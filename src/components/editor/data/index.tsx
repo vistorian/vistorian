@@ -22,14 +22,18 @@ const useStyles = createUseStyles({
   right: {
     margin: '0px 20px',
     width: '100%',
-    maxWidth: 600,
+    maxHeight: '70vh',
   }
 })
 
 function Data() {
   const classes = useStyles()
+
   const [current, setCurrent] = useState('file')
+  const [clearAllOpen, setClearAllOpen] = useState(false)
   const [open, setOpen] = useState(false)
+  const [selectedToDelete, setSelectedToDelete] = useState('')
+  const [preview, setPreview] = useState('')
 
   const { fileNameStore, setFileNameStore } = useContext(EditorContext);
 
@@ -58,29 +62,36 @@ function Data() {
 
   const clearData = (name: string) => {
     // console.log('clearData:', name, fileNameStore)
-    setOpen(false)
-    if (name !== 'all') {
+    if (name !== 'all' && fileNameStore.indexOf(name) !== -1) {
       window.localStorage.removeItem("UPLOADED_FILE_" + name)
-      setFileNameStore(filter(fileNameStore, (fn) => fn === name))
+      setFileNameStore(filter(fileNameStore, (fn) => fn !== name))
+      setOpen(false)
     }
-    else {
+    else if (name === 'all') {
       window.localStorage.clear()
       setFileNameStore([] as string[])
+      setClearAllOpen(false)
     }
   }
-  
-  const handleCancel = () => {
-    setOpen(false)
-  } 
 
   const renderRight = (type: string) => {
     switch (type) {
       case 'file':
-        return <UploadFiles />
+        return <UploadFiles 
+          setPreview={setPreview}
+          setCurrent={setCurrent}
+        />
       case 'paste':
-        return <Paste />
+        return <Paste 
+          setPreview={setPreview}
+          setCurrent={setCurrent}
+        />
       case 'download':
         return <Download />
+      case 'preview':
+        return <DataPreview 
+          preview={preview}
+        />
     }
   }
 
@@ -100,13 +111,14 @@ function Data() {
             type='text'
             shape='circle'
             style={{ marginLeft: 10 }}
-            onClick={() => setOpen(true)} 
+            onClick={() => setClearAllOpen(true)} 
           />
           <Modal
-            title="Delete Files"
-            open={open}
+            title="Clear all data files"
+            open={clearAllOpen}
+            onCancel={() => setClearAllOpen(false)}
             footer={[
-              <Button key="cancel" onClick={handleCancel}>
+              <Button key="cancel" onClick={() => setClearAllOpen(false)}>
                 Cancel
               </Button>,
               <Button key="ok" type="primary" onClick={() => clearData('all')}>
@@ -118,32 +130,46 @@ function Data() {
           </Modal>
         </p>
         {fileNameStore.map((fileName: string) => (
-          <p style={{ paddingLeft: 16, margin: 0 }}>
-            {fileName}
-            <Button
-              icon={<DeleteFilled />}
-              type='text'
-              shape='circle'
-              style={{ marginLeft: 10 }}
-              onClick={() => setOpen(true)}
-            />
-            <Modal
-              title="Delete Files"
-              open={open}
-              onCancel={handleCancel}
-              footer={[
-                <Button key="cancel" onClick={handleCancel}>
-                  Cancel
-                </Button>,
-                <Button key="ok" type="primary" onClick={() => clearData(fileName)}>
-                  OK
-                </Button>,
-              ]}
+            <p key={fileName}
+              style={{ paddingLeft: 16, margin: 0 }}
             >
-              <p>Are you sure you want to delete {fileName} ?</p>
-            </Modal>
-          </p>
+              <Button
+                type='text'
+                style={{ padding: 0, fontWeight: preview === fileName ? 700 : 500 }}
+                onClick={() => {
+                  setCurrent('preview')
+                  setPreview(fileName)
+                }}
+              >
+                {fileName}
+              </Button>
+              <Button
+                icon={<DeleteFilled />}
+                type='text'
+                shape='circle'
+                style={{ marginLeft: 10 }}
+                onClick={() => {
+                  setOpen(true)
+                  setSelectedToDelete(fileName)
+                }}
+              />
+            </p>
         ))}
+        <Modal
+          title="Delete Files"
+          open={open}
+          onCancel={() => setOpen(false)}
+          footer={[
+            <Button key="cancel" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>,
+            <Button key="ok" type="primary" onClick={() => clearData(selectedToDelete)}>
+              OK
+            </Button>,
+          ]}
+        >
+          <p>Are you sure you want to delete {selectedToDelete} ?</p>
+        </Modal>
       </div>
       <div className={classes.right}>
         {renderRight(current)}

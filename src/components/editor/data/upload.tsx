@@ -7,10 +7,15 @@ import { EditorContext } from '../context';
 const useStyles = createUseStyles({
 })
 
+interface IUploadFiles {
+  setPreview: (data: string) => void;
+  setCurrent: (data: string) => void;
+}
 
-function UploadFiles() {
+function UploadFiles(props: IUploadFiles) {
   const classes = useStyles()
-  const { fileNameStore, setFileNameStore } = useContext(EditorContext);
+  const { setPreview, setCurrent } = props
+  const { fileNameStore, setFileNameStore } = useContext(EditorContext)
 
   const normFile = (e: any) => {
     // console.log('Upload event:', e);
@@ -27,10 +32,12 @@ function UploadFiles() {
       message.error(`${file.name} file upload failed.`)
     }
     reader.onload = () => {
-      message.success(`${file.name} file uploaded successfully`)
+      message.success(`${file.name} file uploaded successfully.`)
       // console.log('reader.onload:', reader.result)
       window.localStorage.setItem("UPLOADED_FILE_" + file.name, reader.result as string)
       setFileNameStore([...fileNameStore, file.name])
+      setPreview(file.name)
+      setCurrent('preview')
     }
     return false
   }
