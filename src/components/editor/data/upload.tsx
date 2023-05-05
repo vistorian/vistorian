@@ -10,11 +10,12 @@ const useStyles = createUseStyles({
 interface IUploadFiles {
   setPreview: (data: string) => void;
   setCurrent: (data: string) => void;
+  checkDuplicate: (name: string) => boolean;
 }
 
 function UploadFiles(props: IUploadFiles) {
   const classes = useStyles()
-  const { setPreview, setCurrent } = props
+  const { setPreview, setCurrent, checkDuplicate } = props
   const { fileNameStore, setFileNameStore } = useContext(EditorContext)
 
   const normFile = (e: any) => {
@@ -32,6 +33,8 @@ function UploadFiles(props: IUploadFiles) {
       message.error(`${file.name} file upload failed.`)
     }
     reader.onload = () => {
+      if(!checkDuplicate(file.name)) 
+        return false
       message.success(`${file.name} file uploaded successfully.`)
       // console.log('reader.onload:', reader.result)
       window.localStorage.setItem("UPLOADED_FILE_" + file.name, reader.result as string)

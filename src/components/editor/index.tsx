@@ -38,11 +38,20 @@ const items: MenuProps['items'] = [
 function Editor() {
   const classes = useStyles()
   const [current, setCurrent] = useState('data')
-  const [fileNameStore, setFileNameStore] = useState([] as string[])
+
+  const loadedFiles = Object.keys(window.localStorage)
+    .filter(k => k.startsWith("UPLOADED_FILE_"))
+    .map(n => n.slice(14))
+  const loadedNetworks = Object.keys(window.localStorage)
+    .filter(k => k.startsWith("NETWORK_DEFINITION_"))
+    .map(n => n.slice(19))
+
+  const [fileNameStore, setFileNameStore] = useState(loadedFiles)
+  const [networkStore, setNetworkStore] = useState(loadedNetworks)
   const editorContext = useMemo(
-    () => ({ fileNameStore, setFileNameStore }),
-    [fileNameStore]
-  );
+    () => ({ fileNameStore, setFileNameStore, networkStore, setNetworkStore }),
+    [fileNameStore, networkStore]
+  )
 
   const onClick: MenuProps['onClick'] = (e) => {
     // console.log('click ', e);

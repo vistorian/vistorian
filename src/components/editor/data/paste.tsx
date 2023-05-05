@@ -11,11 +11,12 @@ const useStyles = createUseStyles({
 interface IPaste {
   setPreview: (data: string) => void;
   setCurrent: (data: string) => void;
+  checkDuplicate: (name: string) => boolean;
 }
 
 function Paste(props: IPaste) {
   const classes = useStyles()
-  const { setPreview, setCurrent } = props
+  const { setPreview, setCurrent, checkDuplicate } = props
   const { fileNameStore, setFileNameStore } = useContext(EditorContext);
 
   const [fileName, setFileName] = useState('')
@@ -35,16 +36,23 @@ function Paste(props: IPaste) {
   }
 
   const checkSave = () => {
-    if (fileName.length > 0 && fileName.endsWith('.json') && checkIsJSON(data)) {
-      message.success(`${fileName} file saved successfully.`)
-      // console.log('reader.onload:', reader.result)
-      window.localStorage.setItem("UPLOADED_FILE_" + fileName, data)
-      setFileNameStore([...fileNameStore, fileName])
-      setPreview(fileName)
-      setCurrent('preview')
+    if (fileName.length > 0) {
+      if (!checkDuplicate(fileName)) {
+        if (fileName.endsWith('.json') && checkIsJSON(data)) {
+          message.success(`${fileName} file saved successfully.`)
+          // console.log('reader.onload:', reader.result)
+          window.localStorage.setItem("UPLOADED_FILE_" + fileName, data)
+          setFileNameStore([...fileNameStore, fileName])
+          setPreview(fileName)
+          setCurrent('preview')
+        }
+        else {
+          message.error(`${fileName} file failed to be saved. Please save the data in the JSON format. And the name must end with one of: .json.`)
+        }
+      }
     }
     else {
-      message.error(`${fileName} file failed to be saved.`)
+      message.error(`Please provide a name for your data and the name must end with one of: .json.`)
     }
   }
 

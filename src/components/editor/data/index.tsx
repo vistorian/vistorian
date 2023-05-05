@@ -1,7 +1,7 @@
 import { createUseStyles } from 'react-jss'
 import { useState, useContext } from 'react'
 import { MenuProps } from 'antd'
-import { Menu, Button, Modal } from 'antd'
+import { Menu, Button, Modal, message } from 'antd'
 import { PlusOutlined, DeleteFilled } from '@ant-design/icons'
 import { filter } from 'lodash-es'
 
@@ -68,10 +68,18 @@ function Data() {
       setOpen(false)
     }
     else if (name === 'all') {
-      window.localStorage.clear()
+      fileNameStore.map((fn: string) => window.localStorage.removeItem("UPLOADED_FILE_" + fn))
       setFileNameStore([] as string[])
       setClearAllOpen(false)
     }
+  }
+
+  const checkDuplicate = (name: string) => {
+    if (fileNameStore.indexOf(name) > -1) {
+      message.error(`${name} file upload failed, as the system does not allow data files uploaded with the same name.`)
+      return false
+    }
+    return true
   }
 
   const renderRight = (type: string) => {
@@ -80,11 +88,13 @@ function Data() {
         return <UploadFiles 
           setPreview={setPreview}
           setCurrent={setCurrent}
+          checkDuplicate={checkDuplicate}
         />
       case 'paste':
         return <Paste 
           setPreview={setPreview}
           setCurrent={setCurrent}
+          checkDuplicate={checkDuplicate}
         />
       case 'download':
         return <Download />
