@@ -3,6 +3,8 @@ import { useContext, useState } from 'react'
 import { Button, Modal } from 'antd'
 import { PlusOutlined, DeleteFilled, EditFilled } from '@ant-design/icons'
 import { EditorContext } from '../context'
+import NetPreview from './netPreview'
+import StepForm from './stepform'
 
 const useStyles = createUseStyles({
   root: {
@@ -51,9 +53,9 @@ function Network() {
   const renderRight = (type: string) => {
     switch(type) {
       case 'preview': 
-        return (<div>Preview</div>)
+        return (<NetPreview preview={preview} />)
       case 'stepform':
-        return (<div>Create</div>)
+        return (<StepForm />)
     }
   }
 

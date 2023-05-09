@@ -13,6 +13,8 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
     "antd": "^5.4.5",
     "gh-pages": "^5.0.0",
     "lodash-es": "^4.17.21",
