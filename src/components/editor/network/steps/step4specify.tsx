@@ -5,12 +5,29 @@ import { InboxOutlined, RightOutlined, LeftOutlined, MinusCircleOutlined, PlusOu
 import { RcFile } from 'antd/es/upload';
 import { DataFile, Step4SpecifyDataType, StepFormDataType } from '../../../../../typings';
 import styled from '@emotion/styled';
-import { findIndex, cloneDeep } from 'lodash-es';
+import { findIndex } from 'lodash-es';
+import csvtojson from 'csvtojson';
 
 import { EditorContext } from '../../context'
 
-const { Option } = Select;
-const { Title, Paragraph, Text } = Typography;
+const { Title, Text } = Typography;
+
+const useStyles = createUseStyles({
+  upload: {
+    backgroundColor: '#eee',
+    borderStyle: 'none',
+    padding: '10px 20px 20px',
+    borderRadius: 10,
+    marginBottom: '1em',
+  },
+  selection: {
+    display: 'flex'
+  },
+  selectionName: {
+    width: 250,
+    fontSize: 16,
+  }
+})
 
 interface IStep4SpecifyProps {
   data: StepFormDataType;
@@ -20,15 +37,6 @@ interface IStep4SpecifyProps {
   MyButton: React.FunctionComponent<ButtonProps>;
 }
 
-const useStyles = createUseStyles({
-  upload: {
-    backgroundColor: '#eee',
-    borderStyle: 'none',
-    padding: '10px 20px 20px',
-    borderRadius: 10,
-    marginBottom: '1em',
-  }
-})
 
 function Step4Specify(props: IStep4SpecifyProps) {
   const classes = useStyles()
@@ -37,12 +45,20 @@ function Step4Specify(props: IStep4SpecifyProps) {
 
   const [form] = Form.useForm()
 
-  const [uploaded, setUploaded] = useState<boolean>(false)
+  // const [uploaded, setUploaded] = useState<boolean>(false)
+  const [selectedFileName, setSelectedFileName] = useState<string>('')
   const [dataInTable, setDataInTable] = useState<any[]>([]);
   const [columnInTable, setColumnInTable] = useState<any[]>([]);
   const [hasHeaderRow, setHasHeaderRow] = useState<boolean>(true)
-  const [requiredSelectOption, setRequiredSelectOption] = useState<any>(null);
-  const [unRequiredSelectOption, setUnRequiredSelectOption] = useState<any>(null);
+  const [selectionOptions, setSelectionOptions] = useState<object[]>([])
+
+
+  const convertCsvToJson = async (csvData: string): Promise<any[]> => {
+    const jsonArray = await csvtojson().fromString(csvData)
+    return jsonArray
+    // return JSON.stringify(jsonArray, null, 2);
+  }
+
 
   const onFinish = (values: Step4SpecifyDataType) => {}
 
@@ -74,10 +90,7 @@ function Step4Specify(props: IStep4SpecifyProps) {
         hasHeader: true
       }
       setFileNameStore([...fileNameStore, tmp])
-      setUploaded(true)
-      const re = csvToJson(reader.result as string)
-      setColumnInTable(re.columns)
-      setDataInTable(re.data)
+      setSelectedFileName(file.name)
     }
     return false
   }
@@ -91,51 +104,50 @@ function Step4Specify(props: IStep4SpecifyProps) {
     })
   }
 
-  const csvToJson = (data: string) => {
-    let lines = data.split("\n");
-    let result = new Array<object>()
-
-    // Extract the header line
-    const headers = lines[0].split(",");
-
-    const columns = headers.map(header => {
-      return {
-        title: header,
-        dataIndex: header,
-        key: header,
+  useEffect(()=>{
+    if (selectedFileName.length > 0) {
+      const csvdata = window.localStorage.getItem("UPLOADED_FILE_" + selectedFileName)
+      if (csvdata) {
+        convertCsvToJson(csvdata)
+          .then((jsonData) => {
+            const headers = Object.keys(jsonData[0])
+            const columns = headers.map(header => {
+              return {
+                title: header,
+                dataIndex: header,
+                key: header,
+              }
+            })
+            const options = headers.map((header: string) => {
+              return {
+                value: header,
+                // @ts-ignore
+                label: `${header} (First value is ${jsonData[0][header]})`,
+              }
+            })
+            setColumnInTable(columns)
+            // only preview 5 rows
+            setDataInTable(jsonData.slice(0,5))
+            setSelectionOptions(options)
+          })
+          .catch((error) => {
+            message.error('Error during CSV to JSON conversion:');
+          })
       }
-    })
-    // data preview with 5 rows
-    lines.map((line, i) => {
-      if (i > 0 && i <= 5) {
-        let obj = {}
-        let currentLine = line.split(",")
-        for (let j = 0; j < headers.length; j++) {
-          // @ts-ignore
-          obj[headers[j]] = currentLine[j];
-        }
-        result.push(obj);
-      }
-    })
-    return {
-      columns: columns,
-      data: result
-    }
-  }
+      else {
+        message.error('There is no such data file in the storage!')
+      } 
+    }    
+  }, [selectedFileName])
 
-  const selectedFile = (value: string) => {
-    setUploaded(true)
-    const re = csvToJson(value)
-    setColumnInTable(re.columns)
-    setDataInTable(re.data)
-  }
 
   useEffect(() => {
     // console.log("4: ", data)
     if (!data.step4Specify) return
     form.setFieldsValue({ ...data.step4Specify })
     if (data.step4Specify.file) {
-      setUploaded(true)
+      // setUploaded(true)
+      // setSelectedData(file.name)
       setHasHeaderRow(data.step4Specify.hasHeaderRow)
       // setCsvData(data.step4Specify.fileData)
     }
@@ -158,6 +170,7 @@ function Step4Specify(props: IStep4SpecifyProps) {
               Specifying your link table
             </MyTitle>
 
+            {/* is directed link? */}
             <Form.Item
               label={<Title level={4}>1. Are links <i>directed</i>?</Title>}
               name="directed"
@@ -173,7 +186,8 @@ function Step4Specify(props: IStep4SpecifyProps) {
                 </MySpace>
               </Radio.Group>
             </Form.Item>
-
+            
+            {/* select data files */}
             <Form.Item
                 label={<Title level={4}>2. Upload your table</Title>}
                 name="directed"
@@ -184,7 +198,11 @@ function Step4Specify(props: IStep4SpecifyProps) {
                   <Form.Item style={{marginBottom: 0}}>
                     <div style={{ display: 'flex' }}>
                       <Text style={{width: 300, fontSize: 16, paddingTop: 4}}>Select a previously uploaded file</Text>
-                      <Select style={{ width: 300 }} options={getSelectionFileList()} onChange={selectedFile} />
+                    <Select 
+                      style={{ width: 300 }} 
+                      options={getSelectionFileList()} 
+                      onChange={(value) => setSelectedFileName(value)}
+                    />
                     </div>
                   </Form.Item>
                   <Text style={{ fontSize: 16}}>Or</Text>
@@ -210,7 +228,7 @@ function Step4Specify(props: IStep4SpecifyProps) {
             </Form.Item>
 
             {
-              uploaded
+              selectedFileName.length > 0
                 ?
                 <>
                   <Form.Item name="hasHeaderRow" valuePropName="checked">
@@ -238,25 +256,24 @@ function Step4Specify(props: IStep4SpecifyProps) {
 
                   <Form.Item
                     name="sourceNodeLabel"
-                    label={<MyTitle level={4} style={{ fontSize: 14, marginTop: 4 }}>- Source node label</MyTitle>}
+                    style={{margin: 0}}
                     rules={[{ required: true, message: 'This is required.' }]}
                   >
-                    <Select>
-                      {/* {columnInTable.map((column, i) => {
-                          return <Option key={column.key} value={column.dataIndex}>{`${column.title} (first value is "${firstRow ? firstRow[column.dataIndex] : null}")`}</Option>
-                        })} */}
-                      {requiredSelectOption}
-                    </Select>
+                    <div className={classes.selection}>
+                      <Text className={classes.selectionName}>- Source node label:</Text>
+                      <Select style={{width: 300}} options={selectionOptions} />
+                    </div>
                   </Form.Item>
-
+                  
                   <Form.Item
                     name="targetNodeLabel"
-                    label={<MyTitle level={4} style={{ fontSize: 14, marginTop: 4 }}>- Target node label</MyTitle>}
+                    style={{ margin: 0 }}
                     rules={[{ required: true, message: 'This is required.' }]}
                   >
-                    <Select>
-                      {requiredSelectOption}
-                    </Select>
+                    <div className={classes.selection}>
+                      <Text className={classes.selectionName}>- Target node label:</Text>
+                      <Select style={{ width: 300 }} options={selectionOptions} />
+                    </div>
                   </Form.Item>
 
                   <MyTitle level={4} style={{ fontSize: 16 }}>
@@ -265,63 +282,71 @@ function Step4Specify(props: IStep4SpecifyProps) {
 
                   <Form.Item
                     name="linkId"
-                    label={<MyTitle level={4} style={{ fontSize: 14, marginTop: 4 }}>- Link id</MyTitle>}
+                    style={{ margin: 0 }}
                     rules={[{ required: false }]}
                   >
-                    <Select>
-                      {unRequiredSelectOption}
-                    </Select>
+                    <div className={classes.selection}>
+                      <Text className={classes.selectionName}>- Link ID:</Text>
+                      <Select style={{ width: 300 }} options={selectionOptions} />
+                    </div>
                   </Form.Item>
 
                   <Form.Item
                     name="locationOfSourceNode"
-                    label={<MyTitle level={4} style={{ fontSize: 14, marginTop: 4 }}>- Location of source node</MyTitle>}
+                    style={{ margin: 0 }}
                     rules={[{ required: false }]}
                   >
-                    <Select>
-                      {unRequiredSelectOption}
-                    </Select>
+                    <div className={classes.selection}>
+                      <Text className={classes.selectionName}>- Location of source node:</Text>
+                      <Select style={{ width: 300 }} options={selectionOptions} />
+                    </div>
                   </Form.Item>
 
                   <Form.Item
                     name="locationOfTargetNode"
-                    label={<MyTitle level={4} style={{ fontSize: 14, marginTop: 4 }}>- Location of target node</MyTitle>}
+                    style={{ margin: 0 }}
                     rules={[{ required: false }]}
                   >
-                    <Select>
-                      {unRequiredSelectOption}
-                    </Select>
+                    <div className={classes.selection}>
+                      <Text className={classes.selectionName}>- Location of target node:</Text>
+                      <Select style={{ width: 300 }} options={selectionOptions} />
+                    </div>
                   </Form.Item>
 
                   <Form.Item
                     name="linkWeight"
-                    label={<MyTitle level={4} style={{ fontSize: 14, marginTop: 4 }}>- Link weight</MyTitle>}
+                    style={{ margin: 0 }}
                     rules={[{ required: false }]}
-                    tooltip={"A numerical measure of the strength of connection between nodes (e.g., the travel time between two locations, the value of a cash transfer.)"}
                   >
-                    <Select>
-                      {unRequiredSelectOption}
-                    </Select>
+                    <div className={classes.selection}>
+                      <Text 
+                        className={classes.selectionName} 
+                        // tooltip={"A numerical measure of the strength of connection between nodes (e.g., the travel time between two locations, the value of a cash transfer.)"}
+                      >- Link weight:</Text>
+                      <Select style={{ width: 300 }} options={selectionOptions} />
+                    </div>
                   </Form.Item>
 
                   <Form.Item
                     name="linkType"
-                    label={<MyTitle level={4} style={{ fontSize: 14, marginTop: 4 }}>- Link type</MyTitle>}
+                    style={{ margin: 0 }}
                     rules={[{ required: false }]}
                   >
-                    <Select>
-                      {unRequiredSelectOption}
-                    </Select>
+                    <div className={classes.selection}>
+                      <Text className={classes.selectionName}>- Link type:</Text>
+                      <Select style={{ width: 300 }} options={selectionOptions} />
+                    </div>
                   </Form.Item>
 
                   <Form.Item
                     name="whetherLinkDirected"
-                    label={<MyTitle level={4} style={{ fontSize: 14, marginTop: 4 }}>- Whether a link is directed</MyTitle>}
+                    style={{ margin: 0 }}
                     rules={[{ required: false }]}
                   >
-                    <Select>
-                      {unRequiredSelectOption}
-                    </Select>
+                    <div className={classes.selection}>
+                      <Text className={classes.selectionName}>- Whether a link is directed:</Text>
+                      <Select style={{ width: 300 }} options={selectionOptions} />
+                    </div>
                   </Form.Item>
 
                   <Form.Item
@@ -360,7 +385,7 @@ function Step4Specify(props: IStep4SpecifyProps) {
           </Form.Item>
         </Form> : 
         <Form>
-          
+
         </Form>
       }
 
@@ -372,13 +397,6 @@ function Step4Specify(props: IStep4SpecifyProps) {
 const MySpace = styled(Space)({
   display: "flex",
   flexDirection: "column",
-  flexWrap: "wrap",
-  textAlign: "left"
-})
-
-const MyParagraph = styled(Paragraph)({
-  display: "flex",
-  flexDirection: "row",
   flexWrap: "wrap",
   textAlign: "left"
 })

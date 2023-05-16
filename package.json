@@ -16,6 +16,7 @@
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "antd": "^5.4.5",
+    "csvtojson": "^2.0.10",
     "gh-pages": "^5.0.0",
     "lodash-es": "^4.17.21",
     "moment": "^2.29.4",
