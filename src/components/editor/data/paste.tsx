@@ -2,6 +2,7 @@ import { createUseStyles } from 'react-jss'
 import { Button, Input, message } from 'antd'
 import { useState, useContext } from 'react'
 import { EditorContext } from '../context';
+import { DataFile } from '../../../../typings';
 
 const { TextArea } = Input
 
@@ -9,7 +10,7 @@ const useStyles = createUseStyles({
 })
 
 interface IPaste {
-  setPreview: (data: string) => void;
+  setPreview: (data: DataFile) => void;
   setCurrent: (data: string) => void;
   checkDuplicate: (name: string) => boolean;
 }
@@ -42,8 +43,12 @@ function Paste(props: IPaste) {
           message.success(`${fileName} file saved successfully.`)
           // console.log('reader.onload:', reader.result)
           window.localStorage.setItem("UPLOADED_FILE_" + fileName, data)
-          setFileNameStore([...fileNameStore, fileName])
-          setPreview(fileName)
+          const tmp: DataFile = {
+            name: fileName,
+            hasHeader: true
+          }
+          setFileNameStore([...fileNameStore, tmp])
+          setPreview(tmp)
           setCurrent('preview')
         }
         else {

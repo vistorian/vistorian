@@ -3,12 +3,13 @@ import { useContext } from 'react'
 import { Upload, Form, message } from 'antd'
 import { RcFile } from 'antd/es/upload';
 import { EditorContext } from '../context';
+import { DataFile } from '../../../../typings';
 
 const useStyles = createUseStyles({
 })
 
 interface IUploadFiles {
-  setPreview: (data: string) => void;
+  setPreview: (data: DataFile) => void;
   setCurrent: (data: string) => void;
   checkDuplicate: (name: string) => boolean;
 }
@@ -33,13 +34,18 @@ function UploadFiles(props: IUploadFiles) {
       message.error(`${file.name} file upload failed.`)
     }
     reader.onload = () => {
-      if(!checkDuplicate(file.name)) 
+      if(!checkDuplicate(file.name)) {
         return false
+      }
       message.success(`${file.name} file uploaded successfully.`)
       // console.log('reader.onload:', reader.result)
       window.localStorage.setItem("UPLOADED_FILE_" + file.name, reader.result as string)
-      setFileNameStore([...fileNameStore, file.name])
-      setPreview(file.name)
+      const tmp: DataFile = {
+        name: file.name,
+        hasHeader: true
+      }
+      setFileNameStore([...fileNameStore, tmp])
+      setPreview(tmp)
       setCurrent('preview')
     }
     return false
@@ -60,11 +66,11 @@ function UploadFiles(props: IUploadFiles) {
               name="file"
               beforeUpload={handleFile}
               showUploadList={false}
-              accept="application/json, text/csv, .tsv, .graphml, .gedcom, .pajek"
+              accept="application/json, text/csv, .graphml, .gedcom, .pajek"
             >
               <p className="ant-upload-text">Click or drag files to this area to upload.</p>
               <p className="ant-upload-hint">
-                Support for JSON/CSV/TSV files.
+                Support for JSON/CSV/Graphml/Gedcom/Pajek files.
               </p>
             </Upload.Dragger>
           </Form.Item>

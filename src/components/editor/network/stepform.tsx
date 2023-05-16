@@ -1,7 +1,6 @@
 import { createUseStyles } from 'react-jss'
 import { useState, useEffect } from 'react'
-import { Steps, theme, Typography, Button, Form, Row, Col } from "antd"
-import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+import { Steps, theme, Typography, Button} from "antd"
 import type { StepProps } from "antd"
 import styled from "@emotion/styled"
 
@@ -28,6 +27,10 @@ function StepForm() {
     step5LocationSpec: null,
     step6NodeSpec: null
   })
+
+  // const updateDataTableInfo = (dataInTable: any[], hasHeaderRow: boolean, columnInTable: any[]) => {
+  //   store.updateDataTable(dataInTable, hasHeaderRow, columnInTable)
+  // }
 
   const handlePrevStep = (step: number) => {
     if (step >= 1) {
@@ -57,27 +60,52 @@ function StepForm() {
     }
   }
 
+  const MyButton = styled(Button)({
+    width: 130,
+    marginTop: 40
+  })
+
   const initSteps = [
     {
       title: 'Name',
-      content: <Step1Name data={data} handleNextStep={handleNextStep} />,
+      content: <Step1Name 
+        data={data} 
+        onSuccess={handleNextStep}
+        MyButton={MyButton} 
+      />,
       description: 'Enter a name for your network.'
     },
     {
       title: 'Format',
-      content: <Step2Format data={data} onSuccess={handleNextStep} onPrevious={handlePrevStep} />,
+      content: <Step2Format 
+        data={data} 
+        onSuccess={handleNextStep} 
+        onPrevious={handlePrevStep} 
+        MyButton={MyButton} 
+      />,
       description: 'What is the format of your data?'
     },
-    // {
-    //   title: 'Link',
-    //   content: <Step3Link data={data} onSuccess={handleNextStep} onPrevious={handlePrevStep} />,
-    //   description: 'How are links (edges) represented in your network?'
-    // },
-    // {
-    //   title: 'File',
-    //   content: <Step4Specify data={data} updateDataTableInfo={updateDataTableInfo} onSuccess={handleNextStep} onPrevious={handlePrevStep} />,
-    //   description: 'Specifying your table.'
-    // }
+    {
+      title: 'Link',
+      content: <Step3Link 
+        data={data} 
+        onSuccess={handleNextStep} 
+        onPrevious={handlePrevStep} 
+        MyButton={MyButton} 
+      />,
+      description: 'How are links (edges) represented in your network?'
+    },
+    {
+      title: 'File',
+      content: <Step4Specify 
+        data={data} 
+        // updateDataTableInfo={updateDataTableInfo} 
+        onSuccess={handleNextStep} 
+        onPrevious={handlePrevStep} 
+        MyButton={MyButton} 
+      />,
+      description: 'Specifying your table.'
+    }
   ]
 
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -95,17 +123,23 @@ function StepForm() {
       const linkSteps = initSteps.concat([
         {
           title: 'Location',
-          content: <Step5LocationSpec data={data} onSuccess={handleNextStep} onPrevious={handlePrevStep} />,
+          content: <Step5LocationSpec></Step5LocationSpec>,
+          // content: <Step5LocationSpec 
+          //   data={data} 
+          //   onSuccess={handleNextStep} 
+          //   onPrevious={handlePrevStep} />,
           description: 'Specifying the location.'
         },
         {
           title: 'Node Type',
-          content: <Step6NodeSpec data={data} onSuccess={handleNextStep} onPrevious={handlePrevStep} />,
+          content: <Step6NodeSpec></Step6NodeSpec>,
+          // content: <Step6NodeSpec data={data} onSuccess={handleNextStep} onPrevious={handlePrevStep} />,
           description: 'Specifying the node type.'
         }
       ]);
       setSteps(linkSteps)
     } else if (data.step3Link.link === "rowPerNode") {
+      console.log('rowpernode')
       setSteps(initSteps)
     }
   }, [data])
@@ -122,42 +156,27 @@ function StepForm() {
   const { token } = theme.useToken();
   const Content = styled(Typography.Paragraph)({
     lineHeight: '260px',
-    textAlign: 'center',
+    textAlign: 'left',
     marginTop: 16,
+    padding: '0px 30px',
     color: token.colorTextTertiary,
     backgroundColor: token.colorFillAlter,
     borderRadius: token.borderRadiusLG,
     border: `1px dashed ${token.colorBorder}`,
-  })
-
-  const MyButton = styled(Button)({
-    width: 130,
-    marginTop: 40
+    height: '65vh',
+    overflow: 'scroll'
   })
 
   return (
     <div className='root'>
-      <Steps current={currentStep - 1} labelPlacement="vertical" items={stepItems} />
+      <Steps 
+        current={currentStep - 1} 
+        // labelPlacement="vertical" 
+        items={stepItems} 
+      />
 
       <Content>
         {steps.length === 0 ? initSteps[currentStep - 1].content : steps[currentStep - 1].content}
-
-        <Form>
-          <Form.Item>
-            <Row>
-              <Col span={8} style={{ display: currentStep === 1 ? "none" : "flex" }}>
-                <MyButton type={"primary"} icon={<LeftOutlined />}>
-                  Previous
-                </MyButton>
-              </Col>
-              <Col span={8} offset={8} style={{ display: "flex", flexDirection: "row-reverse" }}>
-                <MyButton type="primary" htmlType="submit">
-                  Next <RightOutlined />
-                </MyButton>
-              </Col>
-            </Row>
-          </Form.Item>
-        </Form>
       </Content>
     </div>
   )

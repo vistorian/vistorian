@@ -10,6 +10,8 @@ import Paste from './paste'
 import Download from './download'
 import DataPreview from './dataPreview'
 import { EditorContext } from '../context'
+import { DataFile } from '../../../../typings'
+import { findIndex } from 'lodash-es'
 
 const useStyles = createUseStyles({
   root: {
@@ -33,7 +35,7 @@ function Data() {
   const [clearAllOpen, setClearAllOpen] = useState(false)
   const [open, setOpen] = useState(false)
   const [selectedToDelete, setSelectedToDelete] = useState('')
-  const [preview, setPreview] = useState('')
+  const [preview, setPreview] = useState({} as DataFile)
 
   const { fileNameStore, setFileNameStore } = useContext(EditorContext);
 
@@ -62,20 +64,20 @@ function Data() {
 
   const clearData = (name: string) => {
     // console.log('clearData:', name, fileNameStore)
-    if (name !== 'all' && fileNameStore.indexOf(name) !== -1) {
+    if (name !== 'all' && findIndex(fileNameStore, (fn: DataFile) => fn.name === name) !== -1) {
       window.localStorage.removeItem("UPLOADED_FILE_" + name)
-      setFileNameStore(filter(fileNameStore, (fn) => fn !== name))
+      setFileNameStore(filter(fileNameStore, (fn) => fn.name !== name))
       setOpen(false)
     }
     else if (name === 'all') {
-      fileNameStore.map((fn: string) => window.localStorage.removeItem("UPLOADED_FILE_" + fn))
-      setFileNameStore([] as string[])
+      fileNameStore.map((fn: DataFile) => window.localStorage.removeItem("UPLOADED_FILE_" + fn.name))
+      setFileNameStore([] as DataFile[])
       setClearAllOpen(false)
     }
   }
 
   const checkDuplicate = (name: string) => {
-    if (fileNameStore.indexOf(name) > -1) {
+    if (findIndex(fileNameStore, (fn: DataFile) => fn.name === name) > -1) {
       message.error(`${name} file upload failed, as the system does not allow data files uploaded with the same name.`)
       return false
     }
@@ -139,19 +141,19 @@ function Data() {
             <p>Are you sure you want to delete all uploaded files?</p>
           </Modal>
         </p>
-        {fileNameStore.map((fileName: string) => (
-            <p key={fileName}
+        {fileNameStore.map((fileName: DataFile) => (
+            <p key={fileName.name}
               style={{ paddingLeft: 16, margin: 0 }}
             >
               <Button
                 type='text'
-                style={{ padding: 0, fontWeight: preview === fileName ? 700 : 500 }}
+                style={{ padding: 0, fontWeight: preview.name === fileName.name ? 700 : 500 }}
                 onClick={() => {
                   setCurrent('preview')
                   setPreview(fileName)
                 }}
               >
-                {fileName}
+                {fileName.name}
               </Button>
               <Button
                 icon={<DeleteFilled />}
@@ -160,7 +162,7 @@ function Data() {
                 style={{ marginLeft: 10 }}
                 onClick={() => {
                   setOpen(true)
-                  setSelectedToDelete(fileName)
+                  setSelectedToDelete(fileName.name)
                 }}
               />
             </p>

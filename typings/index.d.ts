@@ -1,6 +1,11 @@
+type DataFile = {
+  name: string,
+  hasHeader: boolean,
+}
+
 type EditorCtx = {
-  fileNameStore: string[]
-  setFileNameStore: (fileNameStore: string[]) => void;
+  fileNameStore: DataFile[]
+  setFileNameStore: (fileNameStore: DataFile[]) => void;
   networkStore: string[]
   setNetworkStore: (fileNameStore: string[]) => void;
 }
@@ -64,6 +69,7 @@ interface Step6NodeSpecDataType {
 }
 
 export {
+  DataFile,
   EditorCtx,
   StepFormDataType,
   Step1NameDataType,

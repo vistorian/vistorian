@@ -1,5 +1,5 @@
 import { createUseStyles } from 'react-jss'
-import { useState, useContext, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import type { MenuProps } from 'antd'
 import { Menu } from 'antd'
 import { TableOutlined, CodeOutlined, DotChartOutlined } from '@ant-design/icons'
@@ -9,6 +9,7 @@ import Data from './data'
 import Network from './network'
 import VisEditor from './vis'
 import { EditorContext } from './context'
+import { DataFile } from '../../../typings'
 
 const useStyles = createUseStyles({
   root: {
@@ -28,7 +29,7 @@ const items: MenuProps['items'] = [
     icon: <CodeOutlined />,
   },
   {
-    label: '3. Specify Visualization',
+    label: '3. Choose Visualization',
     key: 'vis',
     icon: <DotChartOutlined />,
   }
@@ -41,7 +42,12 @@ function Editor() {
 
   const loadedFiles = Object.keys(window.localStorage)
     .filter(k => k.startsWith("UPLOADED_FILE_"))
-    .map(n => n.slice(14))
+    .map((n) => {
+      return {
+        name: n.slice(14),
+        hasHeader: true
+      } as DataFile
+    })
   const loadedNetworks = Object.keys(window.localStorage)
     .filter(k => k.startsWith("NETWORK_DEFINITION_"))
     .map(n => n.slice(19))

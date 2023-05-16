@@ -1,22 +1,20 @@
-import { createUseStyles } from 'react-jss'
 import { useEffect } from 'react';
-import { Typography, Form, Input } from 'antd';
+import { Typography, Form, Input, ButtonProps, Row, Col } from 'antd';
 import { Step1NameDataType, StepFormDataType } from '../../../../../typings';
+import { RightOutlined } from '@ant-design/icons'
 
-const { Title, Paragraph, Text, Link } = Typography;
+const { Title} = Typography;
 
-const useStyles = createUseStyles({
-})
 
 interface IStep1NameProps {
   data: StepFormDataType;
+  MyButton: React.FunctionComponent<ButtonProps>;
   onSuccess: (data: Step1NameDataType, step: number) => void;
 }
 
 function Step1Name(props: IStep1NameProps) {
-  const classes = useStyles()
 
-  const { onSuccess, data } = props;
+  const { onSuccess, data, MyButton } = props;
 
   const [form] = Form.useForm();
 
@@ -31,7 +29,6 @@ function Step1Name(props: IStep1NameProps) {
   return (
     <Form
       name="basic"
-      style={{ margin: "0 100px", maxWidth: "60vw", textAlign: "left" }}
       onFinish={onFinish}
       autoComplete="off"
       layout={"vertical"}
@@ -44,6 +41,16 @@ function Step1Name(props: IStep1NameProps) {
         rules={[{ required: true, message: 'Enter a name for your network.' }]}
       >
         <Input />
+      </Form.Item>
+
+      <Form.Item>
+        <Row>
+          <Col span={8} offset={16} style={{ display: "flex", flexDirection: "row-reverse" }}>
+            <MyButton type="primary" htmlType="submit">
+              Next <RightOutlined />
+            </MyButton>
+          </Col>
+        </Row>
       </Form.Item>
     </Form>
   )
