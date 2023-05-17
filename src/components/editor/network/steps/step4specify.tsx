@@ -1,7 +1,7 @@
 import { createUseStyles } from 'react-jss'
 import { useEffect, useState, useContext } from 'react';
-import { Button, Form, Upload, message, Row, Col, Select, Space, Typography, Radio, Checkbox, Table, Input, ButtonProps } from 'antd';
-import { InboxOutlined, RightOutlined, LeftOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Form, Upload, message, Row, Col, Select, Space, Typography, Radio, Checkbox, Table, Input, ButtonProps, Tooltip } from 'antd';
+import { InfoCircleOutlined, RightOutlined, LeftOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { RcFile } from 'antd/es/upload';
 import { DataFile, Step4SpecifyDataType, StepFormDataType } from '../../../../../typings';
 import styled from '@emotion/styled';
@@ -9,6 +9,7 @@ import { findIndex } from 'lodash-es';
 import csvtojson from 'csvtojson';
 
 import { EditorContext } from '../../context'
+import TimeFormat from './timeFormat';
 
 const { Title, Text } = Typography;
 
@@ -45,20 +46,20 @@ function Step4Specify(props: IStep4SpecifyProps) {
 
   const [form] = Form.useForm()
 
-  // const [uploaded, setUploaded] = useState<boolean>(false)
   const [selectedFileName, setSelectedFileName] = useState<string>('')
   const [dataInTable, setDataInTable] = useState<any[]>([]);
   const [columnInTable, setColumnInTable] = useState<any[]>([]);
   const [hasHeaderRow, setHasHeaderRow] = useState<boolean>(true)
   const [selectionOptions, setSelectionOptions] = useState<object[]>([])
 
+  // for time format model 
+  const [openTimeFormat, setOpenTimeFormat] = useState<boolean>(false)
+  const [formatString, setFormatString] = useState<string>('%d/%m/%Y')
 
   const convertCsvToJson = async (csvData: string): Promise<any[]> => {
     const jsonArray = await csvtojson().fromString(csvData)
     return jsonArray
-    // return JSON.stringify(jsonArray, null, 2);
   }
-
 
   const onFinish = (values: Step4SpecifyDataType) => {}
 
@@ -127,7 +128,11 @@ function Step4Specify(props: IStep4SpecifyProps) {
             })
             setColumnInTable(columns)
             // only preview 5 rows
-            setDataInTable(jsonData.slice(0,5))
+            const dataintable = jsonData.slice(0,5).map((d, i)=>{
+              d._rowKey=i
+              return d
+            })
+            setDataInTable(dataintable)
             setSelectionOptions(options)
           })
           .catch((error) => {
@@ -240,8 +245,9 @@ function Step4Specify(props: IStep4SpecifyProps) {
                     columns={columnInTable} 
                     showHeader={hasHeaderRow} 
                     dataSource={dataInTable} 
-                    pagination={false}>
-                  </Table>
+                    pagination={false}
+                    rowKey={(record)=>record._rowKey}
+                  />
 
                   <MyTitle level={4}>
                     3. What is the structure of your link table?
@@ -321,8 +327,9 @@ function Step4Specify(props: IStep4SpecifyProps) {
                     <div className={classes.selection}>
                       <Text 
                         className={classes.selectionName} 
-                        // tooltip={"A numerical measure of the strength of connection between nodes (e.g., the travel time between two locations, the value of a cash transfer.)"}
-                      >- Link weight:</Text>
+                      >- Link weight:&nbsp;
+                        <Tooltip title="A numerical measure of the strength of connection between nodes (e.g., the travel time between two locations, the value of a cash transfer.)"><InfoCircleOutlined /></Tooltip>
+                      </Text>
                       <Select style={{ width: 300 }} options={selectionOptions} />
                     </div>
                   </Form.Item>
@@ -362,6 +369,34 @@ function Step4Specify(props: IStep4SpecifyProps) {
                       </MySpace>
                     </Radio.Group>
                   </Form.Item>
+
+                  <Form.Item
+                    name="time"
+                    style={{ margin: 0 }}
+                    rules={[{ required: false }]}
+                  >
+                    <div className={classes.selection}>
+                      <Text className={classes.selectionName}>- Time:</Text>
+                      <Select style={{ width: 300 }} options={selectionOptions} />
+                    </div>
+                  </Form.Item>
+
+                  <Form.Item
+                    label={<Title level={4}>5. Specify a date format:</Title>}
+                    name="timeFormat"
+                    rules={[{ required: false, message: 'This is optional.' }]}
+                  >
+                    <div className={classes.selection}>
+                      <Text className={classes.selectionName}>{formatString}</Text>
+                      <Button onClick={()=>setOpenTimeFormat(true)}>Edit</Button>
+                    </div>
+                  </Form.Item>
+                  <TimeFormat 
+                    open={openTimeFormat} 
+                    setOpen={setOpenTimeFormat} 
+                    formatString={formatString}
+                    setFormatString={setFormatString}
+                  />
                 </>
                 :
                 null

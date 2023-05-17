@@ -53,6 +53,8 @@ interface Step4SpecifyDataType {
   linkType?: string
   whetherLinkDirected?: string
   withTime?: boolean
+  time?: string
+  timeFormat?: string
   node?: string
   relations?: RelationType[]
 }
