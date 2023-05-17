@@ -24,7 +24,6 @@ const useStyles = createUseStyles({
   right: {
     margin: '0px 20px',
     width: '100%',
-    maxHeight: '70vh',
   }
 })
 

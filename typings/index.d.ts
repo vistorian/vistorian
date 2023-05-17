@@ -40,9 +40,8 @@ interface RelationType {
 }
 
 interface Step4SpecifyDataType {
-  directed?: any
+  directed: boolean
   file: any
-  fileData: any
   hasHeaderRow: boolean
   sourceNodeLabel?: string
   targetNodeLabel?: string
@@ -55,8 +54,6 @@ interface Step4SpecifyDataType {
   withTime?: boolean
   time?: string
   timeFormat?: string
-  node?: string
-  relations?: RelationType[]
 }
 
 interface Step5LocationSpecDataType {

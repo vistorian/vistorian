@@ -28,7 +28,7 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
-      <Footer />
+      {/* <Footer /> */}
     </>
   )
 }

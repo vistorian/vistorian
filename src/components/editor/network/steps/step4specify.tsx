@@ -1,6 +1,6 @@
 import { createUseStyles } from 'react-jss'
 import { useEffect, useState, useContext } from 'react';
-import { Button, Form, Upload, message, Row, Col, Select, Space, Typography, Radio, Checkbox, Table, Input, ButtonProps, Tooltip } from 'antd';
+import { Button, Form, Upload, message, Row, Col, Select, Space, Typography, Radio, Checkbox, Table, ButtonProps, Tooltip } from 'antd';
 import { InfoCircleOutlined, RightOutlined, LeftOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { RcFile } from 'antd/es/upload';
 import { DataFile, Step4SpecifyDataType, StepFormDataType } from '../../../../../typings';
@@ -38,6 +38,10 @@ interface IStep4SpecifyProps {
   MyButton: React.FunctionComponent<ButtonProps>;
 }
 
+interface OptionType {
+  value: string,
+  label: string
+}
 
 function Step4Specify(props: IStep4SpecifyProps) {
   const classes = useStyles()
@@ -45,12 +49,14 @@ function Step4Specify(props: IStep4SpecifyProps) {
   const { fileNameStore, setFileNameStore } = useContext(EditorContext);
 
   const [form] = Form.useForm()
+  const directed = Form.useWatch('directed', form)
+  const withTime = Form.useWatch('withTime', form)
 
   const [selectedFileName, setSelectedFileName] = useState<string>('')
   const [dataInTable, setDataInTable] = useState<any[]>([]);
   const [columnInTable, setColumnInTable] = useState<any[]>([]);
   const [hasHeaderRow, setHasHeaderRow] = useState<boolean>(true)
-  const [selectionOptions, setSelectionOptions] = useState<object[]>([])
+  const [selectionOptions, setSelectionOptions] = useState<OptionType[]>([])
 
   // for time format model 
   const [openTimeFormat, setOpenTimeFormat] = useState<boolean>(false)
@@ -61,7 +67,10 @@ function Step4Specify(props: IStep4SpecifyProps) {
     return jsonArray
   }
 
-  const onFinish = (values: Step4SpecifyDataType) => {}
+  const onFinish = (values: any) => {
+    // console.log('4:', values)
+    onSuccess(values, 4)
+  }
 
 
   const normFile = (e: any) => {
@@ -106,9 +115,13 @@ function Step4Specify(props: IStep4SpecifyProps) {
   }
 
   useEffect(()=>{
+    // setTimeout(()=>{console.log('selectedFileName:', selectedFileName)}, 1000)    
     if (selectedFileName.length > 0) {
       const csvdata = window.localStorage.getItem("UPLOADED_FILE_" + selectedFileName)
       if (csvdata) {
+        // if (!hasHeaderRow) {
+        //   const fakeHeader = 
+        // }
         convertCsvToJson(csvdata)
           .then((jsonData) => {
             const headers = Object.keys(jsonData[0])
@@ -119,17 +132,18 @@ function Step4Specify(props: IStep4SpecifyProps) {
                 key: header,
               }
             })
-            const options = headers.map((header: string) => {
-              return {
+            let options = [{value: '', label: '-'}]
+            headers.map((header: string) => {
+              options.push({
                 value: header,
                 // @ts-ignore
                 label: `${header} (First value is ${jsonData[0][header]})`,
-              }
+              })
             })
             setColumnInTable(columns)
             // only preview 5 rows
-            const dataintable = jsonData.slice(0,5).map((d, i)=>{
-              d._rowKey=i
+            const dataintable = jsonData.slice(0, 5).map((d, i) => {
+              d._rowKey = i
               return d
             })
             setDataInTable(dataintable)
@@ -143,7 +157,7 @@ function Step4Specify(props: IStep4SpecifyProps) {
         message.error('There is no such data file in the storage!')
       } 
     }    
-  }, [selectedFileName])
+  }, [selectedFileName, hasHeaderRow])
 
 
   useEffect(() => {
@@ -186,8 +200,8 @@ function Step4Specify(props: IStep4SpecifyProps) {
                   <Text>
                     Doses it matter which node is the&nbsp;<b>source</b>, and which is the&nbsp;<b>target</b>?
                   </Text>
-                  <Radio value={"true"}>Yes</Radio>
-                  <Radio value={"false"}>No</Radio>
+                  <Radio value={true}>Yes</Radio>
+                  <Radio value={false}>No</Radio>
                 </MySpace>
               </Radio.Group>
             </Form.Item>
@@ -195,7 +209,7 @@ function Step4Specify(props: IStep4SpecifyProps) {
             {/* select data files */}
             <Form.Item
                 label={<Title level={4}>2. Upload your table</Title>}
-                name="directed"
+                name="file"
                 rules={[{ required: true, message: 'This is required.' }]}
               >
               <div className={classes.upload}>
@@ -206,7 +220,10 @@ function Step4Specify(props: IStep4SpecifyProps) {
                     <Select 
                       style={{ width: 300 }} 
                       options={getSelectionFileList()} 
-                      onChange={(value) => setSelectedFileName(value)}
+                      onChange={(value) => {
+                        setSelectedFileName(value)
+                        form.setFieldsValue({ 'file': value })
+                      }}
                     />
                     </div>
                   </Form.Item>
@@ -218,7 +235,6 @@ function Step4Specify(props: IStep4SpecifyProps) {
                     noStyle
                   >
                     <Upload.Dragger
-                      name="file"
                       beforeUpload={handleFile}
                       showUploadList={false}
                       accept="text/csv"
@@ -237,13 +253,15 @@ function Step4Specify(props: IStep4SpecifyProps) {
                 ?
                 <>
                   <Form.Item name="hasHeaderRow" valuePropName="checked">
-                    <Checkbox checked onChange={() => setHasHeaderRow(!hasHeaderRow)}>
+                    <Checkbox 
+                      checked 
+                      onChange={() => setHasHeaderRow(!hasHeaderRow)}
+                    >
                       Has header row?
                     </Checkbox>
                   </Form.Item>
                   <Table 
                     columns={columnInTable} 
-                    showHeader={hasHeaderRow} 
                     dataSource={dataInTable} 
                     pagination={false}
                     rowKey={(record)=>record._rowKey}
@@ -267,7 +285,14 @@ function Step4Specify(props: IStep4SpecifyProps) {
                   >
                     <div className={classes.selection}>
                       <Text className={classes.selectionName}>- Source node label:</Text>
-                      <Select style={{width: 300}} options={selectionOptions} />
+                      <Select 
+                        style={{width: 300}} 
+                        options={selectionOptions}
+                        onChange={(value) => {
+                          if (value !== '')
+                            form.setFieldsValue({ 'sourceNodeLabel': value })
+                        }}
+                      />
                     </div>
                   </Form.Item>
                   
@@ -278,7 +303,13 @@ function Step4Specify(props: IStep4SpecifyProps) {
                   >
                     <div className={classes.selection}>
                       <Text className={classes.selectionName}>- Target node label:</Text>
-                      <Select style={{ width: 300 }} options={selectionOptions} />
+                      <Select style={{ width: 300 }}
+                        options={selectionOptions}
+                        onChange={(value) => {
+                          if (value !== '')
+                            form.setFieldsValue({ 'sourceNodeLabel': value })
+                        }}
+                      />
                     </div>
                   </Form.Item>
 
@@ -293,7 +324,10 @@ function Step4Specify(props: IStep4SpecifyProps) {
                   >
                     <div className={classes.selection}>
                       <Text className={classes.selectionName}>- Link ID:</Text>
-                      <Select style={{ width: 300 }} options={selectionOptions} />
+                      <Select style={{ width: 300 }}
+                        options={selectionOptions}
+                        onChange={(value) => form.setFieldsValue({ 'linkId': value })}
+                      />
                     </div>
                   </Form.Item>
 
@@ -304,7 +338,10 @@ function Step4Specify(props: IStep4SpecifyProps) {
                   >
                     <div className={classes.selection}>
                       <Text className={classes.selectionName}>- Location of source node:</Text>
-                      <Select style={{ width: 300 }} options={selectionOptions} />
+                      <Select style={{ width: 300 }}
+                        options={selectionOptions}
+                        onChange={(value) => form.setFieldsValue({ 'locationOfSourceNode': value })}
+                      />
                     </div>
                   </Form.Item>
 
@@ -315,7 +352,10 @@ function Step4Specify(props: IStep4SpecifyProps) {
                   >
                     <div className={classes.selection}>
                       <Text className={classes.selectionName}>- Location of target node:</Text>
-                      <Select style={{ width: 300 }} options={selectionOptions} />
+                      <Select style={{ width: 300 }}
+                        options={selectionOptions}
+                        onChange={(value) => form.setFieldsValue({ 'locationOfTargetNode': value })}
+                      />
                     </div>
                   </Form.Item>
 
@@ -330,7 +370,10 @@ function Step4Specify(props: IStep4SpecifyProps) {
                       >- Link weight:&nbsp;
                         <Tooltip title="A numerical measure of the strength of connection between nodes (e.g., the travel time between two locations, the value of a cash transfer.)"><InfoCircleOutlined /></Tooltip>
                       </Text>
-                      <Select style={{ width: 300 }} options={selectionOptions} />
+                      <Select style={{ width: 300 }}
+                        options={selectionOptions}
+                        onChange={(value) => form.setFieldsValue({ 'linkWeight': value })}
+                      />
                     </div>
                   </Form.Item>
 
@@ -341,20 +384,26 @@ function Step4Specify(props: IStep4SpecifyProps) {
                   >
                     <div className={classes.selection}>
                       <Text className={classes.selectionName}>- Link type:</Text>
-                      <Select style={{ width: 300 }} options={selectionOptions} />
+                      <Select style={{ width: 300 }}
+                        options={selectionOptions}
+                        onChange={(value) => form.setFieldsValue({ 'linkType': value })}
+                      />
                     </div>
                   </Form.Item>
 
-                  <Form.Item
+                  {directed ? <Form.Item
                     name="whetherLinkDirected"
-                    style={{ margin: 0 }}
+                    style={{ margin: 0}}
                     rules={[{ required: false }]}
                   >
                     <div className={classes.selection}>
                       <Text className={classes.selectionName}>- Whether a link is directed:</Text>
-                      <Select style={{ width: 300 }} options={selectionOptions} />
+                      <Select style={{ width: 300 }}
+                        options={selectionOptions}
+                        onChange={(value) => form.setFieldsValue({ 'whetherLinkDirected': value })}
+                      />
                     </div>
-                  </Form.Item>
+                  </Form.Item> : null}
 
                   <Form.Item
                     label={<Title level={4}>4. Are links associated with time?</Title>}
@@ -370,33 +419,38 @@ function Step4Specify(props: IStep4SpecifyProps) {
                     </Radio.Group>
                   </Form.Item>
 
-                  <Form.Item
-                    name="time"
-                    style={{ margin: 0 }}
-                    rules={[{ required: false }]}
-                  >
-                    <div className={classes.selection}>
-                      <Text className={classes.selectionName}>- Time:</Text>
-                      <Select style={{ width: 300 }} options={selectionOptions} />
-                    </div>
-                  </Form.Item>
+                  {withTime ? <>
+                    <Form.Item
+                      name="time"
+                      style={{ margin: 0 }}
+                      rules={[{ required: false }]}
+                    >
+                      <div className={classes.selection}>
+                        <Text className={classes.selectionName}>- Time:</Text>
+                        <Select style={{ width: 300 }}
+                          options={selectionOptions}
+                          onChange={(value) => form.setFieldsValue({ 'time': value })}
+                        />
+                      </div>
+                    </Form.Item> 
 
-                  <Form.Item
-                    label={<Title level={4}>5. Specify a date format:</Title>}
-                    name="timeFormat"
-                    rules={[{ required: false, message: 'This is optional.' }]}
-                  >
-                    <div className={classes.selection}>
-                      <Text className={classes.selectionName}>{formatString}</Text>
-                      <Button onClick={()=>setOpenTimeFormat(true)}>Edit</Button>
-                    </div>
-                  </Form.Item>
-                  <TimeFormat 
-                    open={openTimeFormat} 
-                    setOpen={setOpenTimeFormat} 
-                    formatString={formatString}
-                    setFormatString={setFormatString}
-                  />
+                    <Form.Item
+                      label={<Title level={4}>5. Specify a date format:</Title>}
+                      name="timeFormat"
+                      rules={[{ required: false, message: 'This is optional.' }]}
+                    >
+                      <div className={classes.selection}>
+                        <Text className={classes.selectionName}>{formatString}</Text>
+                        <Button onClick={()=>setOpenTimeFormat(true)}>Edit</Button>
+                      </div>
+                    </Form.Item>
+                    <TimeFormat 
+                      open={openTimeFormat} 
+                      setOpen={setOpenTimeFormat} 
+                      formatString={formatString}
+                      setFormatString={setFormatString}
+                    />
+                  </> : null}
                 </>
                 :
                 null

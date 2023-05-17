@@ -6,9 +6,9 @@ import styled from "@emotion/styled"
 
 import Step1Name from './steps/setp1name'
 import Step2Format from './steps/step2format'
-import Step3Link from './steps/step3Link'
+import Step3Link from './steps/step3link'
 import Step4Specify from './steps/step4specify'
-import Step5LocationSpec from './steps/Step5locationspec'
+import Step5LocationSpec from './steps/step5locationspec'
 import Step6NodeSpec from './steps/step6nodespec'
 import { StepFormDataType, Step1NameDataType, Step2FormatDataType, Step3LinkDataType, Step4SpecifyDataType, Step5LocationSpecDataType, Step6NodeSpecDataType } from '../../../../typings'
 
@@ -27,10 +27,6 @@ function StepForm() {
     step5LocationSpec: null,
     step6NodeSpec: null
   })
-
-  // const updateDataTableInfo = (dataInTable: any[], hasHeaderRow: boolean, columnInTable: any[]) => {
-  //   store.updateDataTable(dataInTable, hasHeaderRow, columnInTable)
-  // }
 
   const handlePrevStep = (step: number) => {
     if (step >= 1) {
@@ -162,9 +158,7 @@ function StepForm() {
     color: token.colorTextTertiary,
     backgroundColor: token.colorFillAlter,
     borderRadius: token.borderRadiusLG,
-    border: `1px dashed ${token.colorBorder}`,
-    height: '65vh',
-    overflow: 'scroll'
+    border: `1px dashed ${token.colorBorder}`
   })
 
   return (
