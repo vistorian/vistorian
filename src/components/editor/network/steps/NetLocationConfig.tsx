@@ -3,7 +3,7 @@ import { createUseStyles } from 'react-jss'
 const useStyles = createUseStyles({
 })
 
-function Step5LocationSpec() {
+function NetLocationConfig() {
   const classes = useStyles()
 
   return (
@@ -13,4 +13,4 @@ function Step5LocationSpec() {
   )
 }
 
-export default Step5LocationSpec
+export default NetLocationConfig

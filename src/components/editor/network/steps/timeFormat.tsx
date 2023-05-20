@@ -1,7 +1,7 @@
 import { createUseStyles } from 'react-jss'
 import { useState } from 'react'
 import { Modal, Input, Button } from 'antd' 
-import { directives, Directives, DirectiveItem } from './timeFormatDirectives'
+import { directives, DirectiveItem } from './timeFormatDirectives'
 import { timeFormat } from 'd3-time-format'
 
 const useStyles = createUseStyles({

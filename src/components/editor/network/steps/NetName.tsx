@@ -1,29 +1,22 @@
 import { useEffect } from 'react';
-import { Typography, Form, Input, ButtonProps, Row, Col } from 'antd';
-import { Step1NameDataType, StepFormDataType } from '../../../../../typings';
+import { Typography, Form, Input, ButtonProps, Row, Col } from 'antd'; 
 import { RightOutlined } from '@ant-design/icons'
+import { NetworkConfig, StepType, StepData, IStepProps } from '../../../../../typings'
 
 const { Title} = Typography;
 
-
-interface IStep1NameProps {
-  data: StepFormDataType;
-  MyButton: React.FunctionComponent<ButtonProps>;
-  onSuccess: (data: Step1NameDataType, step: number) => void;
-}
-
-function Step1Name(props: IStep1NameProps) {
+function NetName(props: IStepProps) {
 
   const { onSuccess, data, MyButton } = props;
 
   const [form] = Form.useForm();
 
   useEffect(() => {
-    form.setFieldsValue({ ...data.step1Name });
+    form.setFieldsValue({ ...data.name });
   }, []);
 
-  const onFinish = (values: Step1NameDataType) => {
-    onSuccess(values, 1);
+  const onFinish = (values: StepData) => {
+    onSuccess(values, 'name');
   };
 
   return (
@@ -56,4 +49,4 @@ function Step1Name(props: IStep1NameProps) {
   )
 }
 
-export default Step1Name
+export default NetName

@@ -3,8 +3,8 @@ import { useContext, useState } from 'react'
 import { Button, Modal } from 'antd'
 import { PlusOutlined, DeleteFilled, EditFilled } from '@ant-design/icons'
 import { EditorContext } from '../context'
-import NetPreview from './netPreview'
-import StepForm from './stepform'
+import NetPreview from './NetPreview'
+import StepForm from './StepForm'
 
 const useStyles = createUseStyles({
   root: {
@@ -17,7 +17,6 @@ const useStyles = createUseStyles({
   right: {
     margin: '0px 20px',
     width: '100%',
-    maxHeight: '70vh',
   }
 })
 

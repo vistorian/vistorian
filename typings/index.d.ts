@@ -10,74 +10,94 @@ type EditorCtx = {
   setNetworkStore: (fileNameStore: string[]) => void;
 }
 
-interface StepFormDataType {
-  step1Name: Step1NameDataType | null
-  step2Format: Step2FormatDataType | null
-  step3Link: Step3LinkDataType | null
-  step4Specify: Step4SpecifyDataType | null
-  step5LocationSpec: Step5LocationSpecDataType | null
-  step6NodeSpec: Step6NodeSpecDataType | null
+
+type StepType = "name" | "format" | "linkType" | "linkTableConfig" | "nodeTableConfig" | "locationTableConfig" |  "extraNodeConfig" | "end"
+type StepData = NetworkName | NetworkFormat | LinkType | LinkTableConfig | NodeTableConfig | LocationTableConfig | ExtraNodeConfig | null
+
+interface NetworkConfig {
+  name: NetworkName | null
+  format: NetworkFormat | null
+  linkType: LinkType | null
+  linkTableConfig: LinkTableConfig | null
+  nodeTableConfig: NodeTableConfig | null
+  locationTableConfig: LocationTableConfig | null
+  extraNodeConfig: ExtraNodeConfig | null
 }
 
-interface Step1NameDataType {
+interface NetworkName {
   name: string
 }
 
-type NetworkFormat = "tabular" | "other"
+type NetworkFormatOpt = "tabular" | "other"
 
-interface Step2FormatDataType {
-  format: NetworkFormat
+interface NetworkFormat {
+  format: NetworkFormatOpt
 }
 
-type NetworkLink = "rowPerLink" | "rowPerNode"
+type LinkTypeOpt = "rowPerLink" | "rowPerNode"
 
-interface Step3LinkDataType {
-  link: NetworkLink
+interface LinkType {
+  linkType: LinkTypeOpt
 }
 
-interface RelationType {
-  [key: string]: string
-}
-
-interface Step4SpecifyDataType {
+interface LinkTableConfig {
   directed: boolean
   file: any
   hasHeaderRow: boolean
-  sourceNodeLabel?: string
-  targetNodeLabel?: string
+  sourceNodeLabel: string
+  targetNodeLabel: string
   linkId?: string
   locationOfSourceNode?: string
   locationOfTargetNode?: string
   linkWeight?: string
   linkType?: string
   whetherLinkDirected?: string
-  withTime?: boolean
+  withTime: boolean
   time?: string
   timeFormat?: string
 }
 
-interface Step5LocationSpecDataType {
+interface LocationTableConfig {
   locationSpecFile?: any
   hasLocationSpecFile: boolean
 }
 
-interface Step6NodeSpecDataType {
+interface ExtraNodeConfig {
+  hasExtraNode: boolean
+}
+
+interface RelationType {
+  [key: string]: string
+}
+
+interface NodeTableConfig {
   nodeSpecFile?: any
   hasNodeSpecFile: boolean
   nodeType: string
 }
 
+interface IStepProps {
+  data: NetworkConfig;
+  onSuccess: (data: StepData, step: StepType) => void;
+  onPrevious: (step: StepType) => void;
+  MyButton: React.FunctionComponent<ButtonProps>;
+}
+
 export {
   DataFile,
   EditorCtx,
-  StepFormDataType,
-  Step1NameDataType,
+  StepType,
+  StepData,
+  NetworkConfig,
+  NetworkName,
+  NetworkFormatOpt,
   NetworkFormat,
-  Step2FormatDataType,
-  NetworkLink,
-  Step3LinkDataType,
+  LinkTypeOpt,
+  LinkType, 
+  LinkTableConfig,
   RelationType,
-  Step4SpecifyDataType,
-  Step5LocationSpecDataType,
-  Step6NodeSpecDataType
+  LocationTableConfig,
+  NodeTableConfig,
+  ExtraNodeConfig,
+  IStepProps
 }

@@ -1,31 +1,24 @@
 import { useEffect } from 'react';
-import { Button, Typography, Form, Radio, Space, Row, Col, Divider, ButtonProps } from 'antd';
-import { Step3LinkDataType, StepFormDataType } from '../../../../../typings';
+import { Typography, Form, Radio, Space, Row, Col, Divider, ButtonProps } from 'antd';
+import { StepData, IStepProps } from '../../../../../typings';
 import { RightOutlined, LeftOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import TablePreview from './tablePreview';
+import TablePreview from './TablePreview';
 
 const { Title, Paragraph, Text } = Typography;
 
-interface IStep3LinkProps {
-  data: StepFormDataType;
-  onSuccess: (data: Step3LinkDataType, step: number) => void;
-  onPrevious: (step: number) => void;
-  MyButton: React.FunctionComponent<ButtonProps>;
-}
-
-function Step3Link(props: IStep3LinkProps) {
+function NetLinkType(props: IStepProps) {
   const { onPrevious, onSuccess, data, MyButton } = props;
 
   const [form] = Form.useForm();
 
   useEffect(() => {
     // console.log("3: ", data);
-    form.setFieldsValue({ ...data.step3Link });
+    form.setFieldsValue({ ...data.linkType });
   }, []);
 
-  const onFinish = (values: Step3LinkDataType) => {
-    onSuccess(values, 3);
+  const onFinish = (values: StepData) => {
+    onSuccess(values, 'linkType');
   };
 
   return (
@@ -39,7 +32,7 @@ function Step3Link(props: IStep3LinkProps) {
     >
       <Form.Item
         label={<Title level={3}>How are links (edges) represented in your network?</Title>}
-        name="link"
+        name="linkType"
         rules={[{ required: true, message: 'Choose the table type.' }]}
       >
         <Radio.Group>
@@ -82,7 +75,7 @@ function Step3Link(props: IStep3LinkProps) {
       <Form.Item>
         <Row>
           <Col span={8} style={{ display: "flex" }}>
-            <MyButton type={"primary"} onClick={() => onPrevious(3)} icon={<LeftOutlined />}>
+            <MyButton type={"primary"} onClick={() => onPrevious('linkType')} icon={<LeftOutlined />}>
               Previous
             </MyButton>
           </Col>
@@ -116,4 +109,4 @@ const MyTitle = styled(Title)({
   marginBottom: 20
 })
 
-export default Step3Link
+export default NetLinkType

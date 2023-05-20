@@ -1,31 +1,22 @@
 import { useEffect } from 'react';
 import { Button, Typography, Form, Radio, Space, Col, Row, ButtonProps } from 'antd';
-import { Step2FormatDataType, StepFormDataType } from '../../../../../typings';
+import { StepData, IStepProps } from '../../../../../typings';
 import { InfoCircleOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 
 const { Title, Paragraph, Text, Link } = Typography;
 
-interface IStep2FormatProps {
-  data: StepFormDataType;
-  MyButton: React.FunctionComponent<ButtonProps>;
-  onSuccess: (data: Step2FormatDataType, step: number) => void;
-  onPrevious: (step: number) => void;
-}
-
-function Step2Format(props: IStep2FormatProps) {
-
+function NetFormat(props: IStepProps) {
   const { data, MyButton, onSuccess, onPrevious } = props
 
   const [form] = Form.useForm();
 
   useEffect(() => {
-    // console.log({ ...data.step2Format })
-    form.setFieldsValue({ ...data.step2Format })
+    form.setFieldsValue({ ...data.format })
   }, [])
 
-  const onFinish = (values: Step2FormatDataType) => {
-    onSuccess(values, 2);
+  const onFinish = (values: StepData) => {
+    onSuccess(values, 'format');
   };
 
   return (
@@ -77,7 +68,7 @@ function Step2Format(props: IStep2FormatProps) {
       <Form.Item>
         <Row>
           <Col span={8} style={{ display: "flex" }}>
-            <MyButton type={"primary"} onClick={() => onPrevious(2)} icon={<LeftOutlined />}>
+            <MyButton type={"primary"} onClick={() => onPrevious('format')} icon={<LeftOutlined />}>
               Previous
             </MyButton>
           </Col>
@@ -111,13 +102,4 @@ const MyTitle = styled(Title)({
   marginBottom: 20
 })
 
-const MyButton = styled(Button)({
-  width: 130,
-  marginTop: 40
-})
-
-const MyTooltip = styled(Form.Item)({
-  marginBottom: 0
-})
-
-export default Step2Format
+export default NetFormat

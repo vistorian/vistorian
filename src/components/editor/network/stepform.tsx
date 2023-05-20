@@ -1,16 +1,18 @@
 import { createUseStyles } from 'react-jss'
 import { useState, useEffect } from 'react'
-import { Steps, theme, Typography, Button} from "antd"
+import { Steps, theme, Typography, Button, message} from "antd"
 import type { StepProps } from "antd"
 import styled from "@emotion/styled"
 
-import Step1Name from './steps/setp1name'
-import Step2Format from './steps/step2format'
-import Step3Link from './steps/step3link'
-import Step4Specify from './steps/step4specify'
-import Step5LocationSpec from './steps/step5locationspec'
-import Step6NodeSpec from './steps/step6nodespec'
-import { StepFormDataType, Step1NameDataType, Step2FormatDataType, Step3LinkDataType, Step4SpecifyDataType, Step5LocationSpecDataType, Step6NodeSpecDataType } from '../../../../typings'
+import NetName from './steps/NetName'
+import NetFormat from './steps/NetFormat'
+import NetLinkType from './steps/NetLinkType'
+import NetLinkConfig from './steps/NetLinkConfig'
+import NetLocationConfig from './steps/NetLocationConfig'
+import NetNodeConfig from './steps/NetNodeConfig'
+import NetExtraNodeConfig from './steps/NetExtraNodeConfig'
+import { NetworkConfig, StepType, StepData, NetworkName, NetworkFormat, LinkType, LinkTableConfig, RelationType, LocationTableConfig, NodeTableConfig, ExtraNodeConfig } from '../../../../typings'
+
 
 const useStyles = createUseStyles({
 })
@@ -19,61 +21,101 @@ const useStyles = createUseStyles({
 function StepForm() {
   const classes = useStyles()
 
-  const [data, setData] = useState<StepFormDataType>({
-    step1Name: null,
-    step2Format: null,
-    step3Link: null,
-    step4Specify: null,
-    step5LocationSpec: null,
-    step6NodeSpec: null
+  const [data, setData] = useState<NetworkConfig>({
+    name: null,
+    format: null,
+    linkType: null,
+    linkTableConfig: null,
+    locationTableConfig: null,
+    nodeTableConfig: null,
+    extraNodeConfig: null,
   })
 
-  const handlePrevStep = (step: number) => {
-    if (step >= 1) {
-      setCurrentStep(step - 1);
-    }
-  }
-
-  const handleNextStep = (stepData: Step1NameDataType | Step2FormatDataType | Step3LinkDataType | Step4SpecifyDataType | Step5LocationSpecDataType | Step6NodeSpecDataType, step: number) => {
-    if (step === 1) {
-      setData({ ...data, step1Name: stepData as Step1NameDataType })
-    } else if (step === 2) {
-      setData({ ...data, step2Format: stepData as Step2FormatDataType })
-    } else if (step === 3) {
-      setData({ ...data, step3Link: stepData as Step3LinkDataType })
-    } else if (step === 4) {
-      setData({ ...data, step4Specify: stepData as Step4SpecifyDataType })
-      // handleFinish(stepData as Step4SpecifyDataType, 4)
-    } else if (step === 5) {
-      setData({ ...data, step5LocationSpec: stepData as Step5LocationSpecDataType })
-    } else if (step === 6) {
-      // todo nodeType data driven
-      setData({ ...data, step6NodeSpec: stepData as Step6NodeSpecDataType })
-      // handleFinish(stepData as Step6NodeSpecDataType, 6)
-    }
-    if (step < 6) {
-      setCurrentStep(step + 1);
-    }
-  }
+  const [steps, setSteps] = useState<StepType[]>(['name', 'format', 'linkType'])
+  const [currentStep, setCurrentStep] = useState<StepType>('name')
+  const [stepItems, setStepItems] = useState<any[]>([])
 
   const MyButton = styled(Button)({
     width: 130,
     marginTop: 40
   })
 
-  const initSteps = [
-    {
+  const handlePrevStep = (step: StepType) => {
+    const idx = steps.indexOf(step)
+    if (idx > 0)
+      setCurrentStep(steps[idx-1])
+  }
+
+  const handleNextStep = (stepData: StepData, step: StepType) => {
+    const newSteps = [...steps]
+    const newData = {...data}
+    switch(step) {
+      case 'name': 
+        newData.name = stepData as NetworkName
+        setData(newData)
+        break
+      case 'format':
+        newData.format = stepData as NetworkFormat
+        setData(newData)
+        break
+      case 'linkType': 
+        newData.linkType = stepData as LinkType
+        setData(newData)
+        // @ts-ignore
+        if (stepData.linkType === 'rowPerLink') {
+          newSteps.push('linkTableConfig')
+          setSteps(newSteps)
+        }
+        else {// 'rowPerNode'
+          newSteps.push('nodeTableConfig')
+          setSteps(newSteps)
+        } 
+        break
+      case 'linkTableConfig':
+        newData.linkTableConfig = stepData as LinkTableConfig
+        setData(newData)
+        // @ts-ignore
+        if (stepData.locationOfSourceNode || stepData.locationOfTargetNode) {
+          newSteps.push('locationTableConfig', 'extraNodeConfig')
+          setSteps(newSteps)
+        }
+        else {
+          newSteps.push('extraNodeConfig')
+          setSteps(newSteps)
+        }
+        break
+      case 'extraNodeConfig':
+        newData.extraNodeConfig = stepData as ExtraNodeConfig
+        setData(newData)
+        break
+      default:
+        message.error('invalid step!')
+    }
+
+    const idx = newSteps.indexOf(step)
+    if (idx === newSteps.length-1){
+      setCurrentStep('end')
+      console.log('data:', newData)
+      // TODO: transform to visualization tab
+    }
+    else
+      setCurrentStep(newSteps[idx+1])
+  }
+
+  const allSteps = {
+    name: {
       title: 'Name',
-      content: <Step1Name 
+      content: <NetName 
         data={data} 
+        onPrevious={handlePrevStep}
         onSuccess={handleNextStep}
         MyButton={MyButton} 
       />,
       description: 'Enter a name for your network.'
     },
-    {
+    format: {
       title: 'Format',
-      content: <Step2Format 
+      content: <NetFormat 
         data={data} 
         onSuccess={handleNextStep} 
         onPrevious={handlePrevStep} 
@@ -81,9 +123,9 @@ function StepForm() {
       />,
       description: 'What is the format of your data?'
     },
-    {
+    linkType: {
       title: 'Link',
-      content: <Step3Link 
+      content: <NetLinkType 
         data={data} 
         onSuccess={handleNextStep} 
         onPrevious={handlePrevStep} 
@@ -91,63 +133,50 @@ function StepForm() {
       />,
       description: 'How are links (edges) represented in your network?'
     },
-    {
+    linkTableConfig: {
       title: 'File',
-      content: <Step4Specify 
+      content: <NetLinkConfig 
         data={data} 
-        // updateDataTableInfo={updateDataTableInfo} 
         onSuccess={handleNextStep} 
         onPrevious={handlePrevStep} 
         MyButton={MyButton} 
       />,
-      description: 'Specifying your table.'
+      description: 'Specifying your link table.'
+    },
+    nodeTableConfig: {
+      title: 'Node Type',
+      content: <NetNodeConfig></NetNodeConfig>,
+      description: 'Specifying the node type.'
+    },
+    locationTableConfig: {
+      title: 'Location',
+      content: <NetLocationConfig></NetLocationConfig>,
+      description: 'Specifying the location.'
+    },
+    extraNodeConfig: {
+      title: 'Extra Node Type',
+      content: <NetExtraNodeConfig 
+        data={data}
+        onSuccess={handleNextStep}
+        onPrevious={handlePrevStep}
+        MyButton={MyButton} 
+      />,
+      description: 'Specifying your extra node type.'
     }
-  ]
-
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [steps, setSteps] = useState<any[]>([]);
-  const [stepItems, setStepItems] = useState<any[]>([])
-
+  }
 
   useEffect(() => {
-    // console.log("data: ", data)
-    if (!data.step3Link) {
-      setSteps(initSteps)
-      return
-    }
-    if (data.step3Link.link === "rowPerLink") {
-      const linkSteps = initSteps.concat([
-        {
-          title: 'Location',
-          content: <Step5LocationSpec></Step5LocationSpec>,
-          // content: <Step5LocationSpec 
-          //   data={data} 
-          //   onSuccess={handleNextStep} 
-          //   onPrevious={handlePrevStep} />,
-          description: 'Specifying the location.'
-        },
-        {
-          title: 'Node Type',
-          content: <Step6NodeSpec></Step6NodeSpec>,
-          // content: <Step6NodeSpec data={data} onSuccess={handleNextStep} onPrevious={handlePrevStep} />,
-          description: 'Specifying the node type.'
-        }
-      ]);
-      setSteps(linkSteps)
-    } else if (data.step3Link.link === "rowPerNode") {
-      console.log('rowpernode')
-      setSteps(initSteps)
-    }
-  }, [data])
-
-  useEffect(() => {
-    const items: StepProps[] = steps.map((item) => ({
-      key: item.title,
-      title: item.title,
-      description: item.description
-    }));
+    // @ts-ignore
+    const items: StepProps[] = steps.map((step: StepType) => allSteps[step])
+                                  .map((item) => ({
+                                    key: item.title,
+                                    title: item.title,
+                                    description: item.description
+                                  }));
+    console.log('items:', items)
     setStepItems(items)
   }, [steps])
+
 
   const { token } = theme.useToken();
   const Content = styled(Typography.Paragraph)({
@@ -164,13 +193,14 @@ function StepForm() {
   return (
     <div className='root'>
       <Steps 
-        current={currentStep - 1} 
-        // labelPlacement="vertical" 
+        current={steps.indexOf(currentStep)} 
         items={stepItems} 
       />
 
       <Content>
-        {steps.length === 0 ? initSteps[currentStep - 1].content : steps[currentStep - 1].content}
+        {/* 
+        // @ts-ignore */}
+        {allSteps[currentStep].content}
       </Content>
     </div>
   )
