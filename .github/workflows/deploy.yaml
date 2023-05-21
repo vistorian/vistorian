@@ -1,0 +1,31 @@
+name: Deploy Vistorian 2.0 # name for your action
+
+on:
+  push: 
+    branches: [gh-pages]  #  Set a branch name to trigger action
+  pull_request:  # perform action after pr
+    branches: [gh-pages]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest   # action perform environment
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v3   
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: 'latest'
+          extended: false
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          deploy_key: ${{ secrets.TOKEN_VISTORIAN }}   # deploy key 
+          external_repository: shuxinhuan/vistorian2.0_dev   # public repo
+          publish_branch: main    # branch in your public repo
+          publish_dir: ./dist     # publicDir in your source code
+          commit_message: ${{ github.event.head_commit.message }}   # sync commit message
