@@ -10,7 +10,7 @@ const useStyles = createUseStyles({
 function Vis() {
   const classes = useStyles()
   const { visType, network } = useParams()
-  const template = find(templates, (t)=>t.key===visType)
+  const template = find(templates, (tp)=>tp.key === visType)
 
   useEffect(()=>{
     update()
@@ -25,7 +25,7 @@ function Vis() {
       return;
     }
 
-    // TODO: change to right spec
+    // TODO: need to update to the right spec
     const dataSpec = [{
       "name": "marieboucher",
       "url": '/data/marieboucher.csv',

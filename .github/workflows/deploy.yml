@@ -2,9 +2,9 @@ name: Deploy Vistorian 2.0 # name for your action
 
 on:
   push: 
-    branches: [gh-pages]  #  Set a branch name to trigger action
-  pull_request:  # perform action after pr
-    branches: [gh-pages]
+    branches:   #  Set a branch name to trigger action
+      - gh-pages
+  # pull_request:  # perform action after pr
 
 jobs:
   deploy:
