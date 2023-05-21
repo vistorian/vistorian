@@ -10,6 +10,13 @@ type EditorCtx = {
   setNetworkStore: (fileNameStore: string[]) => void;
 }
 
+type Template = {
+  key: string,
+  label: string,
+  image: string,
+  template: string,
+}
+
 
 type StepType = "name" | "format" | "linkType" | "linkTableConfig" | "nodeTableConfig" | "locationTableConfig" |  "extraNodeConfig" | "end"
 type StepData = NetworkName | NetworkFormat | LinkType | LinkTableConfig | NodeTableConfig | LocationTableConfig | ExtraNodeConfig | null
@@ -86,6 +93,7 @@ interface IStepProps {
 export {
   DataFile,
   EditorCtx,
+  Template,
   StepType,
   StepData,
   NetworkConfig,

@@ -1,5 +1,7 @@
 import { createUseStyles } from 'react-jss'
 import { Button } from 'antd'
+import templates from '../templates/templates'
+import { Template } from '../../../typings'
 
 const useStyles = createUseStyles({
   root: {
@@ -37,7 +39,7 @@ const useStyles = createUseStyles({
 function Landing() {
   const classes = useStyles()
 
-  const examples: string[] = ['nodelink', 'matrix', 'timearcs', 'map']
+  // const examples: string[] = ['nodelink', 'matrix', 'timearcs', 'map']
 
   return (
     <div className={classes.root}>
@@ -46,10 +48,10 @@ function Landing() {
       <p className={classes.subtitle}>Interactive Visualizations for Dynamic and Multivariate Networks. <br />  Free, online, and open source.</p>
 
       <div id="vistiles" className={classes.visTiles}>
-        {examples.map((example: string) => (
-          // TODO: add link
-          <a href={`./vis/${example}`} key={example}>
-            <img src={`./thumbnails/${example}.png`} className={classes.visimage}/>
+        {templates.map((template: Template) => (
+          // TODO: add rooute link
+          <a href='./' key={template.key}>
+            <img src={`./thumbnails/${template.image}`} className={classes.visimage}/>
           </a>
         ))}
       </div>

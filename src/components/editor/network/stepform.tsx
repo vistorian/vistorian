@@ -17,9 +17,18 @@ import { NetworkConfig, StepType, StepData, NetworkName, NetworkFormat, LinkType
 const useStyles = createUseStyles({
 })
 
+interface IStepFormProps {
+  currentStep: StepType,
+  setCurrentStep: (step: StepType) => void
+  setSelected: (preview: string) => void
+  networkStore: string[]
+  setNetworkStore: (ns: string[]) => void
+  moveToVis: (type: string) => void
+}
 
-function StepForm() {
+function StepForm(props: IStepFormProps) {
   const classes = useStyles()
+  const { setSelected, moveToVis, networkStore, setNetworkStore, currentStep, setCurrentStep } = props
 
   const [data, setData] = useState<NetworkConfig>({
     name: null,
@@ -32,7 +41,6 @@ function StepForm() {
   })
 
   const [steps, setSteps] = useState<StepType[]>(['name', 'format', 'linkType'])
-  const [currentStep, setCurrentStep] = useState<StepType>('name')
   const [stepItems, setStepItems] = useState<any[]>([])
 
   const MyButton = styled(Button)({
@@ -94,9 +102,10 @@ function StepForm() {
 
     const idx = newSteps.indexOf(step)
     if (idx === newSteps.length-1){
-      setCurrentStep('end')
-      console.log('data:', newData)
-      // TODO: transform to visualization tab
+      window.localStorage.setItem("NETWORK_DEFINITION_" + newData.name?.name, JSON.stringify(newData))
+      moveToVis('vis')
+      setSelected(newData.name?.name as string)
+      setNetworkStore([...networkStore, newData.name?.name as string])
     }
     else
       setCurrentStep(newSteps[idx+1])
@@ -173,7 +182,7 @@ function StepForm() {
                                     title: item.title,
                                     description: item.description
                                   }));
-    console.log('items:', items)
+    // console.log('items:', items)
     setStepItems(items)
   }, [steps])
 

@@ -60,7 +60,7 @@ function NetLinkConfig(props: IStepProps) {
   }
 
   const onFinish = (values: any) => {
-    console.log('link table config:', values)
+    // console.log('link table config:', values)
     onSuccess(values, 'linkTableConfig')
   }
 

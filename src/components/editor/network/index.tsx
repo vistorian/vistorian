@@ -3,8 +3,8 @@ import { useContext, useState } from 'react'
 import { Button, Modal } from 'antd'
 import { PlusOutlined, DeleteFilled, EditFilled } from '@ant-design/icons'
 import { EditorContext } from '../context'
-import NetPreview from './NetPreview'
 import StepForm from './StepForm'
+import { StepType } from '../../../../typings'
 
 const useStyles = createUseStyles({
   root: {
@@ -20,14 +20,19 @@ const useStyles = createUseStyles({
   }
 })
 
-function Network() {
+interface INetworkProps {
+  moveToVis: (type: string) => void // move to tab-3
+}
+
+function Network(props: INetworkProps) {
   const classes = useStyles()
+  const { moveToVis } = props
 
   const [selectedToDelete, setSelectedToDelete] = useState('')
   const [clearAllOpen, setClearAllOpen] = useState(false)
   const [open, setOpen] = useState(false)
-  const [current, setCurrent] = useState('stepform')
-  const [preview, setPreview] = useState('')
+  const [selected, setSelected] = useState('')
+  const [currentStep, setCurrentStep] = useState<StepType>('name')
 
   const { networkStore, setNetworkStore } = useContext(EditorContext)
 
@@ -46,18 +51,8 @@ function Network() {
   }
 
   const createNetwork = () => {
-    setCurrent('stepform')
+    setCurrentStep('name')
   }
-
-  const renderRight = (type: string) => {
-    switch(type) {
-      case 'preview': 
-        return (<NetPreview preview={preview} />)
-      case 'stepform':
-        return (<StepForm />)
-    }
-  }
-
 
   return (
     <div className={classes.root}>
@@ -96,10 +91,10 @@ function Network() {
           >
             <Button
               type='text'
-              style={{ padding: 0, fontWeight: preview === ns ? 700 : 500 }}
+              style={{ padding: 0, fontWeight: selected === ns ? 700 : 500 }}
               onClick={() => {
-                setCurrent('preview')
-                setPreview(ns)
+                moveToVis('vis')
+                setSelected(ns)
               }}
             >
               {ns}
@@ -119,8 +114,8 @@ function Network() {
               type='text'
               shape='circle'
               onClick={() => {
-                setCurrent('stepform')
-                setPreview(ns)
+                setCurrentStep('name')
+                setSelected(ns)
               }}
             />
           </p>
@@ -146,7 +141,14 @@ function Network() {
         </Button>
       </div>
       <div className={classes.right}>
-        {renderRight(current)}
+        <StepForm
+          currentStep={currentStep}
+          setCurrentStep={setCurrentStep}
+          setSelected={setSelected}
+          moveToVis={moveToVis}
+          networkStore={networkStore}
+          setNetworkStore={setNetworkStore}
+        />
       </div>
     </div>
   )

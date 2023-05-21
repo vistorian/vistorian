@@ -69,9 +69,9 @@ function Editor() {
       case 'data': 
         return <Data />
       case 'network':
-        return <Network />
+        return <Network moveToVis={setCurrent}/>
       case 'vis':
-        return <VisEditor />
+        return <VisEditor name={''}/>
     }
   }
 

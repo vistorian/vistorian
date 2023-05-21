@@ -19,7 +19,7 @@ let router = createBrowserRouter([
     element: <Editor />,
   },
   {
-    path: "/vis/:vistype?:network",
+    path: "/vis/:visType/network/:network",
     element: <Vis />,
   },
 ]);

@@ -1,0 +1,188 @@
+{
+
+"width": 3000,
+
+  "zoom": true,
+  "pan": {"modifierKeyRequired": []},
+
+
+    "data": [
+        {
+            "name": "marieboucher",
+            "url": "/data/marieboucher.csv",
+            "format": {"type": "csv", "parse": {"Date": "date:'%d/%m/%Y'"}},
+
+            "transform": [
+                {
+                    "type": "calculate",
+                    "as": "source",
+                    "calculate": "datum.Name1 + ' (' + datum.Date + ')'"
+                },
+                {
+                    "type": "calculate",
+                    "as": "target",
+                    "calculate": "datum.Name2 + ' (' + datum.Date + ')'"
+                }
+            ]
+
+        }
+    ],
+
+    "networks": [
+        {
+            "name": "network",
+            "parts": [
+                {
+                    "data": "marieboucher",
+
+                    "yieldsNodes": [
+                        {
+                            "id_field": "source",
+                            "type": "person",
+                            "data": [
+                                { "field": "Name1", "as": "name"},
+                                { "field": "Date", "as": "date"}
+                            ]
+                        },
+                        {
+                            "id_field": "target",
+                            "type": "person",
+                            "data": [
+                                { "field": "Name2", "as": "name"},
+                                { "field": "Date", "as": "date"}
+                            ]
+                        }
+                    ],
+
+                    "yieldsLinks": [
+                        {
+                            "source_id": {"field": "source"},
+                            "source_node_type": "person",
+                            "source_id_field": "id",
+
+                            "target_id": {"field": "target"},
+                            "target_node_type": "person",
+                            "target_id_field": "id",
+
+                            "data": ["*"]
+                        }
+                    ]
+                }
+            ],
+            "transform": [
+                {"type": "metric", "metric": "degree"}
+            ]
+        }
+    ],
+
+
+    "orderings": [
+        {
+            "name": "person_order",
+            "data": "network.nodes",
+            "orderBy": {"field": "data.name"},
+            "allowTies": true
+        }
+    ],
+
+
+
+  "layouts": [
+      {
+          "name": "l",
+          "data": "network.nodes",
+          "pattern": "cartesian",
+
+          "y": [{ "order": "person_order" }],
+          "x": [{ "scale": "time", "field": "data.date" }],
+
+        "positioning": "none"
+      }
+  ],
+
+
+  "scales": [
+    {
+      "name": "time",
+      "type": "time",
+      "range": [0, 500],
+      "domain": [-10098172800000, -8488886400000 ]
+    },
+    {
+      "name": "radius",
+      "type": "linear",
+      "range": [1, 500],
+      "domain": { "data": "network.nodes", "field": "degree" }
+    },
+    {
+      "name": "color",
+      "type": "linear",
+      "scheme": "reds",
+      "domain": { "data": "network.nodes", "field": "degree" }
+    },
+    {
+      "name": "edgeColor",
+      "type": "ordinal",
+      "scheme": "category20",
+      "domain": [
+        "Cambie",
+        "Constitution",
+        "Déclaration",
+        "Procuration",
+        "Testament",
+        "Transport",
+        "Transaction",
+        "Compte",
+        "Attestation",
+        "Protest",
+        "Partage",
+        "Fretment",
+        "Engagement",
+        "Assurance",
+        "Indempnité",
+        "Mariage",
+        "Pouvoir",
+        "Inventaire",
+        "Quittance",
+        "Assiette"
+      ]
+    }
+  ],
+
+  "vis": [
+    {
+      "entries": "network.nodes",
+      "layout": "l",
+      "mark": {
+        "type": "rule",
+        "stroke": "#ececec",
+        "x": 0,
+        "x2": { "expression": "bounds.width" }
+      }
+    },
+
+    {
+      "entries": "network.links",
+      "layout": "l",
+      "drawAxes": true,
+      "mark": {
+        "type": "linkpath",
+        "start": "source",
+        "end": "target",
+        "shape": "curveSymmetric",
+        "stroke": { "field": "data.Nature_acte", "scale": "edgeColor" }
+      }
+    },
+
+    {
+      "entries": "network.nodes",
+      "layout": "l",
+      "mark": {
+        "type": "circle",
+        "area": { "field": "degree", "scale": "radius" },
+        "fill": { "field": "degree", "scale": "color" },
+        "tooltip": { "field": "id" }
+      }
+    }
+  ]
+}
