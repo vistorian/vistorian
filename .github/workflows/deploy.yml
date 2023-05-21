@@ -21,4 +21,3 @@ jobs:
           token: ${{ secrets.TOKEN_VISTORIAN }}   # deploy key 
           repository-name: shuxinhuan/vistorian2.0_dev   # public repo
           branch: main    # branch in your public repo
-          commit_message: ${{ github.event.head_commit.message }}   # sync commit message
