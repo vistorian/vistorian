@@ -21,5 +21,5 @@ jobs:
           deploy_key: ${{ secrets.TOKEN_VISTORIAN }}   # deploy key 
           external_repository: shuxinhuan/vistorian2.0_dev   # public repo
           publish_branch: main    # branch in your public repo
-          publish_dir: ./dist     # publicDir in your source code
+          publish_dir: ./     # publicDir in your source code
           commit_message: ${{ github.event.head_commit.message }}   # sync commit message
