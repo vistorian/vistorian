@@ -1,15 +1,14 @@
 import { createUseStyles } from 'react-jss'
-import { useEffect, useState, useContext } from 'react';
-import { Button, Form, Upload, message, Row, Col, Select, Space, Typography, Radio, Checkbox, Table, ButtonProps, Tooltip } from 'antd';
-import { InfoCircleOutlined, RightOutlined, LeftOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { RcFile } from 'antd/es/upload';
-import { DataFile, IStepProps} from '../../../../../typings';
+import { useState, useContext } from 'react';
+import { Button, Form, Row, Col, Select, Space, Typography, Radio, Tooltip } from 'antd';
+import { InfoCircleOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
+import { IStepProps, SelectOptionType } from '../../../../../typings';
 import styled from '@emotion/styled';
-import { findIndex } from 'lodash-es';
-import csvtojson from 'csvtojson';
 
 import { EditorContext } from '../../context'
 import TimeFormat from './timeFormat';
+import FileSelector from './fileSelector';
+import TablePreview from './tablePreview';
 
 const { Title, Text } = Typography;
 
@@ -30,11 +29,6 @@ const useStyles = createUseStyles({
   }
 })
 
-interface OptionType {
-  value: string,
-  label: string
-}
-
 function NetLinkConfig(props: IStepProps) {
   const classes = useStyles()
   const { onPrevious, onSuccess, data, MyButton } = props;
@@ -48,105 +42,16 @@ function NetLinkConfig(props: IStepProps) {
   const [dataInTable, setDataInTable] = useState<any[]>([]);
   const [columnInTable, setColumnInTable] = useState<any[]>([]);
   const [hasHeaderRow, setHasHeaderRow] = useState<boolean>(true)
-  const [selectionOptions, setSelectionOptions] = useState<OptionType[]>([])
+  const [selectionOptions, setSelectionOptions] = useState<SelectOptionType[]>([])
 
   // for time format model 
   const [openTimeFormat, setOpenTimeFormat] = useState<boolean>(false)
   const [formatString, setFormatString] = useState<string>('%d/%m/%Y')
 
-  const convertCsvToJson = async (csvData: string): Promise<any[]> => {
-    const jsonArray = await csvtojson().fromString(csvData)
-    return jsonArray
-  }
-
   const onFinish = (values: any) => {
     // console.log('link table config:', values)
     onSuccess(values, 'linkTableConfig')
   }
-
-
-  const normFile = (e: any) => {
-    // console.log('Upload event:', e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
-  };
-
-  const handleFile = (file: RcFile, fileList: RcFile[]) => {
-    const reader = new FileReader()
-    reader.readAsText(file)
-    reader.onerror = () => {
-      message.error(`${file.name} file upload failed.`)
-    }
-    reader.onload = () => {
-      if (findIndex(fileNameStore, (fn: DataFile) => fn.name === file.name) > -1) {
-        message.error(`${file.name} file upload failed, as the system does not allow data files uploaded with the same name. You select a previously uploaded file.`)
-        return false
-      }
-      message.success(`${file.name} file uploaded successfully.`)
-      // console.log('reader.onload:', reader.result)
-      window.localStorage.setItem("UPLOADED_FILE_" + file.name, reader.result as string)
-      const tmp: DataFile = {
-        name: file.name,
-        hasHeader: true
-      }
-      setFileNameStore([...fileNameStore, tmp])
-      setSelectedFileName(file.name)
-    }
-    return false
-  }
-
-  const getSelectionFileList = () => {
-    return fileNameStore.map((fn: DataFile) => {
-      return {
-        label: fn.name,
-        value: fn.name
-      }
-    })
-  }
-
-  useEffect(()=>{
-    if (selectedFileName.length > 0) {
-      const csvdata = window.localStorage.getItem("UPLOADED_FILE_" + selectedFileName)
-      if (csvdata) {
-        // TODO: deal with no fakeHeader
-        convertCsvToJson(csvdata)
-          .then((jsonData) => {
-            const headers = Object.keys(jsonData[0])
-            const columns = headers.map(header => {
-              return {
-                title: header,
-                dataIndex: header,
-                key: header,
-              }
-            })
-            let options = [{value: '', label: '-'}]
-            headers.map((header: string) => {
-              options.push({
-                value: header,
-                // @ts-ignore
-                label: `${header} (First value is ${jsonData[0][header]})`,
-              })
-            })
-            setColumnInTable(columns)
-            // only preview 5 rows
-            const dataintable = jsonData.slice(0, 5).map((d, i) => {
-              d._rowKey = i
-              return d
-            })
-            setDataInTable(dataintable)
-            setSelectionOptions(options)
-          })
-          .catch((error) => {
-            message.error('Error during CSV to JSON conversion:');
-          })
-      }
-      else {
-        message.error('There is no such data file in the storage!')
-      } 
-    }    
-  }, [selectedFileName, hasHeaderRow])
 
   return (
     <Form
@@ -179,66 +84,30 @@ function NetLinkConfig(props: IStepProps) {
             </MySpace>
           </Radio.Group>
         </Form.Item>
-        
+
+        <MyTitle level={4}>
+          2. Upload your table
+        </MyTitle>
         {/* select data files */}
-        <Form.Item
-            label={<Title level={4}>2. Upload your table</Title>}
-            name="file"
-            rules={[{ required: true, message: 'This is required.' }]}
-          >
-          <div className={classes.upload}>
-            {/* Dragger needs two form.item! */}
-              <Form.Item style={{marginBottom: 0}}>
-                <div style={{ display: 'flex' }}>
-                  <Text style={{width: 300, fontSize: 16, paddingTop: 4}}>Select a previously uploaded file</Text>
-                <Select 
-                  style={{ width: 300 }} 
-                  options={getSelectionFileList()} 
-                  onChange={(value) => {
-                    setSelectedFileName(value)
-                    form.setFieldsValue({ 'file': value })
-                  }}
-                />
-                </div>
-              </Form.Item>
-              <Text style={{ fontSize: 16}}>Or</Text>
-              <Form.Item
-                name="dragger"
-                valuePropName="fileList"
-                getValueFromEvent={normFile}
-                noStyle
-              >
-                <Upload.Dragger
-                  beforeUpload={handleFile}
-                  showUploadList={false}
-                  accept="text/csv"
-                >
-                  <p className="ant-upload-text">Click or drag files to this area to upload.</p>
-                  <p className="ant-upload-hint">
-                    Support for CSV files.
-                  </p>
-                </Upload.Dragger>
-              </Form.Item>
-          </div>
-        </Form.Item>
+        <FileSelector
+          setDataInTable={setDataInTable}
+          setColumnInTable={setColumnInTable}
+          hasHeaderRow={hasHeaderRow}
+          setSelectionOptions={setSelectionOptions}
+          selectedFileName={selectedFileName}
+          setSelectedFileName={setSelectedFileName}
+          form={form}
+        />
 
         {
           selectedFileName.length > 0
             ?
             <>
-              <Form.Item name="hasHeaderRow" valuePropName="checked">
-                <Checkbox 
-                  checked 
-                  onChange={() => setHasHeaderRow(!hasHeaderRow)}
-                >
-                  Has header row?
-                </Checkbox>
-              </Form.Item>
-              <Table 
-                columns={columnInTable} 
-                dataSource={dataInTable} 
-                pagination={false}
-                rowKey={(record)=>record._rowKey}
+              <TablePreview
+                hasHeaderRow={hasHeaderRow}
+                setHasHeaderRow={setHasHeaderRow}
+                columnInTable={columnInTable}
+                dataInTable={dataInTable}
               />
 
               <MyTitle level={4}>
@@ -263,7 +132,7 @@ function NetLinkConfig(props: IStepProps) {
                     style={{width: 300}} 
                     options={selectionOptions}
                     onChange={(value) => {
-                      if (value !== '')
+                      if (value.length > 0)
                         form.setFieldsValue({ 'sourceNodeLabel': value })
                     }}
                   />
@@ -280,7 +149,7 @@ function NetLinkConfig(props: IStepProps) {
                   <Select style={{ width: 300 }}
                     options={selectionOptions}
                     onChange={(value) => {
-                      if (value !== '')
+                      if (value.length > 0)
                         form.setFieldsValue({ 'targetNodeLabel': value })
                     }}
                   />

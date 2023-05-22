@@ -22,11 +22,12 @@ const useStyles = createUseStyles({
 
 interface INetworkProps {
   moveToVis: (type: string) => void // move to tab-3
+  setSelectedNetwork: (type: string) => void 
 }
 
 function Network(props: INetworkProps) {
   const classes = useStyles()
-  const { moveToVis } = props
+  const { moveToVis, setSelectedNetwork } = props
 
   const [selectedToDelete, setSelectedToDelete] = useState('')
   const [clearAllOpen, setClearAllOpen] = useState(false)
@@ -93,8 +94,9 @@ function Network(props: INetworkProps) {
               type='text'
               style={{ padding: 0, fontWeight: selected === ns ? 700 : 500 }}
               onClick={() => {
-                moveToVis('vis')
+                setSelectedNetwork(ns)
                 setSelected(ns)
+                moveToVis('vis')
               }}
             >
               {ns}
@@ -114,8 +116,8 @@ function Network(props: INetworkProps) {
               type='text'
               shape='circle'
               onClick={() => {
-                setCurrentStep('name')
                 setSelected(ns)
+                setCurrentStep('name')
               }}
             />
           </p>
@@ -145,6 +147,7 @@ function Network(props: INetworkProps) {
           currentStep={currentStep}
           setCurrentStep={setCurrentStep}
           setSelected={setSelected}
+          setSelectedNetwork={setSelectedNetwork}
           moveToVis={moveToVis}
           networkStore={networkStore}
           setNetworkStore={setNetworkStore}

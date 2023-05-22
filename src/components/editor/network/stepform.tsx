@@ -24,11 +24,12 @@ interface IStepFormProps {
   networkStore: string[]
   setNetworkStore: (ns: string[]) => void
   moveToVis: (type: string) => void
+  setSelectedNetwork: (name: string) => void
 }
 
 function StepForm(props: IStepFormProps) {
   const classes = useStyles()
-  const { setSelected, moveToVis, networkStore, setNetworkStore, currentStep, setCurrentStep } = props
+  const { setSelected, moveToVis, networkStore, setNetworkStore, currentStep, setCurrentStep, setSelectedNetwork } = props
 
   const [data, setData] = useState<NetworkConfig>({
     name: null,
@@ -103,9 +104,10 @@ function StepForm(props: IStepFormProps) {
     const idx = newSteps.indexOf(step)
     if (idx === newSteps.length-1){
       window.localStorage.setItem("NETWORK_DEFINITION_" + newData.name?.name, JSON.stringify(newData))
-      moveToVis('vis')
       setSelected(newData.name?.name as string)
       setNetworkStore([...networkStore, newData.name?.name as string])
+      setSelectedNetwork(newData.name?.name as string)
+      moveToVis('vis')
     }
     else
       setCurrentStep(newSteps[idx+1])
@@ -154,13 +156,23 @@ function StepForm(props: IStepFormProps) {
     },
     nodeTableConfig: {
       title: 'Node Type',
-      content: <NetNodeConfig></NetNodeConfig>,
+      content: <NetNodeConfig 
+        data={data}
+        onSuccess={handleNextStep}
+        onPrevious={handlePrevStep}
+        MyButton={MyButton} 
+      />,
       description: 'Specifying the node type.'
     },
     locationTableConfig: {
       title: 'Location',
-      content: <NetLocationConfig></NetLocationConfig>,
-      description: 'Specifying the location.'
+      content: <NetLocationConfig
+        data={data}
+        onSuccess={handleNextStep}
+        onPrevious={handlePrevStep}
+        MyButton={MyButton} 
+      />,
+      description: 'Specifying location table.'
     },
     extraNodeConfig: {
       title: 'Extra Node Type',

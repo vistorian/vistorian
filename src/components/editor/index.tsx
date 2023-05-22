@@ -39,6 +39,7 @@ const items: MenuProps['items'] = [
 function Editor() {
   const classes = useStyles()
   const [current, setCurrent] = useState('data')
+  const [selectedNetwork, setSelectedNetwork] = useState('')
 
   const loadedFiles = Object.keys(window.localStorage)
     .filter(k => k.startsWith("UPLOADED_FILE_"))
@@ -69,9 +70,9 @@ function Editor() {
       case 'data': 
         return <Data />
       case 'network':
-        return <Network moveToVis={setCurrent}/>
+        return <Network moveToVis={setCurrent} setSelectedNetwork={setSelectedNetwork}/>
       case 'vis':
-        return <VisEditor name={''}/>
+        return <VisEditor name={selectedNetwork}/>
     }
   }
 

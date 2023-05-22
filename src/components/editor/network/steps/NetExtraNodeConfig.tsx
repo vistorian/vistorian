@@ -1,11 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss'
-import { Button, Typography, Form, Radio, Space, Col, Row, ButtonProps } from 'antd';
-import { StepData, IStepProps } from '../../../../../typings';
-import { InfoCircleOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { Typography, Form, Radio, Space, Col, Row, Select } from 'antd';
+import { StepData, IStepProps, SelectOptionType } from '../../../../../typings';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
+import FileSelector from './fileSelector';
+import TablePreview from './tablePreview';
 
 const useStyles = createUseStyles({
+  selection: {
+    display: 'flex'
+  },
+  selectionName: {
+    width: 250,
+    fontSize: 16,
+  }
 })
 
 const { Title, Paragraph, Text, Link } = Typography;
@@ -16,9 +25,17 @@ function NetExtraNodeConfig(props: IStepProps) {
   const { data, MyButton, onSuccess, onPrevious } = props
 
   const [form] = Form.useForm();
+  const hasExtraNode = Form.useWatch('hasExtraNode', form)
+
+  const [selectedFileName, setSelectedFileName] = useState<string>('')
+  const [dataInTable, setDataInTable] = useState<any[]>([]);
+  const [columnInTable, setColumnInTable] = useState<any[]>([]);
+  const [hasHeaderRow, setHasHeaderRow] = useState<boolean>(true)
+  const [selectionOptions, setSelectionOptions] = useState<SelectOptionType[]>([])
+
 
   useEffect(() => {
-    form.setFieldsValue({ ...data.format })
+    form.setFieldsValue({ ...data.extraNodeConfig })
   }, [])
 
   const onFinish = (values: StepData) => {
@@ -28,6 +45,7 @@ function NetExtraNodeConfig(props: IStepProps) {
   return (
     <Form
       name="basic"
+      initialValues={{ hasHeaderRow }}
       onFinish={onFinish}
       autoComplete="off"
       layout={"vertical"}
@@ -46,6 +64,55 @@ function NetExtraNodeConfig(props: IStepProps) {
           </MySpace>
         </Radio.Group>
       </Form.Item>
+
+      {hasExtraNode ? <>
+        <FileSelector
+          setDataInTable={setDataInTable}
+          setColumnInTable={setColumnInTable}
+          hasHeaderRow={hasHeaderRow}
+          setSelectionOptions={setSelectionOptions}
+          selectedFileName={selectedFileName}
+          setSelectedFileName={setSelectedFileName}
+          form={form}
+        />
+
+        {selectedFileName.length > 0 ? <>
+          <TablePreview
+            hasHeaderRow={hasHeaderRow}
+            setHasHeaderRow={setHasHeaderRow}
+            columnInTable={columnInTable}
+            dataInTable={dataInTable}
+          />
+
+          <Form.Item
+            name="nodeID"
+            style={{ marginTop: 20, marginBottom: 5 }}
+            rules={[{ required: false }]}
+          >
+            <div className={classes.selection}>
+              <Text className={classes.selectionName}>- Node ID:</Text>
+              <Select style={{ width: 300 }}
+                options={selectionOptions}
+                onChange={(value) => form.setFieldsValue({ 'nodeID': value })}
+              />
+            </div>
+          </Form.Item>
+          <Form.Item
+            name="nodeType"
+            style={{ marginBottom: 5 }}
+            rules={[{ required: false }]}
+          >
+            <div className={classes.selection}>
+              <Text className={classes.selectionName}>- Node Type:</Text>
+              <Select style={{ width: 300 }}
+                options={selectionOptions}
+                onChange={(value) => form.setFieldsValue({ 'nodeType': value })}
+              />
+            </div>
+          </Form.Item>
+          
+        </>: null}
+      </>: null}
 
       <Form.Item>
         <Row>
@@ -70,18 +137,6 @@ const MySpace = styled(Space)({
   flexDirection: "column",
   flexWrap: "wrap",
   textAlign: "left"
-})
-
-const MyParagraph = styled(Paragraph)({
-  display: "flex",
-  flexDirection: "row",
-  flexWrap: "wrap",
-  textAlign: "left"
-})
-
-const MyTitle = styled(Title)({
-  marginTop: 20,
-  marginBottom: 20
 })
 
 export default NetExtraNodeConfig

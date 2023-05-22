@@ -3,7 +3,7 @@ import { Typography, Form, Radio, Space, Row, Col, Divider, ButtonProps } from '
 import { StepData, IStepProps } from '../../../../../typings';
 import { RightOutlined, LeftOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import TablePreview from './tablePreview';
+import TableExample from './tableExample';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -50,7 +50,7 @@ function NetLinkType(props: IStepProps) {
             <MyTitle level={4} style={{ marginBottom: 0, marginTop: -10 }}>
               Example:
             </MyTitle>
-            <TablePreview type={"link"} />
+            <TableExample type={"link"} />
             <Divider />
             <Radio value={"rowPerNode"}>
               <MyTitle level={4} style={{ marginBottom: 20 }}>
@@ -66,7 +66,7 @@ function NetLinkType(props: IStepProps) {
               Example:
             </MyTitle>
             <Row>
-              <TablePreview type={"node"} />
+              <TableExample type={"node"} />
             </Row>
           </MySpace>
         </Radio.Group>

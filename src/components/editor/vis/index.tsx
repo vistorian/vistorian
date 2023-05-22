@@ -38,11 +38,6 @@ interface IVisEditor {
   name: string
 }
 
-interface VisItem {
-  key: string
-  title: string
-}
-
 function VisEditor(props: IVisEditor) {
   const classes = useStyles()
   const { networkStore, setNetworkStore } = useContext(EditorContext)

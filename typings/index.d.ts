@@ -18,7 +18,7 @@ type Template = {
 }
 
 
-type StepType = "name" | "format" | "linkType" | "linkTableConfig" | "nodeTableConfig" | "locationTableConfig" |  "extraNodeConfig" | "end"
+type StepType = "name" | "format" | "linkType" | "linkTableConfig" | "nodeTableConfig" | "locationTableConfig" |  "extraNodeConfig" 
 type StepData = NetworkName | NetworkFormat | LinkType | LinkTableConfig | NodeTableConfig | LocationTableConfig | ExtraNodeConfig | null
 
 interface NetworkConfig {
@@ -65,22 +65,31 @@ interface LinkTableConfig {
 }
 
 interface LocationTableConfig {
-  locationSpecFile?: any
-  hasLocationSpecFile: boolean
+  hasLocationFile: boolean
+  file?: any
+  hasHeaderRow?: boolean
+  place?: string
+  lat?: string
+  lon?: string
 }
 
 interface ExtraNodeConfig {
   hasExtraNode: boolean
+  file?: any
+  hasHeaderRow?: boolean
+  nodeID?: string
+  nodeType?: string
 }
 
 interface RelationType {
-  [key: string]: string
+  column: string,
+  linkName: string
 }
 
 interface NodeTableConfig {
-  nodeSpecFile?: any
-  hasNodeSpecFile: boolean
-  nodeType: string
+  file: any
+  node: string,
+  relations: RelationType[]
 }
 
 interface IStepProps {
@@ -88,6 +97,11 @@ interface IStepProps {
   onSuccess: (data: StepData, step: StepType) => void;
   onPrevious: (step: StepType) => void;
   MyButton: React.FunctionComponent<ButtonProps>;
+}
+
+interface SelectOptionType {
+  value: string,
+  label: string
 }
 
 export {
@@ -107,5 +121,6 @@ export {
   LocationTableConfig,
   NodeTableConfig,
   ExtraNodeConfig,
-  IStepProps
+  IStepProps,
+  SelectOptionType
 }

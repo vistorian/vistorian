@@ -1,13 +1,15 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { Typography, Form, Input, ButtonProps, Row, Col } from 'antd'; 
 import { RightOutlined } from '@ant-design/icons'
-import { NetworkConfig, StepType, StepData, IStepProps } from '../../../../../typings'
+import { StepData, IStepProps } from '../../../../../typings'
+import { EditorContext } from '../../context';
 
 const { Title} = Typography;
 
 function NetName(props: IStepProps) {
 
   const { onSuccess, data, MyButton } = props;
+  const { networkStore, setNetworkStore } = useContext(EditorContext)
 
   const [form] = Form.useForm();
 
