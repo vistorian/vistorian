@@ -4,8 +4,8 @@ on:
   push: 
     branches:   #  Set a branch name to trigger action
       - master
-    # paths:
-    #   - dist/**
+    paths:
+      - dist/**
   # pull_request:  # perform action after pr
 
 jobs:
@@ -16,12 +16,17 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
 
-     - name: Pushes to another repository
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.TOKEN_VISTORIAN }}
+      - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          source-directory: 'dist'
-          destination-github-username: 'shuxinhuan'
-          destination-repository-name: 'vistorian2.0_dev'
-          target-branch: main
+          folder: dist # The folder the action should deploy.
+          token: {{ secrets.TOKEN_VISTORIAN }}
+          repository-name: shuxinhuan/vistorian2.0_dev
+          branch: main
+          clean: true
+          
