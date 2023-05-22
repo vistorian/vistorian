@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "predeploy": "yarn run build",
     "deploy": "gh-pages -d dist",
-    "test": "yarn run build && git add . && git commit -m 'update yml' && git push"
+    "test": "git add . && git commit -m 'update yml' && git push"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",

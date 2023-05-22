@@ -9,7 +9,7 @@ on:
   # pull_request:  # perform action after pr
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest   # action perform environment
     concurrency: ci-${{ github.ref }}
     steps: 
