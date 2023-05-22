@@ -18,8 +18,8 @@ jobs:
 
        - name: Install and Build 
         run: |
-          yarn install
-          yarn run build
+          npm install
+          npm run build
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
