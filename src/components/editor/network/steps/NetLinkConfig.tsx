@@ -9,7 +9,7 @@ import { findIndex } from 'lodash-es';
 import csvtojson from 'csvtojson';
 
 import { EditorContext } from '../../context'
-import TimeFormat from './TimeFormat';
+import TimeFormat from './timeFormat';
 
 const { Title, Text } = Typography;
 

@@ -3,7 +3,7 @@ import { Typography, Form, Radio, Space, Row, Col, Divider, ButtonProps } from '
 import { StepData, IStepProps } from '../../../../../typings';
 import { RightOutlined, LeftOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import TablePreview from './TablePreview';
+import TablePreview from './tablePreview';
 
 const { Title, Paragraph, Text } = Typography;
 

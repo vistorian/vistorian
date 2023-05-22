@@ -4,13 +4,13 @@ import { Steps, theme, Typography, Button, message} from "antd"
 import type { StepProps } from "antd"
 import styled from "@emotion/styled"
 
-import NetName from './steps/NetName'
-import NetFormat from './steps/NetFormat'
-import NetLinkType from './steps/NetLinkType'
-import NetLinkConfig from './steps/NetLinkConfig'
-import NetLocationConfig from './steps/NetLocationConfig'
-import NetNodeConfig from './steps/NetNodeConfig'
-import NetExtraNodeConfig from './steps/NetExtraNodeConfig'
+import NetName from './steps/netName'
+import NetFormat from './steps/netFormat'
+import NetLinkType from './steps/netLinkType'
+import NetLinkConfig from './steps/netLinkConfig'
+import NetLocationConfig from './steps/netLocationConfig'
+import NetNodeConfig from './steps/netNodeConfig'
+import NetExtraNodeConfig from './steps/netExtraNodeConfig'
 import { NetworkConfig, StepType, StepData, NetworkName, NetworkFormat, LinkType, LinkTableConfig, RelationType, LocationTableConfig, NodeTableConfig, ExtraNodeConfig } from '../../../../typings'
 
 

@@ -3,7 +3,7 @@ import { useContext, useState } from 'react'
 import { Button, Modal } from 'antd'
 import { PlusOutlined, DeleteFilled, EditFilled } from '@ant-design/icons'
 import { EditorContext } from '../context'
-import StepForm from './StepForm'
+import StepForm from './stepform'
 import { StepType } from '../../../../typings'
 
 const useStyles = createUseStyles({
