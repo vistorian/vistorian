@@ -9,19 +9,19 @@ on:
   # pull_request:  # perform action after pr
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest   # action perform environment
     concurrency: ci-${{ github.ref }}
     steps: 
-      - name: Checkout
+      - name: Checkout 🛎️
         uses: actions/checkout@v3
 
-       - name: Install and Build 
+      - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
         run: |
-          npm install
+          npm ci
           npm run build
 
-      - name: Deploy
+      - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist     # publicDir in your source private code
