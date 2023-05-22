@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@releases/v4-folder-perms
         with:
           folder: dist     # publicDir in your source private code
           token: ${{ secrets.TOKEN_VISTORIAN }}   # deploy key 
