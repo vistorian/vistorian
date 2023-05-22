@@ -5,7 +5,7 @@ on:
     branches:   #  Set a branch name to trigger action
       - master
     paths:
-      - dist
+      - dist/**
   # pull_request:  # perform action after pr
 
 jobs:
