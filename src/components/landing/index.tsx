@@ -56,7 +56,7 @@ function Landing() {
         ))}
       </div>
 
-      <Button href='./editor'> Start my session</Button>
+      <Button href='#/editor'> Start my session</Button>
 
     </div>
   )

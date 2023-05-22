@@ -2,33 +2,39 @@ import './App.css'
 // import { createUseStyles } from 'react-jss'
 import { 
   createBrowserRouter, 
-  RouterProvider, 
+  RouterProvider,
+  HashRouter, Routes, Route
 } from "react-router-dom"
 
 import Landing from './components/landing'
 import Editor from './components/editor'
 import Vis from './components/vis'
 
-let router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Landing />,
-  },
-  {
-    path: "/editor",
-    element: <Editor />,
-  },
-  {
-    path: "/vis/:visType/network/:network",
-    element: <Vis />,
-  },
-]);
+// let router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <Landing />,
+//   },{
+//     path: "/editor",
+//     element: <Editor />
+//   }, {
+//     path: "/vis/:visType/network/:network",
+//     element: <Vis />,
+//   }
+// ]);
 
 function App() {
   return (
     <>
-      <RouterProvider router={router} />
+      {/* <RouterProvider router={router} /> */}
       {/* <Footer /> */}
+      <HashRouter>
+        <Routes>
+          <Route path="/" element={<Landing />}></Route>
+          <Route path="/editor" element={<Editor />}></Route>
+          <Route path="/vis/:visType/network/:network" element={<Vis />}></Route>
+        </Routes>
+      </HashRouter>
     </>
   )
 }

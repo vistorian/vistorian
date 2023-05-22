@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import { EditorContext } from '../context'
-import { Button } from 'antd'
+import { Button, message } from 'antd'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import templates from '../../templates/templates'
 import { Template } from '../../../../typings'
@@ -78,7 +78,7 @@ function VisEditor(props: IVisEditor) {
       <div className={classes.right}>
         <h2>Select a visualization and start exploring:</h2>
         <div id="vistiles" className={classes.visTiles}>
-          {templates.map((template: Template) => (
+          {selectedNetwork.length > 0 ? templates.map((template: Template) => (
             <div className={classes.visTile} key={template.key}>
               <Link 
                 to={`/vis/${template.key}/network/${selectedNetwork}`} 
@@ -88,7 +88,14 @@ function VisEditor(props: IVisEditor) {
               </Link>
               <span style={{ textAlign: 'center', fontSize: 18 }}><b>{template.label}</b></span>
             </div>
-          ))}
+          )) : 
+          templates.map((template: Template) => (
+            <div className={classes.visTile} key={template.key}>
+              <img src={`./thumbnails/${template.key}.png`} className={classes.visimage} onClick={()=>{message.error('Please select a network first!')}}/>
+              <span style={{ textAlign: 'center', fontSize: 18 }}><b>{template.label}</b></span>
+            </div>
+            ))
+          }
         </div>
       </div>
     </div>

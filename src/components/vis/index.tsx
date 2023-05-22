@@ -24,11 +24,10 @@ function Vis() {
       console.error(`No container with id ${containerId}`);
       return;
     }
-
     // TODO: need to update to the right spec
     const dataSpec = [{
       "name": "marieboucher",
-      "url": '/data/marieboucher.csv',
+      "url": './data/marieboucher.csv',
       "format": { "type": "csv" }
     }]
     const networks = [{
@@ -56,7 +55,7 @@ function Vis() {
       ]
     }]
     // @ts-ignore
-    window.viewer = await NetPanoramaTemplateViewer.render(`/templates/${template.template}`, {
+    window.viewer = await NetPanoramaTemplateViewer.render(`./templates/${template.template}`, {
       dataDefinition: JSON.stringify(dataSpec),
       networksDefinition: JSON.stringify(networks),
     }, "SVG")
