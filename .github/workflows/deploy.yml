@@ -17,9 +17,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        uses: JamesIves/github-pages-deploy-action@v4.1.6
         with:
-          folder: dist     # publicDir in your source private code
+          folder: .     # publicDir in your source private code
           token: ${{ secrets.TOKEN_VISTORIAN }}   # deploy key 
           repository-name: shuxinhuan/vistorian2.0_dev   # public repo
           branch: main    # branch in your public repo
