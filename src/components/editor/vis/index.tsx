@@ -91,7 +91,7 @@ function VisEditor(props: IVisEditor) {
           )) : 
           templates.map((template: Template) => (
             <div className={classes.visTile} key={template.key}>
-              <img src={`./thumbnails/${template.key}.png`} className={classes.visimage} onClick={()=>{message.error('Please first select a network to start the exploration!')}}/>
+              <img src={`./thumbnails/${template.key}.png`} className={classes.visimage} onClick={()=>{message.error('Please select a network to start the exploration!')}}/>
               <span style={{ textAlign: 'center', fontSize: 18 }}><b>{template.label}</b></span>
             </div>
             ))
