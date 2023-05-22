@@ -10,7 +10,8 @@
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "predeploy": "yarn run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "test": "yarn run build && git add . && git commit -m 'update yml' && git push"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
