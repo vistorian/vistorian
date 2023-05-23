@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { createUseStyles } from 'react-jss'
 import { IStepProps, RelationType, SelectOptionType, StepData } from '../../../../../typings'
 import { Col, Form, Row, Select, Space, Typography, Button, Input } from 'antd'
-import { RightOutlined, LeftOutlined } from '@ant-design/icons';
+import { RightOutlined, LeftOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled'
 import FileSelector from './fileSelector'
 import TablePreview from './tablePreview'
@@ -33,26 +33,18 @@ function NetNodeConfig(props: IStepProps) {
   const [columnInTable, setColumnInTable] = useState<any[]>([]);
   const [hasHeaderRow, setHasHeaderRow] = useState<boolean>(true)
   const [selectionOptions, setSelectionOptions] = useState<SelectOptionType[]>([])
-  const [relations, setRelations] = useState<RelationType[]>([{column: '', linkName: 'df'} as RelationType])
+  const [relations, setRelations] = useState<RelationType[]>([])
 
-  const [form] = Form.useForm();
+  const [form] = Form.useForm()
 
   useEffect(() => {
     form.setFieldsValue({ ...data.nodeTableConfig });
   }, []);
 
   const onFinish = (values: StepData) => {
-    // console.log('locationTableConfig', values)
+    console.log('nodeTableConfig', values)
     onSuccess(values, 'nodeTableConfig');
   };
-
-  const addRelation = () => {
-    
-  }
-
-  const deleteRelation = () => {
-
-  }
 
   return (
     <Form
@@ -104,31 +96,46 @@ function NetNodeConfig(props: IStepProps) {
           <MyTitle level={4}>
             2. Specify relations
           </MyTitle>
-          {
-            relations.length === 0 ? 
-            <>
-              <span>You must define at least one relation type.</span>
-              <Button onClick={() => addRelation()}>+ Add relation</Button>
-            </>
-            :
-            <>
-              <Form.Item
-              name="relations"
-              style={{ margin: 0 }}
-              rules={[{ required: true, message: "This is required!" }]}
-              >
-                <div className={classes.selection}>
-                  <Text className={classes.selectionName}>- Column:</Text>
-                  <Select style={{ width: 300 }}
-                    options={selectionOptions}
-                  />
-                  <Text className={classes.linkName}>Link name (type):</Text>
-                  <Input style={{ width: 300 }} />
-                </div>
-              </Form.Item>
-              <Button onClick={() => deleteRelation()}>Delete this relation</Button>
-            </>
-          }          
+            
+          <Form.List
+            name="relations"
+          >
+            {(fields, { add, remove }) => 
+              <>
+                {relations.length === 0 ? <span>You must define at least one relation type.</span> : null}
+                {fields.map((field, index) =>
+                  <Form.Item {...field} key={index}>
+                    <div className={classes.selection}>
+                      <Text className={classes.selectionName}>- Column:</Text>
+                      <Select style={{ width: 300 }}
+                        options={selectionOptions}
+                        // onChange={(value) => {
+                        //   const tmp = [...relations]
+
+                        //   tmp[index].column = value
+                        //   form.setFieldsValue({ 'relations':  tmp})}
+                        // }
+                      />
+                      <Text className={classes.linkName}>Link name (type):</Text>
+                      <Input 
+                        style={{ width: 300 }} 
+                        // onChange={(value) => {
+                        //   console.log('input', value)
+                        //   const tmp = [...relations]
+                        //   // tmp[index].linkName = value
+                        //   form.setFieldsValue({ 'relations': tmp })
+                        // }}
+                      />
+                    </div>
+                    <Button onClick={() => remove(index)}>Delete this relation</Button>
+                  </Form.Item>
+                )}
+                <Form.Item>
+                  <Button onClick={() => add()} icon={<PlusOutlined />}>Add relation</Button>
+                </Form.Item>
+              </>
+            }
+          </Form.List>       
         </>: null}
       </MySpace>
 
