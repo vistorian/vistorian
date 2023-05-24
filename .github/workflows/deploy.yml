@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v3 # check out your repository's code for the workflow to access and perform actions on it.
         with: 
           repository: shuxinhuan/vistorian2.0_dev
-          token: {{ secrets.TOKEN_VISTORIAN }}
+          # token: {{ secrets.TOKEN_VISTORIAN }}
 
       - name: Empty Public Repo
         run: |
