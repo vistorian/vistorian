@@ -1,0 +1,235 @@
+{
+
+  "zoom": true,
+  "pan": {"modifierKeyRequired": []},
+
+  "parameters": [
+    {
+      "name": "linkOpacity",
+      "bind": {
+        "input": "range",
+        "label": "Link Opacity",
+        "min": "0",
+        "max": "1",
+        "step": "0.1"
+      },
+      "value": 1
+    },
+    {
+      "name": "nodeOpacity",
+      "bind": {
+        "input": "range",
+        "label": "Node Opacity",
+        "min": "0",
+        "max": "1",
+        "step": "0.1"
+      },
+      "value": 1
+    },
+    {
+      "name": "nodeSize",
+      "bind": {
+        "input": "range",
+        "label": "Node Size",
+        "min": "2",
+        "max": "400",
+        "step": "2"
+      },
+      "value": 30
+    },
+    {
+      "name": "linkWidth",
+      "bind": {
+        "input": "range",
+        "label": "Link Width",
+        "min": "0",
+        "max": "10",
+        "step": "1"
+      },
+      "value": 2
+    }
+  ],
+
+    "data": [
+        {
+            "name": "marieboucher",
+            "url": "/data/marieboucher.csv",
+            "format": {"type": "csv"},
+
+            "transform": [
+                {
+                    "type": "geocode",
+                    "locationField": "Place1",
+                    "lonAs": "Lon1",
+                    "latAs": "Lat1"
+                },
+                {
+                    "type": "geocode",
+                    "locationField": "Place2",
+                    "lonAs": "Lon2",
+                    "latAs": "Lat2"
+                },
+                {
+                    "type": "calculate",
+                    "as": "source",
+                    "calculate": "datum.Name1 + ' (' + datum.Place1 + ')'"
+                },
+                {
+                    "type": "calculate",
+                    "as": "target",
+                    "calculate": "datum.Name2 + ' (' + datum.Place2 + ')'"
+                }
+            ]
+
+        }
+    ],
+
+    "networks": [
+        {
+            "name": "network",
+            "parts": [
+                {
+                    "data": "marieboucher",
+
+                    "yieldsNodes": [
+                        {
+                            "id_field": "source",
+                            "type": "person",
+                            "data": [
+                                { "field": "Lon1", "as": "lon"},
+                                { "field": "Lat1", "as": "lat"}
+
+                            ]
+                        },
+                        {
+                            "id_field": "target",
+                            "type": "person",
+                            "data": [
+                                { "field": "Lon2", "as": "lon"},
+                                { "field": "Lat2", "as": "lat"}
+                            ]
+                        }
+                    ],
+
+                    "yieldsLinks": [
+                        {
+                            "source_id": {"field": "source"},
+                            "source_node_type": "person",
+                            "source_id_field": "id",
+
+                            "target_id": {"field": "target"},
+                            "target_node_type": "person",
+                            "target_id_field": "id",
+
+                            "data": ["*"]
+                        }
+                    ]
+                }
+            ],
+            "transform": [
+                {"type": "metric", "metric": "degree"},
+                { "type": "filterNodes",  "expression": "datum.data.lon && datum.data.lat" }
+            ]
+        }
+    ],
+
+
+
+  "maps": [
+    {
+      "name": "my_map",
+      "tiles": "Stamen_TerrainBackground",
+      "zoomLevel": 4,
+      "center": [51.5062, -30]
+    }
+],
+
+
+  "layouts": [
+    {
+      "name": "layout",
+      "network": "network",
+
+      "map": "my_map",
+      "lat": { "field": "data.lat" },
+      "lng": { "field": "data.lon" }
+    }
+  ],
+
+
+  "scales": [
+    {
+      "name": "radius",
+      "type": "linear",
+      "range": [1, 500],
+      "domain": { "data": "network.nodes", "field": "degree" }
+    },
+    {
+      "name": "color",
+      "type": "linear",
+      "scheme": "reds",
+      "domain": { "data": "network.nodes", "field": "degree" }
+    },
+    {
+      "name": "edgeColor",
+      "type": "ordinal",
+      "scheme": "category20",
+      "domain": [
+        "Cambie",
+        "Constitution",
+        "Déclaration",
+        "Procuration",
+        "Testament",
+        "Transport",
+        "Transaction",
+        "Compte",
+        "Attestation",
+        "Protest",
+        "Partage",
+        "Fretment",
+        "Engagement",
+        "Assurance",
+        "Indempnité",
+        "Mariage",
+        "Pouvoir",
+        "Inventaire",
+        "Quittance",
+        "Assiette"
+      ]
+    }
+  ],
+
+  "vis": [
+    {
+      "entries": "network.links",
+      "layout": "layout",
+      "mark": {
+        "type": "linkpath",
+        "start": "source",
+        "end": "target",
+        "stroke": {"field": "data.Nature_acte", "scale": "edgeColor"},
+        "opacity": { "parameter": "linkOpacity" },
+        "strokeWidth": { "parameter": "linkWidth" }
+      }
+    },
+
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "mark": {
+        "type": "circle",
+        "area": { "parameter": "nodeSize" },
+        "opacity": { "parameter": "nodeOpacity" },
+        "fill":   { "field": "degree", "scale": "color" },
+        "tooltip": {"expression": "datum.id + ' (degree ' + datum.degree + ')' "}
+      }
+    },
+
+    {
+      "mark":{
+        "type": "map",
+        "map": "my_map"
+      }
+    }
+  ]
+}

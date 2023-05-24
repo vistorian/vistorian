@@ -1,0 +1,82 @@
+{
+    "x": 120,
+    "y": 120,
+
+    "parameters": [
+        {
+            "name": "seriationMethod",
+            "bind": {
+                "input": "select",
+                "options":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+                "labels":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+                "label": "Seriation"
+
+            },
+            "value": "optimal-leaf-order"
+        }
+    ],
+
+  "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
+
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "linear",
+      "scheme": "reds",
+      "domain": [0, 10]
+    }
+  ],
+
+
+ "orderings": [
+    {
+      "name": "o",
+      "data": "network.nodes",
+      "method": {"parameter": "seriationMethod"},
+      "network": "network"
+    }
+  ],
+
+
+    "tables": [
+        {
+            "name": "adjacencyMatrix",
+            "data": "network.links",
+            "rowOrder": {
+                "order": "o", "field": "source"
+            },
+            "colOrder": {
+                "order": "o", "field": "target"
+            }
+        }
+    ],
+    "vis": [
+        {
+            "table": "adjacencyMatrix",
+             "rowLabels": { "field": "source.id", "align": "right", "dx": -15 },
+             "colLabels": { "field": "target.id", "dx": 15  },
+
+             "mark": {
+                "type": "circle",
+                "area": 20,
+
+                "fill": {
+
+                    "condition": {
+                        "test": "datum.size < 1",
+                        "value": "white"
+                    },
+
+                    "scale": "color", "expression": "datum.size"
+                    },
+
+                "tooltip": {"expression": "datum.key[0].id + ' -> ' + datum.key[1].id + ' (' + datum.size + ')' "}
+            }
+        }
+    ]
+}
+
+
+
