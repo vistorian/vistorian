@@ -4,8 +4,8 @@ on:
   push: 
     branches:   #  Set a branch name to trigger action
       - master
-    paths:
-      - dist/**  # also match to subdirectories, * will only match to files in the current directory
+    # paths:
+    #   - dist/**  # also match to subdirectories, * will only match to files in the current directory
   # pull_request:  # perform action after pr
 
 jobs:
@@ -28,9 +28,9 @@ jobs:
 
       - name: Checkout Private Repo
         uses: actions/checkout@v3 
-        with: 
-          repository: shuxinhuan/vistorian2.0
-          token: {{ secrets.TOKEN_VISTORIAN }}
+        # with: 
+        #   repository: shuxinhuan/vistorian2.0
+        #   token: {{ secrets.TOKEN_VISTORIAN }}
 
       - name: Copy Dist folder
         run: |
