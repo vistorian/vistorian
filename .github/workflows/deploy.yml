@@ -15,9 +15,12 @@ jobs:
     steps: 
       - name: Checkout Public Repo
         uses: actions/checkout@v3 # check out your repository's code for the workflow to access and perform actions on it.
+
+      - name: Checkout Public Repo
+        uses: actions/checkout@v3 
         with: 
           repository: shuxinhuan/vistorian2.0_dev
-          token: {{ github.mac-22 }}
+          token: ${{ secrets.TOKEN_VISTORIAN }}
 
       - name: Empty Public Repo
         run: |
