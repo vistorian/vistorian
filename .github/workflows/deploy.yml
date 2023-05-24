@@ -22,6 +22,8 @@ jobs:
       - name: Empty Public Repo
         run: |
           rm -rf ./*
+          git config --global user.email "vlanxin11@gmail.com"
+          git config --global user.name "Shu Xinhuan"
           git add .
           git commit -m "deploy"
           git push
