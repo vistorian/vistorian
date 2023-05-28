@@ -4,14 +4,14 @@ import App from './App'
 import './index.css'
 
 import { ConfigProvider } from "antd"
-// import uiTheme from "./assets/uiTheme.json"
+import uiTheme from "./assets/uiTheme.json"
 
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ConfigProvider
-      // theme={uiTheme}
+      theme={uiTheme}
     >
       <App />
     </ConfigProvider>

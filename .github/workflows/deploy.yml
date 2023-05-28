@@ -4,8 +4,8 @@ on:
   push: 
     branches:   #  Set a branch name to trigger action
       - master
-    # paths:
-    #   - dist/**  # also match to subdirectories, * will only match to files in the current directory
+    paths:
+      - dist/**  # also match to subdirectories, * will only match to files in the current directory
   # pull_request:  # perform action after pr
 
 jobs:

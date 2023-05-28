@@ -7,17 +7,6 @@ import StepForm from './stepform'
 import { StepType } from '../../../../typings'
 
 const useStyles = createUseStyles({
-  root: {
-    display: 'flex',
-    width: '100%',
-  },
-  left: {
-    width: 250,
-  },
-  right: {
-    margin: '0px 20px',
-    width: '100%',
-  }
 })
 
 interface INetworkProps {
@@ -26,134 +15,26 @@ interface INetworkProps {
 }
 
 function Network(props: INetworkProps) {
-  const classes = useStyles()
   const { moveToVis, setSelectedNetwork } = props
-
-  const [selectedToDelete, setSelectedToDelete] = useState('')
-  const [clearAllOpen, setClearAllOpen] = useState(false)
-  const [open, setOpen] = useState(false)
+  
   const [selected, setSelected] = useState('')
   const [currentStep, setCurrentStep] = useState<StepType>('name')
 
   const { networkStore, setNetworkStore } = useContext(EditorContext)
 
-  const clearData = (name: string) => {
-    // console.log('clearData:', name, networkStore)
-    if (name !== 'all' && networkStore.indexOf(name) !== -1) {
-      window.localStorage.removeItem("NETWORK_DEFINITION_" + name)
-      setNetworkStore(networkStore.filter((ns) => ns !== name))
-      setOpen(false)
-    }
-    else if (name === 'all') {
-      networkStore.map(ns => window.localStorage.removeItem("NETWORK_DEFINITION_" + ns))
-      setNetworkStore([] as string[])
-      setClearAllOpen(false)
-    }
-  }
-
-  const createNetwork = () => {
-    setCurrentStep('name')
-  }
-
   return (
-    <div className={classes.root}>
-      <div className={classes.left}>
-        <h3>
-          My Networks
-          <Button
-            icon={<DeleteFilled />}
-            type='text'
-            shape='circle'
-            style={{ marginLeft: 10 }}
-            onClick={() => setClearAllOpen(true)}
-          />
-          <Modal
-            title="Clear all networks"
-            open={clearAllOpen}
-            onCancel={() => setClearAllOpen(false)}
-            footer={[
-              <Button key="cancel" onClick={() => setClearAllOpen(false)}>
-                Cancel
-              </Button>,
-              <Button key="ok" type="primary" onClick={() => clearData('all')}>
-                OK
-              </Button>,
-            ]}
-          >
-            <p>Are you sure you want to delete all networks?</p>
-          </Modal>
-        </h3>
-        <p style={{ padding: 0 }}>
-          Create or select a network to visualize
-        </p>
-        {networkStore.map((ns:string)=> (
-          <p key={ns}
-            style={{ paddingLeft: 16, margin: 0 }}
-          >
-            <Button
-              type='text'
-              style={{ padding: 0, fontWeight: selected === ns ? 700 : 500 }}
-              onClick={() => {
-                setSelectedNetwork(ns)
-                setSelected(ns)
-                moveToVis('vis')
-              }}
-            >
-              {ns}
-            </Button>
-            <Button
-              icon={<DeleteFilled />}
-              type='text'
-              shape='circle'
-              style={{ marginLeft: 10 }}
-              onClick={() => {
-                setOpen(true)
-                setSelectedToDelete(ns)
-              }}
-            />
-            <Button
-              icon={<EditFilled />}
-              type='text'
-              shape='circle'
-              onClick={() => {
-                setSelected(ns)
-                setCurrentStep('name')
-              }}
-            />
-          </p>
-        ))}
-        <Modal
-          title="Delete Files"
-          open={open}
-          onCancel={() => setOpen(false)}
-          footer={[
-            <Button key="cancel" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>,
-            <Button key="ok" type="primary" onClick={() => clearData(selectedToDelete)}>
-              OK
-            </Button>,
-          ]}
-        >
-          <p>Are you sure you want to delete {selectedToDelete} ?</p>
-        </Modal>
-
-        <Button icon={<PlusOutlined />} onClick={createNetwork}>
-          Create
-        </Button>
-      </div>
-      <div className={classes.right}>
-        <StepForm
-          currentStep={currentStep}
-          setCurrentStep={setCurrentStep}
-          setSelected={setSelected}
-          setSelectedNetwork={setSelectedNetwork}
-          moveToVis={moveToVis}
-          networkStore={networkStore}
-          setNetworkStore={setNetworkStore}
-        />
-      </div>
-    </div>
+    <>
+      <h2>Creating New Network</h2>
+      <StepForm
+        currentStep={currentStep}
+        setCurrentStep={setCurrentStep}
+        setSelected={setSelected}
+        setSelectedNetwork={setSelectedNetwork}
+        moveToVis={moveToVis}
+        networkStore={networkStore}
+        setNetworkStore={setNetworkStore}
+      />
+    </>
   )
 }
 

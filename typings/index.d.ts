@@ -10,6 +10,13 @@ type EditorCtx = {
   setNetworkStore: (fileNameStore: string[]) => void;
 }
 
+type Session = {
+  name: string,
+  network: string,
+  vis: string
+}
+
+// Vis template
 type Template = {
   key: string,
   label: string,
@@ -107,6 +114,7 @@ interface SelectOptionType {
 export {
   DataFile,
   EditorCtx,
+  Session,
   Template,
   StepType,
   StepData,
