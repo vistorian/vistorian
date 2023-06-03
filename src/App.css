@@ -17,11 +17,3 @@
   padding-top: 40px;
   height: 2.5rem;
 }
-
-button[ant-click-animating-without-extra-node]:after {
-  -webkit-animation: none !important;
-  -moz-animation: none !important;
-  -o-animation: none !important;
-  -ms-animation: none !important;
-  animation: none !important;
-}

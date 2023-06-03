@@ -1,15 +1,17 @@
 import { createUseStyles } from 'react-jss'
 import { useState, useMemo } from 'react'
-import { Divider, Button, Modal, message } from 'antd'
+import { Divider, Button, Modal, message, Tooltip, Input } from 'antd'
 import { DeleteFilled, CopyFilled, EditFilled } from '@ant-design/icons'
 import Data from './data'
 import Network from './network'
 import VisEditor from './vis'
 import { EditorContext } from './context'
-import { DataFile, Template } from '../../../typings'
+import { DataFile, Template, OperationType } from '../../../typings'
 import templates from '../templates/templates'
 import Sessions from './sessions'
-import { findIndex, filter } from 'lodash-es'
+import { findIndex, filter, find } from 'lodash-es'
+import Record from './record'
+import DataPreview from './data/dataPreview'
 
 const useStyles = createUseStyles({
   root: {
@@ -20,7 +22,7 @@ const useStyles = createUseStyles({
   list: {
     width: 300,
     height: '100%',
-    borderRight: '1px solid rgba(5, 5, 5, 0.06)',
+    borderRight: '1px solid #d9d9d9',
     marginRight: 20,
   },
   main: {
@@ -54,19 +56,33 @@ const useStyles = createUseStyles({
     lineHeight: "2em",
   },
   tabName: {
-
+    width: 170,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    '&:hover': {
+      cursor: 'pointer'
+    }
+  },
+  tabNameFocused: {
+    width: 170,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    fontWeight: 700,
+    backgroundColor: '#FFDF70',
+    '&:hover': {
+      cursor: 'pointer'
+    }
   },
   tabFunc: {
     display: "flex",
   }
 })
 
-type ClearType = "data" | "network" | null
-
 function Editor() {
   const classes = useStyles()
-  const [current, setCurrent] = useState('sessions')
+  const [main, setMain] = useState('sessions')
   const [selectedNetwork, setSelectedNetwork] = useState('')
+  const [preview, setPreview] = useState<string>('')
 
   const loadedFiles = Object.keys(window.localStorage)
     .filter(k => k.startsWith("UPLOADED_FILE_"))
@@ -89,39 +105,160 @@ function Editor() {
 
   // clear data or network
   const [open, setOpen] = useState<boolean>(false)
-  const [clearType, setClearType] = useState<ClearType>(null) 
+  const [clearType, setClearType] = useState<OperationType>(null) 
   const [selectedToDelete, setSelectedToDelete] = useState<string>('')
 
-  const handleDelete = (type: ClearType, name: string) => {
+  const handleSelectToDelete = (type: OperationType, name: string) => {
+    setOpen(true)
+    setClearType(type)
+    setSelectedToDelete(name)
+  }
+
+  const handleDelete = (type: OperationType, name: string) => {
     if (type === 'data') {
       if (name !== 'all' && findIndex(fileNameStore, (fn: DataFile) => fn.name === name) !== -1) {
         window.localStorage.removeItem("UPLOADED_FILE_" + name)
         setFileNameStore(filter(fileNameStore, (fn) => fn.name !== name))
+        message.success('The selected data has been successfully deleted!')
       }
       else if (name === 'all') {
         fileNameStore.map((fn: DataFile) => window.localStorage.removeItem("UPLOADED_FILE_" + fn.name))
         setFileNameStore([] as DataFile[])
+        message.success('All data have been successfully deleted!')
       }
     }
     if (type === 'network') {
       if (name !== 'all' && networkStore.indexOf(name) !== -1) {
         window.localStorage.removeItem("NETWORK_DEFINITION_" + name)
         setNetworkStore(networkStore.filter((ns) => ns !== name))
+        message.success('The selected network has been successfully deleted!')
       }
       else if (name === 'all') {
         networkStore.map(ns => window.localStorage.removeItem("NETWORK_DEFINITION_" + ns))
         setNetworkStore([] as string[])
+        message.success('All networks have been successfully deleted!')
       }
     }
     setOpen(false)
   }
 
-  const renderComp = (step: string) => {
-    switch (step) {
+  // copy data or network
+  const handleCopy = (type: OperationType, name: string) => {
+    if (type === 'data') {
+      const data = window.localStorage.getItem("UPLOADED_FILE_" + name)
+      const idx = findIndex(fileNameStore, (fn) => fn.name === name)
+      if (idx > -1 && data) {
+        const newData = {...fileNameStore[idx]}
+        // get only the name without file postfix
+        const reg = /\.(.*)$/
+        const split = name.split('').reverse().join('').split(reg)
+        newData.name = `${split[1].split('').reverse().join('')}_copy.${split[0].split('').reverse().join('')}`
+        window.localStorage.setItem("UPLOADED_FILE_" + newData.name, data)
+        const tmp = [...fileNameStore]
+        tmp.unshift(newData)
+        setFileNameStore(tmp)
+        message.success('The selected data has been successfully copied!')
+      }
+      else 
+        message.error('No such data files in the cache!')
+    }
+    else if (type === 'network') {
+      const data = window.localStorage.getItem("NETWORK_DEFINITION_" + name)
+      const newName = `${name}_copy`
+      if (data) {
+        window.localStorage.setItem("NETWORK_DEFINITION_" + newName, data)
+        const tmp = [...networkStore]
+        tmp.unshift(newName)
+        setNetworkStore(tmp)
+        message.success('The selected network has been successfully copied!')
+      }
+      else 
+        message.error('No such networks in the cache!')
+    }
+  }
+
+  // rename data or network
+  const handleRename = (type: OperationType, oldName: string, newName: string) => {
+    if (type === 'data') {
+      // TODO: examine the postfix to be .csv/.tsv/...
+      if (newName.length < 1) {
+        message.error("The data must have a name!")
+        return false
+      }
+      else if (findIndex(fileNameStore, (fn: DataFile) => fn.name === newName) !== -1) {
+        message.error("The new data name has existed!")
+        return false
+      }
+      else {
+        const idx = findIndex(fileNameStore, (fn: DataFile) => fn.name === oldName)
+        const result = window.localStorage.getItem("UPLOADED_FILE_" + oldName)
+        if (idx !== -1 && result) {
+          const tmp = [...fileNameStore]
+          tmp[idx].name = newName
+          setFileNameStore(tmp)
+          window.localStorage.removeItem("UPLOADED_FILE_" + oldName)
+          window.localStorage.setItem("UPLOADED_FILE_" + newName, result)
+          message.success('The selected data has been successfully renamed!')
+          return true
+        }
+        else {
+          message.error('No such data in the cache!')
+          return false
+        }
+      }
+    }
+    else if (type === 'network') {
+      if (newName.length < 1) {
+        message.error("The network must have a name!")
+        return false
+      }
+      else if (networkStore.indexOf(newName) !== -1) {
+        message.error("The new network name has existed!")
+        return false
+      }
+      else {
+        const idx = networkStore.indexOf(oldName)
+        const result = window.localStorage.getItem("NETWORK_DEFINITION_" + oldName)
+        if (idx !== -1 && result) {
+          const tmp = [...networkStore]
+          tmp[idx] = newName
+          setNetworkStore(tmp)
+          window.localStorage.removeItem("NETWORK_DEFINITION_" + oldName)
+          window.localStorage.setItem("NETWORK_DEFINITION_" + newName, result)
+          message.success('The selected network has been successfully renamed!')
+          return true
+        }
+        else {
+          message.error('No such network in the cache!')
+          return false
+        }
+      }
+    }
+    return false
+  }
+
+  const showPreview = (type: OperationType, name: string) => {
+    if (type === 'data') {
+      setMain('dataPreview')
+      setPreview(name)
+    }
+    else if (type === 'network') {
+      setMain('networkPreview')
+      setPreview(name)
+    }
+  }
+
+  const renderComp = (content: string) => {
+    switch (content) {
       // case 'data': 
       //   return <Data />
+      case 'dataPreview': 
+        const fileName = find(fileNameStore, (fn: DataFile) => fn.name === preview) as DataFile
+        return <DataPreview preview={fileName}/>
       case 'network':
-        return <Network moveToVis={setCurrent} setSelectedNetwork={setSelectedNetwork}/>
+        return <Network moveToVis={setMain} setSelectedNetwork={setSelectedNetwork}/>
+      case 'networkPreview': 
+        return <div>Network Preview {preview}</div>
       // case 'vis':
       //   return <VisEditor name={selectedNetwork}/>
       case 'sessions':
@@ -140,108 +277,85 @@ function Editor() {
             <Button  
               type='primary' 
               style={{ marginBottom: 10, marginRight: 10 }}
-              onClick={()=>{setCurrent('sessions')}}
+              onClick={()=>{
+                setMain('sessions')
+                setPreview('')
+              }}
             >
               My Sessions
             </Button>
             <Button 
               type='primary' 
               style={{ marginBottom: 10, marginRight: 10 }}
-              onClick={() => { setCurrent('network') }}
+              onClick={() => { 
+                setMain('network') 
+                setPreview('')
+              }}
             >
               Create New Networks
             </Button>
           </div>
-
+          
+          {/* My networks */}
           <div className={classes.tab}>
             <div className={classes.tabHeader}>
               <span className={classes.tabTitle}>My Networks</span>
-              <Button
-                icon={<DeleteFilled />}
-                type='text'
-                shape='circle'
-                onClick={()=>{ 
-                  setOpen(true)
-                  setClearType('network')
-                  setSelectedToDelete('all')
-                 }}
-              />
+              <Tooltip title="Clear all networks">
+                <Button
+                  icon={<DeleteFilled />}
+                  type='text'
+                  shape='circle'
+                  onClick={() => handleSelectToDelete('network', 'all')}
+                />
+              </Tooltip>
             </div>
-            {networkStore.map((network: string) => (
-              <div className={classes.tabContent} key={network}>
-                <span className={classes.tabName}>{network}</span>
-                <div className={classes.tabFunc}>
-                  <Button
-                    icon={<EditFilled />}
-                    type='text'
-                    shape='circle'
-                  />
-                  <Button
-                    icon={<CopyFilled />}
-                    type='text'
-                    shape='circle'
-                  />
-                  <Button
-                    icon={<DeleteFilled />}
-                    type='text'
-                    shape='circle'
-                    onClick={() => {
-                      setOpen(true)
-                      setClearType('network')
-                      setSelectedToDelete(network)
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
+            {networkStore.map((network: string) => 
+              <Record 
+                key={network}
+                data={network}
+                type="network"
+                handleRename={handleRename}
+                handleCopy={handleCopy}
+                handleSelectToDelete={handleSelectToDelete}
+                showPreview={showPreview}
+                selectedPreview={`${main}-${preview}`}
+              />
+            )}
             
           </div> 
           <Divider style={{ margin: '15px 0px'}} />
           
-
+          {/* My data */}
           <div className={classes.tab}>
             <div className={classes.tabHeader}>
               <span className={classes.tabTitle}>My Data</span>
-              <Button
-                icon={<DeleteFilled />}
-                type='text'
-                shape='circle'
-                onClick={() => {
-                  setOpen(true)
-                  setClearType('data')
-                  setSelectedToDelete('all')
-                }}
-              />
+              <Tooltip title="Clear all data">
+                <Button
+                  icon={<DeleteFilled />}
+                  type='text'
+                  shape='circle'
+                  onClick={() => {
+                    setOpen(true)
+                    setClearType('data')
+                    setSelectedToDelete('all')
+                  }}
+                />
+              </Tooltip>
             </div>
             {fileNameStore.map((fileName: DataFile) => (
-              <div className={classes.tabContent} key={fileName.name}>
-                <span className={classes.tabName}>{fileName.name}</span>
-                <div className={classes.tabFunc}>
-                  <Button
-                    icon={<EditFilled />}
-                    type='text'
-                    shape='circle'
-                  />
-                  <Button
-                    icon={<CopyFilled />}
-                    type='text'
-                    shape='circle'
-                  />
-                  <Button
-                    icon={<DeleteFilled />}
-                    type='text'
-                    shape='circle'
-                    onClick={() => {
-                      setOpen(true)
-                      setClearType('data')
-                      setSelectedToDelete(fileName.name)
-                    }}
-                  />
-                </div>
-              </div>
+              <Record
+                key={fileName.name}
+                data={fileName.name}
+                type="data"
+                handleRename={handleRename}
+                handleCopy={handleCopy}
+                handleSelectToDelete={handleSelectToDelete}
+                showPreview={showPreview}
+                selectedPreview={`${main}-${preview}`}
+              />
             ))}
           </div> 
-          <Divider style={{ margin: '15px 0px' }} />
+          <Divider style={{ margin: '15px 0px'  }} />
           
           {/* modal for delete data/network */}
           <Modal
@@ -260,20 +374,23 @@ function Editor() {
             <p>Are you sure you want to delete {selectedToDelete === 'all' ? `all the ${clearType}`: selectedToDelete} ?</p>
           </Modal>
 
+          {/* visualization library */}
           <div className={classes.tab}>
             <div className={classes.tabHeader}>
               <span className={classes.tabTitle}>Visualization Library</span>
             </div>
             {templates.map((template: Template) => (
               <div className={classes.tabContent} key={template.key}>
-                <span className={classes.tabName}>{template.label}</span>
+                <Tooltip placement="topLeft" title={template.label}>
+                  <span className={classes.tabName}>{template.label}</span>
+                </Tooltip>
               </div>
             ))}
           </div> 
           
         </div>
         <div className={classes.main}>
-          {renderComp(current)}
+          {renderComp(main)}
         </div>
       </div>
     </EditorContext.Provider>

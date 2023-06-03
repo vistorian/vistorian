@@ -1,11 +1,12 @@
 import { createUseStyles } from 'react-jss'
 import { useContext, useEffect, useState } from 'react';
-import { Table, Checkbox, message } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Table, Checkbox, message, Button } from 'antd';
+import { DeleteFilled, CopyFilled, EditFilled, CheckCircleFilled } from '@ant-design/icons'
 import { DataFile } from '../../../../typings';
 import { EditorContext } from '../context';
-import { findIndex, cloneDeep } from 'lodash-es'
-
+import { findIndex, cloneDeep } from 'lodash-es';
+import csvtojson from 'csvtojson';
+import styled from '@emotion/styled';
 
 
 const useStyles = createUseStyles({
@@ -13,7 +14,7 @@ const useStyles = createUseStyles({
     backgroundColor: 'rgb(229 231 235)',
     overflow: 'scroll',
     maxHeight: '70vh',
-  }
+  },
 })
 
 interface IDataPreview {
@@ -23,54 +24,65 @@ interface IDataPreview {
 function DataPreview(props: IDataPreview) {
   const classes = useStyles()
   const { preview } = props
-  const { fileNameStore, setFileNameStore } = useContext(EditorContext)
-  const [checked, setChecked] = useState(preview.hasHeader)
   const data = window.localStorage.getItem("UPLOADED_FILE_" + preview.name)
+  const { fileNameStore, setFileNameStore } = useContext(EditorContext)
 
-  const setHasHeader = () => {
-    const idx = findIndex(fileNameStore, (fn: DataFile) => fn.name === preview.name)
-    if (idx > -1) {
-      const tmp = cloneDeep(fileNameStore)
-      tmp[idx].hasHeader = !checked
-      setFileNameStore(tmp)
-      setChecked(!checked)
+  const [checked, setChecked] = useState(preview.hasHeader)
+  const [columnInTable, setColumnInTable] = useState<any[]>([])
+  const [dataInTable, setDataInTable] = useState<any[]>([])
+
+  // const setHasHeader = () => {
+  //   const idx = findIndex(fileNameStore, (fn: DataFile) => fn.name === preview.name)
+  //   if (idx > -1) {
+  //     const tmp = cloneDeep(fileNameStore)
+  //     tmp[idx].hasHeader = !checked
+  //     setFileNameStore(tmp)
+  //     setChecked(!checked)
+  //   }
+  //   else {
+  //     message.error('Can not find the file in the store.')
+  //   }
+  // }
+
+  const MyButton = styled(Button)({
+    marginLeft: 10
+  })
+
+
+  const convertCsvToJson = async (csvData: string): Promise<any[]> => {
+    const jsonArray = await csvtojson().fromString(csvData)
+    return jsonArray
+  }
+
+  useEffect(() => {
+    if (data && preview.name.endsWith('.csv')) {
+      // TODO: deal with no fakeHeader
+      convertCsvToJson(data)
+        .then((jsonData) => {
+          const headers = Object.keys(jsonData[0])
+          const columns = headers.map(header => {
+            return {
+              title: header,
+              dataIndex: header,
+              key: header,
+            }
+          })
+          setColumnInTable(columns)
+          const dataintable = jsonData.map((d, i) => {
+            d._rowKey = i
+            return d
+          })
+          setDataInTable(dataintable)
+        })
+        .catch((error) => {
+          message.error('Error during CSV to JSON conversion:');
+        })
     }
     else {
-      message.error('Can not find the file in the store.')
+      message.error('There is no such data file in the storage!')
     }
-  }
-
-  const csvToJson = (data: string) => {
-    let lines = data.split("\n");
-    let result = new Array<object>()
-
-    // Extract the header line
-    const headers = lines[0].split(",");
-
-    const columns = headers.map(header => {
-      return {
-        title: header,
-        dataIndex: header,
-        key: header,
-      }
-    })
-
-    lines.map((line) => {
-      let obj = {}
-      let currentLine = line.split(",")
-      for (let j = 0; j < headers.length; j++) {
-        // @ts-ignore
-        obj[headers[j]] = currentLine[j];
-      }
-      result.push(obj);
-    })
-    return {
-      columns: columns,
-      data: result
-    }
-  }
-
-  useEffect(()=>{}, [])
+    
+  }, [preview])
 
   const renderPreview = () => {
     if (data && preview.name.endsWith('.json')){
@@ -83,19 +95,20 @@ function DataPreview(props: IDataPreview) {
       )
     }
     else if (data && preview.name.endsWith('.csv')) {
-      const result = csvToJson(data)
       return (
         <>
           <Checkbox 
             checked={checked}
-            onChange={() => setHasHeader()}
+            style={{marginBottom: 10}}
+            // onChange={() => setHasHeader()}
           >
             Has header row?
           </Checkbox>
           <Table
+            columns={columnInTable}
+            dataSource={dataInTable}
+            rowKey={(record) => record._rowKey}
             showHeader={checked}
-            columns={result.columns}
-            dataSource={result.data}
           >
           </Table>
         </>
@@ -105,8 +118,43 @@ function DataPreview(props: IDataPreview) {
 
   return (
     <div className='root'>
-      <h3>Preview of {preview.name}</h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <div style={{ display: 'flex', alignItems: 'center'}}>
+          <h2>{preview.name}</h2>
+          <Button
+            icon={<EditFilled />}
+            type='text'
+            shape='circle'
+            // onClick={() => setEditOpen(true)}
+          />
+        </div>
+        <div style={{ display: 'flex' }}>
+          <MyButton 
+            icon={<EditFilled />}
+            type='primary'
+            // onClick={() => setEditOpen(true)}
+          >
+            Edit data
+          </MyButton>
+          <MyButton
+            icon={<CopyFilled />}
+            type='primary'
+          // onClick={() => setEditOpen(true)}
+          >
+            Duplicate
+          </MyButton>
+          <MyButton
+            icon={<DeleteFilled />}
+            type='primary'
+          // onClick={() => handleSelectToDelete(type, data)}
+          >
+            Delete
+          </MyButton>
+        </div>
+      </div>
+
       {renderPreview()}
+
     </div>
   )
 }

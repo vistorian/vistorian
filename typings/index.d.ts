@@ -24,6 +24,7 @@ type Template = {
   template: string,
 }
 
+type OperationType = "data" | "network" | null
 
 type StepType = "name" | "format" | "linkType" | "linkTableConfig" | "nodeTableConfig" | "locationTableConfig" |  "extraNodeConfig" 
 type StepData = NetworkName | NetworkFormat | LinkType | LinkTableConfig | NodeTableConfig | LocationTableConfig | ExtraNodeConfig | null
@@ -115,6 +116,7 @@ export {
   DataFile,
   EditorCtx,
   Session,
+  OperationType,
   Template,
   StepType,
   StepData,
