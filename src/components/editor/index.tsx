@@ -1,7 +1,7 @@
 import { createUseStyles } from 'react-jss'
 import { useState, useMemo } from 'react'
-import { Divider, Button, Modal, message, Tooltip, Input } from 'antd'
-import { DeleteFilled, CopyFilled, EditFilled } from '@ant-design/icons'
+import { Divider, Button, Modal, Tooltip } from 'antd'
+import { DeleteFilled } from '@ant-design/icons'
 import Data from './data'
 import Network from './network'
 import VisEditor from './vis'
@@ -9,9 +9,10 @@ import { EditorContext } from './context'
 import { DataFile, Template, OperationType } from '../../../typings'
 import templates from '../templates/templates'
 import Sessions from './sessions'
-import { findIndex, filter, find } from 'lodash-es'
+import { find } from 'lodash-es'
 import Record from './record'
 import DataPreview from './data/dataPreview'
+import { handleCopy, handleDelete, handleRename } from './utils'
 
 const useStyles = createUseStyles({
   root: {
@@ -114,127 +115,55 @@ function Editor() {
     setSelectedToDelete(name)
   }
 
-  const handleDelete = (type: OperationType, name: string) => {
-    if (type === 'data') {
-      if (name !== 'all' && findIndex(fileNameStore, (fn: DataFile) => fn.name === name) !== -1) {
-        window.localStorage.removeItem("UPLOADED_FILE_" + name)
-        setFileNameStore(filter(fileNameStore, (fn) => fn.name !== name))
-        message.success('The selected data has been successfully deleted!')
-      }
-      else if (name === 'all') {
-        fileNameStore.map((fn: DataFile) => window.localStorage.removeItem("UPLOADED_FILE_" + fn.name))
-        setFileNameStore([] as DataFile[])
-        message.success('All data have been successfully deleted!')
+  const toDelete = () => {
+    const store = clearType === 'network' ? networkStore : fileNameStore
+    const newStore = handleDelete(clearType, selectedToDelete, store)
+    if (clearType === 'network') {
+      setNetworkStore(newStore as string[])
+      if (main === 'networkPreview' && preview === selectedToDelete) {
+        setPreview('')
+        setMain('blank')
       }
     }
-    if (type === 'network') {
-      if (name !== 'all' && networkStore.indexOf(name) !== -1) {
-        window.localStorage.removeItem("NETWORK_DEFINITION_" + name)
-        setNetworkStore(networkStore.filter((ns) => ns !== name))
-        message.success('The selected network has been successfully deleted!')
-      }
-      else if (name === 'all') {
-        networkStore.map(ns => window.localStorage.removeItem("NETWORK_DEFINITION_" + ns))
-        setNetworkStore([] as string[])
-        message.success('All networks have been successfully deleted!')
+    else if (clearType === 'data') {
+      setFileNameStore(newStore as DataFile[])
+      if (main === 'dataPreview' && preview === selectedToDelete) {
+        setPreview('')
+        setMain('blank')
       }
     }
     setOpen(false)
   }
 
-  // copy data or network
-  const handleCopy = (type: OperationType, name: string) => {
-    if (type === 'data') {
-      const data = window.localStorage.getItem("UPLOADED_FILE_" + name)
-      const idx = findIndex(fileNameStore, (fn) => fn.name === name)
-      if (idx > -1 && data) {
-        const newData = {...fileNameStore[idx]}
-        // get only the name without file postfix
-        const reg = /\.(.*)$/
-        const split = name.split('').reverse().join('').split(reg)
-        newData.name = `${split[1].split('').reverse().join('')}_copy.${split[0].split('').reverse().join('')}`
-        window.localStorage.setItem("UPLOADED_FILE_" + newData.name, data)
-        const tmp = [...fileNameStore]
-        tmp.unshift(newData)
-        setFileNameStore(tmp)
-        message.success('The selected data has been successfully copied!')
-      }
-      else 
-        message.error('No such data files in the cache!')
-    }
-    else if (type === 'network') {
-      const data = window.localStorage.getItem("NETWORK_DEFINITION_" + name)
-      const newName = `${name}_copy`
-      if (data) {
-        window.localStorage.setItem("NETWORK_DEFINITION_" + newName, data)
-        const tmp = [...networkStore]
-        tmp.unshift(newName)
-        setNetworkStore(tmp)
-        message.success('The selected network has been successfully copied!')
-      }
-      else 
-        message.error('No such networks in the cache!')
-    }
+  const toCopy = (type: OperationType, name: string) => {
+    const store = clearType === 'network' ? networkStore : fileNameStore
+    const newStore = handleCopy(type, name, store)
+    if (type === 'network')
+      setNetworkStore(newStore as string[])
+    else if (type === 'data')
+      setFileNameStore(newStore as DataFile[])
   }
 
-  // rename data or network
-  const handleRename = (type: OperationType, oldName: string, newName: string) => {
-    if (type === 'data') {
-      // TODO: examine the postfix to be .csv/.tsv/...
-      if (newName.length < 1) {
-        message.error("The data must have a name!")
-        return false
-      }
-      else if (findIndex(fileNameStore, (fn: DataFile) => fn.name === newName) !== -1) {
-        message.error("The new data name has existed!")
-        return false
-      }
-      else {
-        const idx = findIndex(fileNameStore, (fn: DataFile) => fn.name === oldName)
-        const result = window.localStorage.getItem("UPLOADED_FILE_" + oldName)
-        if (idx !== -1 && result) {
-          const tmp = [...fileNameStore]
-          tmp[idx].name = newName
-          setFileNameStore(tmp)
-          window.localStorage.removeItem("UPLOADED_FILE_" + oldName)
-          window.localStorage.setItem("UPLOADED_FILE_" + newName, result)
-          message.success('The selected data has been successfully renamed!')
-          return true
-        }
-        else {
-          message.error('No such data in the cache!')
-          return false
+  const toRename = (type: OperationType, oldName: string, newName: string) => {
+    const store = clearType === 'network' ? networkStore : fileNameStore
+    const result = handleRename(type, oldName, newName, store)
+    if (type === 'network') {
+      if (result.status) {
+        setNetworkStore(result.newStore as string[])
+        if (main === 'networkPreview' && preview === oldName) {
+          setPreview(newName)
         }
       }
     }
-    else if (type === 'network') {
-      if (newName.length < 1) {
-        message.error("The network must have a name!")
-        return false
-      }
-      else if (networkStore.indexOf(newName) !== -1) {
-        message.error("The new network name has existed!")
-        return false
-      }
-      else {
-        const idx = networkStore.indexOf(oldName)
-        const result = window.localStorage.getItem("NETWORK_DEFINITION_" + oldName)
-        if (idx !== -1 && result) {
-          const tmp = [...networkStore]
-          tmp[idx] = newName
-          setNetworkStore(tmp)
-          window.localStorage.removeItem("NETWORK_DEFINITION_" + oldName)
-          window.localStorage.setItem("NETWORK_DEFINITION_" + newName, result)
-          message.success('The selected network has been successfully renamed!')
-          return true
-        }
-        else {
-          message.error('No such network in the cache!')
-          return false
+    else if (type === 'data') {
+      if (result.status) {
+        setFileNameStore(result.newStore as DataFile[])
+        if (main === 'dataPreview' && preview === oldName) {
+          setPreview(newName)
         }
       }
     }
-    return false
+    return result.status
   }
 
   const showPreview = (type: OperationType, name: string) => {
@@ -254,7 +183,11 @@ function Editor() {
       //   return <Data />
       case 'dataPreview': 
         const fileName = find(fileNameStore, (fn: DataFile) => fn.name === preview) as DataFile
-        return <DataPreview preview={fileName}/>
+        return <DataPreview 
+          selectedData={fileName} 
+          setPreview={setPreview}
+          setMain={setMain}
+        />
       case 'network':
         return <Network moveToVis={setMain} setSelectedNetwork={setSelectedNetwork}/>
       case 'networkPreview': 
@@ -263,6 +196,8 @@ function Editor() {
       //   return <VisEditor name={selectedNetwork}/>
       case 'sessions':
         return <Sessions />
+      case 'blank':
+        return <div></div>
     }
   }
 
@@ -314,11 +249,11 @@ function Editor() {
                 key={network}
                 data={network}
                 type="network"
-                handleRename={handleRename}
-                handleCopy={handleCopy}
                 handleSelectToDelete={handleSelectToDelete}
                 showPreview={showPreview}
                 selectedPreview={`${main}-${preview}`}
+                toCopy={toCopy}
+                toRename={toRename}
               />
             )}
             
@@ -347,11 +282,11 @@ function Editor() {
                 key={fileName.name}
                 data={fileName.name}
                 type="data"
-                handleRename={handleRename}
-                handleCopy={handleCopy}
                 handleSelectToDelete={handleSelectToDelete}
                 showPreview={showPreview}
                 selectedPreview={`${main}-${preview}`}
+                toCopy={toCopy}
+                toRename={toRename}
               />
             ))}
           </div> 
@@ -366,7 +301,11 @@ function Editor() {
               <Button key="cancel" onClick={() => setOpen(false)}>
                 Cancel
               </Button>,
-              <Button key="ok" type="primary" onClick={() => handleDelete(clearType, selectedToDelete)}>
+              <Button 
+                key="ok" 
+                type="primary" 
+                onClick={() => toDelete()}
+              >
                 OK
               </Button>
             ]}

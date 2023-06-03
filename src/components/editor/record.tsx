@@ -1,5 +1,5 @@
 import { Button, Input, Tooltip } from 'antd'
-import { DeleteFilled, CopyFilled, EditFilled, CheckCircleFilled } from '@ant-design/icons'
+import { DeleteFilled, CopyFilled, EditFilled, CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { createUseStyles } from 'react-jss'
 import { OperationType } from '../../../typings'
 import { useState } from 'react'
@@ -37,17 +37,16 @@ const useStyles = createUseStyles({
 interface IRecordProps {
   data: string
   type: OperationType
-  handleSelectToDelete: (type: OperationType, name: string) => void
-  handleCopy: (type: OperationType, name: string) => void
-  handleRename: (type: OperationType, oldName: string, newName: string) => boolean
-  showPreview: (type: OperationType, name: string) => void
   selectedPreview: string 
-  // setPreview: (name: string) => void
+  handleSelectToDelete: (type: OperationType, name: string) => void
+  toCopy: (type: OperationType, name: string) => void
+  toRename: (type: OperationType, oldName: string, newName: string) => boolean
+  showPreview: (type: OperationType, name: string) => void
 }
 
 function Record(props: IRecordProps) {
   const classes = useStyles()
-  const { data, type, selectedPreview, handleRename, handleCopy, handleSelectToDelete, showPreview } = props
+  const { data, type, selectedPreview, toCopy, toRename, handleSelectToDelete, showPreview } = props
 
   const [editOpen, setEditOpen] = useState<boolean>(false)
   const [value, setValue] = useState<string>(data)
@@ -77,12 +76,12 @@ function Record(props: IRecordProps) {
                 onClick={() => setEditOpen(true)}
               />
             </Tooltip>
-            <Tooltip title="Copy">
+            <Tooltip title="Duplicate">
               <Button
                 icon={<CopyFilled />}
                 type='text'
                 shape='circle'
-                onClick={() => handleCopy(type, data)}
+                onClick={() => toCopy(type, data)}
               />
             </Tooltip>
             <Tooltip title="Delete">
@@ -104,14 +103,20 @@ function Record(props: IRecordProps) {
           />
           <div style={{display: 'flex', justifyContent: 'flex-end'}}>
             <Button 
-              icon={<CheckCircleFilled />}
+                icon={<CheckOutlined />}
               type='text'
               shape='circle'
               onClick={()=>{
-                if (handleRename(type, data, value)) {
+                if (toRename(type, data, value)) {
                   setEditOpen(false)
                 }
               }}
+            />
+            <Button
+              icon={<CloseOutlined />}
+              type='text'
+              shape='circle'
+              onClick={() => setEditOpen(false)}
             />
           </div>
         </>

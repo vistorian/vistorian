@@ -1,12 +1,12 @@
 import { createUseStyles } from 'react-jss'
 import { useContext, useEffect, useState } from 'react';
-import { Table, Checkbox, message, Button } from 'antd';
-import { DeleteFilled, CopyFilled, EditFilled, CheckCircleFilled } from '@ant-design/icons'
+import { Table, Checkbox, message, Button, Tooltip, Input, Modal } from 'antd';
+import { DeleteFilled, CopyFilled, EditFilled, CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { DataFile } from '../../../../typings';
 import { EditorContext } from '../context';
-import { findIndex, cloneDeep } from 'lodash-es';
 import csvtojson from 'csvtojson';
 import styled from '@emotion/styled';
+import { handleCopy, handleDelete, handleRename } from '../utils';
 
 
 const useStyles = createUseStyles({
@@ -18,18 +18,51 @@ const useStyles = createUseStyles({
 })
 
 interface IDataPreview {
-  preview: DataFile
+  selectedData: DataFile
+  setPreview: (data: string) => void
+  setMain: (data: string) => void
 }
 
 function DataPreview(props: IDataPreview) {
   const classes = useStyles()
-  const { preview } = props
-  const data = window.localStorage.getItem("UPLOADED_FILE_" + preview.name)
+  const { selectedData, setPreview, setMain } = props
   const { fileNameStore, setFileNameStore } = useContext(EditorContext)
 
-  const [checked, setChecked] = useState(preview.hasHeader)
+  const data = window.localStorage.getItem("UPLOADED_FILE_" + selectedData.name)
+
+  const [checked, setChecked] = useState(selectedData.hasHeader)
   const [columnInTable, setColumnInTable] = useState<any[]>([])
   const [dataInTable, setDataInTable] = useState<any[]>([])
+  const [rename, setRename] = useState<boolean>(false)
+  const [renameValue, setRenameValue] = useState<string>('')
+  // for delete modal
+  const [open, setOpen] = useState<boolean>(false) 
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRenameValue(e.target.value)
+  }
+
+  const toRename = (oldName: string, newName: string) => {
+    const result = handleRename('data', oldName, newName, fileNameStore)
+    if (result.status) {
+      setFileNameStore(result.newStore as DataFile[])
+      setPreview(newName)
+    }
+    setRename(false)
+  }
+
+  const toDelete = (name: string) => {
+    const result = handleDelete('data', name, fileNameStore)
+    setFileNameStore(result as DataFile[])
+    setOpen(false)
+    setPreview('')
+    setMain('blank')
+  }
+
+  const toCopy = (name: string) => {
+    const result = handleCopy('data', name, fileNameStore)
+    setFileNameStore(result as DataFile[])
+  }
 
   // const setHasHeader = () => {
   //   const idx = findIndex(fileNameStore, (fn: DataFile) => fn.name === preview.name)
@@ -48,14 +81,13 @@ function DataPreview(props: IDataPreview) {
     marginLeft: 10
   })
 
-
   const convertCsvToJson = async (csvData: string): Promise<any[]> => {
     const jsonArray = await csvtojson().fromString(csvData)
     return jsonArray
   }
 
   useEffect(() => {
-    if (data && preview.name.endsWith('.csv')) {
+    if (data && selectedData.name.endsWith('.csv')) {
       // TODO: deal with no fakeHeader
       convertCsvToJson(data)
         .then((jsonData) => {
@@ -82,10 +114,10 @@ function DataPreview(props: IDataPreview) {
       message.error('There is no such data file in the storage!')
     }
     
-  }, [preview])
+  }, [selectedData])
 
   const renderPreview = () => {
-    if (data && preview.name.endsWith('.json')){
+    if (data && selectedData.name.endsWith('.json')){
       return (
         <div className={classes.json}>
           <code>
@@ -94,7 +126,7 @@ function DataPreview(props: IDataPreview) {
         </div>
       )
     }
-    else if (data && preview.name.endsWith('.csv')) {
+    else if (data && selectedData.name.endsWith('.csv')) {
       return (
         <>
           <Checkbox 
@@ -119,38 +151,83 @@ function DataPreview(props: IDataPreview) {
   return (
     <div className='root'>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        {/* name */}
         <div style={{ display: 'flex', alignItems: 'center'}}>
-          <h2>{preview.name}</h2>
-          <Button
-            icon={<EditFilled />}
-            type='text'
-            shape='circle'
-            // onClick={() => setEditOpen(true)}
-          />
+          {!rename ? 
+            <>
+              <h2>{selectedData.name}</h2>
+              <Button
+                icon={<EditFilled />}
+                type='text'
+                shape='circle'
+                onClick={() => setRename(true)}
+              />
+            </>:<>
+              <Input
+                style={{ width: 300, fontSize: '22px', margin: '16px 5px', marginLeft: 0}}
+                defaultValue={selectedData.name}
+                onChange={handleInputChange}
+              />
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                  icon={<CheckOutlined />}
+                  type='text'
+                  shape='circle'
+                  onClick={() => toRename(selectedData.name, renameValue)}
+                />
+                <Button
+                  icon={<CloseOutlined />}
+                  type='text'
+                  shape='circle'
+                  onClick={() => setRename(false)}
+                />
+              </div>
+            </>}
         </div>
+        {/* func */}
         <div style={{ display: 'flex' }}>
           <MyButton 
             icon={<EditFilled />}
             type='primary'
-            // onClick={() => setEditOpen(true)}
+            disabled
           >
             Edit data
           </MyButton>
           <MyButton
             icon={<CopyFilled />}
             type='primary'
-          // onClick={() => setEditOpen(true)}
+            onClick={() => toCopy(selectedData.name)}
           >
             Duplicate
           </MyButton>
           <MyButton
             icon={<DeleteFilled />}
             type='primary'
-          // onClick={() => handleSelectToDelete(type, data)}
+            onClick={() => setOpen(true)}
           >
             Delete
           </MyButton>
         </div>
+        {/* modal for delete data/network */}
+        <Modal
+          title={`Delete data`}
+          open={open}
+          onCancel={() => setOpen(false)}
+          footer={[
+            <Button key="cancel" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>,
+            <Button
+              key="ok"
+              type="primary"
+              onClick={() => toDelete(selectedData.name)}
+            >
+              OK
+            </Button>
+          ]}
+        >
+          <p>Are you sure you want to delete {selectedData.name} ?</p>
+        </Modal>
       </div>
 
       {renderPreview()}

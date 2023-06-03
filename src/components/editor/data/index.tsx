@@ -36,7 +36,7 @@ function Data() {
   const [selectedToDelete, setSelectedToDelete] = useState('')
   const [preview, setPreview] = useState({} as DataFile)
 
-  const { fileNameStore, setFileNameStore } = useContext(EditorContext);
+  const { fileNameStore, setFileNameStore } = useContext(EditorContext)
 
   const items: MenuProps['items'] = [
     {
@@ -99,10 +99,11 @@ function Data() {
         />
       case 'download':
         return <Download />
-      case 'preview':
-        return <DataPreview 
-          preview={preview}
-        />
+      // case 'preview':
+      //   return <DataPreview 
+      //     selectedData={preview}
+      //     setPreview={setPreview}
+      //   />
     }
   }
 
