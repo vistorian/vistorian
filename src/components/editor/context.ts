@@ -1,9 +1,11 @@
 import { createContext } from 'react'
-import { EditorCtx, DataFile } from '../../../typings'
+import { EditorCtx, DataFile, Session } from '../../../typings'
 
 export let EditorContext = createContext<EditorCtx>({
   fileNameStore: [] as DataFile[],
   setFileNameStore: () => {},
   networkStore: [] as string[],
   setNetworkStore: () => {},
+  sessionStore: [] as Session[],
+  setSessionStore: () => {}
 })   

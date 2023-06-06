@@ -59,8 +59,8 @@ function NetExtraNodeConfig(props: IStepProps) {
       >
         <Radio.Group>
           <MySpace direction="vertical">
-            <Radio value={true}>Yes, I have a file recording the type for each node.</Radio>
-            <Radio value={false}>No, I do not have a file recording the type for each node.</Radio>
+            <Radio value={true}><b>Yes</b>, I have a file recording the type for each node.</Radio>
+            <Radio value={false}><b>No</b>, I do not have a file recording the type for each node.</Radio>
           </MySpace>
         </Radio.Group>
       </Form.Item>

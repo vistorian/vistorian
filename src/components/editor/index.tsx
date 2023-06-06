@@ -3,16 +3,17 @@ import { useState, useMemo } from 'react'
 import { Divider, Button, Modal, Tooltip } from 'antd'
 import { DeleteFilled } from '@ant-design/icons'
 import Data from './data'
-import Network from './network'
+import Network from './network/index'
 import VisEditor from './vis'
 import { EditorContext } from './context'
-import { DataFile, Template, OperationType } from '../../../typings'
+import { DataFile, Template, OperationType, Session } from '../../../typings'
 import templates from '../templates/templates'
 import Sessions from './sessions'
 import { find } from 'lodash-es'
 import Record from './record'
 import DataPreview from './data/dataPreview'
 import { handleCopy, handleDelete, handleRename } from './utils'
+import NetworkPreview from './network/networkPreview'
 
 const useStyles = createUseStyles({
   root: {
@@ -82,8 +83,10 @@ const useStyles = createUseStyles({
 function Editor() {
   const classes = useStyles()
   const [main, setMain] = useState('sessions')
-  const [selectedNetwork, setSelectedNetwork] = useState('')
+  // for data/network preview
   const [preview, setPreview] = useState<string>('')
+  // select a network for visualizing
+  const [selectedNetwork, setSelectedNetwork] = useState<string>('')
 
   const loadedFiles = Object.keys(window.localStorage)
     .filter(k => k.startsWith("UPLOADED_FILE_"))
@@ -97,11 +100,22 @@ function Editor() {
     .filter(k => k.startsWith("NETWORK_DEFINITION_"))
     .map(n => n.slice(19))
 
+  const loadedSessions = Object.keys(window.localStorage)
+    .filter(k => k.startsWith("SAVED_SESSION_"))
+    .map((n) => {
+      const sessionStr = window.localStorage.getItem(n)
+      if (sessionStr) {
+        return JSON.parse(sessionStr)
+      }
+      return null
+    })
+
   const [fileNameStore, setFileNameStore] = useState(loadedFiles)
   const [networkStore, setNetworkStore] = useState(loadedNetworks)
+  const [sessionStore, setSessionStore] = useState(loadedSessions)
   const editorContext = useMemo(
-    () => ({ fileNameStore, setFileNameStore, networkStore, setNetworkStore }),
-    [fileNameStore, networkStore]
+    () => ({ fileNameStore, setFileNameStore, networkStore, setNetworkStore, sessionStore, setSessionStore }),
+    [fileNameStore, networkStore, sessionStore]
   )
 
   // clear data or network
@@ -189,13 +203,24 @@ function Editor() {
           setMain={setMain}
         />
       case 'network':
-        return <Network moveToVis={setMain} setSelectedNetwork={setSelectedNetwork}/>
+        return <Network 
+          moveToVis={setMain} 
+          setSelectedNetwork={setSelectedNetwork}
+        />
       case 'networkPreview': 
-        return <div>Network Preview {preview}</div>
-      // case 'vis':
-      //   return <VisEditor name={selectedNetwork}/>
+        return <NetworkPreview
+          selectedNetwork={preview}
+          setPreview={setPreview}
+          setMain={setMain}
+          setSelectedNetwork={setSelectedNetwork}
+        />
+      case 'visEditor':
+        return <VisEditor 
+          name={selectedNetwork}
+        />
       case 'sessions':
-        return <Sessions />
+        return <Sessions
+        />
       case 'blank':
         return <div></div>
     }
@@ -244,17 +269,18 @@ function Editor() {
                 />
               </Tooltip>
             </div>
-            {networkStore.map((network: string) => 
-              <Record 
+            {networkStore.map((network: string) => {
+              const selectedPreview = main === 'visEditor' ? `networkPreview-${selectedNetwork}` : `${main}-${preview}`
+              return (<Record 
                 key={network}
                 data={network}
                 type="network"
                 handleSelectToDelete={handleSelectToDelete}
                 showPreview={showPreview}
-                selectedPreview={`${main}-${preview}`}
+                selectedPreview={selectedPreview}
                 toCopy={toCopy}
                 toRename={toRename}
-              />
+              />)}
             )}
             
           </div> 

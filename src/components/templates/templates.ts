@@ -9,7 +9,7 @@ const templates: Template[] = [
   },
   { 
     key: "matrix", 
-    label: "Adjacency Matrix", 
+    label: "Adjacency matrix", 
     image: "matrix.png", 
     template: "matrix.json" 
   },

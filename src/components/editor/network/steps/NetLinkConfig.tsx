@@ -1,14 +1,15 @@
 import { createUseStyles } from 'react-jss'
-import { useState, useContext } from 'react';
-import { Button, Form, Row, Col, Select, Space, Typography, Radio, Tooltip } from 'antd';
+import { useState, useContext, useEffect } from 'react';
+import { Button, Form, Row, Col, Select, Space, Typography, Radio, Tooltip, message } from 'antd';
 import { InfoCircleOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
-import { IStepProps, SelectOptionType } from '../../../../../typings';
+import { DataFile, IStepProps, SelectOptionType } from '../../../../../typings';
 import styled from '@emotion/styled';
 
 import { EditorContext } from '../../context'
 import TimeFormat from './timeFormat';
 import FileSelector from './fileSelector';
 import TablePreview from './tablePreview';
+import csvtojson from 'csvtojson';
 
 const { Title, Text } = Typography;
 

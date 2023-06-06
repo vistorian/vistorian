@@ -17,13 +17,13 @@ const useStyles = createUseStyles({
   },
 })
 
-interface IDataPreview {
+interface IDataPreviewProps {
   selectedData: DataFile
   setPreview: (data: string) => void
   setMain: (data: string) => void
 }
 
-function DataPreview(props: IDataPreview) {
+function DataPreview(props: IDataPreviewProps) {
   const classes = useStyles()
   const { selectedData, setPreview, setMain } = props
   const { fileNameStore, setFileNameStore } = useContext(EditorContext)

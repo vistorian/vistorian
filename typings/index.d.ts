@@ -3,18 +3,21 @@ type DataFile = {
   hasHeader: boolean,
 }
 
+type Session = {
+  id: number,
+  network: string,
+  vis: string
+}
+
 type EditorCtx = {
   fileNameStore: DataFile[]
   setFileNameStore: (fileNameStore: DataFile[]) => void;
   networkStore: string[]
-  setNetworkStore: (fileNameStore: string[]) => void;
+  setNetworkStore: (networkStore: string[]) => void;
+  sessionStore: Session[]
+  setSessionStore: (sessionStore: Session[]) => void
 }
 
-type Session = {
-  name: string,
-  network: string,
-  vis: string
-}
 
 // Vis template
 type Template = {
@@ -57,7 +60,8 @@ interface LinkType {
 
 interface LinkTableConfig {
   directed: boolean
-  file: any
+  file: string
+  dragger?: any
   hasHeaderRow: boolean
   sourceNodeLabel: string
   targetNodeLabel: string
@@ -74,7 +78,7 @@ interface LinkTableConfig {
 
 interface LocationTableConfig {
   hasLocationFile: boolean
-  file?: any
+  file?: string
   hasHeaderRow?: boolean
   place?: string
   lat?: string
@@ -83,7 +87,7 @@ interface LocationTableConfig {
 
 interface ExtraNodeConfig {
   hasExtraNode: boolean
-  file?: any
+  file?: string
   hasHeaderRow?: boolean
   nodeID?: string
   nodeType?: string
@@ -95,7 +99,7 @@ interface RelationType {
 }
 
 interface NodeTableConfig {
-  file: any
+  file: string
   node: string,
   relations: RelationType[]
 }

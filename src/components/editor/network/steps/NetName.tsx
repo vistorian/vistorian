@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react';
-import { Typography, Form, Input, ButtonProps, Row, Col } from 'antd'; 
+import { Typography, Form, Input, ButtonProps, Row, Col, message } from 'antd'; 
 import { RightOutlined } from '@ant-design/icons'
-import { StepData, IStepProps } from '../../../../../typings'
+import { StepData, IStepProps, NetworkName } from '../../../../../typings'
 import { EditorContext } from '../../context';
 
 const { Title} = Typography;
@@ -18,7 +18,13 @@ function NetName(props: IStepProps) {
   }, []);
 
   const onFinish = (values: StepData) => {
-    onSuccess(values, 'name');
+    // @ts-ignore
+    if (networkStore.indexOf(values.name) > -1) {
+      message.error('The new network name has existed!')
+    }
+    else {
+      onSuccess(values, 'name')
+    }
   };
 
   return (
@@ -33,7 +39,7 @@ function NetName(props: IStepProps) {
       <Form.Item
         label={<Title level={3}>Enter a name for your network:</Title>}
         name="name"
-        rules={[{ required: true, message: 'Enter a name for your network.' }]}
+        rules={[{ required: true, message: 'The network must have a name!' }]}
       >
         <Input />
       </Form.Item>
