@@ -3,13 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://shuxinhuan.github.io/vistorian2.0",
+  "homepage": "https://vistorian.github.io/vistorian",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "deploy": "yarn run build && git clone git@github.com:shuxinhuan/vistorian2.0_dev.git && rm -rf vistorian2.0_dev/* && cp -r dist/* vistorian2.0_dev/ && cd vistorian2.0_dev && git add . && git commit -m 'deploy' && git push && cd .. && rm -rf vistorian2.0_dev"
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",

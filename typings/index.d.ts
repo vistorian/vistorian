@@ -9,7 +9,7 @@ type Session = {
   vis: string
 }
 
-type EditorCtx = {
+type WizardCtx = {
   fileNameStore: DataFile[]
   setFileNameStore: (fileNameStore: DataFile[]) => void;
   networkStore: string[]
@@ -118,7 +118,7 @@ interface SelectOptionType {
 
 export {
   DataFile,
-  EditorCtx,
+  WizardCtx,
   Session,
   OperationType,
   Template,

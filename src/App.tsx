@@ -7,7 +7,7 @@ import {
 } from "react-router-dom"
 
 import Landing from './components/landing'
-import Editor from './components/editor'
+import Wizard from './components/wizard'
 import Vis from './components/vis'
 
 // let router = createBrowserRouter([
@@ -15,8 +15,8 @@ import Vis from './components/vis'
 //     path: "/",
 //     element: <Landing />,
 //   },{
-//     path: "/editor",
-//     element: <Editor />
+//     path: "/wizard",
+//     element: <Wizard />
 //   }, {
 //     path: "/vis/:visType/network/:network",
 //     element: <Vis />,
@@ -31,7 +31,7 @@ function App() {
       <HashRouter>
         <Routes>
           <Route path="/" element={<Landing />}></Route>
-          <Route path="/editor" element={<Editor />}></Route>
+          <Route path="/wizard" element={<Wizard />}></Route>
           <Route path="/vis/:visType/network/:network" element={<Vis />}></Route>
         </Routes>
       </HashRouter>
