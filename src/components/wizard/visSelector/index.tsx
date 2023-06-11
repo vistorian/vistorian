@@ -33,12 +33,12 @@ const useStyles = createUseStyles({
 })
 
 interface IVisSelectorProps {
-  name: string
+  network: string
 }
 
 function VisSelector(props: IVisSelectorProps) {
   const classes = useStyles()
-  const { name } = props
+  const { network } = props
 
   const { sessionStore, setSessionStore } = useContext(WizardContext)
 
@@ -47,7 +47,7 @@ function VisSelector(props: IVisSelectorProps) {
     maxId = isFinite(maxId) ? maxId : 0
     const newSession = {
       id: maxId+1,
-      network: name,
+      network: network,
       vis: vis
     }
     window.localStorage.setItem("SAVED_SESSION_" + newSession.id, JSON.stringify(newSession))
@@ -58,12 +58,12 @@ function VisSelector(props: IVisSelectorProps) {
     <>
       <Title level={3}>Select a visualization and start exploring:</Title>
       <div id="vistiles" className={classes.visTiles}>
-        {name.length > 0 ? 
+        {network.length > 0 ? 
           templates.map((template: Template) => (
             <div className={classes.visTile} key={template.key}>
               <Link 
                 onClick={() => saveSession(template.key)}
-                to={`/vis/${template.key}/network/${name}`} 
+                to={`/vis/${template.key}/network/${network}`} 
                 target='_blank'
               >
                 <img 

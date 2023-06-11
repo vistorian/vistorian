@@ -8,13 +8,15 @@ import NetworkSelector from './networkSelector'
 const useStyles = createUseStyles({
 })
 
-interface ISessionProps {
+interface INewSessionProps {
   selectedNetwork: string
+  setSelectedNetwork: (data: string) => void
+  moveToNetwork: (main: string) => void
 }
 
-function NewSession(props: ISessionProps) {
+function NewSession(props: INewSessionProps) {
   const classes = useStyles()
-  const { selectedNetwork } = props
+  const { selectedNetwork, setSelectedNetwork, moveToNetwork } = props
 
   const [current, setCurrent] = useState(0)
   const stepItems = [{
@@ -41,10 +43,12 @@ function NewSession(props: ISessionProps) {
       case 0: 
         return <NetworkSelector 
           setCurrent={setCurrent} 
+          setSelectedNetwork={setSelectedNetwork}
+          moveToNetwork={moveToNetwork}
         />
       case 1: 
         return <VisSelector 
-          name={selectedNetwork} 
+          network={selectedNetwork} 
         />
       default:
         message.error('No such steps!')

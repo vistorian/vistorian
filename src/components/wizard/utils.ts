@@ -2,6 +2,8 @@ import { message } from "antd"
 import { DataFile, OperationType } from "../../../typings"
 import { findIndex, filter } from "lodash-es"
 
+// ========== FileNameStore or NetworkStore ============
+// delete data or network
 export const handleDelete = (type: OperationType, name: string, store: Array<string | DataFile>) => {
   let newStore = [...store]
   if (type === 'data') {

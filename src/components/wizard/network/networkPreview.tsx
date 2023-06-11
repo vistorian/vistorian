@@ -146,7 +146,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
           <p>Are you sure you want to delete {selectedNetwork} ?</p>
         </Modal>
       </div>
-      <pre>{JSON.stringify(JSON.parse(data as string), null, 2)}</pre>
+      {/* <pre>{JSON.stringify(JSON.parse(data as string), null, 2)}</pre> */}
       <NetworkNodeTable 
         network={data as string}
       />

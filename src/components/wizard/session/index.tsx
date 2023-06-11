@@ -1,10 +1,12 @@
 import { createUseStyles } from 'react-jss'
 import { Session } from '../../../../typings'
 import templates from '../../templates/templates'
-import { find } from 'lodash-es'
-import { useContext } from 'react'
+import { filter, find } from 'lodash-es'
+import { useContext, useState } from 'react'
 import { WizardContext } from '../context'
 import { Link } from 'react-router-dom'
+import { Button, Modal, message } from 'antd'
+import { DeleteFilled, CopyFilled } from '@ant-design/icons'
 
 const useStyles = createUseStyles({
   cards: {
@@ -12,98 +14,179 @@ const useStyles = createUseStyles({
     flexWrap: 'wrap'
   },
   card: {
-    margin: 20,
+    width: 275,
+    margin: 30,
     marginLeft: 0,
-    background: '#fff',
-    boxShadow: '0px 0px 20px 0px #0000000D',
-    borderRadius: 6,
-    width: 295,
-    height: 295,
-    '&:hover': {
+    display: 'flex',
+    '&:hover $content': {
       cursor: 'pointer',
       borderColor: 'transparent',
       boxShadow: '0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09)'
+    },
+    '&:hover $func': {
+      display: 'flex',
+      flexDirection: 'column',
     }
   },
-  cardExtra: {
-    margin: 20,
-    marginLeft: 0,
+  content: {
     background: '#fff',
     boxShadow: '0px 0px 20px 0px #0000000D',
     borderRadius: 6,
-    width: 295,
-    height: 295,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
+    width: 240,
+    height: 240,
   },
   thumbnail: {
-    height: 'calc(100% - 45px)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'
   },
   footer: {
-    height: 45,
+    height: 40,
     width: '100%',
     background: '#D9D9D9',
     borderRadius: '0px 0px 6px 6px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  func: {
+    display: 'none',
+  },
+  addSession: {
+    background: '#fff',
+    boxShadow: '0px 0px 20px 0px #0000000D',
+    borderRadius: 6,
+    width: 240,
+    height: 240,
+    margin: 30, 
+    marginLeft: 0, 
+    display: 'flex', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    fontSize: 18,
+    '&:hover': {
+      cursor: 'pointer',
+      borderColor: 'transparent',
+      boxShadow: '0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09)'
+    }
   }
 })
 
+interface ISessionsProps {
+  moveToNewSession: (type: string) => void
+}
 
-function Sessions() {
+function Sessions(props: ISessionsProps) {
   const classes = useStyles()
+  const { moveToNewSession } = props
 
   const {sessionStore, setSessionStore} = useContext(WizardContext)
+  const [open, setOpen] = useState(false)
+  const [deleteSession, setDeleteSession] = useState<string|number>('')
 
-  const clearSessionStore = () => {
-    sessionStore.map((s: Session) => window.localStorage.removeItem("SAVED_SESSION_" + s.id))
-    // window.localStorage.removeItem("SAVED_SESSION_" + '1')
-    setSessionStore([] as Session[])
+  const toDelete = (sessionId: string|number) => {
+    if (sessionId === 'all') {
+      sessionStore.map((s: Session) => window.localStorage.removeItem("SAVED_SESSION_" + s.id))
+      setSessionStore([] as Session[])
+      message.success('All visualizations have been successfully deleted!')
+    }
+    else {
+      window.localStorage.removeItem("SAVED_SESSION_" + sessionId)
+      const newStore = filter(sessionStore, (ss) => ss.id !== sessionId)
+      setSessionStore(newStore)
+      message.success('The selected visualization has been successfully deleted!')
+    }
+    setOpen(false)
+  }
+
+  const toCopy = (session: Session) => {
+    let maxId = Math.max(...sessionStore.map(s => s.id))
+    const newSession = {
+      id: maxId + 1,
+      network: session.network,
+      vis: session.vis
+    }
+    window.localStorage.setItem("SAVED_SESSION_" + newSession.id, JSON.stringify(newSession))
+    setSessionStore([...sessionStore, newSession])
+    message.success('The selected visualization has been successfully copied!')
   }
 
   return (
     <>
-    <h2>My Visualizations</h2>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <h2>My Visualizations</h2>
+      <Button
+        icon={<DeleteFilled />}
+        type='text'
+        shape='circle'
+        onClick={() => {
+          setOpen(true)
+          setDeleteSession('all')
+        }}
+      />
+    </div>
+    <Modal
+      title={`Delete visualization`}
+      open={open}
+      onCancel={() => setOpen(false)}
+      footer={[
+        <Button key="cancel" onClick={() => setOpen(false)}>
+          Cancel
+        </Button>,
+        <Button
+          key="ok"
+          type="primary"
+          onClick={() => toDelete(deleteSession)}
+        >
+          OK
+        </Button>
+      ]}
+    >
+        <p>Are you sure you want to delete {deleteSession==='all' ? 'all the visualizations' : 'the selected visualization'} ?</p>
+    </Modal>
     <div className={classes.cards}>
         {sessionStore.map((session: Session)=> {
         const img = find(templates, t=>t.key===session.vis)
         return (
-          <Link
-            to={`/vis/${session.vis}/network/${session.network}`}
-            target='_blank'
-            key={session.id}
-          >
-            <div 
-              className={classes.card}
-            >
-              <div className={classes.thumbnail}>
-                <img src={`./thumbnails/${img?.image}`} style={{height: 230}} />
+            <div className={classes.card} key={session.id}>
+              {/* content */}
+              <Link
+                to={`/vis/${session.vis}/network/${session.network}`}
+                target='_blank'
+              >
+                <div className={classes.content}>
+                  <div className={classes.thumbnail}>
+                    <img src={`./thumbnails/${img?.image}`} style={{ width: 200, height: 200 }} />
+                  </div>
+                  <div className={classes.footer}>
+                    {session.network}
+                  </div>
+                </div>  
+              </Link>      
+              {/* func */}
+              <div className={classes.func}>
+                <Button
+                  icon={<CopyFilled />}
+                  type='text'
+                  shape='circle'
+                  onClick={() => toCopy(session)}
+                />
+                <Button
+                  icon={<DeleteFilled />}
+                  type='text'
+                  shape='circle'
+                  onClick={() => {
+                    setOpen(true)
+                    setDeleteSession(session.id)
+                  }}
+                />
               </div>
-              <div className={classes.footer}>
-                {session.id}-{session.network}
-              </div>
-            </div>
-          </Link>
+            </div>    
         )
       })}
-        <div
-          className={classes.card}
-          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 18 }}
-        >
+        <div className={classes.addSession} onClick={() => moveToNewSession('newSession')}>
           + Add Session
         </div>
-        <div 
-          className={classes.card} 
-          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 18}}
-          onClick={clearSessionStore} // for test!!!!!
-        >
-        - Clear all sessions
-      </div>
     </div>
     </>
   )

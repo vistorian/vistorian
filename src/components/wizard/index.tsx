@@ -204,8 +204,8 @@ function Wizard() {
           setMain={setMain}
         />
       case 'network':
-        return <Network 
-          moveToVis={setMain} 
+        return <Network
+          moveToNewSession={setMain}
           setSelectedNetwork={setSelectedNetwork}
         />
       case 'networkPreview': 
@@ -217,13 +217,17 @@ function Wizard() {
         />
       case 'visSelector':
         return <VisSelector 
-          name={selectedNetwork}
+          network={selectedNetwork}
         />
       case 'sessions':
-        return <Sessions />
+        return <Sessions 
+          moveToNewSession={setMain}
+        />
       case 'newSession': 
-        return <NewSession 
-          selectedNetwork='marie_boucher'
+        return <NewSession
+          selectedNetwork={selectedNetwork}
+          setSelectedNetwork={setSelectedNetwork}
+          moveToNetwork={setMain}
         />
       case 'blank':
         return <div></div>
@@ -258,16 +262,6 @@ function Wizard() {
             >
               Create New Visualization
             </Button>
-            {/* <Button 
-              type='primary' 
-              style={{ marginBottom: 10, marginRight: 10 }}
-              onClick={() => { 
-                setMain('network') 
-                setPreview('')
-              }}
-            >
-              Create New Network
-            </Button> */}
           </div>
           
           {/* My networks */}
