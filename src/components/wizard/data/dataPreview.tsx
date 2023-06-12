@@ -187,13 +187,13 @@ function DataPreview(props: IDataPreviewProps) {
         </div>
         {/* func */}
         <div style={{ display: 'flex' }}>
-          <MyButton 
+          {/* <MyButton 
             icon={<EditFilled />}
             type='primary'
             disabled
           >
             Edit data
-          </MyButton>
+          </MyButton> */}
           <MyButton
             icon={<CopyFilled />}
             type='primary'

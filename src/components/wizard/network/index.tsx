@@ -22,11 +22,12 @@ const useStyles = createUseStyles({
 interface INetworkProps {
   moveToNewSession: (type: string) => void
   setSelectedNetwork: (name: string) => void
+  setNetSource: (type: boolean|undefined) => void
 }
 
 function Network(props: INetworkProps) {
   const classes = useStyles()
-  const { moveToNewSession, setSelectedNetwork } = props
+  const { moveToNewSession, setSelectedNetwork, setNetSource } = props
   const [currentStep, setCurrentStep] = useState<StepType>('name')
   const { networkStore, setNetworkStore, fileNameStore, setFileNameStore } = useContext(WizardContext)
 
@@ -119,11 +120,13 @@ function Network(props: INetworkProps) {
     const idx = newSteps.indexOf(step)
     // condition: at the end of the network configuration
     if (idx === newSteps.length-1){
-      // update networkStore, move to visSelector
+      // update networkStore
       window.localStorage.setItem("NETWORK_DEFINITION_" + newData.name?.name, JSON.stringify(newData))
       setNetworkStore([...networkStore, newData.name?.name as string])
+      // select the configured network by default, and move to visSelector
       setSelectedNetwork(newData.name?.name as string)
       moveToNewSession('newSession')
+      setNetSource(false)
     }
     else // condition: move to next step
       setCurrentStep(newSteps[idx+1])

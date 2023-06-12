@@ -1,12 +1,12 @@
 import { createUseStyles } from 'react-jss'
 import { useState, useMemo } from 'react'
 import { Divider, Button, Modal, Tooltip } from 'antd'
-import { DeleteFilled } from '@ant-design/icons'
+import { DeleteFilled, FileAddFilled } from '@ant-design/icons'
 import Data from './data'
 import Network from './network/index'
 import VisSelector from './visSelector'
 import { WizardContext } from './context'
-import { DataFile, Template, OperationType, Session } from '../../../typings'
+import { DataFile, Template, OperationType } from '../../../typings'
 import templates from '../templates/templates'
 import Sessions from './session'
 import { find } from 'lodash-es'
@@ -45,7 +45,8 @@ const useStyles = createUseStyles({
   tabHeader: {
     display: "flex",
     justifyContent: "space-between",
-    MarginBottom: 5,
+    alignItems: 'center',
+    marginBottom: 5,
     lineHeight: "2.5em",
   },
   tabTitle: {
@@ -83,12 +84,19 @@ const useStyles = createUseStyles({
 
 function Wizard() {
   const classes = useStyles()
+  // define which component is rendered in the right panel
   const [main, setMain] = useState('sessions')
   // for data/network preview
   const [preview, setPreview] = useState<string>('')
   // select a network for visualizing
   const [selectedNetwork, setSelectedNetwork] = useState<string>('')
+  // when creating a new session, decide on network source
+  // true for select an existing one, false for upload a new one
+  const [netSource, setNetSource] = useState<boolean|undefined>()
 
+  const [triggerReMount, setTriggerReMount] = useState<number>(123)
+
+  // handle the initialization using local storage
   const loadedFiles = Object.keys(window.localStorage)
     .filter(k => k.startsWith("UPLOADED_FILE_"))
     .map((n) => {
@@ -181,6 +189,7 @@ function Wizard() {
     return result.status
   }
 
+  // show data or network preview
   const showPreview = (type: OperationType, name: string) => {
     if (type === 'data') {
       setMain('dataPreview')
@@ -192,6 +201,7 @@ function Wizard() {
     }
   }
 
+  // render main component
   const renderComp = (content: string) => {
     switch (content) {
       // case 'data': 
@@ -203,10 +213,11 @@ function Wizard() {
           setPreview={setPreview}
           setMain={setMain}
         />
-      case 'network':
+      case 'network': // config network
         return <Network
           moveToNewSession={setMain}
           setSelectedNetwork={setSelectedNetwork}
+          setNetSource={setNetSource}
         />
       case 'networkPreview': 
         return <NetworkPreview
@@ -225,12 +236,14 @@ function Wizard() {
         />
       case 'newSession': 
         return <NewSession
+          key={triggerReMount}
           selectedNetwork={selectedNetwork}
           setSelectedNetwork={setSelectedNetwork}
           moveToNetwork={setMain}
+          netSource={netSource}
         />
-      case 'blank':
-        return <div></div>
+      default:
+        return <div>Error</div>
     }
   }
 
@@ -247,7 +260,10 @@ function Wizard() {
               style={{ marginBottom: 10, marginRight: 10 }}
               onClick={()=>{
                 setMain('sessions')
+                // initialize
                 setPreview('')
+                setSelectedNetwork('')
+                setNetSource(undefined)
               }}
             >
               My Visualizations
@@ -256,8 +272,12 @@ function Wizard() {
               type='primary'
               style={{ marginBottom: 10, marginRight: 10 }}
               onClick={() => {
+                setTriggerReMount(Math.random())
                 setMain('newSession')
+                // initialize
                 setPreview('')
+                setSelectedNetwork('')
+                setNetSource(undefined)
               }}
             >
               Create New Visualization
@@ -276,6 +296,7 @@ function Wizard() {
                   onClick={() => handleSelectToDelete('network', 'all')}
                 />
               </Tooltip>
+              
             </div>
             {networkStore.map((network: string) => {
               const selectedPreview = main === 'visSelector' ? `networkPreview-${selectedNetwork}` : `${main}-${preview}`

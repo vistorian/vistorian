@@ -22,6 +22,10 @@ body {
   min-height: 100vh;
 }
 
+::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

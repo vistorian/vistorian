@@ -1,5 +1,5 @@
 import { message } from "antd"
-import { DataFile, OperationType } from "../../../typings"
+import { DataFile, OperationType, Session } from "../../../typings"
 import { findIndex, filter } from "lodash-es"
 
 // ========== FileNameStore or NetworkStore ============
@@ -135,3 +135,11 @@ export const handleRename = (type: OperationType, oldName: string, newName: stri
     newStore: newStore
   }
 }
+
+// ====== handle session updates when network or data updates (i.e., rename, delte) ===============
+// name: network/data name
+// export const updateSessionIfDelete = (type: OperationType, name: string, sessionStore: Array<Session>) => {
+//   if (type === 'network') {
+//     sessionStore.filter(session=> session.network === name)
+//   }
+// }

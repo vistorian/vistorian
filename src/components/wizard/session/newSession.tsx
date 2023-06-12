@@ -12,13 +12,16 @@ interface INewSessionProps {
   selectedNetwork: string
   setSelectedNetwork: (data: string) => void
   moveToNetwork: (main: string) => void
+  netSource: boolean|undefined
 }
 
 function NewSession(props: INewSessionProps) {
   const classes = useStyles()
-  const { selectedNetwork, setSelectedNetwork, moveToNetwork } = props
+  const { selectedNetwork, setSelectedNetwork, moveToNetwork, netSource } = props
 
-  const [current, setCurrent] = useState(0)
+  // handle new session steps: 0 for network selector, 1 for vis selctor
+  const [step, setStep] = useState(0)
+
   const stepItems = [{
     key: 0,
     title: 'Choose a network', 
@@ -42,9 +45,11 @@ function NewSession(props: INewSessionProps) {
     switch (step) {
       case 0: 
         return <NetworkSelector 
-          setCurrent={setCurrent} 
+          setStep={setStep} 
+          selectedNetwork={selectedNetwork}
           setSelectedNetwork={setSelectedNetwork}
           moveToNetwork={moveToNetwork}
+          isFromNetworkCfg={netSource}
         />
       case 1: 
         return <VisSelector 
@@ -61,13 +66,13 @@ function NewSession(props: INewSessionProps) {
         <h2>Create New Visualization:</h2>
         <Steps
           style={{ maxWidth: 800}}
-          current={current}
+          current={step}
           items={stepItems}
         />
       </div>
 
       <Content>
-        { renderComp(current) }
+        { renderComp(step) }
       </Content>
       
     </>

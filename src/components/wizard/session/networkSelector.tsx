@@ -1,9 +1,11 @@
-import { Button, Col, Row, Typography, Radio, Space, Select, RadioChangeEvent, Modal, Spin } from 'antd'
+import { Button, Col, Row, Typography, Radio, Space, Select, RadioChangeEvent, Modal, Spin, message } from 'antd'
 import { RightOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { createUseStyles } from 'react-jss'
 import styled from '@emotion/styled'
-import { useContext, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { WizardContext } from '../context'
+import NetworkNodeTable from '../network/preview/networkNodeTable'
+import NetworkLinkTable from '../network/preview/networkLinkTable'
 
 const useStyles = createUseStyles({
 })
@@ -11,19 +13,21 @@ const useStyles = createUseStyles({
 const { Title, Text } = Typography
 
 interface INetworkSelectorProps {
-  setCurrent: (step: number) => void // update the session creator steps
+  setStep: (step: number) => void // update the session creator steps
+  selectedNetwork: string 
   setSelectedNetwork: (name: string) => void
   moveToNetwork: (main: string) => void
+  isFromNetworkCfg: boolean|undefined
 }
 
 function NetworkSelector(props: INetworkSelectorProps) {
   const classes = useStyles()
-  const { setCurrent, setSelectedNetwork, moveToNetwork } = props  
+  const { setStep, selectedNetwork, setSelectedNetwork, moveToNetwork, isFromNetworkCfg } = props  
   const { networkStore } = useContext(WizardContext)
 
   // true for select an existing one, false for upload a new one
-  const [netSource, setNetSource] = useState<boolean>() 
-  // selected network for preview
+  const [netSource, setNetSource] = useState<boolean | undefined>(typeof(isFromNetworkCfg) === 'undefined' ? undefined: isFromNetworkCfg) 
+  // selected network name for preview
   const [network, setNetwork] = useState<string>()
   // when users select to upload a new vis, spin 3 seconds to maintain mental modal
   const [loading, setLoading] = useState<boolean>(false)
@@ -31,10 +35,13 @@ function NetworkSelector(props: INetworkSelectorProps) {
   const handleNext = () => {
     // TODO: examine if network has been selected
     if (network && network.length > 0) {
-      setCurrent(1)
-      setSelectedNetwork(network)
+      setStep(1)
+      if (network !== selectedNetwork)
+        setSelectedNetwork(network)
     }
-    
+    else {
+      message.error('Please first select a network!')
+    }
   }
 
   const getNetworkList = () => {
@@ -48,13 +55,17 @@ function NetworkSelector(props: INetworkSelectorProps) {
 
   const onTypeChange = (e: RadioChangeEvent) => {
     setNetSource(e.target.value)
-    if (e.target.value) { // select an existing network
-    }
-    else { // upload a new visualization
+    if (!e.target.value) { // upload a new visualization
       setLoading(true)
-      setTimeout(()=>moveToNetwork('network'), 2000) 
+      setTimeout(() => moveToNetwork('network'), 2000) 
     }
   }
+
+  // if back from network config, update 
+  useEffect(()=>{
+    if (selectedNetwork.length > 0)
+      setNetwork(selectedNetwork)
+  }, [netSource])
   
 
 
@@ -64,7 +75,7 @@ function NetworkSelector(props: INetworkSelectorProps) {
         <Title level={3}>Choose a network to visualize: </Title>
 
         <MySpace direction='vertical'>
-          <Radio.Group onChange={onTypeChange}>
+          <Radio.Group onChange={onTypeChange} defaultValue={netSource}>
             <MySpace direction='vertical'>
               <Radio value={'true'}>
                 <Text style={{ fontSize: 18, paddingTop: 4, marginRight: 10 }}>
@@ -90,7 +101,11 @@ function NetworkSelector(props: INetworkSelectorProps) {
           </Radio.Group>
         </MySpace>
 
-        {network && network.length > 0 ? (<></>): null}
+        {network && network.length > 0 ? (<>
+          <Title level={2}>{network} </Title>
+          <NetworkNodeTable network={window.localStorage.getItem('NETWORK_DEFINITION_'+network) as string} />
+          <NetworkLinkTable network={window.localStorage.getItem('NETWORK_DEFINITION_' + network) as string} />
+        </>): null}
 
         <Row>
           <Col span={8} offset={16} style={{ display: "flex", flexDirection: "row-reverse" }}>
