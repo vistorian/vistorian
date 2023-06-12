@@ -90,6 +90,8 @@ function NetworkSelector(props: INetworkSelectorProps) {
           </Radio.Group>
         </MySpace>
 
+        {network && network.length > 0 ? (<></>): null}
+
         <Row>
           <Col span={8} offset={16} style={{ display: "flex", flexDirection: "row-reverse" }}>
             <MyButton type="primary" onClick={() => handleNext()}>

@@ -147,6 +147,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
         </Modal>
       </div>
       {/* <pre>{JSON.stringify(JSON.parse(data as string), null, 2)}</pre> */}
+      {/* data: network configruation */}
       <NetworkNodeTable 
         network={data as string}
       />
