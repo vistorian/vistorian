@@ -4,7 +4,7 @@ import { MenuProps } from 'antd'
 import { Menu, Button, Modal, message } from 'antd'
 import { PlusOutlined, DeleteFilled } from '@ant-design/icons'
 import { filter } from 'lodash-es'
-
+import { HANDLEALL } from '../../../../typings/constant'
 import UploadFiles from './upload'
 import Paste from './paste'
 import Download from './download'
@@ -63,12 +63,12 @@ function Data() {
 
   const clearData = (name: string) => {
     // console.log('clearData:', name, fileNameStore)
-    if (name !== 'all' && findIndex(fileNameStore, (fn: DataFile) => fn.name === name) !== -1) {
+    if (name !== HANDLEALL && findIndex(fileNameStore, (fn: DataFile) => fn.name === name) !== -1) {
       window.localStorage.removeItem("UPLOADED_FILE_" + name)
       setFileNameStore(filter(fileNameStore, (fn) => fn.name !== name))
       setOpen(false)
     }
-    else if (name === 'all') {
+    else if (name === HANDLEALL) {
       fileNameStore.map((fn: DataFile) => window.localStorage.removeItem("UPLOADED_FILE_" + fn.name))
       setFileNameStore([] as DataFile[])
       setClearAllOpen(false)
@@ -133,7 +133,7 @@ function Data() {
               <Button key="cancel" onClick={() => setClearAllOpen(false)}>
                 Cancel
               </Button>,
-              <Button key="ok" type="primary" onClick={() => clearData('all')}>
+              <Button key="ok" type="primary" onClick={() => clearData(HANDLEALL)}>
                 OK
               </Button>,
             ]}

@@ -1,5 +1,6 @@
 import { message } from "antd"
 import { DataFile, OperationType, Session } from "../../../typings"
+import { HANDLEALL } from '../../../typings/constant' 
 import { findIndex, filter } from "lodash-es"
 
 // ========== FileNameStore or NetworkStore ============
@@ -8,12 +9,12 @@ export const handleDelete = (type: OperationType, name: string, store: Array<str
   let newStore = [...store]
   if (type === 'data') {
     let fileNameStore = store as DataFile[]
-    if (name !== 'all' && findIndex(fileNameStore, (fn: DataFile) => fn.name === name) !== -1) {
+    if (name !== HANDLEALL && findIndex(fileNameStore, (fn: DataFile) => fn.name === name) !== -1) {
       window.localStorage.removeItem("UPLOADED_FILE_" + name)
       newStore = filter(fileNameStore, (fn) => fn.name !== name)
       message.success('The selected data has been successfully deleted!')
     }
-    else if (name === 'all') {
+    else if (name === HANDLEALL) {
       fileNameStore.map((fn: DataFile) => window.localStorage.removeItem("UPLOADED_FILE_" + fn.name))
       newStore = [] as DataFile[]
       message.success('All data have been successfully deleted!')
@@ -21,12 +22,12 @@ export const handleDelete = (type: OperationType, name: string, store: Array<str
   }
   else if (type === 'network') {
     let networkStore = store as string[]
-    if (name !== 'all' && networkStore.indexOf(name) !== -1) {
+    if (name !== HANDLEALL && networkStore.indexOf(name) !== -1) {
       window.localStorage.removeItem("NETWORK_DEFINITION_" + name)
       newStore = networkStore.filter((ns) => ns !== name)
       message.success('The selected network has been successfully deleted!')
     }
-    else if (name === 'all') {
+    else if (name === HANDLEALL) {
       networkStore.map(ns => window.localStorage.removeItem("NETWORK_DEFINITION_" + ns))
       newStore = [] as string[]
       message.success('All networks have been successfully deleted!')
@@ -113,7 +114,7 @@ export const handleRename = (type: OperationType, oldName: string, newName: stri
       message.error("The new network name has existed!")
       status = false
     }
-    else {
+    else { 
       const idx = networkStore.indexOf(oldName)
       const result = window.localStorage.getItem("NETWORK_DEFINITION_" + oldName)
       if (idx !== -1 && result) {
@@ -136,10 +137,56 @@ export const handleRename = (type: OperationType, oldName: string, newName: stri
   }
 }
 
-// ====== handle session updates when network or data updates (i.e., rename, delte) ===============
-// name: network/data name
-// export const updateSessionIfDelete = (type: OperationType, name: string, sessionStore: Array<Session>) => {
-//   if (type === 'network') {
-//     sessionStore.filter(session=> session.network === name)
-//   }
-// }
+// ====== update network when data updates (i.e., rename, delete) ========
+export const updateNetworkIfDeleteData = (name: string, networkStore: string[]) => {
+  let newStore: string[] = [...networkStore]
+  if (name === HANDLEALL) {
+    networkStore.forEach(network => window.localStorage.removeItem("NETWORK_DEFINITION_" + network))
+    newStore = []
+  }
+  else { // delete selected networks
+    newStore = networkStore.filter(network => {
+      const data = JSON.parse(window.localStorage.getItem("NETWORK_DEFINITION_"+network) as string)
+      // if (network === ) {
+      //   window.localStorage.removeItem("SAVED_SESSION_" + ss.id)
+      //   return false
+      // }
+    })
+  }
+  return newStore
+}
+
+export const updateNetworkIfRenameData = (oldName: string, newName: string, networkStore: string[]) => {
+
+}
+
+// ====== update session when network updates (i.e., rename, delete) ===============
+// name: network name
+export const updateSessionIfDeleteNet = (name: string, sessionStore: Session[]) => {
+  let newStore: Session[] = [...sessionStore]
+   // delete all networks, therefore deleting all sessions
+  if (name === HANDLEALL) {
+    sessionStore.forEach(ss => window.localStorage.removeItem("SAVED_SESSION_"+ss.id))
+    newStore = []
+  }
+  else { // delete selected networks
+    newStore = sessionStore.filter(ss => {
+      if (ss.network === name) {
+        window.localStorage.removeItem("SAVED_SESSION_" + ss.id)
+        return false
+      }
+    })
+  }
+  return newStore
+}
+
+export const updateSessionIfRenameNet = (oldName: string, newName: string, sessionStore: Session[]) => {
+  let newStore: Session[] = [...sessionStore]
+  sessionStore.forEach((ss, index)=>{
+    if (ss.network === oldName) {
+      newStore[index].network = newName //update newtork name
+      window.localStorage.setItem("SAVED_SESSION_"+ss.id, JSON.stringify(newStore[index]))
+    }
+  })
+  return newStore
+}

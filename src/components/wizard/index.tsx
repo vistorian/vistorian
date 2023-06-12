@@ -7,12 +7,13 @@ import Network from './network/index'
 import VisSelector from './visSelector'
 import { WizardContext } from './context'
 import { DataFile, Template, OperationType } from '../../../typings'
+import { HANDLEALL } from '../../../typings/constant'
 import templates from '../templates/templates'
 import Sessions from './session'
 import { find } from 'lodash-es'
 import Record from './record'
 import DataPreview from './data/dataPreview'
-import { handleCopy, handleDelete, handleRename } from './utils'
+import { handleCopy, handleDelete, handleRename, updateSessionIfDeleteNet, updateSessionIfRenameNet } from './utils'
 import NetworkPreview from './network/networkPreview'
 import NewSession from './session/newSession'
 
@@ -143,6 +144,7 @@ function Wizard() {
     const newStore = handleDelete(clearType, selectedToDelete, store)
     if (clearType === 'network') {
       setNetworkStore(newStore as string[])
+      setSessionStore(updateSessionIfDeleteNet(selectedToDelete, sessionStore))
       if (main === 'networkPreview' && preview === selectedToDelete) {
         setPreview('')
         setMain('blank')
@@ -159,7 +161,7 @@ function Wizard() {
   }
 
   const toCopy = (type: OperationType, name: string) => {
-    const store = clearType === 'network' ? networkStore : fileNameStore
+    const store = type === 'network' ? networkStore : fileNameStore
     const newStore = handleCopy(type, name, store)
     if (type === 'network')
       setNetworkStore(newStore as string[])
@@ -168,11 +170,12 @@ function Wizard() {
   }
 
   const toRename = (type: OperationType, oldName: string, newName: string) => {
-    const store = clearType === 'network' ? networkStore : fileNameStore
+    const store = type === 'network' ? networkStore : fileNameStore
     const result = handleRename(type, oldName, newName, store)
     if (type === 'network') {
       if (result.status) {
         setNetworkStore(result.newStore as string[])
+        setSessionStore(updateSessionIfRenameNet(oldName, newName, sessionStore))
         if (main === 'networkPreview' && preview === oldName) {
           setPreview(newName)
         }
@@ -293,7 +296,7 @@ function Wizard() {
                   icon={<DeleteFilled />}
                   type='text'
                   shape='circle'
-                  onClick={() => handleSelectToDelete('network', 'all')}
+                  onClick={() => handleSelectToDelete('network', HANDLEALL)}
                 />
               </Tooltip>
               
@@ -327,7 +330,7 @@ function Wizard() {
                   onClick={() => {
                     setOpen(true)
                     setClearType('data')
-                    setSelectedToDelete('all')
+                    setSelectedToDelete(HANDLEALL)
                   }}
                 />
               </Tooltip>
@@ -365,7 +368,7 @@ function Wizard() {
               </Button>
             ]}
           >
-            <p>Are you sure you want to delete {selectedToDelete === 'all' ? `all the ${clearType}`: selectedToDelete} ?</p>
+            <p>Are you sure you want to delete {selectedToDelete === HANDLEALL ? `all the ${clearType}`: selectedToDelete} ?</p>
           </Modal>
 
           {/* visualization types */}

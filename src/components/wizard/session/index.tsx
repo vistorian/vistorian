@@ -1,5 +1,6 @@
 import { createUseStyles } from 'react-jss'
 import { Session } from '../../../../typings'
+import { HANDLEALL } from '../../../../typings/constant'
 import templates from '../../templates/templates'
 import { filter, find } from 'lodash-es'
 import { useContext, useState } from 'react'
@@ -85,7 +86,7 @@ function Sessions(props: ISessionsProps) {
   const [deleteSession, setDeleteSession] = useState<string|number>('')
 
   const toDelete = (sessionId: string|number) => {
-    if (sessionId === 'all') {
+    if (sessionId === HANDLEALL) {
       sessionStore.map((s: Session) => window.localStorage.removeItem("SAVED_SESSION_" + s.id))
       setSessionStore([] as Session[])
       message.success('All visualizations have been successfully deleted!')
@@ -121,7 +122,7 @@ function Sessions(props: ISessionsProps) {
         shape='circle'
         onClick={() => {
           setOpen(true)
-          setDeleteSession('all')
+          setDeleteSession(HANDLEALL)
         }}
       />
     </div>
@@ -142,7 +143,7 @@ function Sessions(props: ISessionsProps) {
         </Button>
       ]}
     >
-        <p>Are you sure you want to delete {deleteSession==='all' ? 'all the visualizations' : 'the selected visualization'} ?</p>
+        <p>Are you sure you want to delete {deleteSession===HANDLEALL ? 'all the visualizations' : 'the selected visualization'} ?</p>
     </Modal>
     <div className={classes.cards}>
         {sessionStore.map((session: Session)=> {

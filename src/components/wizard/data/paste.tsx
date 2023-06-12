@@ -26,7 +26,7 @@ function Paste(props: IPaste) {
   const checkIsJSON = (str: string) => {
     try {
       const obj = JSON.parse(str);
-      if (typeof obj == 'object' && obj) {
+      if (typeof obj === 'object' && obj) {
         return true;
       } else {
         return false;
