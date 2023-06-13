@@ -1,12 +1,14 @@
 import { createUseStyles } from 'react-jss'
 import { useContext, useState } from 'react';
-import { Button, Input, Modal } from 'antd';
+import { Button, Input, Modal, Typography } from 'antd';
 import { DeleteFilled, CopyFilled, EditFilled, CheckOutlined, CloseOutlined, NodeIndexOutlined } from '@ant-design/icons'
 import { WizardContext } from '../context';
 import styled from '@emotion/styled';
 import { handleCopy, handleDelete, handleRename } from '../utils';
 import NetworkNodeTable from './preview/networkNodeTable';
 import NetworkLinkTable from './preview/networkLinkTable';
+
+const { Title } = Typography
 
 const useStyles = createUseStyles({
 })
@@ -23,7 +25,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
   const { selectedNetwork, setPreview, setMain, setSelectedNetwork } = props
   const { networkStore, setNetworkStore } = useContext(WizardContext)
 
-  const data = window.localStorage.getItem("NETWORK_DEFINITION_" + selectedNetwork)
+  const data = window.localStorage.getItem("NETWORK_WIZARD_" + selectedNetwork)
 
   const [rename, setRename] = useState<boolean>(false)
   const [renameValue, setRenameValue] = useState<string>('')
@@ -114,7 +116,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
           >
             Delete
           </MyButton>
-          <MyButton
+          <MyButtonPrimary
             icon={<NodeIndexOutlined />}
             type='primary'
             onClick={() => {
@@ -123,7 +125,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
             }}
           >
             Visualize
-          </MyButton>
+          </MyButtonPrimary>
         </div>
         {/* modal for delete data/network */}
         <Modal
@@ -160,7 +162,12 @@ function NetworkPreview(props: INetworkPreviewProps) {
 }
 
 const MyButton = styled(Button)({
-  marginLeft: 10
+  marginLeft: 10,
+  background: '#979797',
+})
+const MyButtonPrimary = styled(Button)({
+  marginLeft: 10,
+  background: '#ED4040',
 })
 
 export default NetworkPreview

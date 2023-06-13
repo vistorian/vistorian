@@ -1,9 +1,11 @@
-import { Table, message } from 'antd'
+import { Table, Typography, message } from 'antd'
 import { useEffect, useState } from 'react'
 import csvtojson from 'csvtojson';
 import { NetworkConfig } from '../../../../../typings';
 import { ColumnsType } from 'antd/es/table';
 import { union } from 'lodash-es';
+
+const { Title } = Typography
 
 interface INetworkNodeTableProps {
   network: string
@@ -64,7 +66,7 @@ function NetworkNodeTable(props: INetworkNodeTableProps) {
 
   return (
     <>
-      <h3>Node Table</h3>
+      <Title level={4}>Link Table</Title>
       <Table
         columns={columnInTable}
         dataSource={dataInTable}

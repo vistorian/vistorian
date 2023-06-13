@@ -1,20 +1,15 @@
-import { createUseStyles } from 'react-jss'
 import { useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import templates from '../templates/templates'
 import { find } from 'lodash-es'
-
-const useStyles = createUseStyles({
-})
+import { NetworkConfig } from '../../../typings'
 
 function Vis() {
-  const classes = useStyles()
   const { visType, network } = useParams()
   const template = find(templates, (tp)=>tp.key === visType)
 
-  useEffect(()=>{
-    update()
-  })
+  const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
+  console.log('network:', networkCfg)
 
   const update = async () => {
     const containerId = "SVG";
@@ -26,7 +21,7 @@ function Vis() {
     }
     // TODO: need to update to the right spec
     const dataSpec = [{
-      "name": "marieboucher",
+      "name": "data",
       "url": './data/marieboucher.csv',
       "format": { "type": "csv" }
     }]
@@ -34,7 +29,7 @@ function Vis() {
       "name": "network",
       "parts": [
         {
-          "data": "marieboucher",
+          "data": "data",
           "yieldsLinks": [
             {
               "source_id": { "field": "Name1" },
@@ -72,6 +67,10 @@ function Vis() {
 
     //  return viewer;
   }
+
+  useEffect(() => {
+    update()
+  })
 
   return (
     <div className='vis'>

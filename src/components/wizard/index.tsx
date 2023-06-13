@@ -107,7 +107,7 @@ function Wizard() {
       } as DataFile
     })
   const loadedNetworks = Object.keys(window.localStorage)
-    .filter(k => k.startsWith("NETWORK_DEFINITION_"))
+    .filter(k => k.startsWith("NETWORK_WIZARD_"))
     .map(n => n.slice(19))
 
   const loadedSessions = Object.keys(window.localStorage)

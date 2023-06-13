@@ -121,7 +121,7 @@ function Network(props: INetworkProps) {
     // condition: at the end of the network configuration
     if (idx === newSteps.length-1){
       // update networkStore
-      window.localStorage.setItem("NETWORK_DEFINITION_" + newData.name?.name, JSON.stringify(newData))
+      window.localStorage.setItem("NETWORK_WIZARD_" + newData.name?.name, JSON.stringify(newData))
       setNetworkStore([...networkStore, newData.name?.name as string])
       // select the configured network by default, and move to visSelector
       setSelectedNetwork(newData.name?.name as string)

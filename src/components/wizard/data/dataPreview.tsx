@@ -1,6 +1,6 @@
 import { createUseStyles } from 'react-jss'
 import { useContext, useEffect, useState } from 'react';
-import { Table, Checkbox, message, Button, Tooltip, Input, Modal } from 'antd';
+import { Table, Checkbox, message, Button, Tooltip, Input, Modal, theme } from 'antd';
 import { DeleteFilled, CopyFilled, EditFilled, CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { DataFile } from '../../../../typings';
 import { WizardContext } from '../context';
@@ -78,8 +78,10 @@ function DataPreview(props: IDataPreviewProps) {
   // }
 
   const MyButton = styled(Button)({
-    marginLeft: 10
+    marginLeft: 10,
+    background: '#979797',
   })
+
 
   const convertCsvToJson = async (csvData: string): Promise<any[]> => {
     const jsonArray = await csvtojson().fromString(csvData)

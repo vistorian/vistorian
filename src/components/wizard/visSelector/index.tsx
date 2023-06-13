@@ -48,7 +48,8 @@ function VisSelector(props: IVisSelectorProps) {
     const newSession = {
       id: maxId+1,
       network: network,
-      vis: vis
+      vis: vis,
+      lastModified: new Date().toLocaleString()
     }
     window.localStorage.setItem("SAVED_SESSION_" + newSession.id, JSON.stringify(newSession))
     setSessionStore([...sessionStore, newSession])

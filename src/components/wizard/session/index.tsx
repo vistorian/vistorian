@@ -43,12 +43,13 @@ const useStyles = createUseStyles({
   },
   footer: {
     height: 40,
-    width: '100%',
+    width: 230,
+    paddingLeft: 10,
     background: '#D9D9D9',
     borderRadius: '0px 0px 6px 6px',
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
   },
   func: {
     display: 'none',
@@ -105,7 +106,8 @@ function Sessions(props: ISessionsProps) {
     const newSession = {
       id: maxId + 1,
       network: session.network,
-      vis: session.vis
+      vis: session.vis,
+      lastModified: new Date().toLocaleString()
     }
     window.localStorage.setItem("SAVED_SESSION_" + newSession.id, JSON.stringify(newSession))
     setSessionStore([...sessionStore, newSession])
@@ -154,13 +156,15 @@ function Sessions(props: ISessionsProps) {
               <Link
                 to={`/vis/${session.vis}/network/${session.network}`}
                 target='_blank'
+                style={{ textDecoration: 'none', color: 'black' }}
               >
                 <div className={classes.content}>
                   <div className={classes.thumbnail}>
                     <img src={`./thumbnails/${img?.image}`} style={{ width: 200, height: 200 }} />
                   </div>
                   <div className={classes.footer}>
-                    {session.network}
+                    <span>{session.network}</span>
+                    <span style={{ fontSize: 12 }}>Edited: {session.lastModified}</span>
                   </div>
                 </div>  
               </Link>      

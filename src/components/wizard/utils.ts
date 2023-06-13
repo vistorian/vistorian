@@ -23,12 +23,12 @@ export const handleDelete = (type: OperationType, name: string, store: Array<str
   else if (type === 'network') {
     let networkStore = store as string[]
     if (name !== HANDLEALL && networkStore.indexOf(name) !== -1) {
-      window.localStorage.removeItem("NETWORK_DEFINITION_" + name)
+      window.localStorage.removeItem("NETWORK_WIZARD_" + name)
       newStore = networkStore.filter((ns) => ns !== name)
       message.success('The selected network has been successfully deleted!')
     }
     else if (name === HANDLEALL) {
-      networkStore.map(ns => window.localStorage.removeItem("NETWORK_DEFINITION_" + ns))
+      networkStore.map(ns => window.localStorage.removeItem("NETWORK_WIZARD_" + ns))
       newStore = [] as string[]
       message.success('All networks have been successfully deleted!')
     }
@@ -58,10 +58,10 @@ export const handleCopy = (type: OperationType, name: string, store: Array<strin
   }
   else if (type === 'network') {
     let networkStore = store as string[]
-    const data = window.localStorage.getItem("NETWORK_DEFINITION_" + name)
+    const data = window.localStorage.getItem("NETWORK_WIZARD_" + name)
     const newName = `${name}_copy`
     if (data) {
-      window.localStorage.setItem("NETWORK_DEFINITION_" + newName, data)
+      window.localStorage.setItem("NETWORK_WIZARD_" + newName, data)
       newStore.unshift(newName)
       message.success('The selected network has been successfully copied! Related visualizations are updated!')
     }
@@ -116,12 +116,12 @@ export const handleRename = (type: OperationType, oldName: string, newName: stri
     }
     else { 
       const idx = networkStore.indexOf(oldName)
-      const result = window.localStorage.getItem("NETWORK_DEFINITION_" + oldName)
+      const result = window.localStorage.getItem("NETWORK_WIZARD_" + oldName)
       if (idx !== -1 && result) {
         networkStore[idx] = newName
         newStore = [...networkStore]
-        window.localStorage.removeItem("NETWORK_DEFINITION_" + oldName)
-        window.localStorage.setItem("NETWORK_DEFINITION_" + newName, result)
+        window.localStorage.removeItem("NETWORK_WIZARD_" + oldName)
+        window.localStorage.setItem("NETWORK_WIZARD_" + newName, result)
         message.success('The selected network has been successfully renamed! Related networks and visualizations are updated!')
         status = true
       }
@@ -173,14 +173,14 @@ export const updateSessionIfRenameNet = (oldName: string, newName: string, sessi
 export const updateNetworkIfDeleteData = (name: string, networkStore: string[]) => {
   let newStore: string[] = [...networkStore]
   if (name === HANDLEALL) {
-    networkStore.forEach(network => window.localStorage.removeItem("NETWORK_DEFINITION_" + network))
+    networkStore.forEach(network => window.localStorage.removeItem("NETWORK_WIZARD_" + network))
     newStore = []
   }
   else { // delete selected networks
     newStore = networkStore.filter(network => {
-      const data = JSON.parse(window.localStorage.getItem("NETWORK_DEFINITION_" + network) as string)
+      const data = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string)
       if ((data.linkTableConfig && data.linkTableConfig.file === name) || (data.nodeTableConfig && data.nodeTableConfig.file === name) || (data.locationTableConfig && data.locationTableConfig.file === name) || (data.extraNodeConfig && data.extraNodeConfig.file === name)) {
-        window.localStorage.removeItem("NETWORK_DEFINITION_" + network)
+        window.localStorage.removeItem("NETWORK_WIZARD_" + network)
         return false
       }
     })
@@ -191,12 +191,12 @@ export const updateNetworkIfDeleteData = (name: string, networkStore: string[]) 
 export const updateNetworkIfRenameData = (oldName: string, newName: string, networkStore: string[]) => {
   let newStore: string[] = [...networkStore]
   networkStore.forEach((network, index) => {
-    const data = JSON.parse(window.localStorage.getItem("NETWORK_DEFINITION_" + network) as string)
+    const data = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string)
     const configTypes = ['linkTableConfig', 'nodeTableConfig', 'locationTableConfig', 'extraNodeConfig']
     configTypes.forEach((cfg: string) => {
       if (data[cfg] && data[cfg]['file'] === oldName) {
         data[cfg]['file'] = newName
-        window.localStorage.setItem("NETWORK_DEFINITION_" + network, JSON.stringify(data))
+        window.localStorage.setItem("NETWORK_WIZARD_" + network, JSON.stringify(data))
       }
     })
   })

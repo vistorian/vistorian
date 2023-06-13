@@ -102,9 +102,9 @@ function NetworkSelector(props: INetworkSelectorProps) {
         </MySpace>
 
         {network && network.length > 0 ? (<>
-          <Title level={2}>{network} </Title>
-          <NetworkNodeTable network={window.localStorage.getItem('NETWORK_DEFINITION_'+network) as string} />
-          <NetworkLinkTable network={window.localStorage.getItem('NETWORK_DEFINITION_' + network) as string} />
+          <Title level={3}>{network} </Title>
+          <NetworkNodeTable network={window.localStorage.getItem('NETWORK_WIZARD_'+network) as string} />
+          <NetworkLinkTable network={window.localStorage.getItem('NETWORK_WIZARD_' + network) as string} />
         </>): null}
 
         <Row>

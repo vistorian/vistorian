@@ -1,8 +1,9 @@
-import { Table, message } from 'antd'
+import { Table, Typography, message } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import { useEffect, useState } from 'react'
 import csvtojson from 'csvtojson'
-import { union } from 'lodash-es'
+
+const { Title } = Typography
 
 const fullCol = {
   linkId: 'Link id',
@@ -87,7 +88,7 @@ function NetworkLinkTable(props: INetworkLinkTableProps) {
 
   return (
     <>
-      <h3>Link Table</h3>
+      <Title level={4}>Link Table</Title>
       <Table
         columns={columnInTable}
         dataSource={dataInTable}
