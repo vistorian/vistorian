@@ -13,7 +13,7 @@ import Sessions from './session'
 import { find } from 'lodash-es'
 import Record from './record'
 import DataPreview from './data/dataPreview'
-import { handleCopy, handleDelete, handleRename, updateSessionIfDeleteNet, updateSessionIfRenameNet } from './utils'
+import { handleCopy, handleDelete, handleRename, updateNetworkIfDeleteData, updateNetworkIfRenameData, updateSessionIfDeleteNet, updateSessionIfRenameNet } from './utils'
 import NetworkPreview from './network/networkPreview'
 import NewSession from './session/newSession'
 
@@ -152,6 +152,7 @@ function Wizard() {
     }
     else if (clearType === 'data') {
       setFileNameStore(newStore as DataFile[])
+      setNetworkStore(updateNetworkIfDeleteData(selectedToDelete, networkStore))
       if (main === 'dataPreview' && preview === selectedToDelete) {
         setPreview('')
         setMain('blank')
@@ -184,6 +185,7 @@ function Wizard() {
     else if (type === 'data') {
       if (result.status) {
         setFileNameStore(result.newStore as DataFile[])
+        setNetworkStore(updateNetworkIfRenameData(oldName, newName, networkStore))
         if (main === 'dataPreview' && preview === oldName) {
           setPreview(newName)
         }
@@ -368,7 +370,7 @@ function Wizard() {
               </Button>
             ]}
           >
-            <p>Are you sure you want to delete {selectedToDelete === HANDLEALL ? `all the ${clearType}`: selectedToDelete} ?</p>
+            <p>Are you sure you want to delete {selectedToDelete === HANDLEALL ? `all the ${clearType}`: selectedToDelete} ? All the related {clearType === 'network' ? `visualizations` : `networks and visualizations`} will be delelted accordingly. </p>
           </Modal>
 
           {/* visualization types */}
