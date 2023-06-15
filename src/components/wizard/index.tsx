@@ -40,7 +40,7 @@ const useStyles = createUseStyles({
   },
   tab: {
     padding: 10,
-    height: 'calc((100% - 300px)/3)',
+    height: 'calc((100% - 300px)/2)',
     overflow: 'scroll'
   },
   tabHeader: {
@@ -350,7 +350,6 @@ function Wizard() {
               />
             ))}
           </div> 
-          <Divider style={{ margin: '15px 0px'  }} />
           
           {/* modal for delete data/network */}
           <Modal
@@ -372,22 +371,10 @@ function Wizard() {
           >
             <p>Are you sure you want to delete {selectedToDelete === HANDLEALL ? `all the ${clearType}`: selectedToDelete} ? All the related {clearType === 'network' ? `visualizations` : `networks and visualizations`} will be delelted accordingly. </p>
           </Modal>
-
-          {/* visualization types */}
-          <div className={classes.tab}>
-            <div className={classes.tabHeader}>
-              <span className={classes.tabTitle}>Visualization Types</span>
-            </div>
-            {templates.map((template: Template) => (
-              <div className={classes.tabContent} key={template.key}>
-                <Tooltip placement="topLeft" title={template.label}>
-                  <span className={classes.tabName}>{template.label}</span>
-                </Tooltip>
-              </div>
-            ))}
-          </div> 
           
         </div>
+
+        {/* the right side */}
         <div className={classes.main}>
           {renderComp(main)}
         </div>

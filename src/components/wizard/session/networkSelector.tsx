@@ -57,7 +57,8 @@ function NetworkSelector(props: INetworkSelectorProps) {
     setNetSource(e.target.value)
     if (!e.target.value) { // upload a new visualization
       setLoading(true)
-      setTimeout(() => moveToNetwork('network'), 2000) 
+      moveToNetwork('network')
+      // setTimeout(() => moveToNetwork('network'), 2000) 
     }
   }
 
