@@ -1,0 +1,103 @@
+{
+  "pan": {"modifierKeyRequired": [ ]},
+  "zoom": true,
+
+  "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
+
+  "parameters": [
+    {
+      "name": "linkOpacity",
+      "bind": {
+        "input": "range",
+        "label": "Link Opacity",
+        "min": "0",
+        "max": "1",
+        "step": "0.1"
+      },
+      "value": 1
+    },
+    {
+      "name": "nodeOpacity",
+      "bind": {
+        "input": "range",
+        "label": "Node Opacity",
+        "min": "0",
+        "max": "1",
+        "step": "0.1"
+      },
+      "value": 1
+    },
+    {
+      "name": "nodeSize",
+      "bind": {
+        "input": "range",
+        "label": "Node Size",
+        "min": "2",
+        "max": "400",
+        "step": "2"
+      },
+      "value": 30
+    },
+    {
+      "name": "linkWidth",
+      "bind": {
+        "input": "range",
+        "label": "Link Width",
+        "min": "0",
+        "max": "10",
+        "step": "1"
+      },
+      "value": 2
+    }
+  ],
+
+  "layouts": [
+    {
+      "name": "layout",
+      "network": "network",
+      "type": "webcola",
+      "avoidOverlap": true
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "radius",
+      "type": "linear",
+      "range": [1, 500],
+      "domain": { "data": "network.nodes", "field": "degree" }
+    },
+    {
+      "name": "color",
+      "type": "linear",
+      "scheme": "reds",
+      "domain": { "data": "network.nodes", "field": "degree" }
+    }
+  ],
+
+  "vis": [
+    {
+      "entries": "network.links",
+      "layout": "layout",
+      "mark": {
+        "type": "linkpath",
+        "start": "source",
+        "end": "target",
+        "opacity": { "parameter": "linkOpacity" },
+        "strokeWidth": { "parameter": "linkWidth" }
+      }
+    },
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "mark": {
+        "type": "circle",
+        "area": { "parameter": "nodeSize" },
+        "opacity": { "parameter": "nodeOpacity" },
+        "fill": { "field": "degree", "scale": "color" },
+        "tooltip": true
+      }
+    }
+  ]
+}

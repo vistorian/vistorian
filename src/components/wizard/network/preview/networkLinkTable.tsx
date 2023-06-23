@@ -28,7 +28,7 @@ function NetworkLinkTable(props: INetworkLinkTableProps) {
 
   const [columnInTable, setColumnInTable] = useState<any[]>([])
   const [dataInTable, setDataInTable] = useState<any[]>([])
-
+  
   const getColumns = () => {
     let columns = [] as ColumnsType
     if (network.format?.format === 'tabular') {

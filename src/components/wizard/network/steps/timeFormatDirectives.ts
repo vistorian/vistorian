@@ -14,7 +14,7 @@ export interface DirectiveItem {
   code: string,
   definition: string,
   example: string,
-  obscure?: boolean
+  obscure?: boolean,
 }
 
 export interface Directives {

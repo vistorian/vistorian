@@ -66,7 +66,7 @@ function NetworkNodeTable(props: INetworkNodeTableProps) {
 
   return (
     <>
-      <Title level={4}>Link Table</Title>
+      <Title level={4}>Node Table</Title>
       <Table
         columns={columnInTable}
         dataSource={dataInTable}

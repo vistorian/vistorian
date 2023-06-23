@@ -7,6 +7,9 @@ import styled from '@emotion/styled';
 import { handleCopy, handleDelete, handleRename } from '../utils';
 import NetworkNodeTable from './preview/networkNodeTable';
 import NetworkLinkTable from './preview/networkLinkTable';
+import DataTable from './preview/dataTable';
+import { NetworkConfig } from '../../../../typings';
+import { genSpecFromLinkTable } from '../../templates/genSpec';
 
 const { Title } = Typography
 
@@ -25,7 +28,18 @@ function NetworkPreview(props: INetworkPreviewProps) {
   const { selectedNetwork, setPreview, setMain, setSelectedNetwork } = props
   const { networkStore, setNetworkStore } = useContext(WizardContext)
 
-  const data = window.localStorage.getItem("NETWORK_WIZARD_" + selectedNetwork)
+  const data = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + selectedNetwork) as string) as NetworkConfig
+  // console.log('NETWORK_SPEC_', genSpecFromLinkTable(data))
+  const getDataTables = () => {
+    const list = []
+    if (data.format?.format === 'tabular') {
+      list.push(data.linkTableConfig?.file)
+      if (data.extraNodeConfig?.hasExtraNode) {
+        list.push(data.extraNodeConfig.file)
+      }
+    }
+    return list as string[]
+  }
 
   const [rename, setRename] = useState<boolean>(false)
   const [renameValue, setRenameValue] = useState<string>('')
@@ -148,14 +162,20 @@ function NetworkPreview(props: INetworkPreviewProps) {
           <p>Are you sure you want to delete {selectedNetwork} ?</p>
         </Modal>
       </div>
+
+
       {/* <pre>{JSON.stringify(JSON.parse(data as string), null, 2)}</pre> */}
       {/* data: network configruation */}
-      <NetworkNodeTable 
+      <DataTable dataNames={getDataTables()}/>
+
+      <Title level={3}> PREVIEW </Title>
+      <span>Below, you see the link and node tables that are generated from your specified network. </span>
+      {/* <NetworkNodeTable 
         network={data as string}
       />
       <NetworkLinkTable
         network={data as string}
-      />
+      /> */}
     
     </div>
   )

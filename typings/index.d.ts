@@ -30,15 +30,18 @@ type Template = {
 
 type OperationType = "data" | "network" | null
 
-type StepType = "name" | "format" | "linkType" | "linkTableConfig" | "nodeTableConfig" | "locationTableConfig" |  "extraNodeConfig" 
-type StepData = NetworkName | NetworkFormat | LinkType | LinkTableConfig | NodeTableConfig | LocationTableConfig | ExtraNodeConfig | null
+// type StepType = "name" | "format" | "linkType" | "linkTableConfig" | "nodeTableConfig" | "locationTableConfig" |  "extraNodeConfig" 
+// type StepData = NetworkName | NetworkFormat | LinkType | LinkTableConfig | NodeTableConfig | LocationTableConfig | ExtraNodeConfig | null
+
+type StepType = "name" | "format" | "linkTableConfig" | "locationTableConfig" | "extraNodeConfig" 
+type StepData = NetworkName | NetworkFormat | LinkTableConfig | LocationTableConfig | ExtraNodeConfig | null
 
 interface NetworkConfig {
   name: NetworkName | null
   format: NetworkFormat | null
-  linkType: LinkType | null
+  // linkType: LinkType | null
   linkTableConfig: LinkTableConfig | null
-  nodeTableConfig: NodeTableConfig | null
+  // nodeTableConfig: NodeTableConfig | null
   locationTableConfig: LocationTableConfig | null
   extraNodeConfig: ExtraNodeConfig | null
 }
@@ -53,11 +56,11 @@ interface NetworkFormat {
   format: NetworkFormatOpt
 }
 
-type LinkTypeOpt = "rowPerLink" | "rowPerNode"
+// type LinkTypeOpt = "rowPerLink" | "rowPerNode"
 
-interface LinkType {
-  linkType: LinkTypeOpt
-}
+// interface LinkType {
+//   linkType: LinkTypeOpt
+// }
 
 interface LinkTableConfig {
   directed: boolean
@@ -71,7 +74,6 @@ interface LinkTableConfig {
   locationOfTargetNode?: string
   linkWeight?: string
   linkType?: string
-  whetherLinkDirected?: string
   withTime: boolean
   time?: string
   timeFormat?: string
@@ -91,19 +93,19 @@ interface ExtraNodeConfig {
   file?: string
   hasHeaderRow?: boolean
   nodeID?: string
-  nodeType?: string
+  nodeTypes?: string[]
 }
 
-interface RelationType {
-  column: string,
-  linkName: string
-}
+// interface RelationType {
+//   column: string,
+//   linkName: string
+// }
 
-interface NodeTableConfig {
-  file: string
-  node: string,
-  relations: RelationType[]
-}
+// interface NodeTableConfig {
+//   file: string
+//   node: string,
+//   relations: RelationType[]
+// }
 
 interface IStepProps {
   data: NetworkConfig;
@@ -129,12 +131,8 @@ export {
   NetworkName,
   NetworkFormatOpt,
   NetworkFormat,
-  LinkTypeOpt,
-  LinkType, 
   LinkTableConfig,
-  RelationType,
   LocationTableConfig,
-  NodeTableConfig,
   ExtraNodeConfig,
   IStepProps,
   SelectOptionType

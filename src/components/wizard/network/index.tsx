@@ -6,14 +6,13 @@ import styled from "@emotion/styled"
 
 import NetName from './steps/netName'
 import NetFormat from './steps/netFormat'
-import NetLinkType from './steps/netLinkType'
 import NetLinkConfig from './steps/netLinkConfig'
 import NetLocationConfig from './steps/netLocationConfig'
-import NetNodeConfig from './steps/netNodeConfig'
 import NetExtraNodeConfig from './steps/netExtraNodeConfig'
-import { NetworkConfig, StepType, StepData, NetworkName, NetworkFormat, LinkType, LinkTableConfig, RelationType, LocationTableConfig, NodeTableConfig, ExtraNodeConfig, DataFile } from '../../../../typings'
+import { NetworkConfig, StepType, StepData, NetworkName, NetworkFormat, LinkTableConfig, LocationTableConfig, ExtraNodeConfig, DataFile } from '../../../../typings'
 import { WizardContext } from '../context'
 import { findIndex } from 'lodash-es'
+import { genSpecFromLinkTable } from '../../templates/genSpec'
 
 
 const useStyles = createUseStyles({
@@ -28,22 +27,22 @@ interface INetworkProps {
 function Network(props: INetworkProps) {
   const classes = useStyles()
   const { moveToNewSession, setSelectedNetwork, setNetSource } = props
-  const [currentStep, setCurrentStep] = useState<StepType>('name')
+
   const { networkStore, setNetworkStore, fileNameStore, setFileNameStore } = useContext(WizardContext)
 
   // record the configuration specified from the users
   const [data, setData] = useState<NetworkConfig>({
     name: null,
     format: null,
-    linkType: null,
     linkTableConfig: null,
     locationTableConfig: null,
-    nodeTableConfig: null,
     extraNodeConfig: null,
   })
-  const initSteps = ['name', 'format', 'linkType'] as StepType[]
-  const [steps, setSteps] = useState<StepType[]>(initSteps)
-  const [stepItems, setStepItems] = useState<any[]>([])
+  const baseSteps = ['name', 'format', 'linkTableConfig', 'extraNodeConfig'] as StepType[]
+  const locationSteps = ['name', 'format', 'linkTableConfig', 'locationTableConfig', 'extraNodeConfig'] as StepType[]
+  const [steps, setSteps] = useState<StepType[]>(baseSteps)
+  const [currentStep, setCurrentStep] = useState<StepType>('name')
+  const [stepItems, setStepItems] = useState<any[]>([]) // for antd steps
 
   const handlePrevStep = (step: StepType) => {
     const idx = steps.indexOf(step)
@@ -53,9 +52,9 @@ function Network(props: INetworkProps) {
 
   const handleNextStep = (stepData: StepData, step: StepType) => {
     let newSteps = [...steps]
-    let newData = {...data}
-    switch(step) {
-      case 'name': 
+    let newData = { ...data }
+    switch (step) {
+      case 'name':
         newData.name = stepData as NetworkName
         setData(newData)
         break
@@ -63,33 +62,20 @@ function Network(props: INetworkProps) {
         newData.format = stepData as NetworkFormat
         setData(newData)
         break
-      case 'linkType': 
-        newData.linkType = stepData as LinkType
-        setData(newData)
-        // @ts-ignore
-        if (stepData.linkType === 'rowPerLink') {
-          newSteps = [...initSteps, 'linkTableConfig']
-          setSteps(newSteps)
-        }
-        else {// 'rowPerNode'
-          newSteps = [...initSteps, 'nodeTableConfig']
-          setSteps(newSteps)
-        } 
-        break
       case 'linkTableConfig':
         newData.linkTableConfig = stepData as LinkTableConfig
         setData(newData)
         // @ts-ignore
         if (stepData.locationOfSourceNode || stepData.locationOfTargetNode) {
-          newSteps = [...steps, 'locationTableConfig', 'extraNodeConfig']
-          setSteps(newSteps)
+          newSteps=[...locationSteps]
+          setSteps(locationSteps)
         }
         else {
-          newSteps = [...steps, 'extraNodeConfig']
-          setSteps(newSteps)
+          newSteps = [...baseSteps]
+          setSteps(baseSteps)
         }
         break
-      case 'locationTableConfig': 
+      case 'locationTableConfig':
         newData.locationTableConfig = stepData as LocationTableConfig
         setData(newData)
         break
@@ -97,16 +83,11 @@ function Network(props: INetworkProps) {
         newData.extraNodeConfig = stepData as ExtraNodeConfig
         setData(newData)
         break
-      case 'nodeTableConfig':
-        newData.nodeTableConfig = stepData as NodeTableConfig
-        setData(newData)
-        break
       default:
         message.error('Invalid step!')
     }
-    // console.log('newData:', newData)
-    // deal with fileNameStore updates
-    // which should not be within steps, as components would be updated
+
+    // update fileNameStore after this step to avoid components updating meanwhile
     if (stepData && 'file' in stepData) {
       if (findIndex(fileNameStore, (fn: DataFile) => fn.name === stepData.file) === -1) {
         const tmp = {
@@ -114,22 +95,26 @@ function Network(props: INetworkProps) {
           hasHeader: true
         } as DataFile
         setFileNameStore([...fileNameStore, tmp])
-      } 
+      }
     }
 
     const idx = newSteps.indexOf(step)
     // condition: at the end of the network configuration
-    if (idx === newSteps.length-1){
+    if (idx === newSteps.length - 1) {
       // update networkStore
       window.localStorage.setItem("NETWORK_WIZARD_" + newData.name?.name, JSON.stringify(newData))
+      // window.localStorage.setItem("NETWORK_SPEC_" + newData.name?.name, JSON.stringify(genSpecFromLinkTable(newData)))
+      // console.log('NETWORK_SPEC_', genSpecFromLinkTable(newData))
+      
       setNetworkStore([...networkStore, newData.name?.name as string])
-      // select the configured network by default, and move to visSelector
+      // select the configured network by default
       setSelectedNetwork(newData.name?.name as string)
+      // go back to new session and set the network source as "Upload a new network"
       moveToNewSession('newSession')
       setNetSource(false)
     }
     else // condition: move to next step
-      setCurrentStep(newSteps[idx+1])
+      setCurrentStep(newSteps[idx + 1])
   }
 
   const allSteps = {
@@ -153,16 +138,6 @@ function Network(props: INetworkProps) {
       />,
       description: 'What is the format of your data?'
     },
-    linkType: {
-      title: 'Link',
-      content: <NetLinkType 
-        data={data} 
-        onSuccess={handleNextStep} 
-        onPrevious={handlePrevStep} 
-        MyButton={MyButton} 
-      />,
-      description: 'How are links (edges) represented in your network?'
-    },
     linkTableConfig: {
       title: 'Link Table',
       content: <NetLinkConfig 
@@ -173,16 +148,6 @@ function Network(props: INetworkProps) {
       />,
       description: 'Specifying your link table.'
     },
-    nodeTableConfig: {
-      title: 'Node Type',
-      content: <NetNodeConfig 
-        data={data}
-        onSuccess={handleNextStep}
-        onPrevious={handlePrevStep}
-        MyButton={MyButton} 
-      />,
-      description: 'Specifying the node type.'
-    },
     locationTableConfig: {
       title: 'Location',
       content: <NetLocationConfig
@@ -191,7 +156,7 @@ function Network(props: INetworkProps) {
         onPrevious={handlePrevStep}
         MyButton={MyButton} 
       />,
-      description: 'Specifying location table.'
+      description: 'Specifying your location table.'
     },
     extraNodeConfig: {
       title: 'Extra Node Type',
@@ -201,7 +166,7 @@ function Network(props: INetworkProps) {
         onPrevious={handlePrevStep}
         MyButton={MyButton} 
       />,
-      description: 'Specifying your extra node type.'
+      description: 'Specifying your extra node types.'
     }
   }
 

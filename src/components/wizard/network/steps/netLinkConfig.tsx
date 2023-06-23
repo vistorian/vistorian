@@ -1,15 +1,13 @@
 import { createUseStyles } from 'react-jss'
-import { useState, useContext, useEffect } from 'react';
+import { useState} from 'react';
 import { Button, Form, Row, Col, Select, Space, Typography, Radio, Tooltip, message } from 'antd';
 import { InfoCircleOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
-import { DataFile, IStepProps, SelectOptionType } from '../../../../../typings';
+import { IStepProps, SelectOptionType } from '../../../../../typings';
 import styled from '@emotion/styled';
-
-import { WizardContext } from '../../context'
 import TimeFormat from './timeFormat';
 import FileSelector from './fileSelector';
 import TablePreview from './tablePreview';
-import csvtojson from 'csvtojson';
+import { timeFormat } from 'd3-time-format'
 
 const { Title, Text } = Typography;
 
@@ -22,7 +20,8 @@ const useStyles = createUseStyles({
     marginBottom: '1em',
   },
   selection: {
-    display: 'flex'
+    display: 'flex',
+    alignItems: 'center',
   },
   selectionName: {
     width: 250,
@@ -33,9 +32,9 @@ const useStyles = createUseStyles({
 function NetLinkConfig(props: IStepProps) {
   const classes = useStyles()
   const { onPrevious, onSuccess, data, MyButton } = props;
-  const { fileNameStore, setFileNameStore } = useContext(WizardContext);
 
   const [form] = Form.useForm()
+  const file = Form.useWatch('file', form)
   const directed = Form.useWatch('directed', form)
   const withTime = Form.useWatch('withTime', form)
 
@@ -51,6 +50,13 @@ function NetLinkConfig(props: IStepProps) {
 
   const onFinish = (values: any) => {
     // console.log('link table config:', values)
+    if (!file) {
+      message.error('You shoud upload your link table first!')
+      return
+    }
+    if (withTime) {
+      values.timeFormat = formatString
+    }
     onSuccess(values, 'linkTableConfig')
   }
 
@@ -69,26 +75,8 @@ function NetLinkConfig(props: IStepProps) {
           Specifying your link table
         </MyTitle>
 
-        {/* is directed link? */}
-        <Form.Item
-          label={<Title level={4}>1. Are links <i>directed</i>?</Title>}
-          htmlFor='net-config-directed'
-          name="directed"
-          rules={[{ required: true, message: 'This is required.' }]}
-        >
-          <Radio.Group id='net-config-directed'>
-            <MySpace direction="vertical">
-              <Text>
-                Doses it matter which node is the&nbsp;<b>source</b>, and which is the&nbsp;<b>target</b>?
-              </Text>
-              <Radio value={true}>Yes</Radio>
-              <Radio value={false}>No</Radio>
-            </MySpace>
-          </Radio.Group>
-        </Form.Item>
-
         <MyTitle level={4}>
-          2. Upload your table
+          1. Upload your table
         </MyTitle>
         {/* select data files */}
         <FileSelector
@@ -112,6 +100,24 @@ function NetLinkConfig(props: IStepProps) {
                 dataInTable={dataInTable}
               />
 
+              {/* is directed link? */}
+              <Form.Item
+                label={<Title level={4}>2. Are links <i>directed</i>?</Title>}
+                htmlFor='net-config-directed'
+                name="directed"
+                rules={[{ required: true, message: 'This is required.' }]}
+              >
+                <Radio.Group id='net-config-directed'>
+                  <MySpace direction="vertical">
+                    <Text>
+                      Doses it matter which node is the&nbsp;<b>source</b>, and which is the&nbsp;<b>target</b>?
+                    </Text>
+                    <Radio value={true}>Yes</Radio>
+                    <Radio value={false}>No</Radio>
+                  </MySpace>
+                </Radio.Group>
+              </Form.Item>
+
               <MyTitle level={4}>
                 3. What is the structure of your link table?
               </MyTitle>
@@ -129,7 +135,7 @@ function NetLinkConfig(props: IStepProps) {
                 rules={[{ required: true, message: 'This is required.' }]}
               >
                 <div className={classes.selection}>
-                  <Text className={classes.selectionName}>- Source node label:</Text>
+                  <Text className={classes.selectionName}>- {directed?'Source node':'Node 1'} label:</Text>
                   <Select 
                     style={{width: 300}} 
                     options={selectionOptions}
@@ -147,7 +153,7 @@ function NetLinkConfig(props: IStepProps) {
                 rules={[{ required: true, message: 'This is required.' }]}
               >
                 <div className={classes.selection}>
-                  <Text className={classes.selectionName}>- Target node label:</Text>
+                  <Text className={classes.selectionName}>- {directed ? 'Target node' : 'Node 2'} label:</Text>
                   <Select style={{ width: 300 }}
                     options={selectionOptions}
                     onChange={(value) => {
@@ -182,7 +188,7 @@ function NetLinkConfig(props: IStepProps) {
                 rules={[{ required: false }]}
               >
                 <div className={classes.selection}>
-                  <Text className={classes.selectionName}>- Location of source node:</Text>
+                  <Text className={classes.selectionName}>- Location of {directed ? 'source node' : 'node 1'}:</Text>
                   <Select style={{ width: 300 }}
                     options={selectionOptions}
                     onChange={(value) => form.setFieldsValue({ 'locationOfSourceNode': value })}
@@ -196,7 +202,7 @@ function NetLinkConfig(props: IStepProps) {
                 rules={[{ required: false }]}
               >
                 <div className={classes.selection}>
-                  <Text className={classes.selectionName}>- Location of target node:</Text>
+                  <Text className={classes.selectionName}>- Location of {directed ? 'target node' : 'node 2'}:</Text>
                   <Select style={{ width: 300 }}
                     options={selectionOptions}
                     onChange={(value) => form.setFieldsValue({ 'locationOfTargetNode': value })}
@@ -236,20 +242,6 @@ function NetLinkConfig(props: IStepProps) {
                 </div>
               </Form.Item>
 
-              {directed ? <Form.Item
-                name="whetherLinkDirected"
-                style={{ margin: 0}}
-                rules={[{ required: false }]}
-              >
-                <div className={classes.selection}>
-                  <Text className={classes.selectionName}>- Whether a link is directed:</Text>
-                  <Select style={{ width: 300 }}
-                    options={selectionOptions}
-                    onChange={(value) => form.setFieldsValue({ 'whetherLinkDirected': value })}
-                  />
-                </div>
-              </Form.Item> : null}
-
               <Form.Item
                 label={<Title level={4}>4. Are links associated with time?</Title>}
                 htmlFor='net-config-withTime'
@@ -269,7 +261,7 @@ function NetLinkConfig(props: IStepProps) {
                 <Form.Item
                   name="time"
                   style={{ margin: 0 }}
-                  rules={[{ required: false }]}
+                  rules={[{ required: true, message: 'This is required.' }]}
                 >
                   <div className={classes.selection}>
                     <Text className={classes.selectionName}>- Time:</Text>
@@ -281,15 +273,16 @@ function NetLinkConfig(props: IStepProps) {
                 </Form.Item> 
 
                 <Form.Item
-                  label={<Title level={4}>5. Specify a date format:</Title>}
                   htmlFor='net-config-timeFormat'
                   name="timeFormat"
-                  rules={[{ required: false, message: 'This is optional.' }]}
+                  rules={[{ required: false, message: 'This is required.' }]}
                 >
                   <div className={classes.selection}>
-                    <Text className={classes.selectionName}>{formatString}</Text>
+                    <Text className={classes.selectionName}>- Specify a date format:</Text>
+                    <Text style={{marginRight: 5}}>{formatString}</Text>
                     <Button id='net-config-timeFormat' onClick={()=>setOpenTimeFormat(true)}>Edit</Button>
                   </div>
+                  <InfoCircleOutlined /><span style={{marginLeft: 5}}>In this format, the current datetime is <b>{timeFormat(formatString)(new Date())}</b>.</span>
                 </Form.Item>
                 <TimeFormat 
                   open={openTimeFormat} 

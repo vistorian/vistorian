@@ -108,7 +108,7 @@ function Wizard() {
     })
   const loadedNetworks = Object.keys(window.localStorage)
     .filter(k => k.startsWith("NETWORK_WIZARD_"))
-    .map(n => n.slice(19))
+    .map(n => n.slice(15))
 
   const loadedSessions = Object.keys(window.localStorage)
     .filter(k => k.startsWith("SAVED_SESSION_"))

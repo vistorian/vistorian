@@ -90,11 +90,6 @@ function FileSelector(props: IFileSelectorProps) {
     })
   }
 
-  const convertCsvToJson = async (csvData: string): Promise<any[]> => {
-    const jsonArray = await csvtojson().fromString(csvData)
-    return jsonArray
-  }
-
   const formatJsonForTable = async (fileName: string) => {
     const csvdata = window.localStorage.getItem("UPLOADED_FILE_" + fileName)
     if (csvdata) {

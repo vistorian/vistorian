@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { createUseStyles } from 'react-jss'
-import { IStepProps, RelationType, SelectOptionType, StepData } from '../../../../../typings'
+import { IStepProps, RelationType, SelectOptionType, StepData } from '../../../../../../typings'
 import { Col, Form, Row, Select, Space, Typography, Button, Input } from 'antd'
 import { RightOutlined, LeftOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled'
-import FileSelector from './fileSelector'
-import TablePreview from './tablePreview'
+import FileSelector from '../fileSelector'
+import TablePreview from '../tablePreview'
 
 const { Title, Text } = Typography;
 
