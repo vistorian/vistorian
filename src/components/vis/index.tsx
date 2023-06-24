@@ -11,8 +11,8 @@ function Vis() {
 
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
   let spec: any
-  
-  if (networkCfg.extraNodeConfig?.hasExtraNode) {
+
+  if (!networkCfg.extraNodeConfig?.hasExtraNode) {
     spec = genSpecFromLinkTable(networkCfg)
   }
   else {
@@ -34,8 +34,6 @@ function Vis() {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
     }, "SVG")
-    // @ts-ignore
-    console.log('viewer:', window.viewer)
 
     // @ts-ignore
     const specString = JSON.stringify(window.viewer.spec)

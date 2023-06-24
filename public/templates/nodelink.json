@@ -9,8 +9,7 @@
     {
       "name": "layout",
       "network": "network",
-      "type": "webcola",
-      "avoidOverlap": true
+      "type": "d3-force"
     }
   ],
 
@@ -18,7 +17,7 @@
     {
       "name": "radius",
       "type": "linear",
-      "range": [30, 300],
+      "range": [10, 280],
       "domain": { "data": "network.nodes", "field": "degree" }
     },
     {
@@ -26,6 +25,15 @@
       "type": "linear",
       "scheme": "reds",
       "domain": { "data": "network.nodes", "field": "degree" }
+    },
+    {
+      "name": "edgeColor",
+      "type": "ordinal",
+      "scheme": "category20",
+      "domain": {
+        "data": "network.links",
+        "field": "linkType"
+      }
     }
   ],
 
@@ -36,7 +44,12 @@
       "mark": {
         "type": "linkpath",
         "start": "source",
-        "end": "target"
+        "end": "target",
+        "stroke": {
+          "field": "linkType",
+          "scale": "edgeColor"
+        },
+        "strokeWidth": 1
       }
     },
     {
