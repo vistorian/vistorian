@@ -5,6 +5,15 @@
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
 
+  "parameters": [
+    {
+      "name": "select_node",
+      "action": "replace",
+      "network": "network",
+      "type": "selection"
+    }
+  ],
+
   "layouts": [
     {
       "name": "layout",
@@ -54,6 +63,26 @@
     },
     {
       "entries": "network.nodes",
+      "ifInSelection": "select_node.nodes",
+      "layout": "layout",
+      "mark": {
+        "type": "circle",
+        "area": 600,
+        "fill": "gold"
+      },
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "click",
+          "action": "toggle",
+          "selection": "select_node",
+          "clearOnBackgroundClick": true
+        }
+      ]
+    },
+    {
+      "entries": "network.nodes",
       "layout": "layout",
       "mark": {
         "type": "circle",
@@ -68,6 +97,14 @@
         "tooltip": {
           "expression": "datum.id + ' (degree ' + datum.degree + ')' "
         }
+      }
+    },
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "mark": {
+        "type": "text",
+        "text": {"expression": "datum.degree > 20 ? datum.id : null "}
       }
     }
   ]
