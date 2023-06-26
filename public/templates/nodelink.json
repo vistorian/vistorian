@@ -1,18 +1,18 @@
 {
-  "pan": {"modifierKeyRequired": [ ]},
-  "zoom": true,
 
   "data": "[dataDefinition]",
-  "networks": "[networksDefinition]",
 
   "parameters": [
     {
       "name": "select_node",
       "action": "replace",
       "network": "network",
-      "type": "selection"
+      "type": "selection",
+      "clearOnBackgroundClick": true
     }
   ],
+
+  "networks": "[networksDefinition]",
 
   "layouts": [
     {
@@ -76,8 +76,7 @@
           "using": "cursor",
           "event": "click",
           "action": "toggle",
-          "selection": "select_node",
-          "clearOnBackgroundClick": true
+          "selection": "select_node"
         }
       ]
     },
@@ -93,18 +92,7 @@
         "fill": {
           "field": "degree",
           "scale": "nodeColor"
-        },
-        "tooltip": {
-          "expression": "datum.id + ' (degree ' + datum.degree + ')' "
         }
-      }
-    },
-    {
-      "entries": "network.nodes",
-      "layout": "layout",
-      "mark": {
-        "type": "text",
-        "text": {"expression": "datum.degree > 20 ? datum.id : null "}
       }
     }
   ]
