@@ -1,8 +1,11 @@
 {
-    "x": 120,
-    "y": 120,
+  "x": 120,
+  "y": 120,
 
-    "parameters": [
+  "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
+
+  "parameters": [
         {
             "name": "seriationMethod",
             "bind": {
@@ -16,26 +19,30 @@
         }
     ],
 
-  "data": "[dataDefinition]",
-  "networks": "[networksDefinition]",
+    "groupings": [
+        {
+            "name": "cellWeight",
+            "common": ["source.id", "target.id"],
+            "data": "network.links"
+        }
+    ],
 
 
   "scales": [
     {
-      "name": "color",
+      "name": "cellColor",
       "type": "linear",
       "scheme": "reds",
-      "domain": [0, 10]
+      "domain": { "data": "cellWeight", "field": "size"}
     }
   ],
 
 
  "orderings": [
     {
-      "name": "o",
-      "data": "network.nodes",
-      "method": {"parameter": "seriationMethod"},
-      "network": "network"
+        "name": "order",
+        "method": {"parameter": "seriationMethod"},
+        "network": "network"
     }
   ],
 
@@ -45,31 +52,39 @@
             "name": "adjacencyMatrix",
             "data": "network.links",
             "rowOrder": {
-                "order": "o", "field": "source"
+                "order": "order", "field": "source"
             },
             "colOrder": {
-                "order": "o", "field": "target"
-            }
+                "order": "order", "field": "target"
+            },
+            "symmetric": true
         }
     ],
     "vis": [
         {
             "table": "adjacencyMatrix",
-             "rowLabels": { "field": "source.id", "align": "right", "dx": -15 },
-             "colLabels": { "field": "target.id", "dx": 15  },
+            "rowLabels": { "field": "source.id", "align": "right", "dx": -15 },
+            "colLabels": { "field": "target.id", "dx": 15  },
+            "rowLines": { "stroke": "lightgrey" },
+            "colLines": { "stroke": "lightgrey" },
 
              "mark": {
-                "type": "circle",
-                "area": 20,
+                "type": "square",
+                "area": { "expression": "(bounds.width * bounds.height)"},
+                "x": {
+                    "expression": "bounds.x + bounds.width/2"
+                },
+                "y": {
+                    "expression": "bounds.y + bounds.height/2"
+                },
 
                 "fill": {
-
                     "condition": {
                         "test": "datum.size < 1",
                         "value": "white"
                     },
 
-                    "scale": "color", "expression": "datum.size"
+                    "scale": "cellColor", "expression": "datum.size"
                     },
 
                 "tooltip": {"expression": "datum.key[0].id + ' -> ' + datum.key[1].id + ' (' + datum.size + ')' "}

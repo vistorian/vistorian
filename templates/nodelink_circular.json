@@ -1,6 +1,7 @@
 {
 
   "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
 
   "parameters": [
     {
@@ -12,13 +13,13 @@
     }
   ],
 
-  "networks": "[networksDefinition]",
-
   "layouts": [
     {
       "name": "layout",
       "network": "network",
-      "type": "d3-force"
+      "type": "cytoscape",
+      "algorithm": "circle",
+      "animate": false
     }
   ],
 
@@ -39,7 +40,16 @@
       "name": "edgeColor",
       "type": "ordinal",
       "scheme": "category20",
-      "domain": { "data": "network.links", "field": "linkType" }
+      "domain": {
+        "data": "network.links",
+        "field": "linkType"
+      }
+    },
+    {
+      "name": "edgeWidth",
+      "type": "linear",
+      "range": [1, 5],
+      "domain": { "data": "network.links", "field": "linkWeight" }
     }
   ],
 
@@ -51,45 +61,17 @@
         "type": "linkpath",
         "start": "source",
         "end": "target",
-        "stroke": {
-          "field": "linkType",
-          "scale": "edgeColor"
-        },
-        "strokeWidth": 1
+        "stroke": { "field": "linkType", "scale": "edgeColor" },
+        "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth" }
       }
     },
     {
       "entries": "network.nodes",
-      "ifInSelection": "select_node.nodes",
       "layout": "layout",
       "mark": {
         "type": "circle",
-        "area": 600,
-        "fill": "gold"
-      },
-      "actions": [
-        {
-          "interaction": "select",
-          "using": "cursor",
-          "event": "click",
-          "action": "toggle",
-          "selection": "select_node"
-        }
-      ]
-    },
-    {
-      "entries": "network.nodes",
-      "layout": "layout",
-      "mark": {
-        "type": "circle",
-        "area": {
-          "field": "degree",
-          "scale": "radius"
-        },
-        "fill": {
-          "field": "degree",
-          "scale": "nodeColor"
-        }
+        "area": { "field": "degree", "scale": "radius" },
+        "fill": { "field": "degree", "scale": "nodeColor" }
       }
     }
   ]

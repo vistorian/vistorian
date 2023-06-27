@@ -1,0 +1,72 @@
+{
+  "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
+
+  "groupings": [
+    {
+      "name": "groupedBySource",
+      "data": "network.links",
+      "common": ["source.id" ]
+    }
+  ],
+  "orderings": [
+    {
+      "name": "order",
+      "data": "groupedBySource",
+      "orderBy": {
+        "field": "size",
+        "direction": "descending"
+      }
+    }
+  ],
+  "layouts": [
+    {
+      "name": "layout",
+      "data": "groupedBySource",
+      "pattern": "cartesian",
+      "y": [{"order": "order"}]
+    }
+  ],
+  "scales": [
+    {
+      "name": "color",
+      "type": "linear",
+      "scheme": "reds",
+      "domain": { "data": "groupedBySource", "field": "size"}
+    }
+  ],
+  "vis": [
+    {
+      "entries": "groupedBySource",
+      "layout": "layout",
+      "mark": {
+        "type": "text",
+        "text": {
+          "field": "key[0]"
+        },
+        "x": 100,
+        "align": "right"
+      }
+    },
+    {
+      "entries": "groupedBySource",
+      "layout": "layout",
+      "vis": [
+        {
+          "entries": "entry.data",
+          "mark": {
+            "type": "square",
+            "fill": "grey",
+            "area": 100,
+            "x": {
+              "expression": "index * 20 + 120"
+            },
+            "tooltip": {
+              "expression": " datum.source.id + ' -> ' + datum.target.id + ' (edge value' + ')' "
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
