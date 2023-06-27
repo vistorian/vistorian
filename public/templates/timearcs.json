@@ -8,25 +8,23 @@
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
 
-    "orderings": [
-        {
-            "name": "order",
-            "data": "network.nodes",
-            "orderBy": {"field": "data.name"},
-            "allowTies": true
-        }
-    ],
-
-
+  "orderings": [
+    {
+        "name": "order",
+        "data": "network.nodes",
+        "orderBy": {"field": "data.name"},
+        "allowTies": true
+    }
+  ],
 
   "layouts": [
       {
-          "name": "layout",
-          "data": "network.nodes",
-          "pattern": "cartesian",
+        "name": "layout",
+        "data": "network.nodes",
+        "pattern": "cartesian",
 
-          "y": [{ "order": "order" }],
-          "x": [{ "scale": "time", "field": "data.date" }],
+        "y": [{ "order": "order" }],
+        "x": [{ "scale": "time", "field": "data.date" }],
 
         "positioning": "none"
       }
@@ -56,10 +54,7 @@
       "name": "edgeColor",
       "type": "ordinal",
       "scheme": "category20",
-      "domain": {
-        "data": "network.links",
-        "field": "linkType"
-      }
+      "domain": { "data": "network.links", "field": "linkType" }
     }
   ],
 

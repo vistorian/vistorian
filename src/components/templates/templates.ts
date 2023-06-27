@@ -7,6 +7,12 @@ const templates: Template[] = [
     image: "nodelink.png",
     template: "nodelink.json"
   },
+  {
+    key: "nodelink_circular",
+    label: "Node-link diagram with circular layout",
+    image: "nodelink_circular.png",
+    template: "nodelink_circular.json"
+  },
   { 
     key: "matrix", 
     label: "Adjacency matrix", 
@@ -25,6 +31,12 @@ const templates: Template[] = [
     image: "adjacencyList.png",
     template: "adjacencyList.json"
   },
+  // {
+  //   key: "arcDiagram",
+  //   label: "Arc diagram",
+  //   image: "arcDiagram.png",
+  //   template: "arcDiagram.json"
+  // },
   {
     key: "map",
     label: "Map",
