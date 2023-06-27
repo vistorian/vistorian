@@ -20,19 +20,13 @@ function NetworkNodeTable(props: INetworkNodeTableProps) {
   const getColumns = () => {
     let columns = [] as ColumnsType
     if (network.format?.format === 'tabular') {
-      if (network.linkType?.linkType === 'rowPerLink') {
-        columns = ['id', 'label'].map(header => {
-          return {
-            title: header,
-            dataIndex: header,
-            key: header,
-          }
-        })
-        // TODO: extra node config
-      }
-      else { // 'rowPerNode'
-
-      }
+      columns = ['id', 'label'].map(header => {
+        return {
+          title: header,
+          dataIndex: header,
+          key: header,
+        }
+    })
     }
     return columns
   }

@@ -25,5 +25,9 @@
     ]
   },
   "include": ["src"],
+  "exclude": [
+    "src/components/wizard/network/steps/deprecated/*",
+    "src/components/wizard/network/preview/*"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -6,11 +6,11 @@ export default defineConfig({
   base: 'https://vistorian.github.io/vistorian/',
   plugins: [react()],
 
-  build: {
-    rollupOptions: {
-      external: [
-        '/src/components/wizard/network/steps/deprecated/*'
-      ],
-    },
-  },
+  // build: {
+  //   rollupOptions: {
+  //     external: [
+  //       '/src/components/wizard/network/steps/deprecated/*'
+  //     ],
+  //   },
+  // },
 })
