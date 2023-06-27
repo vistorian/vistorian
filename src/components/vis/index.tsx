@@ -37,10 +37,10 @@ function Vis() {
 
   let spec: any
   if (!networkCfg.extraNodeConfig?.hasExtraNode) {
-    spec = genSpecFromLinkTable(networkCfg)
+    spec = genSpecFromLinkTable(networkCfg, visType)
   }
   else {
-    spec = genSpecFromLinkAndNodeTable(networkCfg)
+    spec = genSpecFromLinkAndNodeTable(networkCfg, visType)
   }
   console.log('vis:', spec)
 

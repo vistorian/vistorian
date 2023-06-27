@@ -5,28 +5,30 @@
   "zoom": true,
   "pan": {"modifierKeyRequired": []},
 
+  "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
 
-    "data": [
-        {
-            "name": "marieboucher",
-            "url": "/data/marieboucher.csv",
-            "format": {"type": "csv", "parse": {"Date": "date:'%d/%m/%Y'"}},
+  "data": [
+      {
+          "name": "marieboucher",
+          "url": "/data/marieboucher.csv",
+          "format": {"type": "csv", "parse": {"Date": "date:'%d/%m/%Y'"}},
 
-            "transform": [
-                {
-                    "type": "calculate",
-                    "as": "source",
-                    "calculate": "datum.Name1 + ' (' + datum.Date + ')'"
-                },
-                {
-                    "type": "calculate",
-                    "as": "target",
-                    "calculate": "datum.Name2 + ' (' + datum.Date + ')'"
-                }
-            ]
+          "transform": [
+              {
+                  "type": "calculate",
+                  "as": "source",
+                  "calculate": "datum.Name1 + ' (' + datum.Date + ')'"
+              },
+              {
+                  "type": "calculate",
+                  "as": "target",
+                  "calculate": "datum.Name2 + ' (' + datum.Date + ')'"
+              }
+          ]
 
-        }
-    ],
+      }
+  ],
 
     "networks": [
         {
@@ -44,7 +46,7 @@
                                 { "field": "Date", "as": "date"}
                             ]
                         },
-                        {
+                        {                                                 
                             "id_field": "target",
                             "type": "person",
                             "data": [

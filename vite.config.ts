@@ -5,4 +5,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: 'https://vistorian.github.io/vistorian/',
   plugins: [react()],
+
+  build: {
+    rollupOptions: {
+      external: [
+        '/src/components/wizard/network/steps/deprecated/*'
+      ],
+    },
+  },
 })
