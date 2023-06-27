@@ -37,10 +37,10 @@ function Vis() {
 
   let spec: any
   if (!networkCfg.extraNodeConfig?.hasExtraNode) {
-    spec = genSpecFromLinkTable(networkCfg, visType)
+    spec = genSpecFromLinkTable(networkCfg, visType as string)
   }
   else {
-    spec = genSpecFromLinkAndNodeTable(networkCfg, visType)
+    spec = genSpecFromLinkAndNodeTable(networkCfg, visType as string)
   }
   console.log('vis:', spec)
 
@@ -53,14 +53,18 @@ function Vis() {
       return;
     }
 
+    // decrease rendering time for matrix
+    let renderer = visType === 'matrix' ? "canvas" : "svg"
+
     // @ts-ignore
     window.viewer = await NetPanoramaTemplateViewer.render(`./templates/${template.template}`, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
-    }, "SVG")
-
+    }, "SVG", { renderer: renderer })
     // @ts-ignore
     const specString = JSON.stringify(window.viewer.spec)
+    // @ts-ignore
+    console.log('VIEW STATE:', window.viewer.state)
     // @ts-ignore
     specUrl = "https://netpanorama-editor.netlify.app/?spec=" + encodeURIComponent(specString);
 

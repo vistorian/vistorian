@@ -39,10 +39,7 @@
       "name": "edgeColor",
       "type": "ordinal",
       "scheme": "category20",
-      "domain": {
-        "data": "network.links",
-        "field": "linkType"
-      }
+      "domain": { "data": "network.links", "field": "linkType" }
     }
   ],
 

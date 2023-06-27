@@ -1,0 +1,102 @@
+{
+
+"width": 3000,
+
+  "zoom": true,
+  "pan": {"modifierKeyRequired": []},
+
+  "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
+
+    "orderings": [
+        {
+            "name": "order",
+            "data": "network.nodes",
+            "orderBy": {"field": "data.name"},
+            "allowTies": true
+        }
+    ],
+
+
+
+  "layouts": [
+      {
+          "name": "layout",
+          "data": "network.nodes",
+          "pattern": "cartesian",
+
+          "y": [{ "order": "order" }],
+          "x": [{ "scale": "time", "field": "data.date" }],
+
+        "positioning": "none"
+      }
+  ],
+
+
+  "scales": [
+    {
+      "name": "time",
+      "type": "time",
+      "range": [0, 500],
+      "domain": { "data": "network.nodes",  "field": "data.date"}
+    },
+    {
+      "name": "radius",
+      "type": "linear",
+      "range": [1, 500],
+      "domain": { "data": "network.nodes", "field": "degree" }
+    },
+    {
+      "name": "nodeColor",
+      "type": "linear",
+      "scheme": "reds",
+      "domain": { "data": "network.nodes", "field": "degree" }
+    },
+    {
+      "name": "edgeColor",
+      "type": "ordinal",
+      "scheme": "category20",
+      "domain": {
+        "data": "network.links",
+        "field": "linkType"
+      }
+    }
+  ],
+
+  "vis": [
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "mark": {
+        "type": "rule",
+        "stroke": "#ececec",
+        "x": 0,
+        "x2": { "expression": "bounds.width" }
+      }
+    },
+
+    {
+      "entries": "network.links",
+      "layout": "layout",
+      "drawAxes": true,
+      "mark": {
+        "type": "linkpath",
+        "start": "source",
+        "end": "target",
+        "shape": "curveSymmetric",
+        "stroke": { "field": "linkType", "scale": "edgeColor" }
+      }
+    },
+
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "mark": {
+        "type": "circle",
+        "area": { "field": "degree", "scale": "radius" },
+        "fill": { "field": "degree", "scale": "nodeColor" },
+        "tooptip": {"field": "id"}
+      }
+    }
+  ]
+}

@@ -17,12 +17,18 @@ const templates: Template[] = [
     key: "timearcs", 
     label: "Time arcs", 
     image: "timearcs.png", 
-    template: "timeline.json" 
+    template: "timearcs.json" 
   },
-  { 
-    key: "map", 
-    label: "Map", 
-    image: "map.png", 
+  {
+    key: "adjacencyList",
+    label: "Adjacency list",
+    image: "adjacencyList.png",
+    template: "adjacencyList.json"
+  },
+  {
+    key: "map",
+    label: "Map",
+    image: "map.png",
     template: "map.json"
   },
 ]

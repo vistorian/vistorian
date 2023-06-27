@@ -9,14 +9,28 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
   const timeColumn = config.linkTableConfig?.time
   const timeFormat = config.linkTableConfig?.timeFormat
 
+  const defaultNodeType = "_default_node_type"
+
   const parse = timeColumn ? { 'parse': { [timeColumn]: `date:'${timeFormat}'`}} : null
-  const linkTableImportSpec: any = {
+  const linkTableImportSpec = {
     name: "links",
     localStorage: "UPLOADED_FILE_" + linkFileName,
     format: {
       type: "csv", // TODO: add more types
       ...parse
-    }
+    },
+    transform:[
+      {
+        "type": "calculate",
+        "as": "source",
+        "calculate": `datum.${sourceLabel}`
+      },
+      {
+        "type": "calculate",
+        "as": "target",
+        "calculate": `datum.${targetLabel}`
+      }
+    ] // by default. no need to map node field to data field. just use source
   }
 
   if (visType === 'timearcs') {
@@ -36,6 +50,27 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 
   let dataSpec = [linkTableImportSpec]
 
+  
+  /**
+   * @description
+   * @param {string} type is this node 'source' or 'target'?
+   * @return {*} 
+   */
+  const getNodeRawData = (type: string) => {
+    const f = (type === 'source') ? sourceLabel : targetLabel
+    if (visType === 'timearcs') {
+      return [
+        { "field": f, "as": "name" },
+        { "field": timeColumn, "as": "date" }
+      ]
+    }
+    else { // 'nodelink', 'matrix'
+      return [
+        { "field": f, "as": "name" },
+      ]
+    }
+  }
+
   const networkSpec = {
     name: "network",
     "parts": [
@@ -44,31 +79,26 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
         "yieldsNodes" : [
           {
             "id_field": "source",
-            "type": "person",
-            "data": [
-              { "field": sourceLabel, "as": "name" },
-              { "field": timeColumn, "as": "date" }
-            ]
+            "type": defaultNodeType,
+            "data": getNodeRawData('source')
           },
           {
             "id_field": "target",
-            "type": "person",
-            "data": [
-              { "field": targetLabel, "as": "name" },
-              { "field": timeColumn, "as": "date" }
-            ]
+            "type": defaultNodeType,
+            "data": getNodeRawData('target')
           }
         ],
         "yieldsLinks": [
           {
-            "source_id": { "field": sourceLabel },
-            "source_node_type": "person",
+            "source_id": { "field": "source" },
+            "source_node_type": defaultNodeType,
             "source_id_field": "id",
 
-            "target_id": { "field": targetLabel },
-            "target_node_type": "person",
+            "target_id": { "field": "target" },
+            "target_node_type": defaultNodeType,
             "target_id_field": "id",
-
+            
+            "addReverseLinks": visType === 'matrix' ? true : false,
             "data": ["*"]
           }
         ]
@@ -92,7 +122,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 }
 
 
-// TODO: map to visType
+// TODO: waiting for updates based on func genSpecFromLinkTable
 export const genSpecFromLinkAndNodeTable = (config: NetworkConfig, visType: string) => {
   const linkFileName = config.linkTableConfig?.file
 
