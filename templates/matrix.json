@@ -30,10 +30,16 @@
 
   "scales": [
     {
-      "name": "cellColor",
+      "name": "opacity",
       "type": "linear",
-      "scheme": "reds",
+      "range": [0, 1],
       "domain": { "data": "cellWeight", "field": "size"}
+    },
+    {
+      "name": "cellColor",
+      "type": "ordinal",
+      "scheme": "category20",
+      "domain": { "data": "network.links", "field": "linkType"}
     }
   ],
 
@@ -83,9 +89,11 @@
                         "test": "datum.size < 1",
                         "value": "white"
                     },
+                    "scale": "cellColor", "field": "linkType"
+                    
+                },
 
-                    "scale": "cellColor", "expression": "datum.size"
-                    },
+                
 
                 "tooltip": {"expression": "datum.key[0].id + ' -> ' + datum.key[1].id + ' (' + datum.size + ')' "}
             }

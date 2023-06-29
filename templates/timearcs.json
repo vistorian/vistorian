@@ -79,6 +79,7 @@
         "start": "source",
         "end": "target",
         "shape": "curveSymmetric",
+        "directionForShape": { "ordering": "order" },
         "stroke": { "field": "linkType", "scale": "edgeColor" }
       }
     },

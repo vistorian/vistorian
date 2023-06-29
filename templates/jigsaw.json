@@ -1,0 +1,62 @@
+{
+  "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
+
+  "orderings": [
+    {
+      "name": "degree_order",
+      "orderBy": { "field": "degree", "direction": "descending" },
+      "data": "network.nodes"
+    }
+  ],
+
+  "layouts": [
+    {
+      "name": "jigsaw",
+      "pattern": "cartesian",
+      "x": [{"scale": "axis", "field": "_type"}],
+      "y": [{"order": "degree"}],
+      "data": "network.nodes",
+      "positioning": "start"
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "axis",
+      "type": "ordinal",
+      "domain": ["type1", "type2"],
+      "range": [0, 1]
+    },
+    {
+      "name": "radius",
+      "type": "linear",
+      "range": [1, 500],
+      "domain": { "data": "network.nodes", "field": "degree" }
+    }
+  ],
+
+  "vis": [
+    {
+      "entries": "network.links",
+      "layout": "jigsaw",
+      "mark": {
+        "type": "linkpath",
+        "start": "source",
+        "end": "target"
+      }
+    },
+
+    {
+      "entries": "network.nodes",
+      "layout": "jigsaw",
+      "mark": {
+        "type": "circle",
+        "area": { "field": "degree", "scale": "radius" },
+        "fill": {"expression": "datum._type === 'type1' ? 'red' : 'blue' "},
+        "tooltip": {"expression": "datum.id + ' (degree ' + datum.degree + ')' "}
+      }
+    }
+
+  ]
+}
