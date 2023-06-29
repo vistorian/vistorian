@@ -13,13 +13,21 @@
     }
   ],
 
+  "orderings": [
+    {
+      "name": "order",
+      "data": "network.nodes",
+      "method": "optimal-leaf-order",
+      "network": "network"
+    }
+  ],
+
   "layouts": [
     {
       "name": "layout",
-      "network": "network",
-      "type": "cytoscape",
-      "algorithm": "circle",
-      "animate": false
+      "data": "network.nodes",
+      "pattern": "circle",
+      "order": "order"
     }
   ],
 
