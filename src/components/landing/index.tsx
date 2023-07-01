@@ -27,6 +27,7 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
+    flexWrap: 'wrap'
   },
   visimage: {
     height: 200,

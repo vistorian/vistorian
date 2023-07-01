@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import templates from '../templates/templates'
 import { find } from 'lodash-es'
 import { NetworkConfig } from '../../../typings'
-import { genSpecFromLinkAndNodeTable, genSpecFromLinkTable } from '../templates/genSpec'
+import { genSpecFromLinkTable } from '../templates/genSpec'
 import { createUseStyles } from 'react-jss'
 import { Button } from 'antd'
 
@@ -35,13 +35,7 @@ function Vis() {
   const template = find(templates, (tp)=>tp.key === visType)
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
 
-  let spec: any
-  if (!networkCfg.extraNodeConfig?.hasExtraNode) {
-    spec = genSpecFromLinkTable(networkCfg, visType as string)
-  }
-  else {
-    spec = genSpecFromLinkAndNodeTable(networkCfg, visType as string)
-  }
+  let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
   console.log('vis:', spec)
 
   const update = async () => {
