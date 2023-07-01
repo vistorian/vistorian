@@ -1,14 +1,5 @@
 {
   "data": "[dataDefinition]",
-  "parameters": [
-    {
-      "name": "node_selection",
-      "action": "replace",
-      "network": "network",
-      "type": "selection",
-      "clearOnBackgroundClick": true
-    }
-  ],
   "networks": "[networksDefinition]",
   "layouts": [
     {
@@ -28,13 +19,13 @@
     {
       "name": "nodeType",
       "type": "ordinal",
-      "range": "[nodeTypeShape]",
+      "range": ["circle", "square", "cross", "diamond", "triangle", "M0,.5L.6,.8L.5,.1L1,-.3L.3,-.4L0,-1L-.3,-.4L-1,-.3L-.5,.1L-.6,.8L0,.5Z"],
       "domain": { "data": "network.nodes",  "field": "data.type0" }
     },
     {
       "name": "edgeColor",
       "type": "ordinal",
-      "scheme": "[linkTypeColorScheme]",
+      "scheme": "category10",
       "domain": { "data": "network.links", "field": "linkType" }
     },
     {

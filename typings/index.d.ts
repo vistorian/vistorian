@@ -119,6 +119,11 @@ interface SelectOptionType {
   label: string
 }
 
+interface EncodingSchemes {
+  linkType: string | string[],
+  nodeType: string | string[]
+}
+
 export {
   DataFile,
   WizardCtx,
@@ -135,5 +140,6 @@ export {
   LocationTableConfig,
   ExtraNodeConfig,
   IStepProps,
-  SelectOptionType
+  SelectOptionType,
+  EncodingSchemes
 }

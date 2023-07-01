@@ -38,7 +38,7 @@
     {
       "name": "cellColor",
       "type": "ordinal",
-      "scheme": "category20",
+      "scheme": "category10",
       "domain": { "data": "network.links", "field": "linkType"}
     }
   ],

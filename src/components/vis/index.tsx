@@ -1,11 +1,13 @@
 import { Link, useParams } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import templates from '../templates/templates'
 import { find } from 'lodash-es'
 import { NetworkConfig } from '../../../typings'
 import { genSpecFromLinkTable } from '../templates/genSpec'
 import { createUseStyles } from 'react-jss'
 import { Button } from 'antd'
+import Legend from './legend'
+import { defaultLinkTypeColorScheme, defaultNodeTypeShapeScheme } from '../../../typings/constant'
 
 const useStyles = createUseStyles({
   root: {
@@ -14,10 +16,11 @@ const useStyles = createUseStyles({
     height: '100%',
   },
   left: {
-    width: 300,
+    width: 280,
     height: '100%',
     borderRight: '1px solid #d9d9d9',
     marginRight: 20,
+    paddingRight: 20
   },
   right: {
     width: "calc(100% - 320px)"
@@ -35,11 +38,13 @@ function Vis() {
   const template = find(templates, (tp)=>tp.key === visType)
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
 
+  const [linkTypeColorScheme, setLinkTypeColorScheme] = useState(defaultLinkTypeColorScheme)
+  const [nodeTypeShapeScheme, setNodeTypeShapeScheme] = useState(defaultNodeTypeShapeScheme)
+
   let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
-  console.log('vis:', spec)
 
   const update = async () => {
-    const containerId = "SVG";
+    const containerId = "vis-SVG";
     const container = document.getElementById(containerId);
 
     if (!container) {
@@ -54,9 +59,13 @@ function Vis() {
     window.viewer = await NetPanoramaTemplateViewer.render(`./templates/${template.template}`, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
-    }, "SVG", { renderer: renderer })
+      linkTypeColorScheme: `"${linkTypeColorScheme}"`,
+      nodeTypeShape: nodeTypeShapeScheme
+    }, containerId, { renderer: renderer })
     // @ts-ignore
     const specString = JSON.stringify(window.viewer.spec)
+    // @ts-ignore
+    console.log('Spec:', window.viewer.spec)
     // @ts-ignore
     console.log('VIEW STATE:', window.viewer.state)
     // @ts-ignore
@@ -96,21 +105,28 @@ function Vis() {
               Design
             </Button> */}
           </div>
+          
+          {/* show network names */}
           <div style={{ display: 'flex', flexDirection: 'column'}}>
-            <span style={{background: '#eee', marginRight: 20, marginBottom: 3, padding: 5, fontSize: 18}}><b>Network:</b>&nbsp;{network}</span>
+            <span style={{background: '#eee', marginBottom: 3, fontSize: 18}}><b>Network:</b>&nbsp;{network}</span>
             {/* TODO: return to network preview */}
             <Link
               to='./'
               target='_blank'
-              style={{paddingLeft: 5}}
             >
-              Return to Dataview
+              Return to Network View
             </Link>
           </div>
+
+          {/* show legends */}
+          <Legend 
+            config={networkCfg} 
+            schemes={{linkType: linkTypeColorScheme, nodeType: nodeTypeShapeScheme}} 
+          />
         </div>
         
         {/* render netpanorama */}
-        <div id="SVG" className={classes.right} />
+        <div id="vis-SVG" className={classes.right} />
     </div>
   )
 }
