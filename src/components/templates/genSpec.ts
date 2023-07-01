@@ -122,8 +122,10 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 }
 
 
-// TODO: waiting for updates based on func genSpecFromLinkTable
+
+
 export const genSpecFromLinkAndNodeTable = (config: NetworkConfig, visType: string) => {
+  console.log('config:', config)
   const linkFileName = config.linkTableConfig?.file
 
   const sourceLabel = config.linkTableConfig?.sourceNodeLabel
