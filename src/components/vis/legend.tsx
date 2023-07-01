@@ -1,7 +1,9 @@
+// @ts-ignore
+import { read } from "vega-loader"
 import { EncodingSchemes, NetworkConfig } from "../../../typings"
-import csvtojson from 'csvtojson';
 import { useEffect, useState } from "react";
 import LegendItem from "./legendItem";
+import csvtojson from 'csvtojson'
 
 interface ILegendProps {
   config: NetworkConfig,
@@ -10,37 +12,32 @@ interface ILegendProps {
 
 function Legend(props: ILegendProps) {
   const { config, schemes } = props
-  const [linkTypeList, setLinkTypeList] = useState<string[]>([])
-  const [nodeTypeList, setNodeTypeList] = useState<string[]>([])
 
-  const getLinkData = async () => {
+  const getLinkData = () => {
     const csvdata = window.localStorage.getItem("UPLOADED_FILE_" + config.linkTableConfig?.file) as string
-    await csvtojson().fromString(csvdata)
-      .then((jsonData) => {
-        if (config.linkTableConfig?.linkType) {
-          const list = Array.from(new Set(jsonData.map((d) => d[config.linkTableConfig?.linkType as string])))
-          setLinkTypeList(list)
-        }
-      })
+    const jsonData = read(csvdata, { type: 'csv' })
+    if (config.linkTableConfig?.linkType) {
+      let list = Array.from(new Set(jsonData.map((d: any) => d[config.linkTableConfig?.linkType as string])))
+      list = list.map(l => l==='' ? 'undefined': l)
+      return list as string[]
+    }
+    return []
   }
+  const linkTypeList = getLinkData()
 
-  const getNodeData = async () => {
+  const getNodeData = () => {
     if (config.extraNodeConfig?.hasExtraNode) {
       const csvdata = window.localStorage.getItem("UPLOADED_FILE_" + config.extraNodeConfig.file) as string
-      await csvtojson().fromString(csvdata)
-        .then((jsonData) => {
-          // TODO: deal with multiple node types
-          const nodeTypes = config.extraNodeConfig?.nodeTypes as string[]
-          const list = Array.from(new Set(jsonData.map((d) => d[nodeTypes[0]])))
-          setNodeTypeList(list)
-        })
+      const jsonData = read(csvdata, { type: 'csv' })
+      // TODO: deal with multiple node types
+      const nodeTypes = config.extraNodeConfig?.nodeTypes as string[]
+      let list = Array.from(new Set(jsonData.map((d: any) => d[nodeTypes[0]])))
+      list = list.map(l => l === '' ? 'undefined' : l)
+      return list as string[]
     }
+    return []
   }
-
-  useEffect(()=>{
-    getLinkData()
-    getNodeData()
-  }, [])
+  const nodeTypeList = getNodeData()
 
   return (
     <div>

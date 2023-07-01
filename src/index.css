@@ -17,7 +17,7 @@
 body {
   margin: 0;
   display: flex;
-  place-items: startni;
+  place-items: stretch;
   min-width: 320px;
   min-height: 100vh;
 }

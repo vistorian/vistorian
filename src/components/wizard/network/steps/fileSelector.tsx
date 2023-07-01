@@ -74,7 +74,6 @@ function FileSelector(props: IFileSelectorProps) {
         return false
       }
       message.success(`${file.name} file uploaded successfully.`)
-      // console.log('reader.onload:', reader.result)
       window.localStorage.setItem("UPLOADED_FILE_" + file.name, reader.result as string)
       onSuccess(null, file)
     }
