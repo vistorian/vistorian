@@ -1,6 +1,5 @@
 {
-
-"width": 3000,
+  "width": 3000,
 
   "zoom": true,
   "pan": {"modifierKeyRequired": []},
@@ -8,12 +7,25 @@
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
 
+  "parameters": [
+    {
+      "name": "seriationMethod",
+      "bind": {
+          "input": "select",
+          "options":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+          "labels":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+          "label": "Seriation"
+      },
+      "value": "optimal-leaf-order"
+    }
+  ],
+
   "orderings": [
     {
-        "name": "order",
-        "data": "network.nodes",
-        "orderBy": {"field": "data.name"},
-        "allowTies": true
+      "name": "order",
+      "data": "network.nodes",
+      "orderBy": {"field": "data.name"},
+      "allowTies": true
     }
   ],
 
@@ -22,10 +34,8 @@
         "name": "layout",
         "data": "network.nodes",
         "pattern": "cartesian",
-
-        "y": [{ "order": "order" }],
         "x": [{ "scale": "time", "field": "data.date" }],
-
+        "y": [{ "order": "order" }],
         "positioning": "none"
       }
   ],
@@ -35,13 +45,13 @@
     {
       "name": "time",
       "type": "time",
-      "range": [0, 500],
+      "range": [50, 500],
       "domain": { "data": "network.nodes",  "field": "data.date"}
     },
     {
       "name": "radius",
       "type": "linear",
-      "range": [1, 500],
+      "range": [10, 200],
       "domain": { "data": "network.nodes", "field": "degree" }
     },
     {
@@ -53,23 +63,23 @@
     {
       "name": "edgeColor",
       "type": "ordinal",
-      "scheme": "category20",
+      "scheme": "category10",
       "domain": { "data": "network.links", "field": "linkType" }
     }
   ],
 
-  "vis": [
+"vis": [
     {
       "entries": "network.nodes",
       "layout": "layout",
       "mark": {
         "type": "rule",
-        "stroke": "#ececec",
+        "stroke": "#eeeeee",
+        "strokeWidth": 4,
         "x": 0,
         "x2": { "expression": "bounds.width" }
       }
     },
-
     {
       "entries": "network.links",
       "layout": "layout",
@@ -79,19 +89,21 @@
         "start": "source",
         "end": "target",
         "shape": "curveSymmetric",
-        "directionForShape": { "ordering": "order" },
-        "stroke": { "field": "linkType", "scale": "edgeColor" }
+        "stroke": { "field": "linkType", "scale": "edgeColor" },
+        "directionForShape": {  "ordering": "order" },
+        "strokeWidth": 1,
+        "strokeOpacity": 0.3
       }
     },
-
     {
       "entries": "network.nodes",
       "layout": "layout",
       "mark": {
         "type": "circle",
         "area": { "field": "degree", "scale": "radius" },
-        "fill": { "field": "degree", "scale": "nodeColor" },
-        "tooptip": {"field": "id"}
+        "fill": "black",
+        "stroke": "white",
+        "tooptip": { "field": "id" }
       }
     }
   ]

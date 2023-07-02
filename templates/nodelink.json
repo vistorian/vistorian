@@ -1,48 +1,55 @@
 {
-
   "data": "[dataDefinition]",
-
   "parameters": [
     {
-      "name": "select_node",
+      "name": "node_selection",
       "action": "replace",
       "network": "network",
       "type": "selection",
       "clearOnBackgroundClick": true
     }
   ],
-
   "networks": "[networksDefinition]",
-
   "layouts": [
     {
       "name": "layout",
       "network": "network",
-      "type": "d3-force"
+      "type": "webcola",
+      "avoidOverlap": true
     }
   ],
-
   "scales": [
     {
       "name": "radius",
       "type": "linear",
-      "range": [10, 280],
-      "domain": { "data": "network.nodes", "field": "degree" }
+      "range": [ 20, 150 ],
+      "domain": { "data": "network.nodes",  "field": "degree" }
     },
     {
-      "name": "nodeColor",
-      "type": "linear",
-      "scheme": "reds",
-      "domain": { "data": "network.nodes", "field": "degree" }
+      "name": "nodeShape",
+      "type": "ordinal",
+      "range": "[nodeTypeShapeScheme]",
+      "domain": { "data": "network.nodes",  "field": "data.type0" }
     },
     {
       "name": "edgeColor",
       "type": "ordinal",
-      "scheme": "category20",
+      "scheme": "[linkTypeColorScheme]",
       "domain": { "data": "network.links", "field": "linkType" }
+    },
+    {
+      "name": "edgeWidth",
+      "type": "linear",
+      "range": [ 1.2, 3],
+      "domain": { "data": "network.links", "field": "linkWeight" }
+    },
+    {
+      "name": "edgeOpacity",
+      "type": "linear",
+      "range": [0.2, 0.8],
+      "domain": { "data": "network.links", "field": "linkWeight" }
     }
   ],
-
   "vis": [
     {
       "entries": "network.links",
@@ -51,45 +58,21 @@
         "type": "linkpath",
         "start": "source",
         "end": "target",
-        "stroke": {
-          "field": "linkType",
-          "scale": "edgeColor"
-        },
-        "strokeWidth": 1
+        "stroke": { "field": "linkType", "scale": "edgeColor" },
+        "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth"},
+        "opacity":  { "field": "linkWeight", "scale": "edgeOpacity"},
+        "shape": "line"
       }
     },
     {
       "entries": "network.nodes",
-      "ifInSelection": "select_node.nodes",
       "layout": "layout",
       "mark": {
-        "type": "circle",
-        "area": 600,
-        "fill": "gold"
-      },
-      "actions": [
-        {
-          "interaction": "select",
-          "using": "cursor",
-          "event": "click",
-          "action": "toggle",
-          "selection": "select_node"
-        }
-      ]
-    },
-    {
-      "entries": "network.nodes",
-      "layout": "layout",
-      "mark": {
-        "type": "circle",
-        "area": {
-          "field": "degree",
-          "scale": "radius"
-        },
-        "fill": {
-          "field": "degree",
-          "scale": "nodeColor"
-        }
+        "type": "symbol",
+        "shape": {"field": "data.type0", "scale": "nodeShape"},
+        "area": { "field": "degree", "scale": "radius" },
+        "fill": "black",
+        "stroke": "white"
       }
     }
   ]

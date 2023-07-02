@@ -5,11 +5,15 @@
 
   "parameters": [
     {
-      "name": "select_node",
-      "action": "replace",
-      "network": "network",
-      "type": "selection",
-      "clearOnBackgroundClick": true
+      "name": "seriationMethod",
+      "bind": {
+          "input": "select",
+          "options":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+          "labels":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+          "label": "Node ordering"
+
+      },
+      "value": "optimal-leaf-order"
     }
   ],
 
@@ -17,7 +21,7 @@
     {
       "name": "order",
       "data": "network.nodes",
-      "method": "optimal-leaf-order",
+      "method": { "parameter": "seriationMethod" },
       "network": "network"
     }
   ],
@@ -35,28 +39,31 @@
     {
       "name": "radius",
       "type": "linear",
-      "range": [10, 280],
-      "domain": { "data": "network.nodes", "field": "degree" }
+      "range": [ 20, 150 ],
+      "domain": { "data": "network.nodes",  "field": "degree" }
     },
     {
-      "name": "nodeColor",
-      "type": "linear",
-      "scheme": "reds",
-      "domain": { "data": "network.nodes", "field": "degree" }
+      "name": "nodeShape",
+      "type": "ordinal",
+      "range": "[nodeTypeShapeScheme]",
+      "domain": { "data": "network.nodes",  "field": "data.type0" }
     },
     {
       "name": "edgeColor",
       "type": "ordinal",
-      "scheme": "category20",
-      "domain": {
-        "data": "network.links",
-        "field": "linkType"
-      }
+      "scheme": "[linkTypeColorScheme]",
+      "domain": { "data": "network.links", "field": "linkType" }
     },
     {
       "name": "edgeWidth",
       "type": "linear",
-      "range": [1, 5],
+      "range": [ 1.2, 3],
+      "domain": { "data": "network.links", "field": "linkWeight" }
+    },
+    {
+      "name": "edgeOpacity",
+      "type": "linear",
+      "range": [0.2, 0.8],
       "domain": { "data": "network.links", "field": "linkWeight" }
     }
   ],
@@ -70,16 +77,20 @@
         "start": "source",
         "end": "target",
         "stroke": { "field": "linkType", "scale": "edgeColor" },
-        "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth" }
+        "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth"},
+        "opacity":  { "field": "linkWeight", "scale": "edgeOpacity"},
+        "shape": "line"
       }
     },
     {
       "entries": "network.nodes",
       "layout": "layout",
       "mark": {
-        "type": "circle",
+        "type": "symbol",
+        "shape": {"field": "data.type0", "scale": "nodeShape"},
         "area": { "field": "degree", "scale": "radius" },
-        "fill": { "field": "degree", "scale": "nodeColor" }
+        "fill": "black",
+        "stroke": "white"
       }
     }
   ]
