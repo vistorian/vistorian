@@ -10,6 +10,7 @@ import Landing from './components/landing'
 import Wizard from './components/wizard'
 import Vis from './components/vis'
 
+// BrowserRouter which can not be used in Github pages
 // let router = createBrowserRouter([
 //   {
 //     path: "/",
@@ -32,6 +33,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />}></Route>
           <Route path="/wizard" element={<Wizard />}></Route>
+          {/* TODO: direct to related network view */}
+          <Route path="/wizard/network/:network" element={<Landing />}></Route>
           <Route path="/vis/:visType/network/:network" element={<Vis />}></Route>
         </Routes>
       </HashRouter>

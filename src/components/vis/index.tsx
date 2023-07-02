@@ -60,7 +60,7 @@ function Vis() {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
       linkTypeColorScheme: `"${linkTypeColorScheme}"`,
-      nodeTypeShape: nodeTypeShapeScheme
+      nodeTypeShapeScheme: nodeTypeShapeScheme
     }, containerId, { renderer: renderer })
     // @ts-ignore
     const specString = JSON.stringify(window.viewer.spec)

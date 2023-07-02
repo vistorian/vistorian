@@ -1,6 +1,5 @@
 {
-
-"width": 3000,
+  "width": 3000,
 
   "zoom": true,
   "pan": {"modifierKeyRequired": []},
@@ -9,25 +8,24 @@
   "networks": "[networksDefinition]",
 
   "parameters": [
-        {
-            "name": "seriationMethod",
-            "bind": {
-                "input": "select",
-                "options":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
-                "labels":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
-                "label": "Seriation"
-
-            },
-            "value": "optimal-leaf-order"
-        }
-    ],
+    {
+      "name": "seriationMethod",
+      "bind": {
+          "input": "select",
+          "options":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+          "labels":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+          "label": "Seriation"
+      },
+      "value": "optimal-leaf-order"
+    }
+  ],
 
   "orderings": [
     {
-        "name": "order",
-        "data": "network.nodes",
-        "orderBy": {"field": "data.name"},
-        "allowTies": true
+      "name": "order",
+      "data": "network.nodes",
+      "orderBy": {"field": "data.name"},
+      "allowTies": true
     }
   ],
 
@@ -36,10 +34,8 @@
         "name": "layout",
         "data": "network.nodes",
         "pattern": "cartesian",
-
-        "y": [{ "order": "order" }],
         "x": [{ "scale": "time", "field": "data.date" }],
-
+        "y": [{ "order": "order" }],
         "positioning": "none"
       }
   ],
@@ -49,7 +45,7 @@
     {
       "name": "time",
       "type": "time",
-      "range": [0, 500],
+      "range": [50, 500],
       "domain": { "data": "network.nodes",  "field": "data.date"}
     },
     {
@@ -81,9 +77,7 @@
         "stroke": "#eeeeee",
         "strokeWidth": 4,
         "x": 0,
-        "x2": {
-          "expression": "bounds.width"
-        }
+        "x2": { "expression": "bounds.width" }
       }
     },
     {
@@ -95,13 +89,8 @@
         "start": "source",
         "end": "target",
         "shape": "curveSymmetric",
-        "stroke": {
-          "field": "linkType",
-          "scale": "edgeColor"
-        },
-        "directionForShape": {
-          "ordering": "order"
-        },
+        "stroke": { "field": "linkType", "scale": "edgeColor" },
+        "directionForShape": {  "ordering": "order" },
         "strokeWidth": 1,
         "strokeOpacity": 0.3
       }
@@ -111,15 +100,10 @@
       "layout": "layout",
       "mark": {
         "type": "circle",
-        "area": {
-          "field": "degree",
-          "scale": "radius"
-        },
+        "area": { "field": "degree", "scale": "radius" },
         "fill": "black",
         "stroke": "white",
-        "tooptip": {
-          "field": "id"
-        }
+        "tooptip": { "field": "id" }
       }
     }
   ]

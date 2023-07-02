@@ -6,14 +6,14 @@ import Data from './data'
 import Network from './network/index'
 import VisSelector from './visSelector'
 import { WizardContext } from './context'
-import { DataFile, Template, OperationType } from '../../../typings'
+import { DataFile, Template, OperationType, NetworkConfig } from '../../../typings'
 import { HANDLEALL } from '../../../typings/constant'
 import templates from '../templates/templates'
 import Sessions from './session'
 import { find } from 'lodash-es'
 import Record from './record'
 import DataPreview from './data/dataPreview'
-import { handleCopy, handleDelete, handleRename, updateNetworkIfDeleteData, updateNetworkIfRenameData, updateSessionIfDeleteNet, updateSessionIfRenameNet } from './utils'
+import { handleCopy, handleDelete, handleRename, isDataInNetwork, updateNetworkAndSessionIfDeleteData, updateNetworkIfRenameData, updateSessionIfDeleteNet, updateSessionIfRenameNet } from './utils'
 import NetworkPreview from './network/networkPreview'
 import NewSession from './session/newSession'
 
@@ -87,14 +87,14 @@ function Wizard() {
   const classes = useStyles()
   // define which component is rendered in the right panel
   const [main, setMain] = useState('sessions')
-  // for data/network preview
+  // which data/network is previewing
   const [preview, setPreview] = useState<string>('')
   // select a network for visualizing
   const [selectedNetwork, setSelectedNetwork] = useState<string>('')
   // when creating a new session, decide on network source
   // true for select an existing one, false for upload a new one
   const [netSource, setNetSource] = useState<boolean|undefined>()
-
+  // whenever clicking create a visualization, trigger re-mounting the component
   const [triggerReMount, setTriggerReMount] = useState<number>(123)
 
   // handle the initialization using local storage
@@ -144,7 +144,7 @@ function Wizard() {
     const newStore = handleDelete(clearType, selectedToDelete, store)
     if (clearType === 'network') {
       setNetworkStore(newStore as string[])
-      setSessionStore(updateSessionIfDeleteNet(selectedToDelete, sessionStore))
+      setSessionStore(updateSessionIfDeleteNet([selectedToDelete], sessionStore))
       if (main === 'networkPreview' && preview === selectedToDelete) {
         setPreview('')
         setMain('blank')
@@ -152,8 +152,10 @@ function Wizard() {
     }
     else if (clearType === 'data') {
       setFileNameStore(newStore as DataFile[])
-      setNetworkStore(updateNetworkIfDeleteData(selectedToDelete, networkStore))
-      if (main === 'dataPreview' && preview === selectedToDelete) {
+      const result = updateNetworkAndSessionIfDeleteData(selectedToDelete, networkStore, sessionStore)
+      setNetworkStore(result.networkStore)
+      setSessionStore(result.sessionStore)
+      if ((main === 'dataPreview' && preview === selectedToDelete) || (main === 'networkPreview' && isDataInNetwork(selectedNetwork, preview))) {
         setPreview('')
         setMain('blank')
       }
@@ -185,7 +187,7 @@ function Wizard() {
     else if (type === 'data') {
       if (result.status) {
         setFileNameStore(result.newStore as DataFile[])
-        setNetworkStore(updateNetworkIfRenameData(oldName, newName, networkStore))
+        updateNetworkIfRenameData(oldName, newName, networkStore)
         if (main === 'dataPreview' && preview === oldName) {
           setPreview(newName)
         }
@@ -248,7 +250,7 @@ function Wizard() {
           netSource={netSource}
         />
       default:
-        return <div>Error</div>
+        return <div>{main}</div>
     }
   }
 

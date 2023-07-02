@@ -26,9 +26,9 @@
       "domain": { "data": "network.nodes",  "field": "degree" }
     },
     {
-      "name": "nodeType",
+      "name": "nodeShape",
       "type": "ordinal",
-      "range": "[nodeTypeShape]",
+      "range": "[nodeTypeShapeScheme]",
       "domain": { "data": "network.nodes",  "field": "data.type0" }
     },
     {
@@ -69,7 +69,7 @@
       "layout": "layout",
       "mark": {
         "type": "symbol",
-        "shape": {"field": "data.type0", "scale": "nodeType"},
+        "shape": {"field": "data.type0", "scale": "nodeShape"},
         "area": { "field": "degree", "scale": "radius" },
         "fill": "black",
         "stroke": "white"

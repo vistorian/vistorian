@@ -7,7 +7,7 @@ type Session = {
   id: number,
   network: string,
   vis: string
-  lastModified: string,
+  created: string,
 }
 
 type WizardCtx = {

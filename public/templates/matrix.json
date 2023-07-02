@@ -6,39 +6,30 @@
   "networks": "[networksDefinition]",
 
   "parameters": [
-        {
-            "name": "seriationMethod",
-            "bind": {
-                "input": "select",
-                "options":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
-                "labels":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
-                "label": "Seriation"
+      {
+        "name": "seriationMethod",
+        "bind": {
+            "input": "select",
+            "options":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+            "labels":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+            "label": "Seriation"
 
-            },
-            "value": "optimal-leaf-order"
-        }
+        },
+        "value": "optimal-leaf-order"
+      }
     ],
-
-    "groupings": [
-        {
-            "name": "cellWeight",
-            "common": ["source.id", "target.id"],
-            "data": "network.links"
-        }
-    ],
-
 
   "scales": [
     {
       "name": "opacity",
       "type": "linear",
-      "range": [0, 1],
-      "domain": { "data": "cellWeight", "field": "size"}
+      "range": [0.2, 1],
+      "domain": { "data": "network.links", "field": "linkWeight"}
     },
     {
       "name": "cellColor",
       "type": "ordinal",
-      "scheme": "category10",
+      "scheme": "[linkTypeColorScheme]",
       "domain": { "data": "network.links", "field": "linkType"}
     }
   ],
@@ -77,25 +68,23 @@
              "mark": {
                 "type": "square",
                 "area": { "expression": "(bounds.width * bounds.height)"},
-                "x": {
-                    "expression": "bounds.x + bounds.width/2"
-                },
-                "y": {
-                    "expression": "bounds.y + bounds.height/2"
-                },
-
+                "x": { "expression": "bounds.x + bounds.width/2" },
+                "y": { "expression": "bounds.y + bounds.height/2" },
                 "fill": {
                     "condition": {
                         "test": "datum.size < 1",
                         "value": "white"
                     },
-                    "scale": "cellColor", "field": "linkType"
-                    
+                    "scale": "cellColor", "expression": "datum.data[0].linkType" 
                 },
-
-                
-
-                "tooltip": {"expression": "datum.key[0].id + ' -> ' + datum.key[1].id + ' (' + datum.size + ')' "}
+                "opacity": {
+                    "condition": {
+                        "test": "datum.size < 1",
+                        "value": 0
+                    },
+                    "scale": "opacity", "expression": "datum.data[0].linkWeight" 
+                },
+                "tooltip": {"expression": "datum"}
             }
         }
     ]
