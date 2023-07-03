@@ -1,9 +1,5 @@
-// @ts-ignore
-import { read } from "vega-loader"
 import { EncodingSchemes, NetworkConfig } from "../../../typings"
-import { useEffect, useState } from "react";
 import LegendItem from "./legendItem";
-import csvtojson from 'csvtojson'
 
 interface ILegendProps {
   config: NetworkConfig,
@@ -14,8 +10,7 @@ function Legend(props: ILegendProps) {
   const { config, schemes } = props
 
   const getLinkData = () => {
-    const csvdata = window.localStorage.getItem("UPLOADED_FILE_" + config.linkTableConfig?.file) as string
-    const jsonData = read(csvdata, { type: 'csv' })
+    const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + config.linkTableConfig?.file) as string)
     if (config.linkTableConfig?.linkType) {
       let list = Array.from(new Set(jsonData.map((d: any) => d[config.linkTableConfig?.linkType as string])))
       list = list.map(l => l==='' ? 'undefined': l)
@@ -27,8 +22,7 @@ function Legend(props: ILegendProps) {
 
   const getNodeData = () => {
     if (config.extraNodeConfig?.hasExtraNode) {
-      const csvdata = window.localStorage.getItem("UPLOADED_FILE_" + config.extraNodeConfig.file) as string
-      const jsonData = read(csvdata, { type: 'csv' })
+      const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + config.extraNodeConfig.file) as string)
       // TODO: deal with multiple node types
       const nodeTypes = config.extraNodeConfig?.nodeTypes as string[]
       let list = Array.from(new Set(jsonData.map((d: any) => d[nodeTypes[0]])))

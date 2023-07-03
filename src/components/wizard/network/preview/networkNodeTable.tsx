@@ -1,6 +1,5 @@
 import { Table, Typography, message } from 'antd'
 import { useEffect, useState } from 'react'
-import csvtojson from 'csvtojson';
 import { NetworkConfig } from '../../../../../typings';
 import { ColumnsType } from 'antd/es/table';
 import { union } from 'lodash-es';
@@ -31,23 +30,19 @@ function NetworkNodeTable(props: INetworkNodeTableProps) {
     return columns
   }
 
-  const getData = async () => {
-    const csvdata = window.localStorage.getItem("UPLOADED_FILE_" + network.linkTableConfig?.file) as string
-    if (csvdata) {
-      // TODO: deal with no fakeHeader
+  const getData = () => {
+    const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.linkTableConfig?.file) as string)
+    if (jsonData) {
       const columns = getColumns()
-      await csvtojson().fromString(csvdata)
-        .then((jsonData) => {
-          if (columns.length === 2) { // only has ['id', 'label']
-            const sourceNodeLabel = network.linkTableConfig?.sourceNodeLabel
-            const targetNodeLabel = network.linkTableConfig?.targetNodeLabel
-            if (sourceNodeLabel && targetNodeLabel) {
-              const data = union(jsonData.map(d => d[sourceNodeLabel]), jsonData.map(d => d[targetNodeLabel])).map((l, i) => ({ '_rowKey': i, 'id': i, 'label': l }))
-              setColumnInTable(columns)
-              setDataInTable(data)
-            }
-          }
-        })
+      if (columns.length === 2) { // only has ['id', 'label']
+        const sourceNodeLabel = network.linkTableConfig?.sourceNodeLabel
+        const targetNodeLabel = network.linkTableConfig?.targetNodeLabel
+        if (sourceNodeLabel && targetNodeLabel) {
+          const data = union(jsonData.map((d:any) => d[sourceNodeLabel]), jsonData.map((d:any) => d[targetNodeLabel])).map((l, i) => ({ '_rowKey': i, 'id': i, 'label': l }))
+          setColumnInTable(columns)
+          setDataInTable(data)
+        }
+      }
     }
     else {
       message.error('There is no such data file in the storage!')

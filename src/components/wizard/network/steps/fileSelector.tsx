@@ -1,11 +1,10 @@
 import { createUseStyles } from 'react-jss'
-import { useEffect, useContext, useState } from 'react';
-import { Form, Upload, message, Select, Typography, FormInstance } from 'antd';
-import { RcFile, UploadChangeParam, UploadFile } from 'antd/es/upload';
-import { DataFile } from '../../../../../typings';
-import { findIndex } from 'lodash-es';
-import csvtojson from 'csvtojson';
-// import Upload from 'rc-upload'
+import { useEffect, useContext, useState } from 'react'
+import { Form, Upload, message, Select, Typography, FormInstance } from 'antd'
+import { RcFile, UploadChangeParam, UploadFile } from 'antd/es/upload'
+import { DataFile } from '../../../../../typings'
+import { findIndex } from 'lodash-es'
+import csvtojson from 'csvtojson'
 
 import { WizardContext } from '../../context'
 const { Text } = Typography;
@@ -68,13 +67,16 @@ function FileSelector(props: IFileSelectorProps) {
     reader.onerror = () => {
       message.error(`${file.name} file upload failed.`)
     }
-    reader.onload = () => {
+    reader.onload = async () => {
       if (findIndex(fileNameStore, (fn: DataFile) => fn.name === file.name) > -1) {
         message.error(`${file.name} file upload failed, as the system does not allow data files uploaded with the same name. Please select a previously uploaded file.`)
         return false
       }
       message.success(`${file.name} file uploaded successfully.`)
-      window.localStorage.setItem("UPLOADED_FILE_" + file.name, reader.result as string)
+      const csvdata = reader.result as string
+      await csvtojson().fromString(csvdata).then((jsonData) => {
+        window.localStorage.setItem("UPLOADED_FILE_" + file.name, JSON.stringify(jsonData))
+      })
       onSuccess(null, file)
     }
     return true
@@ -89,40 +91,34 @@ function FileSelector(props: IFileSelectorProps) {
     })
   }
 
-  const formatJsonForTable = async (fileName: string) => {
-    const csvdata = window.localStorage.getItem("UPLOADED_FILE_" + fileName)
-    if (csvdata) {
-      // TODO: deal with no fakeHeader
-      await csvtojson().fromString(csvdata)
-        .then((jsonData) => {
-          const headers = Object.keys(jsonData[0])
-          const columns = headers.map(header => {
-            return {
-              title: header,
-              dataIndex: header,
-              key: header,
-            }
-          })
-          let options = [{ value: '', label: '-' }]
-          headers.map((header: string) => {
-            options.push({
-              value: header,
-              // @ts-ignore
-              label: `${header} (First value is ${jsonData[0][header]})`,
-            })
-          })
-          setColumnInTable(columns)
-          // only preview 3 rows
-          const dataintable = jsonData.slice(0, 3).map((d, i) => {
-            d._rowKey = i
-            return d
-          })
-          setDataInTable(dataintable)
-          setSelectionOptions(options)
+  const formatJsonForTable = (fileName: string) => {
+    const data = window.localStorage.getItem("UPLOADED_FILE_" + fileName)
+    if (data) {
+      const jsonData = JSON.parse(data as string)
+      const headers = Object.keys(jsonData[0])
+      const columns = headers.map(header => {
+        return {
+          title: header,
+          dataIndex: header,
+          key: header,
+        }
+      })
+      let options = [{ value: '', label: '-' }]
+      headers.map((header: string) => {
+        options.push({
+          value: header,
+          // @ts-ignore
+          label: `${header} (First value is ${jsonData[0][header]})`,
         })
-        // .catch((error) => {
-        //   message.error('Error during CSV to JSON conversion:');
-        // })
+      })
+      setColumnInTable(columns)
+      // only preview 3 rows
+      const dataintable = jsonData.slice(0, 3).map((d: any, i: number) => {
+        d._rowKey = i
+        return d
+      })
+      setDataInTable(dataintable)
+      setSelectionOptions(options)
     }
     else {
       message.error('There is no such data file in the storage!')

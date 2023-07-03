@@ -20,7 +20,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     name: "links",
     localStorage: "UPLOADED_FILE_" + linkFileName,
     format: {
-      type: "csv", // TODO: add more types
+      type: "json", // TODO: add more types
       ...parse
     },
     transform:[
@@ -70,7 +70,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       {
         "name": "nodes",
         "localStorage": "UPLOADED_FILE_" + config.extraNodeConfig?.file,
-        "format": { type: "csv" },
+        "format": { type: "json" },
         "transform": trans
       }
     ]
@@ -182,40 +182,6 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 
   // =========== if vis is timearcs, generate staic network without time =========== 
   if (visType === 'timearcs') {
-    // const staticNetworkSpec = {
-    //   "name": "staticNetwork",
-    //   "parts": [
-    //     {
-    //       "data": "links",
-    //       "yieldsNodes": [
-    //         {
-    //           "id_field": sourceLabel,
-    //           "type": defaultNodeType,
-    //           "data": ["*"]
-    //         },
-    //         {
-    //           "id_field": targetLabel,
-    //           "type": defaultNodeType,
-    //           "data": ["*"]
-    //         }
-    //       ],
-    //       "yieldsLinks": [
-    //         {
-    //           "source_id": { "field": sourceLabel }, 
-    //           "source_node_type": defaultNodeType,
-    //           "source_id_field": "id",
-    //           "target_id": { "field": targetLabel }, 
-    //           "target_node_type": "person",
-    //           "target_id_field": "id",
-    //           "data": ["*"]
-    //         }
-    //       ]
-    //     }
-    //   ],
-    //   "transform": [
-    //     {"type": "metric", "metric": "degree"}
-    //   ] 
-    // }
     const staticNetworkSpec = {
       "name": "staticNetwork",
       "nodes": config.extraNodeConfig?.hasExtraNode ? "nodes" : undefined,

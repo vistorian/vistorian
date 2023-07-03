@@ -4,7 +4,6 @@ import { Table, Checkbox, message, Button, Tooltip, Input, Modal, theme } from '
 import { DeleteFilled, CopyFilled, EditFilled, CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { DataFile } from '../../../../typings';
 import { WizardContext } from '../context';
-import csvtojson from 'csvtojson';
 import styled from '@emotion/styled';
 import { handleCopy, handleDelete, handleRename } from '../utils';
 
@@ -83,34 +82,23 @@ function DataPreview(props: IDataPreviewProps) {
   })
 
 
-  const convertCsvToJson = async (csvData: string): Promise<any[]> => {
-    const jsonArray = await csvtojson().fromString(csvData)
-    return jsonArray
-  }
-
   useEffect(() => {
     if (data && selectedData.name.endsWith('.csv')) {
-      // TODO: deal with no fakeHeader
-      convertCsvToJson(data)
-        .then((jsonData) => {
-          const headers = Object.keys(jsonData[0])
-          const columns = headers.map(header => {
-            return {
-              title: header,
-              dataIndex: header,
-              key: header,
-            }
-          })
-          setColumnInTable(columns)
-          const dataintable = jsonData.map((d, i) => {
-            d._rowKey = i
-            return d
-          })
-          setDataInTable(dataintable)
-        })
-        .catch((error) => {
-          message.error('Error during CSV to JSON conversion:');
-        })
+      const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + selectedData.name) as string)
+      const headers = Object.keys(jsonData[0])
+      const columns = headers.map(header => {
+        return {
+          title: header,
+          dataIndex: header,
+          key: header,
+        }
+      })
+      setColumnInTable(columns)
+      const dataintable = jsonData.map((d: any, i: number) => {
+        d._rowKey = i
+        return d
+      })
+      setDataInTable(dataintable)
     }
     else {
       message.error('There is no such data file in the storage!')
@@ -144,6 +132,7 @@ function DataPreview(props: IDataPreviewProps) {
             rowKey={(record) => record._rowKey}
             showHeader={checked}
             size='small'
+            pagination={{defaultPageSize: 15}}
           >
           </Table>
         </>

@@ -158,6 +158,7 @@ export const updateSessionIfDeleteNet = (names: string[], sessionStore: Session[
         window.localStorage.removeItem("SAVED_SESSION_" + ss.id)
         return false
       }
+      return true
     })
   }
   return newStore
@@ -221,6 +222,7 @@ export const updateNetworkAndSessionIfDeleteData = (name: string, networkStore: 
         deleted.push(network)
         return false
       }
+      return true
     })
     newSessionStore = updateSessionIfDeleteNet(deleted, sessionStore)
   }
