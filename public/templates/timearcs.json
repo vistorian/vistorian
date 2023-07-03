@@ -1,5 +1,6 @@
 {
   "width": 3000,
+  "x": 120,
 
   "zoom": true,
   "pan": {"modifierKeyRequired": []},
@@ -16,7 +17,7 @@
           "labels":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
           "label": "Seriation"
       },
-      "value": "optimal-leaf-order"
+      "value": "barycentre"
     }
   ],
 
@@ -26,6 +27,11 @@
       "data": "network.nodes",
       "orderBy": {"field": "data.name"},
       "allowTies": true
+    }, 
+    {
+      "name": "staticOrder",
+      "method": {"parameter": "seriationMethod"},
+      "network": "staticNetwork"
     }
   ],
 
@@ -35,8 +41,15 @@
         "data": "network.nodes",
         "pattern": "cartesian",
         "x": [{ "scale": "time", "field": "data.date" }],
-        "y": [{ "order": "order" }],
+        "y": [{ "order": "staticOrder", "field": "data.name" }],
         "positioning": "none"
+      },
+       {
+        "name": "staticLayout",
+        "data": "staticNetwork.nodes",
+        "order": "staticOrder",
+        "pattern": "linear",
+        "orientation": "vertical"
       }
   ],
 
@@ -70,14 +83,24 @@
 
 "vis": [
     {
-      "entries": "network.nodes",
-      "layout": "layout",
+      "entries": "staticNetwork.nodes",
+      "layout": "staticLayout",
       "mark": {
         "type": "rule",
         "stroke": "#eeeeee",
         "strokeWidth": 4,
         "x": 0,
         "x2": { "expression": "bounds.width" }
+      }
+    },
+    {
+      "entries": "staticNetwork.nodes",
+      "layout": "staticLayout",
+      "mark": {
+        "type": "text",
+        "text": { "expression": "datum.id"},
+        "align": "right",
+        "dx": -15
       }
     },
     {
@@ -90,7 +113,7 @@
         "end": "target",
         "shape": "curveSymmetric",
         "stroke": { "field": "linkType", "scale": "edgeColor" },
-        "directionForShape": {  "ordering": "order" },
+        "directionForShape": {  "ordering": "staticOrder" },
         "strokeWidth": 1,
         "strokeOpacity": 0.3
       }

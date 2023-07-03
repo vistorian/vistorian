@@ -14,6 +14,8 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
   const defaultNodeType = "_default_node_type"
 
   const parse = timeColumn ? { 'parse': { [timeColumn]: `date:'${timeFormat}'`}} : null
+
+  // =========== FOR DATA SPEC =========== 
   const linkTableImportSpec = {
     name: "links",
     localStorage: "UPLOADED_FILE_" + linkFileName,
@@ -74,6 +76,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     ]
   }
 
+  // =========== FOR NETWORK SPEC =========== 
   /**
    * @description
    * @param {string} type is this node 'source' or 'target'?
@@ -94,10 +97,11 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     }
   }
 
+  let networkSpec = []
   // is "id" correct default for case when only link-table used?
   const idField = config.extraNodeConfig?.hasExtraNode ? config.extraNodeConfig.nodeID : "id"
 
-  const networkSpec = {
+  const baseNetworkSpec = {
     "name": "network",
     "parts": [
       {
@@ -136,9 +140,8 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
   }
 
   // =========== if exists the node dataset =========== 
-  // TODO: how to deal with time arcs with node data
-  if (config.extraNodeConfig?.hasExtraNode && visType !== 'timearcs') {
-    networkSpec.parts = [
+  if (config.extraNodeConfig?.hasExtraNode) {
+    baseNetworkSpec.parts = [
       {
         "data": "nodes",
         "yieldsNodes": [
@@ -168,15 +171,64 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       }
     ]
   }
+  networkSpec.push(baseNetworkSpec)
 
   // TODO: deal with geo config, linkID
-  if (config.linkTableConfig?.linkType) 
-    networkSpec.transform.push({ "type": "calculate", "as": "linkType", "calculate": `datum.data.${config.linkTableConfig?.linkType}`, "for": "links" })
+  if (config.linkTableConfig?.linkType)
+    baseNetworkSpec.transform.push({ "type": "calculate", "as": "linkType", "calculate": `datum.data.${config.linkTableConfig?.linkType}`, "for": "links" })
   if (config.linkTableConfig?.linkWeight)
-    networkSpec.transform.push({ "type": "calculate", "as": "linkWeight", "calculate": `datum.data.${config.linkTableConfig?.linkWeight}`, "for": "links" })
+    baseNetworkSpec.transform.push({ "type": "calculate", "as": "linkWeight", "calculate": `datum.data.${config.linkTableConfig?.linkWeight}`, "for": "links" })
+
+
+  // =========== if vis is timearcs, generate staic network without time =========== 
+  if (visType === 'timearcs') {
+    // const staticNetworkSpec = {
+    //   "name": "staticNetwork",
+    //   "parts": [
+    //     {
+    //       "data": "links",
+    //       "yieldsNodes": [
+    //         {
+    //           "id_field": sourceLabel,
+    //           "type": defaultNodeType,
+    //           "data": ["*"]
+    //         },
+    //         {
+    //           "id_field": targetLabel,
+    //           "type": defaultNodeType,
+    //           "data": ["*"]
+    //         }
+    //       ],
+    //       "yieldsLinks": [
+    //         {
+    //           "source_id": { "field": sourceLabel }, 
+    //           "source_node_type": defaultNodeType,
+    //           "source_id_field": "id",
+    //           "target_id": { "field": targetLabel }, 
+    //           "target_node_type": "person",
+    //           "target_id_field": "id",
+    //           "data": ["*"]
+    //         }
+    //       ]
+    //     }
+    //   ],
+    //   "transform": [
+    //     {"type": "metric", "metric": "degree"}
+    //   ] 
+    // }
+    const staticNetworkSpec = {
+      "name": "staticNetwork",
+      "nodes": config.extraNodeConfig?.hasExtraNode ? "nodes" : undefined,
+      "links": "links",
+      "directed": true,
+      "source_node": [idField, sourceLabel],
+      "target_node": [idField, targetLabel]
+    }
+    networkSpec.push(staticNetworkSpec)
+  }
 
   return {
     data: dataSpec,
-    network: [networkSpec]
+    network: networkSpec
   }
 }
