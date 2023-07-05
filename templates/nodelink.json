@@ -3,10 +3,16 @@
   "parameters": [
     {
       "name": "node_selection",
-      "action": "replace",
       "network": "network",
       "type": "selection",
       "clearOnBackgroundClick": true
+    },
+    {
+      "name": "neighbours",
+      "source": "node_selection",
+      "transform": [
+        { "type": "neighbours", "direction": "both" }
+      ]
     }
   ],
   "networks": "[networksDefinition]",
@@ -22,7 +28,7 @@
     {
       "name": "radius",
       "type": "linear",
-      "range": [ 20, 150 ],
+      "range": [ 15, 150 ],
       "domain": { "data": "network.nodes",  "field": "degree" }
     },
     {
@@ -72,7 +78,29 @@
         "shape": {"field": "data.type0", "scale": "nodeShape"},
         "area": { "field": "degree", "scale": "radius" },
         "fill": "black",
-        "stroke": "white"
+        "stroke": {
+          "condition": [
+            {
+              "inSelection": "node_selection.nodes",
+              "value": "blue"
+            },
+            {
+              "inSelection": "neighbours.nodes",
+              "value": "blue"
+            }
+          ],
+          "value": "white"
+        },
+        "actions": [
+          {
+            "interaction": "select",
+            "using": "cursor",
+            "event": "click",
+            "action": "toggle",
+            "selection": "node_selection"
+          }
+        ],
+        "tooltip": {"field": "id"}
       }
     }
   ]
