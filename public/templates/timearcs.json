@@ -90,7 +90,8 @@
         "stroke": "#eeeeee",
         "strokeWidth": 4,
         "x": 0,
-        "x2": { "expression": "bounds.width" }
+        "x2": { "expression": "bounds.width" },
+        "tooptip": { "expression": "datum"}
       }
     },
     {
@@ -100,7 +101,8 @@
         "type": "text",
         "text": { "expression": "datum.id"},
         "align": "right",
-        "dx": -15
+        "dx": -15,
+        "fontSize": 6
       }
     },
     {
@@ -115,7 +117,8 @@
         "stroke": { "field": "linkType", "scale": "edgeColor" },
         "directionForShape": {  "ordering": "staticOrder" },
         "strokeWidth": 1,
-        "strokeOpacity": 0.3
+        "strokeOpacity": 0.3,
+        "tooptip": { "expression": "datum"}
       }
     },
     {
@@ -126,7 +129,7 @@
         "area": { "field": "degree", "scale": "radius" },
         "fill": "black",
         "stroke": "white",
-        "tooptip": { "field": "id" }
+        "tooptip": { "expression": "datum"}
       }
     }
   ]

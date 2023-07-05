@@ -69,7 +69,9 @@ function Vis() {
     // @ts-ignore
     console.log('VIEW STATE:', window.viewer.state)
     // @ts-ignore
-    specUrl = "https://netpanorama-editor.netlify.app/?spec=" + encodeURIComponent(specString);
+    // specUrl = "https://netpanorama-editor.netlify.app/?spec=" + encodeURIComponent(specString);
+    // let viewer = new GraphgraView(spec, { container: "#SVG", renderer })
+    // await viewer.render();
 
     // @ts-ignore
     container.getElementsByTagName("svg")[0].style["max-width"] = "100%";
