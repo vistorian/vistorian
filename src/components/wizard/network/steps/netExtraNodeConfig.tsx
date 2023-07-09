@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss'
-import { Typography, Form, Radio, Space, Col, Row, Select, Button, message } from 'antd';
+import { Typography, Form, Radio, Space, Col, Row, Select, Button, message, Tooltip } from 'antd';
 import { StepData, IStepProps, SelectOptionType } from '../../../../../typings';
-import { LeftOutlined, RightOutlined, PlusOutlined } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined, PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import FileSelector from './fileSelector';
 import TablePreview from './tablePreview';
@@ -121,13 +121,27 @@ function NetExtraNodeConfig(props: IStepProps) {
           <Form.Item
             name="nodeID"
             style={{ marginTop: 20, marginBottom: 5 }}
-            rules={[{ required: false }]}
+            rules={[{ required: true, message: 'This is required.' }]}
           >
             <div className={classes.selection}>
               <Text className={classes.selectionName}>- Node ID:</Text>
               <Select style={{ width: 300 }}
                 options={selectionOptions}
                 onChange={(value) => form.setFieldsValue({ 'nodeID': value })}
+              />
+            </div>
+          </Form.Item>
+
+          <Form.Item
+            name="nodeLabel"
+            style={{ marginBottom: 5 }}
+            rules={[{ required: false }]}
+          >
+            <div className={classes.selection}>
+              <Text className={classes.selectionName}>- Node Label:&nbsp;<Tooltip title="Display name for the nodes"><InfoCircleOutlined /></Tooltip></Text>
+              <Select style={{ width: 300 }}
+                options={selectionOptions}
+                onChange={(value) => form.setFieldsValue({ 'nodeLabel': value })}
               />
             </div>
           </Form.Item>
@@ -151,11 +165,12 @@ function NetExtraNodeConfig(props: IStepProps) {
                       />
                     </div>
                   </Form.Item>
-                  {index !== 0 ? <Button onClick={() => remove(index)}>Delete this node type</Button> : null}
+                  {index !== 0 ? <Button style={{marginBottom: 5}} onClick={() => remove(index)}>Delete this node type</Button> : null}
                 </>
               )
             }
           })}
+          <br />
           {(nodeTypes[2]===null) ? <Button onClick={() => add()} icon={<PlusOutlined />}>Add more node types</Button> : null}
         </>: null}
       </>: null}

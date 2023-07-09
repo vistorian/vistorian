@@ -93,6 +93,7 @@ interface ExtraNodeConfig {
   file?: string
   hasHeaderRow?: boolean
   nodeID?: string
+  nodeLabel?: string
   nodeTypes?: string[]
 }
 

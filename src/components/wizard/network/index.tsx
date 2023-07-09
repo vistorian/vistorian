@@ -88,14 +88,21 @@ function Network(props: INetworkProps) {
     }
 
     // update fileNameStore after this step to avoid components updating meanwhile
-    if (stepData && 'file' in stepData) {
-      if (findIndex(fileNameStore, (fn: DataFile) => fn.name === stepData.file) === -1) {
+    if (stepData && 'dragger' in stepData) {
+      const index = findIndex(fileNameStore, (fn: DataFile) => fn.name === stepData.file)
+      // if the file doesn't in flie store, record it. 
+      if (index === -1) {
         const tmp = {
           name: stepData.file,
-          hasHeader: true
+          hasHeader: stepData.hasHeaderRow
         } as DataFile
         setFileNameStore([...fileNameStore, tmp])
       }
+      // else {
+        // if the file exists, but the hasHeader updates, update the filestore
+        // if (fileNameStore[index].hasHeader !== stepData.hasHeaderRow) {          
+        // }
+      // }
     }
 
     const idx = newSteps.indexOf(step)

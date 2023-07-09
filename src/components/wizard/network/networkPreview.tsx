@@ -28,14 +28,14 @@ function NetworkPreview(props: INetworkPreviewProps) {
   const { selectedNetwork, setPreview, setMain, setSelectedNetwork } = props
   const { networkStore, setNetworkStore } = useContext(WizardContext)
 
-  const data = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + selectedNetwork) as string) as NetworkConfig
-  // console.log('NETWORK_SPEC_', genSpecFromLinkTable(data))
+  const network = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + selectedNetwork) as string) as NetworkConfig
+  // console.log('NETWORK_SPEC_', genSpecFromLinkTable(network))
   const getDataTables = () => {
     const list = []
-    if (data.format?.format === 'tabular') {
-      list.push(data.linkTableConfig?.file)
-      if (data.extraNodeConfig?.hasExtraNode) {
-        list.push(data.extraNodeConfig.file)
+    if (network.format?.format === 'tabular') {
+      list.push(network.linkTableConfig?.file)
+      if (network.extraNodeConfig?.hasExtraNode) {
+        list.push(network.extraNodeConfig.file)
       }
     }
     return list as string[]
@@ -143,7 +143,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
         </div>
         {/* modal for delete data/network */}
         <Modal
-          title={`Delete data`}
+          title={`Delete network`}
           open={open}
           onCancel={() => setOpen(false)}
           footer={[
@@ -171,10 +171,10 @@ function NetworkPreview(props: INetworkPreviewProps) {
       <Title level={3}> PREVIEW </Title>
       <span>Below, you see the link and node tables that are generated from your specified network. </span>
       {/* <NetworkNodeTable 
-        network={data as string}
-      />
-      <NetworkLinkTable
-        network={data as string}
+        network={network}
+      /> */}
+      {/* <NetworkLinkTable
+        network={network}
       /> */}
     
     </div>

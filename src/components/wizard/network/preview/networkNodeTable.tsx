@@ -7,11 +7,11 @@ import { union } from 'lodash-es';
 const { Title } = Typography
 
 interface INetworkNodeTableProps {
-  network: string
+  network: NetworkConfig
 }
 
 function NetworkNodeTable(props: INetworkNodeTableProps) {
-  const network = JSON.parse(props.network) as NetworkConfig
+  const { network } = props 
   
   const [columnInTable, setColumnInTable] = useState<any[]>([])
   const [dataInTable, setDataInTable] = useState<any[]>([])

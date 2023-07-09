@@ -2,6 +2,7 @@ import { Table, Typography, message } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import { useEffect, useState } from 'react'
 import csvtojson from 'csvtojson'
+import { NetworkConfig } from '../../../../../typings'
 
 const { Title } = Typography
 
@@ -20,11 +21,11 @@ const fullCol = {
 }
 
 interface INetworkLinkTableProps {
-  network: string
+  network: NetworkConfig
 }
 
 function NetworkLinkTable(props: INetworkLinkTableProps) {
-  const network = JSON.parse(props.network)
+  const { network } = props
 
   const [columnInTable, setColumnInTable] = useState<any[]>([])
   const [dataInTable, setDataInTable] = useState<any[]>([])
@@ -32,23 +33,21 @@ function NetworkLinkTable(props: INetworkLinkTableProps) {
   const getColumns = () => {
     let columns = [] as ColumnsType
     if (network.format?.format === 'tabular') {
-      if (network.linkType?.linkType === 'rowPerLink') {
-        Object.entries(fullCol).forEach((entry) => {
-          if (network.linkTableConfig.hasOwnProperty(entry[0]) && network.linkTableConfig[entry[0]].length > 0) {
-            columns.push({
-              title: entry[1],
-              children: [{
-                  title: network.linkTableConfig[entry[0]],
-                  dataIndex: entry[0],
-                  key: entry[0],
-                }]
-            })
-          }
-        })        
-      }
-      else { // 'rowPerNode'
+      Object.entries(fullCol).forEach((entry) => {
+        if (network.linkTableConfig && network.linkTableConfig.hasOwnProperty(entry[0])) {
+          if (network.linkTableConfig?[entry[0]].length > 0){
 
-      }
+          }
+          columns.push({
+            title: entry[1],
+            children: [{
+              title: network.linkTableConfig[entry[0]],
+              dataIndex: entry[0],
+              key: entry[0],
+            }]
+          })
+        }
+      })
     }
     // console.log('getColumns:', columns)
     return columns
