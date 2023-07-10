@@ -1,7 +1,5 @@
-import { Table, Typography, message } from 'antd'
-import { useEffect, useState } from 'react'
+import { Table, Typography } from 'antd'
 import { NetworkConfig } from '../../../../../typings';
-import { ColumnsType } from 'antd/es/table';
 import { union } from 'lodash-es';
 
 const { Title } = Typography
@@ -12,46 +10,65 @@ interface INetworkNodeTableProps {
 
 function NetworkNodeTable(props: INetworkNodeTableProps) {
   const { network } = props 
-  
-  const [columnInTable, setColumnInTable] = useState<any[]>([])
-  const [dataInTable, setDataInTable] = useState<any[]>([])
 
   const getColumns = () => {
-    let columns = [] as ColumnsType
+    let columns: any[] = []
     if (network.format?.format === 'tabular') {
-      columns = ['id', 'label'].map(header => {
-        return {
-          title: header,
-          dataIndex: header,
-          key: header,
+      if (network.extraNodeConfig?.hasExtraNode) { // has extra node table
+        columns.push({ title: 'ID', dataIndex: network.extraNodeConfig.nodeID })
+        if (network.extraNodeConfig.nodeLabel) {
+          columns.push({ title: 'Label', dataIndex: network.extraNodeConfig.nodeLabel })
         }
-    })
+        const types = network.extraNodeConfig.nodeTypes
+        if (types) {
+          types.map((type, idx) => {
+            if (type && type.length > 0) {
+              columns.push({
+                title: `Type ${idx+1}`,
+                dataIndex: type
+              })
+            }
+          })
+        }
+      }
+      else { // no extra node table
+        columns.push(
+          { title: 'ID', dataIndex: 'nodeID' }, 
+          { title: 'Label', dataIndex: 'nodeLabel'})
+      }
     }
     return columns
   }
 
   const getData = () => {
-    const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.linkTableConfig?.file) as string)
-    if (jsonData) {
-      const columns = getColumns()
-      if (columns.length === 2) { // only has ['id', 'label']
-        const sourceNodeLabel = network.linkTableConfig?.sourceNodeLabel
-        const targetNodeLabel = network.linkTableConfig?.targetNodeLabel
-        if (sourceNodeLabel && targetNodeLabel) {
-          const data = union(jsonData.map((d:any) => d[sourceNodeLabel]), jsonData.map((d:any) => d[targetNodeLabel])).map((l, i) => ({ '_rowKey': i, 'id': i, 'label': l }))
-          setColumnInTable(columns)
-          setDataInTable(data)
-        }
+    const columns = getColumns()
+    let data: any[] = []
+    if (!network.extraNodeConfig?.hasExtraNode) { // no exra node table
+      const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.linkTableConfig?.file) as string)
+      const sourceNodeLabel = network.linkTableConfig?.sourceNodeLabel
+      const targetNodeLabel = network.linkTableConfig?.targetNodeLabel
+      if (sourceNodeLabel && targetNodeLabel) {
+        data = union(jsonData.map((d: any) => d[sourceNodeLabel]), jsonData.map((d: any) => d[targetNodeLabel])).map((l, i) => ({ '_rowKey': i, 'nodeID': i, 'nodeLabel': l }))
       }
     }
-    else {
-      message.error('There is no such data file in the storage!')
+    else { // has extra node table
+      const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.extraNodeConfig?.file) as string)
+      data = jsonData.map((record: any, index: number) => {
+        let row: { [key: string]: string | number } = {}
+        row['_rowKey'] = index
+        columns.forEach(column => {
+          let k = column.dataIndex
+          row[k] = record[k]
+        })
+        return row
+      })
+      // console.log('getData:', data)
     }
+    return data
   }
 
-  useEffect(()=>{
-    getData()
-  }, [])
+  const columnInTable = getColumns()
+  const dataInTable = getData()
 
   return (
     <>

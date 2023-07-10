@@ -1,7 +1,4 @@
 import { Table, Typography, message } from 'antd'
-import { ColumnsType } from 'antd/es/table'
-import { useEffect, useState } from 'react'
-import csvtojson from 'csvtojson'
 import { NetworkConfig } from '../../../../../typings'
 
 const { Title } = Typography
@@ -16,7 +13,6 @@ const fullCol = {
   locationOfTargetNode: 'Location of target node',
   linkWeight: 'Link weight', 
   linkType: 'Link type',
-  whetherLinkDirected: 'Link Directed',
   time: 'Time',
 }
 
@@ -26,64 +22,51 @@ interface INetworkLinkTableProps {
 
 function NetworkLinkTable(props: INetworkLinkTableProps) {
   const { network } = props
-
-  const [columnInTable, setColumnInTable] = useState<any[]>([])
-  const [dataInTable, setDataInTable] = useState<any[]>([])
   
   const getColumns = () => {
-    let columns = [] as ColumnsType
+    let columns = [] as any[]
     if (network.format?.format === 'tabular') {
       Object.entries(fullCol).forEach((entry) => {
-        if (network.linkTableConfig && network.linkTableConfig.hasOwnProperty(entry[0])) {
-          if (network.linkTableConfig?[entry[0]].length > 0){
-
-          }
+        //@ts-ignore
+        if (network.linkTableConfig && network.linkTableConfig.hasOwnProperty(entry[0]) && network.linkTableConfig[entry[0]].length > 0) {
           columns.push({
             title: entry[1],
-            children: [{
-              title: network.linkTableConfig[entry[0]],
-              dataIndex: entry[0],
-              key: entry[0],
-            }]
+            //@ts-ignore
+            dataIndex: network.linkTableConfig[entry[0]]
           })
         }
       })
     }
+    // TODO: test other data formats
     // console.log('getColumns:', columns)
     return columns
   }
 
-  const getData = async () => {
-    const csvdata = window.localStorage.getItem("UPLOADED_FILE_" + network.linkTableConfig?.file) as string
-    if (csvdata) {
-      // TODO: deal with no fakeHeader
+  const getData = () => {
+    let data: any[] = []
+
+    const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.linkTableConfig?.file) as string)
+    if (jsonData) {
       const columns = getColumns()
-      await csvtojson().fromString(csvdata)
-        .then((jsonData) => {
-          const data = jsonData.map((record, index) => {
-            let row: { [key: string]: string|number } = {}
-            row['_rowKey'] = index
-            columns.forEach(column => {
-              // @ts-ignore
-              let k = column.children[0].dataIndex
-              row[k] = record[network.linkTableConfig[k]]
-            })
-            return row
-          })
-          // console.log('getData:', data)
-          setColumnInTable(columns)
-          setDataInTable(data)
+      data = jsonData.map((record: any, index: number) => {
+        let row: { [key: string]: string | number } = {}
+        row['_rowKey'] = index
+        columns.forEach(column => {
+          let k = column.dataIndex
+          row[k] = record[k]
         })
+        return row
+      })
+      // console.log('getData:', data)
     }
     else {
       message.error('There is no such data file in the storage!')
     }
+    return data
   }
 
-  useEffect(() => {
-    getData()
-  }, [])
-
+  const columnInTable = getColumns()
+  const dataInTable = getData()
 
   return (
     <>

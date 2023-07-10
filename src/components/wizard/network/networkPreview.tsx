@@ -9,7 +9,6 @@ import NetworkNodeTable from './preview/networkNodeTable';
 import NetworkLinkTable from './preview/networkLinkTable';
 import DataTable from './preview/dataTable';
 import { NetworkConfig } from '../../../../typings';
-import { genSpecFromLinkTable } from '../../templates/genSpec';
 
 const { Title } = Typography
 
@@ -29,17 +28,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
   const { networkStore, setNetworkStore } = useContext(WizardContext)
 
   const network = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + selectedNetwork) as string) as NetworkConfig
-  // console.log('NETWORK_SPEC_', genSpecFromLinkTable(network))
-  const getDataTables = () => {
-    const list = []
-    if (network.format?.format === 'tabular') {
-      list.push(network.linkTableConfig?.file)
-      if (network.extraNodeConfig?.hasExtraNode) {
-        list.push(network.extraNodeConfig.file)
-      }
-    }
-    return list as string[]
-  }
+  const [edit, setEdit] = useState<boolean>(false)
 
   const [rename, setRename] = useState<boolean>(false)
   const [renameValue, setRenameValue] = useState<string>('')
@@ -111,10 +100,12 @@ function NetworkPreview(props: INetworkPreviewProps) {
         {/* func */}
         <div style={{ display: 'flex' }}>
           <MyButton
-            icon={<EditFilled />}
+            style={{ width: 135 }}
+            icon={edit ? <CheckOutlined />: <EditFilled />}
             type='primary'
+            onClick={() => setEdit(!edit)}
           >
-            Edit Network
+            {edit? 'Update' : 'Edit Network'}
           </MyButton>
           <MyButton
             icon={<CopyFilled />}
@@ -163,20 +154,17 @@ function NetworkPreview(props: INetworkPreviewProps) {
         </Modal>
       </div>
 
-
       {/* <pre>{JSON.stringify(JSON.parse(data as string), null, 2)}</pre> */}
       {/* data: network configruation */}
-      <DataTable dataNames={getDataTables()}/>
+      <Title level={3}>DATA TABLE(S)</Title>
+      <span>Below, you see the data tables you have used to specify ... </span>
+      <DataTable network={network} edit={edit}/>
+
 
       <Title level={3}> PREVIEW </Title>
       <span>Below, you see the link and node tables that are generated from your specified network. </span>
-      {/* <NetworkNodeTable 
-        network={network}
-      /> */}
-      {/* <NetworkLinkTable
-        network={network}
-      /> */}
-    
+      <NetworkNodeTable network={network} />
+      <NetworkLinkTable network={network} />
     </div>
   )
 }

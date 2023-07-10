@@ -82,6 +82,7 @@ interface LinkTableConfig {
 interface LocationTableConfig {
   hasLocationFile: boolean
   file?: string
+  dragger?: any
   hasHeaderRow?: boolean
   place?: string
   lat?: string
@@ -91,6 +92,7 @@ interface LocationTableConfig {
 interface ExtraNodeConfig {
   hasExtraNode: boolean
   file?: string
+  dragger?: any
   hasHeaderRow?: boolean
   nodeID?: string
   nodeLabel?: string
