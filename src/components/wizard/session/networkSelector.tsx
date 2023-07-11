@@ -6,6 +6,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { WizardContext } from '../context'
 import NetworkNodeTable from '../network/preview/networkNodeTable'
 import NetworkLinkTable from '../network/preview/networkLinkTable'
+import { NetworkConfig } from '../../../../typings'
 
 const useStyles = createUseStyles({
 })
@@ -104,8 +105,8 @@ function NetworkSelector(props: INetworkSelectorProps) {
 
         {network && network.length > 0 ? (<>
           <Title level={3}>{network} </Title>
-          <NetworkNodeTable network={window.localStorage.getItem('NETWORK_WIZARD_'+network) as string} />
-          <NetworkLinkTable network={window.localStorage.getItem('NETWORK_WIZARD_' + network) as string} />
+          <NetworkNodeTable network={JSON.parse(window.localStorage.getItem('NETWORK_WIZARD_'+network) as string) as NetworkConfig} />
+          <NetworkLinkTable network={JSON.parse(window.localStorage.getItem('NETWORK_WIZARD_' + network) as string) as NetworkConfig} />
         </>): null}
 
         <Row>

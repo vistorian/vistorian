@@ -1,5 +1,5 @@
 import { Button, Input, Tooltip } from 'antd'
-import { DeleteFilled, CopyFilled, EditFilled, CheckOutlined, CloseOutlined } from '@ant-design/icons'
+import { DeleteFilled, CopyFilled, EditFilled, CheckOutlined, CloseOutlined, NodeIndexOutlined } from '@ant-design/icons'
 import { createUseStyles } from 'react-jss'
 import { OperationType } from '../../../typings'
 import { useState } from 'react'
@@ -42,11 +42,12 @@ interface IRecordProps {
   toCopy: (type: OperationType, name: string) => void
   toRename: (type: OperationType, oldName: string, newName: string) => boolean
   showPreview: (type: OperationType, name: string) => void
+  showVisSelector: (name: string) => void
 }
 
 function Record(props: IRecordProps) {
   const classes = useStyles()
-  const { data, type, selectedPreview, toCopy, toRename, handleSelectToDelete, showPreview } = props
+  const { data, type, selectedPreview, toCopy, toRename, handleSelectToDelete, showPreview, showVisSelector } = props
 
   const [editOpen, setEditOpen] = useState<boolean>(false)
   const [value, setValue] = useState<string>(data)
@@ -92,6 +93,15 @@ function Record(props: IRecordProps) {
                 onClick={() => handleSelectToDelete(type, data)}
               />
             </Tooltip>
+            {type === 'network' ? 
+              <Tooltip title="Visualize">
+                <Button
+                  icon={<NodeIndexOutlined />}
+                  type='text'
+                  shape='circle'
+                  onClick={() => showVisSelector(data)}
+                />
+              </Tooltip> : null}
           </div>
         </>
       ) : (

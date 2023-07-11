@@ -208,6 +208,12 @@ function Wizard() {
     }
   }
 
+  const showVisSelector = (name: string) => {
+    setMain('visSelector')
+    setSelectedNetwork(name)
+    setPreview('')
+  }
+
   // render main component
   const renderComp = (content: string) => {
     switch (content) {
@@ -264,7 +270,7 @@ function Wizard() {
             </a>
             <Button  
               type='primary' 
-              style={{ marginBottom: 10, marginRight: 10 }}
+              style={{ marginBottom: 10, marginRight: 10, fontWeight: 700 }}
               onClick={()=>{
                 setMain('sessions')
                 // initialize
@@ -277,7 +283,7 @@ function Wizard() {
             </Button>
             <Button
               type='primary'
-              style={{ marginBottom: 10, marginRight: 10 }}
+              style={{ marginBottom: 10, marginRight: 10, fontWeight: 700 }}
               onClick={() => {
                 setTriggerReMount(Math.random())
                 setMain('newSession')
@@ -316,6 +322,7 @@ function Wizard() {
                 selectedPreview={selectedPreview}
                 toCopy={toCopy}
                 toRename={toRename}
+                showVisSelector={showVisSelector}
               />)}
             )}
             
@@ -349,6 +356,7 @@ function Wizard() {
                 selectedPreview={`${main}-${preview}`}
                 toCopy={toCopy}
                 toRename={toRename}
+                showVisSelector={showVisSelector}
               />
             ))}
           </div> 

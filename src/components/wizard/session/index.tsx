@@ -107,7 +107,13 @@ function Sessions(props: ISessionsProps) {
       id: maxId + 1,
       network: session.network,
       vis: session.vis,
-      created: new Date().toLocaleString()
+      created: new Date().toLocaleString('en-GB', {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric"
+      })
     }
     window.localStorage.setItem("SAVED_SESSION_" + newSession.id, JSON.stringify(newSession))
     setSessionStore([...sessionStore, newSession])
@@ -164,7 +170,7 @@ function Sessions(props: ISessionsProps) {
                   </div>
                   <div className={classes.footer}>
                     <span>{session.network}</span>
-                    <span style={{ fontSize: 12 }}>Created by: {session.created}</span>
+                    <span style={{ fontSize: 12 }}>Created at: {session.created}</span>
                   </div>
                 </div>  
               </Link>      
@@ -190,7 +196,7 @@ function Sessions(props: ISessionsProps) {
         )
       })}
         <div className={classes.addSession} onClick={() => moveToNewSession('newSession')}>
-          + Add Session
+          + Create Visualization
         </div>
     </div>
     </>

@@ -1,7 +1,7 @@
 import { Checkbox, Select, Table, Typography } from 'antd'
 import { NetworkConfig } from '../../../../../typings';
 
-const { Title } = Typography
+const { Title, Text } = Typography
 
 const opts = [
   { value: '', label: '-'},
@@ -33,12 +33,10 @@ function LinkDataTable(props: IDataTableProps) {
     }
   })
   const data = jsonData.map((d: any, i: number) => {
-    d._rowKey = i
-    return d
+    const dd = {...d}
+    dd._rowKey = i
+    return dd
   })
-
-  const directed = network.linkTableConfig?.directed
-  const timeFormat = network.linkTableConfig?.timeFormat
 
 
   /**
@@ -48,9 +46,7 @@ function LinkDataTable(props: IDataTableProps) {
    */
   const getDefault = (dataColumn: string) => {
     if (network.linkTableConfig) {
-      const entries = Object.entries(network.linkTableConfig)
-      for (let i = 0; i < entries.length; i++){
-        const entry = entries[i]
+      for (let entry of Object.entries(network.linkTableConfig)){
         if (fullCol.findIndex(i => i === entry[0]) > -1 && dataColumn === entry[1]){
           return entry[0]
         }
@@ -69,19 +65,25 @@ function LinkDataTable(props: IDataTableProps) {
 
   return (
     <>
-      <div style={{ display: 'flex'}}>
-        <Checkbox />
+      <div style={{ display: 'flex', marginBottom: 5}}>
+        <Checkbox checked={network.linkTableConfig?.directed}> 
+          Is directed?
+        </Checkbox>
+        {network.linkTableConfig?.withTime ? <>
+          <Text style={{ marginLeft: 10, marginRight: 5, fontWeight: 600 }}>Time format:</Text>
+          <Text style={{ textDecoration: 'underline' }}>{network.linkTableConfig?.timeFormat}</Text>
+        </> : null}
       </div>
       <div style={{ display: 'flex'}}>
         {columns.map(column => {
           const netColumn = getDefault(column.dataIndex)
           return (
             <Select
+              key={column.dataIndex}
               defaultValue={netColumn}
               style={{ width: `calc(100%/${Object.keys(jsonData[0]).length} + 8px)`, margin: 4 }}
               onChange={(value) => handleChange(value, column.dataIndex)}
               options={opts}
-              disabled={!edit}
             />
           )
         })}

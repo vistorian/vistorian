@@ -99,14 +99,14 @@ function NetworkPreview(props: INetworkPreviewProps) {
         </div>
         {/* func */}
         <div style={{ display: 'flex' }}>
-          <MyButton
+          {/* <MyButton
             style={{ width: 135 }}
             icon={edit ? <CheckOutlined />: <EditFilled />}
             type='primary'
             onClick={() => setEdit(!edit)}
           >
             {edit? 'Update' : 'Edit Network'}
-          </MyButton>
+          </MyButton> */}
           <MyButton
             icon={<CopyFilled />}
             type='primary'
@@ -157,12 +157,12 @@ function NetworkPreview(props: INetworkPreviewProps) {
       {/* <pre>{JSON.stringify(JSON.parse(data as string), null, 2)}</pre> */}
       {/* data: network configruation */}
       <Title level={3}>DATA TABLE(S)</Title>
-      <span>Below, you see the data tables you have used to specify ... </span>
+      <span>Below, you see the data tables you have used to specify. </span>
       <DataTable network={network} edit={edit}/>
 
 
       <Title level={3}> PREVIEW </Title>
-      <span>Below, you see the link and node tables that are generated from your specified network. </span>
+      <span>{edit ? "Your link and node tables are updating." : "Below, you see the link and node tables that are generated from your specified network."}</span>
       <NetworkNodeTable network={network} />
       <NetworkLinkTable network={network} />
     </div>
