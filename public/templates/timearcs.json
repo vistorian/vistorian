@@ -76,7 +76,7 @@
     {
       "name": "edgeColor",
       "type": "ordinal",
-      "scheme": "category10",
+      "range": "[linkTypeColorScheme]",
       "domain": { "data": "network.links", "field": "linkType" }
     }
   ],

@@ -59,7 +59,7 @@ function Vis() {
     window.viewer = await NetPanoramaTemplateViewer.render(`./templates/${template.template}`, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
-      linkTypeColorScheme: `"${linkTypeColorScheme}"`,
+      linkTypeColorScheme: linkTypeColorScheme,
       nodeTypeShapeScheme: nodeTypeShapeScheme
     }, containerId, { renderer: renderer })
     // @ts-ignore

@@ -29,7 +29,7 @@
     {
       "name": "cellColor",
       "type": "ordinal",
-      "scheme": "[linkTypeColorScheme]",
+      "range": "[linkTypeColorScheme]",
       "domain": { "data": "network.links", "field": "linkType"}
     }
   ],

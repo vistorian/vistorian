@@ -1,5 +1,6 @@
 import * as d3 from 'd3'
 import { useEffect, useRef } from 'react'
+import { defaultLinkTypeColorScheme } from '../../../typings/constant'
 
 interface ILegentItemProps {
   type: string
@@ -16,6 +17,9 @@ export default function LegendItem(props: ILegentItemProps) {
   if (type === 'linkType') {
     if (scheme === 'category10') {
       scale = d3.scaleOrdinal().domain(list).range(d3.schemeCategory10)
+    }
+    else {
+      scale = d3.scaleOrdinal().domain(list).range(scheme)
     }
   }
   else if (type === 'nodeType') {
