@@ -1,4 +1,7 @@
 {
+  "zoom": true,
+  "pan": {"modifierKeyRequired": []},
+  
   "x": 700,  
   "height": 1400,
 

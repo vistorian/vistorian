@@ -1,10 +1,14 @@
 {
+  "zoom": true,
+  "pan": {"modifierKeyRequired": []},
+  
   "data": "[dataDefinition]",
   "parameters": [
     {
       "name": "node_selection",
       "network": "network",
       "type": "selection",
+      "action": "replace",
       "clearOnBackgroundClick": true
     },
     {
@@ -40,7 +44,7 @@
     {
       "name": "edgeColor",
       "type": "ordinal",
-      "scheme": "[linkTypeColorScheme]",
+      "range": "[linkTypeColorScheme]",
       "domain": { "data": "network.links", "field": "linkType" }
     },
     {
@@ -66,41 +70,72 @@
         "end": "target",
         "stroke": { "field": "linkType", "scale": "edgeColor" },
         "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth"},
-        "opacity":  { "field": "linkWeight", "scale": "edgeOpacity"},
+        "opacity":  { 
+          "conditions": [
+            {
+              "test": "datum.data._shown === false",
+              "value": 0
+            },
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "field": "linkWeight",
+              "scale": "edgeOpacity"
+            },
+            {
+              "inSelection": "neighbours.links",
+              "value": 1
+            }
+          ],
+          "value": 0.1
+        },
         "shape": "line"
       }
     },
     {
       "entries": "network.nodes",
       "layout": "layout",
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseover",
+          "action": "replace",
+          "selection": "node_selection"
+        }
+      ],
       "mark": {
         "type": "symbol",
         "shape": {"field": "data.type0", "scale": "nodeShape"},
         "area": { "field": "degree", "scale": "radius" },
         "fill": "black",
-        "stroke": {
-          "condition": [
+        "stroke": "white",
+        "opacity": {
+          "conditions": [
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "value": 1
+            },
             {
               "inSelection": "node_selection.nodes",
-              "value": "blue"
+              "value": 1
             },
             {
               "inSelection": "neighbours.nodes",
-              "value": "blue"
+              "value": 1
             }
           ],
-          "value": "white"
+          "value": 0.1
         },
-        "actions": [
-          {
-            "interaction": "select",
-            "using": "cursor",
-            "event": "click",
-            "action": "toggle",
-            "selection": "node_selection"
-          }
-        ],
         "tooltip": {"field": "id"}
+      }
+    },
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "if": "datum.degree > [lableImportance]",
+      "mark": {
+        "type": "text",
+        "text": { "expression": "datum.id"}
       }
     }
   ]

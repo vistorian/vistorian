@@ -2,6 +2,9 @@
   "x": 120,
   "y": 120,
 
+  "zoom": true,
+  "pan": {"modifierKeyRequired": []},
+
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
 
@@ -29,7 +32,7 @@
     {
       "name": "cellColor",
       "type": "ordinal",
-      "scheme": "[linkTypeColorScheme]",
+      "range": "[linkTypeColorScheme]",
       "domain": { "data": "network.links", "field": "linkType"}
     }
   ],

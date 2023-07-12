@@ -76,7 +76,7 @@
     {
       "name": "edgeColor",
       "type": "ordinal",
-      "scheme": "category10",
+      "range": "[linkTypeColorScheme]",
       "domain": { "data": "network.links", "field": "linkType" }
     }
   ],
@@ -113,7 +113,7 @@
         "type": "linkpath",
         "start": "source",
         "end": "target",
-        "shape": "curveSymmetric",
+        "shape": "line",
         "stroke": { "field": "linkType", "scale": "edgeColor" },
         "directionForShape": {  "ordering": "staticOrder" },
         "strokeWidth": 1,

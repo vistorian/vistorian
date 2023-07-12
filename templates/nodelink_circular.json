@@ -1,4 +1,6 @@
 {
+  "zoom": true,
+  "pan": {"modifierKeyRequired": []},
 
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
@@ -51,7 +53,7 @@
     {
       "name": "edgeColor",
       "type": "ordinal",
-      "scheme": "[linkTypeColorScheme]",
+      "range": "[linkTypeColorScheme]",
       "domain": { "data": "network.links", "field": "linkType" }
     },
     {
@@ -78,7 +80,15 @@
         "end": "target",
         "stroke": { "field": "linkType", "scale": "edgeColor" },
         "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth"},
-        "opacity":  { "field": "linkWeight", "scale": "edgeOpacity"},
+        "opacity":  { 
+          "conditions": [
+            {
+              "test": "datum.data._shown === false",
+              "value": 0
+            }
+          ],
+          "field": "linkWeight", "scale": "edgeOpacity"
+        },
         "shape": "line"
       }
     },
