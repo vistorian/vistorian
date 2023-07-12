@@ -3,19 +3,6 @@ import { NetworkConfig } from '../../../../../typings';
 
 const { Title, Text } = Typography
 
-const opts = [
-  { value: '', label: '-'},
-  { value: 'linkId', label: 'Link id' },
-  { value: 'sourceNodeLabel', label: 'Source node label' },
-  { value: 'targetNodeLabel', label: 'Target node label' },
-  { value: 'locationOfSourceNode', label: 'Location of source node' },
-  { value: 'locationOfTargetNode', label: 'Location of target node' },
-  { value: 'linkWeight', label: 'Link weight' },
-  { value: 'linkType', label: 'Link type' },
-  { value: 'time', label: 'Time' },
-]
-const fullCol = opts.map(o => o.value).filter(i => i !== '')
-
 interface IDataTableProps {
   network: NetworkConfig
   edit: boolean
@@ -37,6 +24,19 @@ function LinkDataTable(props: IDataTableProps) {
     dd._rowKey = i
     return dd
   })
+
+  const opts = [
+    { value: '', label: '-' },
+    { value: 'linkId', label: 'Link id' },
+    { value: 'sourceNodeLabel', label: network.linkTableConfig?.directed ? 'Source node label' : 'Node 1 label' },
+    { value: 'targetNodeLabel', label: network.linkTableConfig?.directed ? 'Target node label' : 'Node 2 label' },
+    { value: 'locationOfSourceNode', label: 'Location of source node' },
+    { value: 'locationOfTargetNode', label: 'Location of target node' },
+    { value: 'linkWeight', label: 'Link weight' },
+    { value: 'linkType', label: 'Link type' },
+    { value: 'time', label: 'Time' },
+  ]
+  const fullCol = opts.map(o => o.value).filter(i => i !== '')
 
 
   /**
