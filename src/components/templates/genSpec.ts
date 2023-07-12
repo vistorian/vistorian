@@ -1,6 +1,6 @@
 import { NetworkConfig } from "../../../typings"
 
-export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => {
+export const genSpecFromLinkTable = (config: NetworkConfig, visType: string, timeRange: number[]) => {
   console.log('config', config)
 
   const linkFileName = config.linkTableConfig?.file
@@ -23,7 +23,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       type: "json", // TODO: add more types
       ...parse
     },
-    transform:[
+    transform: [
       {
         "type": "calculate",
         "as": "source",
@@ -49,6 +49,14 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
         "calculate": `datum.${targetLabel} + ' (' + datum.${timeColumn} + ')'`
       }
     ]
+  }
+  // respond to globle time slider
+  if (config.linkTableConfig?.withTime) {
+    linkTableImportSpec.transform.push({
+      "type": "calculate",
+      "as": "_shown",
+      "calculate": `datum.${config.linkTableConfig.time}>${timeRange[0]} && datum.${config.linkTableConfig.time}<${timeRange[1]}`
+    })
   }
 
   let dataSpec = [linkTableImportSpec]

@@ -80,7 +80,15 @@
         "end": "target",
         "stroke": { "field": "linkType", "scale": "edgeColor" },
         "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth"},
-        "opacity":  { "field": "linkWeight", "scale": "edgeOpacity"},
+        "opacity":  { 
+          "conditions": [
+            {
+              "test": "datum.data._shown === false",
+              "value": 0
+            }
+          ],
+          "field": "linkWeight", "scale": "edgeOpacity"
+        },
         "shape": "line"
       }
     },

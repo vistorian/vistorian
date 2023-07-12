@@ -5,9 +5,10 @@ import { find } from 'lodash-es'
 import { NetworkConfig } from '../../../typings'
 import { genSpecFromLinkTable } from '../templates/genSpec'
 import { createUseStyles } from 'react-jss'
-import { Button } from 'antd'
 import Legend from './legend'
+import TimeSlider from './timeslider'
 import { defaultLinkTypeColorScheme, defaultNodeTypeShapeScheme } from '../../../typings/constant'
+import { timeParse, timeFormat } from 'd3-time-format'
 
 const useStyles = createUseStyles({
   root: {
@@ -22,29 +23,42 @@ const useStyles = createUseStyles({
     marginRight: 20,
     paddingRight: 20
   },
-  right: {
-    width: "calc(100% - 320px)"
-  },
   header: {
     display: "flex",
     flexDirection: "column",
   },
+  right: {
+    width: "calc(100% - 320px)"
+  }
 })
 
 function Vis() {
   const classes = useStyles()
   const { visType, network } = useParams()
+  const containerId = "visSvg";
 
   const template = find(templates, (tp)=>tp.key === visType)
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
 
   const [linkTypeColorScheme, setLinkTypeColorScheme] = useState(defaultLinkTypeColorScheme)
   const [nodeTypeShapeScheme, setNodeTypeShapeScheme] = useState(defaultNodeTypeShapeScheme)
+  const data = JSON.parse(window.localStorage.getItem('UPLOADED_FILE_' + networkCfg.linkTableConfig?.file) as string)
 
-  let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
+  // respond to time slider
+  let minTime = 0, maxTime = 0
+  if (networkCfg.linkTableConfig?.withTime) {
+    const timeColumn = networkCfg.linkTableConfig?.time as string
+    const timeFmt = networkCfg.linkTableConfig?.timeFormat as string
+    const timeArray = data.map((d: any) => timeParse(timeFmt)(d[timeColumn])?.getTime())
+    minTime = Math.min(...timeArray)
+    maxTime = Math.max(...timeArray)
+  }
+  const [timeRange, setTimeRange] = useState<number[]>([minTime, maxTime])
 
+  const lableImportance = 15
+
+  // render netpan
   const update = async () => {
-    const containerId = "vis-SVG";
     const container = document.getElementById(containerId);
 
     if (!container) {
@@ -55,12 +69,14 @@ function Vis() {
     // decrease rendering time for matrix
     let renderer = visType === 'matrix' ? "canvas" : "svg"
 
+    let spec: any = genSpecFromLinkTable(networkCfg, visType as string, timeRange)
     // @ts-ignore
     window.viewer = await NetPanoramaTemplateViewer.render(`./templates/${template.template}`, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
       linkTypeColorScheme: linkTypeColorScheme,
-      nodeTypeShapeScheme: nodeTypeShapeScheme
+      nodeTypeShapeScheme: nodeTypeShapeScheme,
+      lableImportance: lableImportance
     }, containerId, { renderer: renderer })
     // @ts-ignore
     const specString = JSON.stringify(window.viewer.spec)
@@ -92,20 +108,6 @@ function Vis() {
             <a href="./" style={{ marginBottom: "20px", }}>
               <img src="./logos/logo-vistorian.png" style={{ width: 200 }} />
             </a>
-            {/* <Button
-              type='primary'
-              style={{ marginBottom: 10, marginRight: 10 }}
-              onClick={() => {}}
-            >
-              Exploration
-            </Button>
-            <Button
-              type='primary'
-              style={{ marginBottom: 10, marginRight: 10 }}
-              onClick={() => { }}
-            >
-              Design
-            </Button> */}
           </div>
           
           {/* show network names */}
@@ -128,7 +130,17 @@ function Vis() {
         </div>
         
         {/* render netpanorama */}
-        <div id="vis-SVG" className={classes.right} />
+        <div className={classes.right}>
+        {networkCfg.linkTableConfig?.withTime ? 
+          <TimeSlider 
+            network={networkCfg} 
+            minTime={minTime} 
+            maxTime={maxTime}
+            setTimeRange={setTimeRange}
+          /> 
+          : null}
+          <div id={containerId} style={{ width: '100%' }}></div>
+        </div>
     </div>
   )
 }
