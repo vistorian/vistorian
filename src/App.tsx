@@ -9,6 +9,7 @@ import {
 import Landing from './components/landing'
 import Wizard from './components/wizard'
 import Vis from './components/vis'
+import XPlainer from './components/xplainer'
 
 // BrowserRouter which can not be used in Github pages
 // let router = createBrowserRouter([
@@ -36,6 +37,7 @@ function App() {
           {/* TODO: direct to related network view */}
           <Route path="/wizard/network/:network" element={<Landing />}></Route>
           <Route path="/vis/:visType/network/:network" element={<Vis />}></Route>
+          <Route path="/vis/:visType/network/:network/xplainer" element={<XPlainer />}></Route>
         </Routes>
       </HashRouter>
     </>

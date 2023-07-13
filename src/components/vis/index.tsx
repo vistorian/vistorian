@@ -54,7 +54,6 @@ function Vis() {
     maxTime = Math.max(...timeArray)
   }
   const [timeRange, setTimeRange] = useState<number[]>([minTime, maxTime])
-
   const lableImportance = 15
 
   // render netpan
@@ -93,8 +92,6 @@ function Vis() {
     container.getElementsByTagName("svg")[0].style["max-width"] = "100%";
     // @ts-ignore
     container.getElementsByTagName("svg")[0].style["max-height"] = "100%";
-
-    //  return viewer;
   }
 
   useEffect(() => {
@@ -131,15 +128,15 @@ function Vis() {
         
         {/* render netpanorama */}
         <div className={classes.right}>
-        {networkCfg.linkTableConfig?.withTime ? 
-          <TimeSlider 
-            network={networkCfg} 
-            minTime={minTime} 
-            maxTime={maxTime}
-            setTimeRange={setTimeRange}
-          /> 
-          : null}
-          <div id={containerId} style={{ width: '100%' }}></div>
+          {networkCfg.linkTableConfig?.withTime ? 
+            <TimeSlider 
+              network={networkCfg} 
+              minTime={minTime} 
+              maxTime={maxTime}
+              setTimeRange={setTimeRange}
+            /> 
+            : null}
+            <div id={containerId} style={{ width: '100%' }}></div>
         </div>
     </div>
   )
