@@ -147,8 +147,8 @@
       "mark": {
         "type": "text",
         "text": { "expression": "datum.id" },
-        "dx": 3,
-        "dy": 2
+        "dx": 5,
+        "dy": 5
       }
     },
     {
@@ -158,8 +158,8 @@
       "mark": {
         "type": "text",
         "text": { "expression": "datum.id" },
-        "dx": 3,
-        "dy": 2
+        "dx": 5,
+        "dy": 5
       }
     },
     {
@@ -176,8 +176,8 @@
             }
           ]
         },
-        "dx": 3,
-        "dy": 2
+        "dx": 5,
+        "dy": 5
       }
     }
   ]
