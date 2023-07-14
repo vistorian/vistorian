@@ -143,10 +143,41 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
+      "ifInSelection": "node_selection.nodes",
+      "mark": {
+        "type": "text",
+        "text": { "expression": "datum.id" },
+        "dx": 3,
+        "dy": 2
+      }
+    },
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "ifInSelection": "neighbours.nodes",
+      "mark": {
+        "type": "text",
+        "text": { "expression": "datum.id" },
+        "dx": 3,
+        "dy": 2
+      }
+    },
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
       "if": "datum.degree > [lableImportance]",
       "mark": {
         "type": "text",
-        "text": { "expression": "datum.id" }
+        "text": { 
+          "conditions": [
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "value": { "expression": "datum.id"}
+            }
+          ]
+        },
+        "dx": 3,
+        "dy": 2
       }
     }
   ]
