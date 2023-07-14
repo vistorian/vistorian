@@ -69,14 +69,15 @@ function Vis() {
     // decrease rendering time for matrix
     let renderer = visType === 'matrix' ? "canvas" : "svg"
 
-    let spec: any = genSpecFromLinkTable(networkCfg, visType as string, timeRange)
+    let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
     // @ts-ignore
     window.viewer = await NetPanoramaTemplateViewer.render(`./templates/${template.template}`, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
       linkTypeColorScheme: linkTypeColorScheme,
       nodeTypeShapeScheme: nodeTypeShapeScheme,
-      lableImportance: lableImportance
+      lableImportance: lableImportance,
+      timeRange: timeRange
     }, containerId, { renderer: renderer })
     // @ts-ignore
     const specString = JSON.stringify(window.viewer.spec)

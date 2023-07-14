@@ -45,6 +45,7 @@ function TimeSlider(props: ITimeSliderProps) {
       connect: true,
       tooltips: true,
       format: format,
+      behaviour: 'tap-drag',
       range: {
         'min': [minTime],
         'max': [maxTime]
@@ -63,14 +64,14 @@ function TimeSlider(props: ITimeSliderProps) {
     if (ele && ele.noUiSlider) {
       // @ts-ignore
       ele.noUiSlider.on('end', (values, handle, unencoded, tap, positions) => { 
-        console.log('slider', values, unencoded)
+        // console.log('slider', values, unencoded)
         setTimeRange(unencoded)
       })
     }
   }, [])
 
   return (
-    <div style={{ width: '100%', height: 100, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div style={{ width: '100%', height: 150, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <div id="timeSliderDiv" style={{ width: `calc(100% - 80px)`, height: 10 }}></div> 
     </div>
     

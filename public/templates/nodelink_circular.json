@@ -16,6 +16,24 @@
 
       },
       "value": "optimal-leaf-order"
+    },
+    {
+      "name": "node_selection",
+      "network": "network",
+      "type": "selection",
+      "action": "replace",
+      "clearOnBackgroundClick": true
+    },
+    {
+      "name": "neighbours",
+      "source": "node_selection",
+      "transform": [
+        { "type": "neighbours", "direction": "both" }
+      ]
+    },
+    {
+      "name": "timeRange",
+      "value": "[timeRange]"
     }
   ],
 
@@ -83,11 +101,20 @@
         "opacity":  { 
           "conditions": [
             {
-              "test": "datum.data._shown === false",
+              "test": "datum.data._time < params.timeRange[0] || datum.data._time > params.timeRange[1]",
               "value": 0
+            },
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "field": "linkWeight",
+              "scale": "edgeOpacity"
+            },
+            {
+              "inSelection": "neighbours.links",
+              "value": 1
             }
           ],
-          "field": "linkWeight", "scale": "edgeOpacity"
+          "value": 0.1
         },
         "shape": "line"
       }
@@ -95,12 +122,38 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseover",
+          "action": "replace",
+          "selection": "node_selection"
+        }
+      ],
       "mark": {
         "type": "symbol",
         "shape": {"field": "data.type0", "scale": "nodeShape"},
         "area": { "field": "degree", "scale": "radius" },
         "fill": "black",
-        "stroke": "white"
+        "stroke": "white",
+        "opacity": {
+          "conditions": [
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "value": 1
+            },
+            {
+              "inSelection": "node_selection.nodes",
+              "value": 1
+            },
+            {
+              "inSelection": "neighbours.nodes",
+              "value": 1
+            }
+          ],
+          "value": 0.1
+        }
       }
     }
   ]

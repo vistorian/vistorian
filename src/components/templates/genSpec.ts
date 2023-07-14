@@ -1,6 +1,6 @@
 import { NetworkConfig } from "../../../typings"
 
-export const genSpecFromLinkTable = (config: NetworkConfig, visType: string, timeRange: number[]) => {
+export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => {
   console.log('config', config)
 
   const linkFileName = config.linkTableConfig?.file
@@ -54,8 +54,8 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string, tim
   if (config.linkTableConfig?.withTime) {
     linkTableImportSpec.transform.push({
       "type": "calculate",
-      "as": "_shown",
-      "calculate": `datum.${config.linkTableConfig.time}>${timeRange[0]} && datum.${config.linkTableConfig.time}<${timeRange[1]}`
+      "as": "_time",
+      "calculate": `datum.${config.linkTableConfig.time}`
     })
   }
 

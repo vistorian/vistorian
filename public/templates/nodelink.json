@@ -17,6 +17,10 @@
       "transform": [
         { "type": "neighbours", "direction": "both" }
       ]
+    },
+    {
+      "name": "timeRange", 
+      "value": "[timeRange]"
     }
   ],
   "networks": "[networksDefinition]",
@@ -73,7 +77,7 @@
         "opacity":  { 
           "conditions": [
             {
-              "test": "datum.data._shown === false",
+              "test": "datum.data._time < params.timeRange[0] || datum.data._time > params.timeRange[1]",
               "value": 0
             },
             {
@@ -100,6 +104,13 @@
           "using": "cursor",
           "event": "mouseover",
           "action": "replace",
+          "selection": "node_selection"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseout",
+          "action": "remove",
           "selection": "node_selection"
         }
       ],
@@ -135,7 +146,7 @@
       "if": "datum.degree > [lableImportance]",
       "mark": {
         "type": "text",
-        "text": { "expression": "datum.id"}
+        "text": { "expression": "datum.id" }
       }
     }
   ]
