@@ -155,6 +155,35 @@
           "value": 0.1
         }
       }
+    },
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "ifInSelection": "node_selection.nodes",
+      "mark": {
+        "type": "text",
+        "text": { "expression": "datum.id" },
+        "dx": 5,
+        "dy": 5
+      }
+    },
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "if": "datum.degree > [lableImportance]",
+      "mark": {
+        "type": "text",
+        "text": { 
+          "conditions": [
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "value": { "expression": "datum.id"}
+            }
+          ]
+        },
+        "dx": 5,
+        "dy": 5
+      }
     }
   ]
 }
