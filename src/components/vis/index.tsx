@@ -1,5 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { Button} from 'antd'
+
 import templates from '../templates/templates'
 import { find } from 'lodash-es'
 import { NetworkConfig } from '../../../typings'
@@ -158,14 +160,14 @@ function Vis() {
           
           {/* show network names */}
           <div style={{ display: 'flex', flexDirection: 'column'}}>
-            <span style={{background: '#eee', marginBottom: 3, fontSize: 18}}><b>Network:</b>&nbsp;{network}</span>
-            {/* TODO: return to network preview */}
-            <Link
-              to='./'
-              target='_blank'
-            >
+            <Button  
+                type='primary' 
+                style={{ marginBottom: 10, marginRight: 10, fontWeight: 700 }}
+                onClick={()=>{location.href='./#/wizard';}}
+              >
               Return to Network View
-            </Link>
+            </Button>
+            <span style={{backgroundColor: "#eee", marginBottom: -10, marginTop: 10, fontSize: 18, padding: 10}}><b>This Network:</b>&nbsp;{network}</span>
           </div>
 
           {/* show legends */}
