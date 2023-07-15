@@ -1,7 +1,4 @@
-{
-  "zoom": true,
-  "pan": {"modifierKeyRequired": []},
-  
+{  
   "data": "[dataDefinition]",
   "parameters": [
     {
@@ -144,17 +141,6 @@
       "entries": "network.nodes",
       "layout": "layout",
       "ifInSelection": "node_selection.nodes",
-      "mark": {
-        "type": "text",
-        "text": { "expression": "datum.id" },
-        "dx": 5,
-        "dy": 5
-      }
-    },
-    {
-      "entries": "network.nodes",
-      "layout": "layout",
-      "ifInSelection": "neighbours.nodes",
       "mark": {
         "type": "text",
         "text": { "expression": "datum.id" },
