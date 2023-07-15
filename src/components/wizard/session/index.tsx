@@ -155,7 +155,7 @@ function Sessions(props: ISessionsProps) {
     </Modal>
     <div className={classes.cards}>
         {sessionStore.map((session: Session)=> {
-        const img = find(templates, t=>t.key===session.vis)
+        const img = find(templates, t=>t.key===session.vis[0])
         return (
             <div className={classes.card} key={session.id}>
               {/* content */}

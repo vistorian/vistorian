@@ -1,7 +1,4 @@
-{
-  "zoom": true,
-  "pan": {"modifierKeyRequired": []},
-  
+{  
   "data": "[dataDefinition]",
   "parameters": [
     {
@@ -136,8 +133,7 @@
             }
           ],
           "value": 0.1
-        },
-        "tooltip": {"field": "id"}
+        }
       }
     },
     {
@@ -147,19 +143,8 @@
       "mark": {
         "type": "text",
         "text": { "expression": "datum.id" },
-        "dx": 3,
-        "dy": 2
-      }
-    },
-    {
-      "entries": "network.nodes",
-      "layout": "layout",
-      "ifInSelection": "neighbours.nodes",
-      "mark": {
-        "type": "text",
-        "text": { "expression": "datum.id" },
-        "dx": 3,
-        "dy": 2
+        "dx": 5,
+        "dy": 5
       }
     },
     {
@@ -176,8 +161,8 @@
             }
           ]
         },
-        "dx": 3,
-        "dy": 2
+        "dx": 5,
+        "dy": 5
       }
     }
   ]
