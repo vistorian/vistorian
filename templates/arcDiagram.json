@@ -1,6 +1,5 @@
 {  
   "x": 700,  
-  "height": 1400,
 
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
@@ -61,6 +60,12 @@
       "type": "linear",
       "scheme": "reds",
       "domain": { "data": "network.nodes", "field": "degree" }
+    },
+    {
+      "name": "edgeOpacity",
+      "type": "linear",
+      "range": [0.2, 0.8],
+      "domain": { "data": "network.links", "field": "linkWeight" }
     }
   ],
 
