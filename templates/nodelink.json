@@ -144,7 +144,11 @@
         "type": "text",
         "text": { "expression": "datum.id" },
         "dx": 5,
-        "dy": 5
+        "dy": 5,
+        "fontSize": 13,
+        "stroke": "white",
+        "fontWeight": "bold",
+        "strokeWidth": 0.5
       }
     },
     {
@@ -162,7 +166,11 @@
           ]
         },
         "dx": 5,
-        "dy": 5
+        "dy": 5,
+        "fontSize": 13,
+        "stroke": "white",
+        "fontWeight": "bold",
+        "strokeWidth": 0.5
       }
     }
   ]
