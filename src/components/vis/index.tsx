@@ -9,6 +9,8 @@ import Legend from './legend'
 import TimeSlider from './timeslider'
 import { defaultLinkTypeColorScheme, defaultNodeTypeShapeScheme } from '../../../typings/constant'
 import { timeParse, timeFormat } from 'd3-time-format'
+import * as d3 from 'd3'
+import { Button } from 'antd'
 
 const useStyles = createUseStyles({
   root: {
@@ -34,10 +36,10 @@ const useStyles = createUseStyles({
 
 function Vis() {
   const classes = useStyles()
-  const { visType, network } = useParams()
-  const containerId = "visSvg";
+  const { visTypes, network } = useParams()
+  const visTypeList = visTypes?.split('+') as string[]
+  const preContainer = "visSvg";
 
-  const template = find(templates, (tp)=>tp.key === visType)
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
 
   const [linkTypeColorScheme, setLinkTypeColorScheme] = useState(defaultLinkTypeColorScheme)
@@ -56,15 +58,29 @@ function Vis() {
   const [timeRange, setTimeRange] = useState<number[]>([minTime, maxTime])
   const lableImportance = 15
 
-  // render netpan
-  const update = async () => {
-    const container = document.getElementById(containerId);
+  let viewers: any[] = new Array(visTypeList.length).fill({})
 
-    if (!container) {
-      console.error(`No container with id ${containerId}`);
-      return;
-    }
+  let onChange = (newVal: any) => {
+    console.log('onChange:', { newVal })
+    viewers.map(viewer => {
+      propogateSelection(viewer, "node_selection", newVal)
+    })
+  }
 
+  function propogateSelection(viewer: any, selectionName: string, newVal:any) {
+    // Internally NetPanorma represents selections as an object containing an array of selected node objects, and an array of selected link objectes
+    // This objects must be nodes/links in the correct network (not just identical copies!)
+    // If the views we are linking use the same identifiers, then we can link them like this:
+    // This is a bit inelegant: I might add a new method to NetPanorama in future to make it unnecessary.
+
+    const nodeIds = newVal.nodes.map((n: any) => n.id);
+    const linkIds = newVal.links.map((l: any) => l.id);
+
+    const networkName = "network"; // the name of the network in which the selection is made - set in specification
+    const nodes = viewer.state[networkName].nodes.filter((n: any) => nodeIds.includes(n.id));
+    const links = viewer.state[networkName].links.filter((l: any) => linkIds.includes(l.id));
+
+<<<<<<< HEAD
     // decrease rendering time for matrix
     let renderer = visType === 'matrix' ? "canvas" : "svg"
 
@@ -92,10 +108,73 @@ function Vis() {
     container.getElementsByTagName("svg")[0].style["max-width"] = "100%";
     // @ts-ignore
     container.getElementsByTagName("svg")[0].style["max-height"] = "100%";
+=======
+    viewer.setParam(selectionName, { nodes, links })
+  }
+
+  // render netpan
+  const update = async (containerId: string, visType: string, index: number) => {
+    let renderer = visType === 'matrix' ? 'canvas' : 'svg'
+    let template = templates.filter(t => t.key === visType)[0]
+    let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
+      // @ts-ignore
+    viewers[index] = await NetPanoramaTemplateViewer.render(`./templates/${template.template}`, {
+        dataDefinition: JSON.stringify(spec.data),
+        networksDefinition: JSON.stringify(spec.network),
+        linkTypeColorScheme: linkTypeColorScheme,
+        nodeTypeShapeScheme: nodeTypeShapeScheme,
+        lableImportance: lableImportance,
+        timeRange: timeRange
+      }, containerId, { 
+        renderer: renderer,
+        paramCallbacks: { node_selection: onChange }
+      })
+      // @ts-ignore
+      console.log('Spec:', visType, viewers[index])
+      // @ts-ignore
+      console.log('VIEW STATE:', visType, viewers[index].state)
+      // @ts-ignore
+      // const specString = JSON.stringify(window.viewer.spec)
+      // @ts-ignore
+      // specUrl = "https://netpanorama-editor.netlify.app/?spec=" + encodeURIComponent(specString);
+      const container = document.getElementById(containerId)
+      if (container && container.getElementsByTagName("svg").length > 0) {
+        // @ts-ignore
+        container.getElementsByTagName("svg")[0].style["max-width"] = "100%";
+        // @ts-ignore
+        container.getElementsByTagName("svg")[0].style["max-height"] = "100%";
+      }
+
+      // TODO: implement it in netpan
+      const svg = d3.select(`#${containerId}`).select('svg')
+      if (svg) {
+        let g = svg.select("g").select("g")
+        // @ts-ignore
+        svg.call(d3.zoom()
+          // .extent([[0, 0], [width, height]])
+          // .scaleExtent([1, 8])
+          .on("zoom", zoomed));
+
+        // @ts-ignore
+        function zoomed({ transform }) {
+          g.attr("transform", transform);
+        }
+      }
+>>>>>>> master
   }
 
   useEffect(() => {
-    update()
+    for (let index: number = 0; index < visTypeList.length; index++) {
+      const visType = visTypeList[index]
+      const containerId = `${preContainer}${index}`
+      const container = document.getElementById(containerId)
+
+      if (!container) {
+        console.error(`No container with id ${containerId}`);
+        continue
+      }
+      update(containerId, visType, index)
+    }
   })
 
   return (
@@ -109,14 +188,15 @@ function Vis() {
           
           {/* show network names */}
           <div style={{ display: 'flex', flexDirection: 'column'}}>
-            <span style={{background: '#eee', marginBottom: 3, fontSize: 18}}><b>Network:</b>&nbsp;{network}</span>
-            {/* TODO: return to network preview */}
-            <Link
-              to='./'
-              target='_blank'
+          {/* TODO: return to network preview */}
+            <Button
+              type='primary'
+              style={{ marginBottom: 10, marginRight: 10, fontWeight: 700 }}
+              onClick={() => { location.href = './#/wizard'; }}
             >
               Return to Network View
-            </Link>
+            </Button>
+            <span style={{ background: '#eee', marginBottom: 3, fontSize: 18 }}><b>Network:</b>&nbsp;{network}</span>
           </div>
 
           {/* show legends */}
@@ -128,6 +208,7 @@ function Vis() {
         
         {/* render netpanorama */}
         <div className={classes.right}>
+<<<<<<< HEAD
           {networkCfg.linkTableConfig?.withTime ? 
             <TimeSlider 
               network={networkCfg} 
@@ -137,6 +218,24 @@ function Vis() {
             /> 
             : null}
             <div id={containerId} style={{ width: '100%' }}></div>
+=======
+        {networkCfg.linkTableConfig?.withTime ? 
+          <TimeSlider 
+            network={networkCfg} 
+            minTime={minTime} 
+            maxTime={maxTime}
+            setTimeRange={setTimeRange}
+          /> 
+          : null}
+          <div style={{ width: '100%', display: 'flex'}}>
+            {visTypes && visTypes.split('+').map((visType, idx) => {
+              const num = visTypes.split('+').length
+              return (
+                <div id={`${preContainer}${idx}`} key={idx} style={{ width: `${100/num}%` }}></div>
+              )
+            })}
+          </div>
+>>>>>>> master
         </div>
     </div>
   )

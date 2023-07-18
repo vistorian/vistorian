@@ -1,7 +1,4 @@
-{
-  "zoom": true,
-  "pan": {"modifierKeyRequired": []},
-  
+{  
   "data": "[dataDefinition]",
   "parameters": [
     {
@@ -17,6 +14,10 @@
       "transform": [
         { "type": "neighbours", "direction": "both" }
       ]
+    },
+    {
+      "name": "timeRange", 
+      "value": "[timeRange]"
     }
   ],
   "networks": "[networksDefinition]",
@@ -73,7 +74,7 @@
         "opacity":  { 
           "conditions": [
             {
-              "test": "datum.data._shown === false",
+              "test": "datum.data._time < params.timeRange[0] || datum.data._time > params.timeRange[1]",
               "value": 0
             },
             {
@@ -101,6 +102,13 @@
           "event": "mouseover",
           "action": "replace",
           "selection": "node_selection"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseout",
+          "action": "remove",
+          "selection": "node_selection"
         }
       ],
       "mark": {
@@ -125,8 +133,22 @@
             }
           ],
           "value": 0.1
-        },
-        "tooltip": {"field": "id"}
+        }
+      }
+    },
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "ifInSelection": "node_selection.nodes",
+      "mark": {
+        "type": "text",
+        "text": { "expression": "datum.id" },
+        "dx": 5,
+        "dy": 5,
+        "fontSize": 13,
+        "stroke": "white",
+        "fontWeight": "bold",
+        "strokeWidth": 0.5
       }
     },
     {
@@ -135,7 +157,20 @@
       "if": "datum.degree > [lableImportance]",
       "mark": {
         "type": "text",
-        "text": { "expression": "datum.id"}
+        "text": { 
+          "conditions": [
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "value": { "expression": "datum.id"}
+            }
+          ]
+        },
+        "dx": 5,
+        "dy": 5,
+        "fontSize": 13,
+        "stroke": "white",
+        "fontWeight": "bold",
+        "strokeWidth": 0.5
       }
     }
   ]

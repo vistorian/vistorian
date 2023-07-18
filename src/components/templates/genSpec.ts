@@ -1,6 +1,6 @@
 import { NetworkConfig } from "../../../typings"
 
-export const genSpecFromLinkTable = (config: NetworkConfig, visType: string, timeRange: number[]) => {
+export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => {
   console.log('config', config)
 
   const linkFileName = config.linkTableConfig?.file
@@ -34,7 +34,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string, tim
         "as": "target",
         "calculate": `datum.${targetLabel}`
       }
-    ] 
+    ] as any[]
   }
   if (visType === 'timearcs') {
     linkTableImportSpec.transform = [
@@ -50,12 +50,38 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string, tim
       }
     ]
   }
+  if (visType === 'map') {
+    linkTableImportSpec.transform = [
+      {
+        "type": "geocode",
+        "locationField": "Place1",
+        "lonAs": "Lon1",
+        "latAs": "Lat1"
+      },
+      {
+        "type": "geocode",
+        "locationField": "Place2",
+        "lonAs": "Lon2",
+        "latAs": "Lat2"
+      },
+      {
+        "type": "calculate",
+        "as": "source",
+        "calculate": `datum.${sourceLabel} + ' (' + datum.Place1 + ')'`
+      },
+      {
+        "type": "calculate",
+        "as": "target",
+        "calculate": `datum.${targetLabel} + ' (' + datum.Place2 + ')'`
+      }
+    ]
+  }
   // respond to globle time slider
   if (config.linkTableConfig?.withTime) {
     linkTableImportSpec.transform.push({
       "type": "calculate",
-      "as": "_shown",
-      "calculate": `datum.${config.linkTableConfig.time}>${timeRange[0]} && datum.${config.linkTableConfig.time}<${timeRange[1]}`
+      "as": "_time",
+      "calculate": `datum.${config.linkTableConfig.time}`
     })
   }
 
@@ -96,6 +122,12 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string, tim
       return [
         { "field": f, "as": "name" },
         { "field": timeColumn, "as": "date" }
+      ]
+    }
+    else if (visType === 'map') {
+      return [
+        { "field": "Lon1", "as": "lon" },
+        { "field": "Lat1", "as": "lat" }
       ]
     }
     else { // 'nodelink', 'matrix'

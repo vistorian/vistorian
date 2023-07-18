@@ -113,7 +113,7 @@
         "type": "linkpath",
         "start": "source",
         "end": "target",
-        "shape": "line",
+        "shape": "curveSymmetric",
         "stroke": { "field": "linkType", "scale": "edgeColor" },
         "directionForShape": {  "ordering": "staticOrder" },
         "strokeWidth": 1,

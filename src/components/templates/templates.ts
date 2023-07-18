@@ -25,30 +25,30 @@ const templates: Template[] = [
     image: "timearcs.png", 
     template: "timearcs.json" 
   },
-  {
-    key: "adjacencyList",
-    label: "Adjacency list",
-    image: "adjacencyList.png",
-    template: "adjacencyList.json"
-  },
+  // {
+  //   key: "adjacencyList",
+  //   label: "Adjacency list",
+  //   image: "adjacencyList.png",
+  //   template: "adjacencyList.json"
+  // },
   {
     key: "arcDiagram",
     label: "Arc diagram",
     image: "arcDiagram.png",
     template: "arcDiagram.json"
   },
-  {
-    key: "jigsaw",
-    label: "Jigsaw",
-    image: "jigsaw.png",
-    template: "jigsaw.json"
-  },
   // {
-  //   key: "map",
-  //   label: "Map",
-  //   image: "map.png",
-  //   template: "map.json"
+  //   key: "jigsaw",
+  //   label: "Jigsaw",
+  //   image: "jigsaw.png",
+  //   template: "jigsaw.json"
   // },
+  {
+    key: "map",
+    label: "Map",
+    image: "map.png",
+    template: "map.json"
+  },
 ]
 
 export default templates

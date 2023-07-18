@@ -1,12 +1,52 @@
-{
-  "zoom": true,
-  "pan": {"modifierKeyRequired": []},
-  
+{  
   "x": 700,  
-  "height": 1400,
 
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
+
+  "parameters": [
+    {
+      "name": "seriationMethod",
+      "bind": {
+        "input": "select",
+        "options": [
+          "optimal-leaf-order",
+          "barycentre",
+          "bandwidth-reduction",
+          "pca"
+        ],
+        "labels": [
+          "optimal-leaf-order",
+          "barycentre",
+          "bandwidth-reduction",
+          "pca"
+        ],
+        "label": "Node ordering"
+      },
+      "value": "optimal-leaf-order"
+    },
+    {
+      "name": "node_selection",
+      "network": "network",
+      "type": "selection",
+      "action": "replace",
+      "clearOnBackgroundClick": true
+    },
+    {
+      "name": "neighbours",
+      "source": "node_selection",
+      "transform": [
+        {
+          "type": "neighbours",
+          "direction": "both"
+        }
+      ]
+    },
+    {
+      "name": "timeRange",
+      "value": "[timeRange]"
+    }
+  ],
 
   "scales": [
     {
@@ -20,6 +60,12 @@
       "type": "linear",
       "scheme": "reds",
       "domain": { "data": "network.nodes", "field": "degree" }
+    },
+    {
+      "name": "edgeOpacity",
+      "type": "linear",
+      "range": [0.2, 0.8],
+      "domain": { "data": "network.links", "field": "linkWeight" }
     }
   ],
 
@@ -51,9 +97,26 @@
         "start": "source",
         "end": "target",
         "shape": "arc",
-        "strokeOpacity": 0.2,
         "directionForShape": { "ordering": "degree_order"},
-        "strokeWidth": { "field": "linkWeight" }
+        "strokeWidth": { "field": "linkWeight" },
+        "strokeOpacity": {
+          "conditions": [
+            {
+              "test": "datum.data._time < params.timeRange[0] || datum.data._time > params.timeRange[1]",
+              "value": 0
+            },
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "field": "linkWeight",
+              "scale": "edgeOpacity"
+            },
+            {
+              "inSelection": "neighbours.links",
+              "value": 1
+            }
+          ],
+          "value": 0.2
+        }
       }
     },
 
