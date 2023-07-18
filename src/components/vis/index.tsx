@@ -1,14 +1,13 @@
 import { Link, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import templates from '../templates/templates'
-import { find } from 'lodash-es'
 import { NetworkConfig } from '../../../typings'
 import { genSpecFromLinkTable } from '../templates/genSpec'
 import { createUseStyles } from 'react-jss'
 import Legend from './legend'
 import TimeSlider from './timeslider'
 import { defaultLinkTypeColorScheme, defaultNodeTypeShapeScheme } from '../../../typings/constant'
-import { timeParse, timeFormat } from 'd3-time-format'
+import { timeParse } from 'd3-time-format'
 import * as d3 from 'd3'
 import { Button } from 'antd'
 
@@ -80,35 +79,6 @@ function Vis() {
     const nodes = viewer.state[networkName].nodes.filter((n: any) => nodeIds.includes(n.id));
     const links = viewer.state[networkName].links.filter((l: any) => linkIds.includes(l.id));
 
-<<<<<<< HEAD
-    // decrease rendering time for matrix
-    let renderer = visType === 'matrix' ? "canvas" : "svg"
-
-    let spec: any = genSpecFromLinkTable(networkCfg, visType as string, timeRange)
-    // @ts-ignore
-    window.viewer = await NetPanoramaTemplateViewer.render(`./templates/${template.template}`, {
-      dataDefinition: JSON.stringify(spec.data),
-      networksDefinition: JSON.stringify(spec.network),
-      linkTypeColorScheme: linkTypeColorScheme,
-      nodeTypeShapeScheme: nodeTypeShapeScheme,
-      lableImportance: lableImportance
-    }, containerId, { renderer: renderer })
-    // @ts-ignore
-    const specString = JSON.stringify(window.viewer.spec)
-    // @ts-ignore
-    console.log('Spec:', window.viewer.spec)
-    // @ts-ignore
-    console.log('VIEW STATE:', window.viewer.state)
-    // @ts-ignore
-    // specUrl = "https://netpanorama-editor.netlify.app/?spec=" + encodeURIComponent(specString);
-    // let viewer = new GraphgraView(spec, { container: "#SVG", renderer })
-    // await viewer.render();
-
-    // @ts-ignore
-    container.getElementsByTagName("svg")[0].style["max-width"] = "100%";
-    // @ts-ignore
-    container.getElementsByTagName("svg")[0].style["max-height"] = "100%";
-=======
     viewer.setParam(selectionName, { nodes, links })
   }
 
@@ -160,7 +130,6 @@ function Vis() {
           g.attr("transform", transform);
         }
       }
->>>>>>> master
   }
 
   useEffect(() => {
@@ -189,13 +158,31 @@ function Vis() {
           {/* show network names */}
           <div style={{ display: 'flex', flexDirection: 'column'}}>
           {/* TODO: return to network preview */}
-            <Button
-              type='primary'
-              style={{ marginBottom: 10, marginRight: 10, fontWeight: 700 }}
-              onClick={() => { location.href = './#/wizard'; }}
+            <Link
+              to={`./#/wizard`}
+              target='_blank'
+              style={{ marginRight: 10, marginBottom: 10 }}
             >
-              Return to Network View
-            </Button>
+              <Button
+                type='primary'
+                style={{ width: '100%', fontWeight: 700 }}
+              >
+                Return to Network View
+              </Button>
+            </Link>
+            <Link 
+              to={`/vis/${visTypes}/network/${network}/xplainer`} 
+              target='_blank'
+              style={{ marginRight: 10, marginBottom: 10}}
+            >
+              <Button
+                type='primary'
+                style={{ width: '100%', fontWeight: 700 }}
+              >
+                Jump to Learning Mode
+              </Button>
+            </Link>
+            
             <span style={{ background: '#eee', marginBottom: 3, fontSize: 18 }}><b>Network:</b>&nbsp;{network}</span>
           </div>
 
@@ -208,17 +195,6 @@ function Vis() {
         
         {/* render netpanorama */}
         <div className={classes.right}>
-<<<<<<< HEAD
-          {networkCfg.linkTableConfig?.withTime ? 
-            <TimeSlider 
-              network={networkCfg} 
-              minTime={minTime} 
-              maxTime={maxTime}
-              setTimeRange={setTimeRange}
-            /> 
-            : null}
-            <div id={containerId} style={{ width: '100%' }}></div>
-=======
         {networkCfg.linkTableConfig?.withTime ? 
           <TimeSlider 
             network={networkCfg} 
@@ -235,7 +211,6 @@ function Vis() {
               )
             })}
           </div>
->>>>>>> master
         </div>
     </div>
   )

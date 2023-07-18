@@ -36,8 +36,8 @@ function App() {
           <Route path="/wizard" element={<Wizard />}></Route>
           {/* TODO: direct to related network view */}
           <Route path="/wizard/network/:network" element={<Landing />}></Route>
-          <Route path="/vis/:visType/network/:network" element={<Vis />}></Route>
-          <Route path="/vis/:visType/network/:network/xplainer" element={<XPlainer />}></Route>
+          <Route path="/vis/:visTypes/network/:network" element={<Vis />}></Route>
+          <Route path="/vis/:visTypes/network/:network/xplainer" element={<XPlainer />}></Route>
         </Routes>
       </HashRouter>
     </>
