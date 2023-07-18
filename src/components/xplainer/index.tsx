@@ -70,13 +70,6 @@ function Xplainer() {
 
     let nodes = newVal.nodes.map((entry: any) => entry.id)
     let links: LinkTuple[] = uniqBy(newVal.links, 'id').map((entry: any) => [entry.source.id, entry.target.id])
-    console.log('nodes', nodes, 'links', links)
-    // let nodes = [
-    //   'Charles Moruan',
-    //   'Marie Boucher et Hubert Antheaume Cie',
-    //   'Maude Lequere'
-    // ]
-    // let links: LinkTuple[] = [["Marie Boucher", "Hubert Antheaume"], ["Marie Boucher", "Maude Lequere"]];
     let motifs = patternDetector.run(nodes, links)
     console.log('motifs:', motifs)
   }
