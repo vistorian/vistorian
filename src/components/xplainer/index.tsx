@@ -68,8 +68,9 @@ function Xplainer() {
     const networkData = viewers[0].state.network
     let patternDetector = new PatternDetectors({ nodes: networkData.nodes, links: networkData.links })
 
-    let nodes = newVal.nodes
+    let nodes = newVal.nodes.map((entry: any) => entry.id)
     let links: LinkTuple[] = uniqBy(newVal.links, 'id').map((entry: any) => [entry.source.id, entry.target.id])
+    console.log('nodes', nodes, 'links', links)
     // let nodes = [
     //   'Charles Moruan',
     //   'Marie Boucher et Hubert Antheaume Cie',
