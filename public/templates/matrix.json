@@ -63,8 +63,8 @@
     "vis": [
         {
             "table": "adjacencyMatrix",
-            "rowLabels": { "field": "source.id", "align": "right", "dx": -15 },
-            "colLabels": { "field": "target.id", "dx": 15  },
+            "rowLabels": { "field": "source.id", "align": "right", "dx": -15, "fontSize": 8 },
+            "colLabels": { "field": "target.id", "dx": 15, "fontSize": 8  },
             "rowLines": { "stroke": "lightgrey" },
             "colLines": { "stroke": "lightgrey" },
 
@@ -87,7 +87,7 @@
                     },
                     "scale": "opacity", "expression": "datum.data[0].linkWeight" 
                 },
-                "tooltip": {"expression": "datum"}
+                "tooltip": {"expression": "datum.key[0].id + ' -> ' + datum.key[1].id "}
             }
         }
     ]

@@ -1,7 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { Button} from 'antd'
-
 import templates from '../templates/templates'
 import { find } from 'lodash-es'
 import { NetworkConfig } from '../../../typings'
@@ -12,6 +10,7 @@ import TimeSlider from './timeslider'
 import { defaultLinkTypeColorScheme, defaultNodeTypeShapeScheme } from '../../../typings/constant'
 import { timeParse, timeFormat } from 'd3-time-format'
 import * as d3 from 'd3'
+import { Button } from 'antd'
 
 const useStyles = createUseStyles({
   root: {
@@ -71,7 +70,7 @@ function Vis() {
 
   function propogateSelection(viewer: any, selectionName: string, newVal:any) {
     // Internally NetPanorma represents selections as an object containing an array of selected node objects, and an array of selected link objectes
-    // This objects must be odes/links in the correct network (not just identical copies!)
+    // This objects must be nodes/links in the correct network (not just identical copies!)
     // If the views we are linking use the same identifiers, then we can link them like this:
     // This is a bit inelegant: I might add a new method to NetPanorama in future to make it unnecessary.
 
@@ -160,14 +159,15 @@ function Vis() {
           
           {/* show network names */}
           <div style={{ display: 'flex', flexDirection: 'column'}}>
-            <Button  
-                type='primary' 
-                style={{ marginBottom: 10, marginRight: 10, fontWeight: 700 }}
-                onClick={()=>{location.href='./#/wizard';}}
-              >
+          {/* TODO: return to network preview */}
+            <Button
+              type='primary'
+              style={{ marginBottom: 10, marginRight: 10, fontWeight: 700 }}
+              onClick={() => { location.href = './#/wizard'; }}
+            >
               Return to Network View
             </Button>
-            <span style={{backgroundColor: "#eee", marginBottom: -10, marginTop: 10, fontSize: 18, padding: 10}}><b>This Network:</b>&nbsp;{network}</span>
+            <span style={{ background: '#eee', marginBottom: 3, fontSize: 18 }}><b>Network:</b>&nbsp;{network}</span>
           </div>
 
           {/* show legends */}

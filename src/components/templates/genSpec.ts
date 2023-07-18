@@ -34,7 +34,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
         "as": "target",
         "calculate": `datum.${targetLabel}`
       }
-    ] 
+    ] as any[]
   }
   if (visType === 'timearcs') {
     linkTableImportSpec.transform = [
@@ -47,6 +47,32 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
         "type": "calculate",
         "as": "target",
         "calculate": `datum.${targetLabel} + ' (' + datum.${timeColumn} + ')'`
+      }
+    ]
+  }
+  if (visType === 'map') {
+    linkTableImportSpec.transform = [
+      {
+        "type": "geocode",
+        "locationField": "Place1",
+        "lonAs": "Lon1",
+        "latAs": "Lat1"
+      },
+      {
+        "type": "geocode",
+        "locationField": "Place2",
+        "lonAs": "Lon2",
+        "latAs": "Lat2"
+      },
+      {
+        "type": "calculate",
+        "as": "source",
+        "calculate": `datum.${sourceLabel} + ' (' + datum.Place1 + ')'`
+      },
+      {
+        "type": "calculate",
+        "as": "target",
+        "calculate": `datum.${targetLabel} + ' (' + datum.Place2 + ')'`
       }
     ]
   }
@@ -96,6 +122,12 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       return [
         { "field": f, "as": "name" },
         { "field": timeColumn, "as": "date" }
+      ]
+    }
+    else if (visType === 'map') {
+      return [
+        { "field": "Lon1", "as": "lon" },
+        { "field": "Lat1", "as": "lat" }
       ]
     }
     else { // 'nodelink', 'matrix'
