@@ -11,6 +11,8 @@ import { timeParse } from 'd3-time-format'
 import { uniqBy } from 'lodash-es'
 import { Button } from 'antd'
 import { LinkTuple, PatternDetectors } from "./motifs/patternDetectors";
+import PatternCard from './patternCard'
+import { NetworkPattern } from './motifs/motif'
 
 const useStyles = createUseStyles({
   root: {
@@ -45,6 +47,7 @@ function Xplainer() {
 
   const [linkTypeColorScheme, setLinkTypeColorScheme] = useState(defaultLinkTypeColorScheme)
   const [nodeTypeShapeScheme, setNodeTypeShapeScheme] = useState(defaultNodeTypeShapeScheme)
+  const lableImportance = 15  // show labels according to the importance
 
   // respond to time slider
   let minTime = 0, maxTime = 0
@@ -57,12 +60,10 @@ function Xplainer() {
   }
   const [timeRange, setTimeRange] = useState<number[]>([minTime, maxTime])
 
-  // show labels according to the importance
-  const lableImportance = 15
-
-  let viewers: any[] = new Array(visTypeList.length).fill({})
-
-  let detectMotifs = (newVal: any) => {
+  // detect motifs
+  const [open, setOpen] = useState(false)
+  const [motifs, setMotifs] = useState<NetworkPattern[]>([])
+  const detectMotifs = (newVal: any) => {
     console.log('detectMotifs:', newVal)
     // TODO: only allow for one view in Learning Mode
     const networkData = viewers[0].state.network
@@ -70,10 +71,13 @@ function Xplainer() {
 
     let nodes = newVal.nodes.map((entry: any) => entry.id)
     let links: LinkTuple[] = uniqBy(newVal.links, 'id').map((entry: any) => [entry.source.id, entry.target.id])
-    let motifs = patternDetector.run(nodes, links)
-    console.log('motifs:', motifs)
+    let result = patternDetector.run(nodes, links)
+    setMotifs(result)
+    setOpen(true)
+    console.log('motifs:', result)
   }
 
+  let viewers: any[] = new Array(visTypeList.length).fill({})
   // render netpan
   const update = async (containerId: string, visType: string, index: number) => {
     let renderer = visType === 'matrix' ? 'canvas' : 'svg'
@@ -134,7 +138,7 @@ function Xplainer() {
       }
       update(containerId, visType, index)
     }
-  })
+  }, [timeRange])
 
   return (
     <div className={classes.root}>
@@ -200,6 +204,11 @@ function Xplainer() {
             )
           })}
         </div>
+        <PatternCard 
+          open={open} 
+          setOpen={setOpen} 
+          motifs={motifs}
+        />
       </div>
     </div>
   )
