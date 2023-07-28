@@ -72,8 +72,8 @@ function Vis() {
 
   let viewers: any[] = new Array(visTypeList.length).fill({})
 
-  let onChange = (newVal: any) => {
-    console.log('onChange:', { newVal })
+  let onCoordination = (newVal: any) => {
+    console.log('onCoordination:', { newVal })
     viewers.map(viewer => {
       propogateSelection(viewer, "node_selection", newVal)
     })
@@ -112,7 +112,9 @@ function Vis() {
         timeRange: timeRange
       }, containerId, { 
         renderer: renderer,
-        paramCallbacks: { node_selection: onChange }
+        paramCallbacks: { 
+          node_selection: onCoordination
+        }
       })
       // @ts-ignore
       console.log('Spec:', visType, viewers[index])

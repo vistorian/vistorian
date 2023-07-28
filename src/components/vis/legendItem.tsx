@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface ILegentItemProps {
   type: string
@@ -20,6 +20,10 @@ export default function LegendItem(props: ILegentItemProps) {
   else {
     scale = d3.scaleOrdinal().domain(list).range(scheme)
   }
+
+  // 0: show; 1: hide
+  const ifDisplayIcons = ['\uf06e', '\uf070']
+  const [ifDisplay, setIfDisplay] = useState(0)
   
   const update = () => {
     const svg = svgRef.current
@@ -60,12 +64,14 @@ export default function LegendItem(props: ILegentItemProps) {
       .attr('text-anchor', 'middle')
       .attr('font-family', 'FontAwesome')
       .attr('font-size', '10px')
-      .text('\uf06e')
+      .text(ifDisplayIcons[ifDisplay])
       .attr('x', 250)
       .attr('y', 13)
+      .style('cursor', 'pointer')
       .on("click", function(){
         d3.select(this)
-          .text('\uf070')
+          .text(ifDisplayIcons[1-ifDisplay])
+        setIfDisplay(1-ifDisplay)
       })
   }
 

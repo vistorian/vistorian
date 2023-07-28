@@ -1,7 +1,4 @@
 {
-  "zoom": true,
-  "pan": {"modifierKeyRequired": []},
-
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
 
