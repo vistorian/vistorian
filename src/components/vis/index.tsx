@@ -7,7 +7,7 @@ import { genSpecFromLinkTable } from '../templates/genSpec'
 import { createUseStyles } from 'react-jss'
 import Legend from './legend'
 import TimeSlider from './timeslider'
-import { defaultLinkTypeColorScheme, defaultNodeTypeShapeScheme } from '../../../typings/constant'
+import { defaultColorScheme, defaultNodeTypeShapeScheme } from '../../../typings/constant'
 import { timeParse, timeFormat } from 'd3-time-format'
 import * as d3 from 'd3'
 import { Button } from 'antd'
@@ -41,10 +41,11 @@ function Vis() {
   const preContainer = "visSvg";
 
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
-
-  const [linkTypeColorScheme, setLinkTypeColorScheme] = useState(defaultLinkTypeColorScheme)
-  const [nodeTypeShapeScheme, setNodeTypeShapeScheme] = useState(defaultNodeTypeShapeScheme)
   const data = JSON.parse(window.localStorage.getItem('UPLOADED_FILE_' + networkCfg.linkTableConfig?.file) as string)
+
+  const [colorScheme, setColorScheme] = useState(defaultColorScheme)
+  const [nodeTypeShapeScheme, setNodeTypeShapeScheme] = useState(defaultNodeTypeShapeScheme)
+  const [nodeLabel, setNodeLabel] = useState<string>(networkCfg.extraNodeConfig?.nodeLabel ? networkCfg.extraNodeConfig?.nodeLabel : 'id')
 
   // respond to time slider
   let minTime = 0, maxTime = 0
@@ -93,8 +94,9 @@ function Vis() {
     viewers[index] = await NetPanoramaTemplateViewer.render(`./templates/${template.template}`, {
         dataDefinition: JSON.stringify(spec.data),
         networksDefinition: JSON.stringify(spec.network),
-        linkTypeColorScheme: linkTypeColorScheme,
+        colorScheme: colorScheme,
         nodeTypeShapeScheme: nodeTypeShapeScheme,
+        nodeLabel: nodeLabel,
         lableImportance: lableImportance,
         timeRange: timeRange
       }, containerId, { 
@@ -173,7 +175,7 @@ function Vis() {
           {/* show legends */}
           <Legend 
             config={networkCfg} 
-            schemes={{linkType: linkTypeColorScheme, nodeType: nodeTypeShapeScheme}} 
+            schemes={{linkType: colorScheme, nodeType: nodeTypeShapeScheme}} 
           />
         </div>
         

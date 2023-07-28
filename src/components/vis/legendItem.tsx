@@ -1,6 +1,5 @@
 import * as d3 from 'd3'
 import { useEffect, useRef } from 'react'
-import { defaultLinkTypeColorScheme } from '../../../typings/constant'
 
 interface ILegentItemProps {
   type: string
