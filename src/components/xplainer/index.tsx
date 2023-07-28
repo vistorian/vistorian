@@ -6,7 +6,7 @@ import { genSpecFromLinkTable } from '../templates/genSpec'
 import { createUseStyles } from 'react-jss'
 import Legend from '../vis/legend'
 import TimeSlider from '../vis/timeslider'
-import { defaultLinkTypeColorScheme, defaultNodeTypeShapeScheme } from '../../../typings/constant'
+import { defaultColorScheme, defaultNodeTypeShapeScheme } from '../../../typings/constant'
 import { timeParse } from 'd3-time-format'
 import { uniqBy } from 'lodash-es'
 import { Button } from 'antd'
@@ -45,7 +45,7 @@ function Xplainer() {
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
   const data = JSON.parse(window.localStorage.getItem('UPLOADED_FILE_' + networkCfg.linkTableConfig?.file) as string)
 
-  const [linkTypeColorScheme, setLinkTypeColorScheme] = useState(defaultLinkTypeColorScheme)
+  const [linkTypeColorScheme, setLinkTypeColorScheme] = useState(defaultColorScheme)
   const [nodeTypeShapeScheme, setNodeTypeShapeScheme] = useState(defaultNodeTypeShapeScheme)
   const lableImportance = 15  // show labels according to the importance
 
@@ -182,7 +182,9 @@ function Xplainer() {
         {/* show legends */}
         <Legend
           config={networkCfg}
-          schemes={{ linkType: linkTypeColorScheme, nodeType: nodeTypeShapeScheme }}
+          linkTypeEncoding={colorScheme}
+          nodeTypeEncoding={nodeTypeInShape ? nodeTypeShapeScheme : colorScheme}
+          nodeTypeInShape={nodeTypeInShape}
         />
       </div>
 
