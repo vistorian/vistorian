@@ -18,6 +18,10 @@
     {
       "name": "timeRange", 
       "value": "[timeRange]"
+    },
+    {
+      "name": "nodeTypeInShape",
+      "value": "[nodeTypeInShape]"
     }
   ],
   "networks": "[networksDefinition]",
@@ -43,9 +47,15 @@
       "domain": { "data": "network.nodes",  "field": "data.type0" }
     },
     {
+      "name": "nodeColor",
+      "type": "ordinal",
+      "range": "[colorScheme]",
+      "domain": { "data": "network.nodes",  "field": "data.type0" }
+    },
+    {
       "name": "edgeColor",
       "type": "ordinal",
-      "range": "[linkTypeColorScheme]",
+      "range": "[colorScheme]",
       "domain": { "data": "network.links", "field": "linkType" }
     },
     {
@@ -69,7 +79,15 @@
         "type": "linkpath",
         "start": "source",
         "end": "target",
-        "stroke": { "field": "linkType", "scale": "edgeColor" },
+        "stroke": {
+          "conditions": [
+            {
+              "test": "!params.nodeTypeInShape",
+              "value": "grey"
+            }
+          ], 
+          "field": "linkType", "scale": "edgeColor" 
+        },
         "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth"},
         "opacity":  { 
           "conditions": [
@@ -113,9 +131,25 @@
       ],
       "mark": {
         "type": "symbol",
-        "shape": {"field": "data.type0", "scale": "nodeShape"},
+        "shape": {
+          "conditions": [
+            {
+              "test": "!params.nodeTypeInShape",
+              "value": "circle"
+            }
+          ],
+          "field": "data.type0", "scale": "nodeShape"
+        },
         "area": { "field": "degree", "scale": "radius" },
-        "fill": "black",
+        "fill": {
+          "conditions": [
+            {
+              "test": "params.nodeTypeInShape",
+              "value": "black"
+            }
+          ],
+           "field": "data.type0", "scale": "nodeColor"
+        },
         "stroke": "white",
         "opacity": {
           "conditions": [
@@ -142,7 +176,7 @@
       "ifInSelection": "node_selection.nodes",
       "mark": {
         "type": "text",
-        "text": { "expression": "datum.id" },
+        "text": { "expression": "[nodeLabel]" },
         "dx": 5,
         "dy": 5,
         "fontSize": 13,
@@ -161,7 +195,7 @@
           "conditions": [
             {
               "selectionIsEmpty": "node_selection.nodes",
-              "value": { "expression": "datum.id"}
+              "value": { "expression": "[nodeLabel]"}
             }
           ]
         },

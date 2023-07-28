@@ -2,9 +2,6 @@
   "width": 3000,
   "x": 120,
 
-  "zoom": true,
-  "pan": {"modifierKeyRequired": []},
-
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
 
@@ -76,7 +73,7 @@
     {
       "name": "edgeColor",
       "type": "ordinal",
-      "range": "[linkTypeColorScheme]",
+      "range": "[colorScheme]",
       "domain": { "data": "network.links", "field": "linkType" }
     }
   ],

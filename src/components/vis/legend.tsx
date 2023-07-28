@@ -1,13 +1,15 @@
-import { EncodingSchemes, NetworkConfig } from "../../../typings"
+import { NetworkConfig } from "../../../typings"
 import LegendItem from "./legendItem";
 
 interface ILegendProps {
   config: NetworkConfig,
-  schemes: EncodingSchemes
+  linkTypeEncoding: string | string[],
+  nodeTypeEncoding: string | string[],
+  nodeTypeInShape: boolean
 }
 
 function Legend(props: ILegendProps) {
-  const { config, schemes } = props
+  const { config, linkTypeEncoding, nodeTypeEncoding, nodeTypeInShape } = props
 
   const getLinkData = () => {
     const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + config.linkTableConfig?.file) as string)
@@ -38,28 +40,28 @@ function Legend(props: ILegendProps) {
       <p style={{ fontSize: 18 }}><b>Legend:</b></p>
       {/* link type */}
       {config.linkTableConfig?.linkType ? <>
-        <span>Link Colors:</span>
+        <span>Link Types:</span>
         {linkTypeList.map((linkType) => 
           <LegendItem 
             key={linkType}
-            type="linkType"
+            type="linkColor"
             name={linkType} 
             list={linkTypeList}
-            scheme={schemes.linkType}
+            scheme={linkTypeEncoding}
           />
         )}
       </> : null}
 
       {/* node type */}
-      {config.extraNodeConfig?.hasExtraNode ? <>
-        <span>Node Shapes:</span>
+      {(config.extraNodeConfig?.hasExtraNode)  ? <>
+        <span>Node Types:</span>
         {nodeTypeList.map((nodeType) =>
           <LegendItem
             key={nodeType}
-            type="nodeType"
+            type={nodeTypeInShape ? "nodeShape" : "nodeColor"}
             name={nodeType}
             list={nodeTypeList}
-            scheme={schemes.nodeType}
+            scheme={nodeTypeEncoding}
           />
         )}
       </> : null}

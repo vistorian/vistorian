@@ -57,7 +57,7 @@ function Landing() {
         ))}
       </div>
 
-      <Button href='#/wizard'> Start my visualizations</Button>
+      <Button href='#/wizard'> Start my visualization</Button>
 
     </div>
   )

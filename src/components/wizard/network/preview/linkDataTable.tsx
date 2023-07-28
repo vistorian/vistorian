@@ -28,8 +28,8 @@ function LinkDataTable(props: IDataTableProps) {
   const opts = [
     { value: '', label: '-' },
     { value: 'linkId', label: 'Link id' },
-    { value: 'sourceNodeLabel', label: network.linkTableConfig?.directed ? 'Source node label' : 'Node 1 label' },
-    { value: 'targetNodeLabel', label: network.linkTableConfig?.directed ? 'Target node label' : 'Node 2 label' },
+    { value: 'sourceNodeLabel', label: network.linkTableConfig?.directed ? 'Source node id' : 'Node 1 id' },
+    { value: 'targetNodeLabel', label: network.linkTableConfig?.directed ? 'Target node id' : 'Node 2 id' },
     { value: 'locationOfSourceNode', label: 'Location of source node' },
     { value: 'locationOfTargetNode', label: 'Location of target node' },
     { value: 'linkWeight', label: 'Link weight' },
