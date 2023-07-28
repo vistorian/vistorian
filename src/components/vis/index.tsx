@@ -133,20 +133,20 @@ function Vis() {
       }
 
       // TODO: implement it in netpan
-      const svg = d3.select(`#${containerId}`).select('svg')
-      if (svg) {
-        let g = svg.select("g").select("g")
-        // @ts-ignore
-        svg.call(d3.zoom()
-          // .extent([[0, 0], [width, height]])
-          // .scaleExtent([1, 8])
-          .on("zoom", zoomed));
+      // const svg = d3.select(`#${containerId}`).select('svg')
+      // if (svg) {
+      //   let g = svg.select("g").select("g")
+      //   // @ts-ignore
+      //   svg.call(d3.zoom()
+      //     // .extent([[0, 0], [width, height]])
+      //     // .scaleExtent([1, 8])
+      //     .on("zoom", zoomed));
 
-        // @ts-ignore
-        function zoomed({ transform }) {
-          g.attr("transform", transform);
-        }
-      }
+      //   // @ts-ignore
+      //   function zoomed({ transform }) {
+      //     g.attr("transform", transform);
+      //   }
+      // }
   }
 
   useEffect(() => {
