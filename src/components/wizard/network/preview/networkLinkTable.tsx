@@ -5,10 +5,8 @@ const { Title } = Typography
 
 const fullCol = {
   linkId: 'Link id',
-  // sourceNodeId: 'Source node id',
-  sourceNodeLabel: 'Source node label',
-  // targetNodeId: 'Target node id',
-  targetNodeLabel: 'Target node label',
+  sourceNodeLabel: 'Source node id',
+  targetNodeLabel: 'Target node id',
   locationOfSourceNode: 'Location of source node',
   locationOfTargetNode: 'Location of target node',
   linkWeight: 'Link weight', 

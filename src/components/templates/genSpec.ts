@@ -36,6 +36,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       }
     ] as any[]
   }
+  
   if (visType === 'timearcs') {
     linkTableImportSpec.transform = [
       {

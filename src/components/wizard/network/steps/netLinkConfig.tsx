@@ -135,7 +135,7 @@ function NetLinkConfig(props: IStepProps) {
                 rules={[{ required: true, message: 'This is required.' }]}
               >
                 <div className={classes.selection}>
-                  <Text className={classes.selectionName}>- {directed?'Source node':'Node 1'} label:</Text>
+                  <Text className={classes.selectionName}>- {directed?'Source node':'Node 1'} id:</Text>
                   <Select 
                     style={{width: 300}} 
                     options={selectionOptions}
@@ -153,7 +153,7 @@ function NetLinkConfig(props: IStepProps) {
                 rules={[{ required: true, message: 'This is required.' }]}
               >
                 <div className={classes.selection}>
-                  <Text className={classes.selectionName}>- {directed ? 'Target node' : 'Node 2'} label:</Text>
+                  <Text className={classes.selectionName}>- {directed ? 'Target node' : 'Node 2'} id:</Text>
                   <Select style={{ width: 300 }}
                     options={selectionOptions}
                     onChange={(value) => {

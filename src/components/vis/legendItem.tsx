@@ -6,41 +6,29 @@ interface ILegentItemProps {
   name: string
   list: string[]
   scheme: string | string[]
+  nodeTypeInShape?: boolean
 }
 
 export default function LegendItem(props: ILegentItemProps) {
-  const { type, name, list, scheme } = props
+  const { type, name, list, scheme, nodeTypeInShape } = props
   const svgRef = useRef(null)
 
   let scale: any
-  if (type === 'linkType') {
-    if (scheme === 'category10') {
-      scale = d3.scaleOrdinal().domain(list).range(d3.schemeCategory10)
-    }
-    else {
-      scale = d3.scaleOrdinal().domain(list).range(scheme)
-    }
+  if (scheme === 'category10') {
+    scale = d3.scaleOrdinal().domain(list).range(d3.schemeCategory10)
   }
-  else if (type === 'nodeType') {
+  else {
     scale = d3.scaleOrdinal().domain(list).range(scheme)
   }
   
   const update = () => {
     const svg = svgRef.current
     d3.select(svg).selectAll('*').remove()
-
     const g = d3.select(svg)
       .append("g")
       .attr("transform", "translate(0, 0)")
-    if (type === 'linkType') {
-      g.append("rect")
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', 13)
-        .attr('height', 13)
-        .attr('fill', scale(name))
-    }
-    else if (type === 'nodeType') {
+
+    if (type === 'nodeShape') {
       const pair = { 'circle': d3.symbolCircle, 'square': d3.symbolSquare, 'cross': d3.symbolCross, 'diamond': d3.symbolDiamond, 'triangle': d3.symbolTriangle2}
       if (scale(name) in pair) {
         // @ts-ignore
@@ -53,12 +41,32 @@ export default function LegendItem(props: ILegentItemProps) {
           .attr("transform", "translate(7, 7)")
       }
     }
+    else { // 'linkColor', 'nodeColor'
+      g.append("rect")
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', 13)
+        .attr('height', 13)
+        .attr('fill', scale(name))
+    }
 
     g.append('text')
       .text(name)
       .attr('x', 20)
       .attr('y', 13)
       .style("font-size", 13)
+
+    g.append('text')
+      .attr('text-anchor', 'middle')
+      .attr('font-family', 'FontAwesome')
+      .attr('font-size', '10px')
+      .text('\uf06e')
+      .attr('x', 250)
+      .attr('y', 13)
+      .on("click", function(){
+        d3.select(this)
+          .text('\uf070')
+      })
   }
 
   useEffect(()=>{

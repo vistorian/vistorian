@@ -162,7 +162,7 @@
       "ifInSelection": "node_selection.nodes",
       "mark": {
         "type": "text",
-        "text": { "expression": "datum.id" },
+        "text": { "expression": "[nodeLabel]" },
         "dx": 5,
         "dy": 5,
         "fontSize": 13,
@@ -181,7 +181,7 @@
           "conditions": [
             {
               "selectionIsEmpty": "node_selection.nodes",
-              "value": { "expression": "datum.id"}
+              "value": { "expression": "[nodeLabel]"}
             }
           ]
         },

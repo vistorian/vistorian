@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import templates from '../templates/templates'
-import { find } from 'lodash-es'
+import { uniqBy } from 'lodash-es'
 import { NetworkConfig } from '../../../typings'
 import { genSpecFromLinkTable } from '../templates/genSpec'
 import { createUseStyles } from 'react-jss'
@@ -45,7 +45,17 @@ function Vis() {
 
   const [colorScheme, setColorScheme] = useState(defaultColorScheme)
   const [nodeTypeShapeScheme, setNodeTypeShapeScheme] = useState(defaultNodeTypeShapeScheme)
-  const [nodeLabel, setNodeLabel] = useState<string>(networkCfg.extraNodeConfig?.nodeLabel ? networkCfg.extraNodeConfig?.nodeLabel : 'id')
+  const [nodeLabel, setNodeLabel] = useState<string>(networkCfg.extraNodeConfig?.nodeLabel ? `"datum.data.${networkCfg.extraNodeConfig?.nodeLabel}"` : `"datum.id"`)
+  
+  const getNodeTypes = () => {
+    if (!networkCfg.extraNodeConfig?.hasExtraNode) 
+      return 1
+    const arr = networkCfg.extraNodeConfig.nodeTypes?.filter(t => t.length > 0)
+    if (!arr) return 1
+    const nodeData = JSON.parse(window.localStorage.getItem('UPLOADED_FILE_' + networkCfg.extraNodeConfig.file) as string)
+    return uniqBy(nodeData, arr[0]).length
+  }
+  const [nodeTypeInShape, setNodeTypeInShape] = useState<boolean>(networkCfg.linkTableConfig?.linkType?.length as number > 0)
 
   // respond to time slider
   let minTime = 0, maxTime = 0
@@ -96,6 +106,7 @@ function Vis() {
         networksDefinition: JSON.stringify(spec.network),
         colorScheme: colorScheme,
         nodeTypeShapeScheme: nodeTypeShapeScheme,
+        nodeTypeInShape: nodeTypeInShape,
         nodeLabel: nodeLabel,
         lableImportance: lableImportance,
         timeRange: timeRange
@@ -174,8 +185,10 @@ function Vis() {
 
           {/* show legends */}
           <Legend 
-            config={networkCfg} 
-            schemes={{linkType: colorScheme, nodeType: nodeTypeShapeScheme}} 
+            config={networkCfg}
+            linkTypeEncoding={colorScheme}
+            nodeTypeEncoding={nodeTypeInShape ? nodeTypeShapeScheme : colorScheme}
+            nodeTypeInShape={nodeTypeInShape}
           />
         </div>
         
