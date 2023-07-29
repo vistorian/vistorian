@@ -122,10 +122,15 @@ interface SelectOptionType {
   label: string
 }
 
-interface EncodingSchemes {
-  linkType: string | string[],
-  nodeType: string | string[]
+interface VisContentOptions {
+  timeRange: [number, number] | null,
+  colorScheme: string | string[] | null,
+  nodeTypeInShape: boolean | null,
+  nodeTypeShapeScheme: string | string[] | null,
+  nodeLabel: string | null,
+  lableImportance: any
 }
+
 
 export {
   DataFile,
@@ -144,5 +149,5 @@ export {
   ExtraNodeConfig,
   IStepProps,
   SelectOptionType,
-  EncodingSchemes
+  VisContentOptions
 }

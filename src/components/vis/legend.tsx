@@ -2,14 +2,16 @@ import { NetworkConfig } from "../../../typings"
 import LegendItem from "./legendItem";
 
 interface ILegendProps {
-  config: NetworkConfig,
+  network: string,
   linkTypeEncoding: string | string[],
   nodeTypeEncoding: string | string[],
   nodeTypeInShape: boolean
 }
 
 function Legend(props: ILegendProps) {
-  const { config, linkTypeEncoding, nodeTypeEncoding, nodeTypeInShape } = props
+  const { network, linkTypeEncoding, nodeTypeEncoding, nodeTypeInShape } = props
+
+  const config = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
 
   const getLinkData = () => {
     const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + config.linkTableConfig?.file) as string)

@@ -6,17 +6,17 @@ import { NetworkConfig } from "../../../typings"
 import { timeParse, timeFormat } from 'd3-time-format'
 
 interface ITimeSliderProps {
-  network: NetworkConfig
+  network: string
   minTime: number
   maxTime: number
-  setTimeRange: (tr: number[]) => void
+  setTimeRange: (tr: [number, number]) => void
 }
 
 function TimeSlider(props: ITimeSliderProps) {
   const { network, minTime, maxTime, setTimeRange } = props
-
-  const timeColumn = network.linkTableConfig?.time as string
-  const timeFmt = network.linkTableConfig?.timeFormat as string
+  const config = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
+  const timeColumn = config.linkTableConfig?.time as string
+  const timeFmt = config.linkTableConfig?.timeFormat as string
 
 
   const format = {
