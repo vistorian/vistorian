@@ -5,6 +5,7 @@ import templates from "../templates/templates"
 import { genSpecFromLinkTable } from "../templates/genSpec"
 
 interface IVisContentProps {
+  type: string // "explore" || "xplainer"
   viewerId: number
   width: string
   visType: string
@@ -46,10 +47,11 @@ function VisContent(props: IVisContentProps) {
   const update = async () => {
     let renderer = visType === 'matrix' ? 'canvas' : 'svg'
     let template = templates.filter(t => t.key === visType)[0]
+    let templatePath = props.type === 'explore' ? `./templates/${template.template}` : `./templates/xplainer/${template.template}`
     let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
 
     // @ts-ignore
-    viewer = await NetPanoramaTemplateViewer.render(`./templates/${template.template}`, {
+    viewer = await NetPanoramaTemplateViewer.render(templatePath, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
       colorScheme: options.colorScheme,

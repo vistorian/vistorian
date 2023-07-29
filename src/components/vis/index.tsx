@@ -154,6 +154,7 @@ function Vis(props: IVisProps) {
             {visTypeList.map((visType, idx) => {
               return (
                 <VisContent 
+                  type={props.type}
                   key={idx}
                   viewerId={idx}
                   width={`${100/visTypeList.length}%`}
