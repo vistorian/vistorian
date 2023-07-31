@@ -15,7 +15,21 @@
           "label": "Seriation"
       },
       "value": "barycentre"
-    }
+    },
+    {
+      "name": "timeRange",
+      "value": "[timeRange]"
+    },
+    {
+      "name": "nodeTypeInShape",
+      "value": "[nodeTypeInShape]"
+    },
+    {
+      "name": "pattern_selection",
+      "network": "network",
+      "action": "replace",
+      "type": "selection"
+    },
   ],
 
   "orderings": [
@@ -124,6 +138,14 @@
       "entries": "network.links",
       "layout": "layout",
       "drawAxes": true,
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "rect",
+          "action": "replace",
+          "selection": "pattern_selection"
+        }
+      ],
       "mark": {
         "type": "linkpath",
         "start": "source",
@@ -133,18 +155,24 @@
         "directionForShape": {  "ordering": "staticOrder" },
         "strokeWidth": 1,
         "strokeOpacity": 0.3,
-        "tooptip": { "expression": "datum"}
       }
     },
     {
       "entries": "network.nodes",
       "layout": "layout",
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "rect",
+          "action": "replace",
+          "selection": "pattern_selection"
+        }
+      ],
       "mark": {
         "type": "circle",
         "area": { "field": "degree", "scale": "radius" },
         "fill": "black",
         "stroke": "white",
-        "tooptip": { "expression": "datum"}
       }
     }
   ]

@@ -56,8 +56,8 @@ function Vis(props: IVisProps) {
 
   const colorScheme = defaultColorScheme
   const nodeTypeShapeScheme = defaultNodeTypeShapeScheme
-  const nodeTypeInShape = networkCfg.linkTableConfig?.linkType?.length as number > 0
-  const nodeLabel = networkCfg.extraNodeConfig?.nodeLabel ? `"datum.data.${networkCfg.extraNodeConfig?.nodeLabel}"` : `"datum.id"`
+  const nodeTypeInShape: boolean = networkCfg.linkTableConfig?.linkType?.length as number > 0
+  const nodeLabel: string = networkCfg.extraNodeConfig?.nodeLabel ? `"datum.data.${networkCfg.extraNodeConfig?.nodeLabel}"` : `"datum.id"`
   const lableImportance = 15
 
   let options: VisContentOptions = {
@@ -154,6 +154,7 @@ function Vis(props: IVisProps) {
             {visTypeList.map((visType, idx) => {
               return (
                 <VisContent 
+                  type={props.type}
                   key={idx}
                   viewerId={idx}
                   width={`${100/visTypeList.length}%`}
@@ -164,7 +165,6 @@ function Vis(props: IVisProps) {
               )
             })}
           </div>
-          {/* pattern card */}
         </div>
     </div>
   )

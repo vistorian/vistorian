@@ -2,14 +2,19 @@
   "data": "[dataDefinition]",
   "parameters": [
     {
-      "name": "rect_selection",
+      "name": "pattern_selection",
       "network": "network",
       "action": "replace",
-      "type": "selection"
+      "type": "selection",
+      "clearOnBackgroundClick": true
     },
     {
       "name": "timeRange", 
       "value": "[timeRange]"
+    },
+    {
+      "name": "nodeTypeInShape",
+      "value": "[nodeTypeInShape]"
     }
   ],
   "networks": "[networksDefinition]",
@@ -35,9 +40,15 @@
       "domain": { "data": "network.nodes",  "field": "data.type0" }
     },
     {
+      "name": "nodeColor",
+      "type": "ordinal",
+      "range": "[colorScheme]",
+      "domain": { "data": "network.nodes",  "field": "data.type0" }
+    },
+    {
       "name": "edgeColor",
       "type": "ordinal",
-      "range": "[linkTypeColorScheme]",
+      "range": "[colorScheme]",
       "domain": { "data": "network.links", "field": "linkType" }
     },
     {
@@ -62,14 +73,29 @@
           "interaction": "select",
           "using": "rect",
           "action": "replace",
-          "selection": "rect_selection"
+          "selection": "pattern_selection"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "click",
+          "action": "replace",
+          "selection": "pattern_selection"
         }
       ],
       "mark": {
         "type": "linkpath",
         "start": "source",
         "end": "target",
-        "stroke": { "field": "linkType", "scale": "edgeColor" },
+        "stroke": {
+          "conditions": [
+            {
+              "test": "!params.nodeTypeInShape",
+              "value": "grey"
+            }
+          ], 
+          "field": "linkType", "scale": "edgeColor" 
+        },
         "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth"},
         "opacity":  { 
           "conditions": [
@@ -78,12 +104,12 @@
               "value": 0
             },
             {
-              "selectionIsEmpty": "rect_selection.links",
+              "selectionIsEmpty": "pattern_selection.nodes",
               "field": "linkWeight",
               "scale": "edgeOpacity"
             },
             {
-              "inSelection": "rect_selection.links",
+              "inSelection": "pattern_selection.links",
               "value": 1
             }
           ],
@@ -100,23 +126,46 @@
           "interaction": "select",
           "using": "rect",
           "action": "replace",
-          "selection": "rect_selection"
+          "selection": "pattern_selection"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "click",
+          "action": "replace",
+          "selection": "pattern_selection"
         }
       ],
       "mark": {
         "type": "symbol",
-        "shape": {"field": "data.type0", "scale": "nodeShape"},
+        "shape": {
+          "conditions": [
+            {
+              "test": "!params.nodeTypeInShape",
+              "value": "circle"
+            }
+          ],
+          "field": "data.type0", "scale": "nodeShape"
+        },
         "area": { "field": "degree", "scale": "radius" },
-        "fill": "black",
+        "fill": {
+          "conditions": [
+            {
+              "test": "params.nodeTypeInShape",
+              "value": "black"
+            }
+          ],
+           "field": "data.type0", "scale": "nodeColor"
+        },
         "stroke": "white",
         "opacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "rect_selection.nodes",
+              "selectionIsEmpty": "pattern_selection.nodes",
               "value": 1
             },
             {
-              "inSelection": "rect_selection.nodes",
+              "inSelection": "pattern_selection.nodes",
               "value": 1
             }
           ],

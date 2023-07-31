@@ -1,5 +1,5 @@
 import { createUseStyles } from "react-jss"
-import { Menu } from 'antd'
+import { Menu, message } from 'antd'
 import { useEffect, useState } from "react"
 import Pattern from "./pattern"
 import { NetworkPattern } from "./motifs/motif"
@@ -24,10 +24,11 @@ interface IPatternCardProps {
   open: boolean
   setOpen: (d: boolean) => void
   motifs: NetworkPattern[]
+  offset: [number, number]
 }
 
 function PatternCard (props: IPatternCardProps) {
-  const { open, setOpen, motifs } = props
+  const { open, setOpen, motifs, offset } = props
   const classes = useStyles()
 
   const [current, setCurrent] = useState('0')
@@ -50,22 +51,21 @@ function PatternCard (props: IPatternCardProps) {
   }, [motifs])
 
   return (
-    <div 
-      className={classes.root} 
+    <div className={classes.root}
       style={{
-        display: open ? "flex" : "none",
-        transform: "translate(800px, 20px)"
-      }}
+      display: open ? "flex" : "none",
+      transform: `translate(${offset[0]}px, ${offset[1]}px)`
+    }}
     >
-      <CloseOutlined 
-        style={{position: 'absolute', right: 10, top: 10}}
-        onClick={()=>setOpen(false)}
+      <CloseOutlined
+        style={{ position: 'absolute', right: 10, top: 10 }}
+        onClick={() => setOpen(false)}
       />
-      <Menu 
-        mode="horizontal" 
-        onClick={onClick} 
-        selectedKeys={[current]} 
-        items={getMenuItems()} 
+      <Menu
+        mode="horizontal"
+        onClick={onClick}
+        selectedKeys={[current]}
+        items={getMenuItems()}
       />
       <Pattern motif={motifs[Number(current)]} />
     </div>

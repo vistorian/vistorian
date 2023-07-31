@@ -79,7 +79,7 @@ function Pattern (props: IPatternProps) {
             <span style={{ fontSize: 20, fontWeight: 600}}>Variants:</span>
             <br />
             <ul>
-              {pattern.variants.map((v) => (<li>{v}</li>))}
+              {pattern.variants.map((v) => (<li key={v}>{v}</li>))}
             </ul>
           </div>
         </div> : null}
