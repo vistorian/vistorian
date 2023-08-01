@@ -71,7 +71,7 @@
       "actions": [
         {
           "interaction": "select",
-          "using": "rect",
+          "using": "[selectType]",
           "action": "replace",
           "selection": "pattern_selection"
         },
@@ -124,7 +124,7 @@
       "actions": [
         {
           "interaction": "select",
-          "using": "rect",
+          "using": "[selectType]",
           "action": "replace",
           "selection": "pattern_selection"
         },

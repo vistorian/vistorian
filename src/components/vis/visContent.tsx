@@ -6,6 +6,8 @@ import { genSpecFromLinkTable } from "../templates/genSpec"
 import PatternCard from "../xplainer/patternCard"
 import useMotifDetect from '../xplainer/useMotifDetect'
 import * as d3 from 'd3'
+import PatternSelection from "../xplainer/patternSelection"
+
 
 interface IVisContentProps {
   type: string // "explore" || "xplainer"
@@ -24,6 +26,7 @@ function VisContent(props: IVisContentProps) {
   const [networkData, setNetworkData] = useState({})
   // rect/lasso selection mouseup position
   const [offsetData, setOffsetData] = useState<[number, number]>([0, 0])
+  const [selectType, setSelectType] = useState<string>('rect')
 
   const containerId = `visSvg${viewerId}`
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
@@ -77,6 +80,7 @@ function VisContent(props: IVisContentProps) {
     viewer = await NetPanoramaTemplateViewer.render(templatePath, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
+      selectType: `"${selectType}"`,
       ...options
     }, containerId, {
       renderer: renderer,
@@ -121,10 +125,12 @@ function VisContent(props: IVisContentProps) {
       return
     }
     update()
-  }, [loading])
+  }, [loading, selectType])
 
   const handleMouseUp = (event: any) => {
-    setOffsetData([event.offsetX, event.offsetY])
+    if (event.target instanceof SVGElement) {
+      setOffsetData([event.offsetX, event.offsetY])
+    }    
   }
 
   useEffect(() => {
@@ -139,8 +145,13 @@ function VisContent(props: IVisContentProps) {
       {loading ? 
         <Spin tip="Loading" size="small">
           <div id={containerId} style={{ width: width }} />
+          <PatternSelection type={selectType} setType={setSelectType} />
         </Spin> 
-        : <div id={containerId} style={{ width: width }} />
+        : 
+        <>
+          <div id={containerId} style={{ width: width }} />
+          <PatternSelection type={selectType} setType={setSelectType} />
+        </>
       }
       {/* pattern card */}
       {(props.type === 'xplainer') ? 
