@@ -160,7 +160,7 @@ function Sessions(props: ISessionsProps) {
             <div className={classes.card} key={session.id}>
               {/* content */}
               <Link
-                to={`/vis/${session.vis}/network/${session.network}`}
+                to={`/vis/${session.vis}/network/${session.network}/xplainer`}
                 target='_blank'
                 style={{ textDecoration: 'none', color: 'black' }}
               >
