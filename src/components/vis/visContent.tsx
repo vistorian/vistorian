@@ -24,6 +24,7 @@ function VisContent(props: IVisContentProps) {
   let viewer: any
   // network data generated from netpan
   const [networkData, setNetworkData] = useState({})
+  const [sceneJSON, setSceneJSON] = useState({})
   // rect/lasso selection mouseup position
   const [offsetData, setOffsetData] = useState<[number, number]>([0, 0])
   const [selectType, setSelectType] = useState<string>('rect')
@@ -54,7 +55,7 @@ function VisContent(props: IVisContentProps) {
   //   viewer.setParam(selectionName, { nodes, links })
   // }
 
-  let motifs = useMotifDetect(networkData)
+  let motifs = useMotifDetect(networkData, sceneJSON)
   type ParamChangeCallbacks = { [paramNamee: string]: (newVal: string | number) => void } // refer to netpan
   const getParamCallbacks = () => {
     let cb: ParamChangeCallbacks = {}
@@ -88,8 +89,9 @@ function VisContent(props: IVisContentProps) {
       paramCallbacks: getParamCallbacks()
     })
     // @ts-ignore
-    console.log('VIEW STATE:', viewer.state, viewer.interactionState)
+    console.log('VIEW STATE:', viewer.state, viewer.sceneJSON)
     setNetworkData(viewer.state.network)
+    setSceneJSON(viewer.sceneJSON)
 
     const container = document.getElementById(containerId)
     if (container && container.getElementsByTagName("svg").length > 0) {
