@@ -72,6 +72,7 @@ function VisContent(props: IVisContentProps) {
 
   const update = async () => {
     let renderer = visType === 'matrix' ? 'canvas' : 'svg'
+    // let renderer = 'svg'
     let template = templates.filter(t => t.key === visType)[0]
     let templatePath = props.type === 'explore' ? `./templates/${template.template}` : `./templates/xplainer/${template.template}`
     let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
@@ -128,7 +129,7 @@ function VisContent(props: IVisContentProps) {
   }, [loading, selectType])
 
   const handleMouseUp = (event: any) => {
-    if (event.target instanceof SVGElement) {
+    if (event.target instanceof SVGElement || event.target instanceof HTMLCanvasElement) {
       setOffsetData([event.offsetX, event.offsetY])
     }    
   }

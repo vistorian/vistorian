@@ -33,5 +33,10 @@ export const patternList: PatternList = {
     title: "Fan",
     explanation: "A fan node is a node that with many connections yet few of those have subsequent connections. Hence, the fan node is the only connection between its neighbours and the rest of the graph.",
     variants: []
+  },
+  "Connector": {
+    title: "Connector",
+    explanation: "A connector is ",
+    variants: []
   }
 }

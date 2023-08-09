@@ -4,6 +4,7 @@ const useStyles = createUseStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
+    zIndex: 10,
   },
   func: {
     width: 40,

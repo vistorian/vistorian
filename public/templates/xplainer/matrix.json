@@ -22,14 +22,15 @@
             "name": "pattern_selection",
             "network": "network",
             "action": "replace",
-            "type": "selection"
+            "type": "selection",
+            "clearOnBackgroundClick": true
         }
     ],
     "scales": [
         {
             "name": "opacity",
             "type": "linear",
-            "range": [ 0.2, 1 ],
+            "range": [ 0.4, 1 ],
             "domain": { "data": "network.links", "field": "linkWeight" }
         },
         {
@@ -74,7 +75,7 @@
             "actions": [
                 {
                     "interaction": "select",
-                    "using": "rect",
+                    "using": "[selectType]",
                     "action": "replace",
                     "selection": "pattern_selection"
                 }
@@ -93,10 +94,21 @@
                     "expression": "datum.data[0].linkType"
                 },
                 "opacity": {
-                    "condition": {
-                        "test": "datum.size < 1",
-                        "value": 0
-                    },
+                    "conditions": [
+                        {
+                            "test": "datum.size < 1",
+                            "value": "0"
+                        },
+                        {
+                            "inSelection": "pattern_selection.links",
+                            "scale": "opacity",
+                            "expression": "datum.data[0].linkWeight"
+                        },
+                        {
+                            "selectionIsNotEmpty": "pattern_selection.links",
+                            "value": 0.1
+                        }
+                    ],
                     "scale": "opacity",
                     "expression": "datum.data[0].linkWeight"
                 }

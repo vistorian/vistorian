@@ -28,8 +28,9 @@
       "name": "pattern_selection",
       "network": "network",
       "action": "replace",
-      "type": "selection"
-    },
+      "type": "selection",
+      "clearOnBackgroundClick": true
+    }
   ],
 
   "orderings": [
@@ -115,18 +116,6 @@
       "entries": "staticNetwork.nodes",
       "layout": "staticLayout",
       "mark": {
-        "type": "rule",
-        "stroke": "#eeeeee",
-        "strokeWidth": 4,
-        "x": 0,
-        "x2": { "expression": "bounds.width" },
-        "tooptip": { "expression": "datum"}
-      }
-    },
-    {
-      "entries": "staticNetwork.nodes",
-      "layout": "staticLayout",
-      "mark": {
         "type": "text",
         "text": { "expression": "datum.id"},
         "align": "right",
@@ -141,7 +130,7 @@
       "actions": [
         {
           "interaction": "select",
-          "using": "rect",
+          "using": "[selectType]",
           "action": "replace",
           "selection": "pattern_selection"
         }
@@ -154,7 +143,19 @@
         "stroke": { "field": "linkType", "scale": "edgeColor" },
         "directionForShape": {  "ordering": "staticOrder" },
         "strokeWidth": 1,
-        "strokeOpacity": 0.3,
+        "strokeOpacity": {
+          "conditions": [
+            {
+              "selectionIsEmpty": "pattern_selection.nodes",
+              "value": 0.3
+            },
+            {
+              "inSelection": "pattern_selection.links",
+              "value": 0.8
+            }
+          ],
+          "value": 0.3
+        }
       }
     },
     {
@@ -163,7 +164,7 @@
       "actions": [
         {
           "interaction": "select",
-          "using": "rect",
+          "using": "[selectType]",
           "action": "replace",
           "selection": "pattern_selection"
         }
@@ -173,6 +174,19 @@
         "area": { "field": "degree", "scale": "radius" },
         "fill": "black",
         "stroke": "white",
+        "opacity": {
+          "conditions": [
+            {
+              "selectionIsEmpty": "pattern_selection.nodes",
+              "value": 1
+            },
+            {
+              "inSelection": "pattern_selection.nodes",
+              "value": 1
+            }
+          ],
+          "value": 0.1
+        }
       }
     }
   ]
