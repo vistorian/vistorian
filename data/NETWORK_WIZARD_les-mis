@@ -1,0 +1,30 @@
+{
+  "name": {
+    "name": "les-mis"
+  },
+  "format": {
+    "format": "tabular"
+  },
+  "linkTableConfig": {
+    "file": "les-mis-links.csv",
+    "hasHeaderRow": true,
+    "directed": false,
+    "sourceNodeLabel": "source",
+    "targetNodeLabel": "target",
+    "linkWeight": "value",
+    "withTime": false
+  },
+  "locationTableConfig": null,
+  "extraNodeConfig": {
+    "hasExtraNode": true,
+    "file": "les-mis-nodes.csv",
+    "hasHeaderRow": true,
+    "nodeID": "id",
+    "nodeLabel": "name",
+    "nodeTypes": [
+      "group",
+      null,
+      null
+    ]
+  }
+}

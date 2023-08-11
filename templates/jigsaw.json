@@ -56,7 +56,7 @@
       "mark": {
         "type": "circle",
         "area": { "field": "degree", "scale": "radius" },
-        "fill": {"expression": "datum._type === 'type1' ? 'red' : 'blue' "},
+        "fill": { "expression": "datum._type === 'type1' ? 'red' : 'blue' "},
         "tooltip": {"expression": "datum.id + ' (degree ' + datum.degree + ')' "}
       }
     }

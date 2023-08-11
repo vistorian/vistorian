@@ -15,6 +15,25 @@
           "label": "Seriation"
       },
       "value": "barycentre"
+    },
+    {
+      "name": "timeRange",
+      "value": "[timeRange]"
+    },
+    {
+      "name": "timeFormat",
+      "value": "[timeFormat]"
+    },
+    {
+      "name": "nodeTypeInShape",
+      "value": "[nodeTypeInShape]"
+    },
+    {
+      "name": "pattern_selection",
+      "network": "network",
+      "action": "replace",
+      "type": "selection",
+      "clearOnBackgroundClick": true
     }
   ],
 
@@ -101,18 +120,6 @@
       "entries": "staticNetwork.nodes",
       "layout": "staticLayout",
       "mark": {
-        "type": "rule",
-        "stroke": "#eeeeee",
-        "strokeWidth": 4,
-        "x": 0,
-        "x2": { "expression": "bounds.width" },
-        "tooptip": { "expression": "datum"}
-      }
-    },
-    {
-      "entries": "staticNetwork.nodes",
-      "layout": "staticLayout",
-      "mark": {
         "type": "text",
         "text": { "expression": "datum.id"},
         "align": "right",
@@ -124,6 +131,14 @@
       "entries": "network.links",
       "layout": "layout",
       "drawAxes": true,
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "[selectType]",
+          "action": "replace",
+          "selection": "pattern_selection"
+        }
+      ],
       "mark": {
         "type": "linkpath",
         "start": "source",
@@ -132,19 +147,50 @@
         "stroke": { "field": "linkType", "scale": "edgeColor" },
         "directionForShape": {  "ordering": "staticOrder" },
         "strokeWidth": 1,
-        "strokeOpacity": 0.3,
-        "tooptip": { "expression": "datum"}
+        "strokeOpacity": {
+          "conditions": [
+            {
+              "selectionIsEmpty": "pattern_selection.nodes",
+              "value": 0.3
+            },
+            {
+              "inSelection": "pattern_selection.links",
+              "value": 0.8
+            }
+          ],
+          "value": 0.3
+        }
       }
     },
     {
       "entries": "network.nodes",
       "layout": "layout",
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "[selectType]",
+          "action": "replace",
+          "selection": "pattern_selection"
+        }
+      ],
       "mark": {
         "type": "circle",
         "area": { "field": "degree", "scale": "radius" },
         "fill": "black",
         "stroke": "white",
-        "tooptip": { "expression": "datum"}
+        "opacity": {
+          "conditions": [
+            {
+              "selectionIsEmpty": "pattern_selection.nodes",
+              "value": 1
+            },
+            {
+              "inSelection": "pattern_selection.nodes",
+              "value": 1
+            }
+          ],
+          "value": 0.1
+        }
       }
     }
   ]

@@ -2,18 +2,11 @@
   "data": "[dataDefinition]",
   "parameters": [
     {
-      "name": "node_selection",
+      "name": "pattern_selection",
       "network": "network",
-      "type": "selection",
       "action": "replace",
+      "type": "selection",
       "clearOnBackgroundClick": true
-    },
-    {
-      "name": "neighbours",
-      "source": "node_selection",
-      "transform": [
-        { "type": "neighbours", "direction": "both" }
-      ]
     },
     {
       "name": "timeRange", 
@@ -75,6 +68,21 @@
     {
       "entries": "network.links",
       "layout": "layout",
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "[selectType]",
+          "action": "replace",
+          "selection": "pattern_selection"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "click",
+          "action": "replace",
+          "selection": "pattern_selection"
+        }
+      ],
       "mark": {
         "type": "linkpath",
         "start": "source",
@@ -96,12 +104,12 @@
               "value": 0
             },
             {
-              "selectionIsEmpty": "node_selection.nodes",
+              "selectionIsEmpty": "pattern_selection.nodes",
               "field": "linkWeight",
               "scale": "edgeOpacity"
             },
             {
-              "inSelection": "neighbours.links",
+              "inSelection": "pattern_selection.links",
               "value": 1
             }
           ],
@@ -116,17 +124,16 @@
       "actions": [
         {
           "interaction": "select",
-          "using": "cursor",
-          "event": "mouseover",
+          "using": "[selectType]",
           "action": "replace",
-          "selection": "node_selection"
+          "selection": "pattern_selection"
         },
         {
           "interaction": "select",
           "using": "cursor",
-          "event": "mouseout",
-          "action": "remove",
-          "selection": "node_selection"
+          "event": "click",
+          "action": "replace",
+          "selection": "pattern_selection"
         }
       ],
       "mark": {
@@ -154,57 +161,16 @@
         "opacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "node_selection.nodes",
+              "selectionIsEmpty": "pattern_selection.nodes",
               "value": 1
             },
             {
-              "inSelection": "node_selection.nodes",
-              "value": 1
-            },
-            {
-              "inSelection": "neighbours.nodes",
+              "inSelection": "pattern_selection.nodes",
               "value": 1
             }
           ],
           "value": 0.1
         }
-      }
-    },
-    {
-      "entries": "network.nodes",
-      "layout": "layout",
-      "ifInSelection": "node_selection.nodes",
-      "mark": {
-        "type": "text",
-        "text": { "expression": "[nodeLabel]" },
-        "dx": 5,
-        "dy": 5,
-        "fontSize": 13,
-        "stroke": "white",
-        "fontWeight": "bold",
-        "strokeWidth": 0.5
-      }
-    },
-    {
-      "entries": "network.nodes",
-      "layout": "layout",
-      "if": "datum.degree > [lableImportance]",
-      "mark": {
-        "type": "text",
-        "text": { 
-          "conditions": [
-            {
-              "selectionIsEmpty": "node_selection.nodes",
-              "value": { "expression": "[nodeLabel]"}
-            }
-          ]
-        },
-        "dx": 5,
-        "dy": 5,
-        "fontSize": 13,
-        "stroke": "white",
-        "fontWeight": "bold",
-        "strokeWidth": 0.5
       }
     }
   ]
