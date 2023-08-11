@@ -99,7 +99,7 @@ function Wizard() {
 
   async function loadAndStoreFiles(files: string[]) {
     for (const filename of files) {
-      const response = await fetch(`/data/${filename}`)
+      const response = await fetch(`./data/${filename}`)
       const text = await response.text()
       window.localStorage.setItem(filename, text)
     }
