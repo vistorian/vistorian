@@ -9,7 +9,6 @@ import {
 import Landing from './components/landing'
 import Wizard from './components/wizard'
 import Vis from './components/vis'
-import XPlainer from './components/xplainer'
 
 // BrowserRouter which can not be used in Github pages
 // let router = createBrowserRouter([

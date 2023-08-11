@@ -42,7 +42,6 @@ function NetworkLinkTable(props: INetworkLinkTableProps) {
 
   const getData = () => {
     let data: any[] = []
-
     const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.linkTableConfig?.file) as string)
     if (jsonData) {
       const columns = getColumns()

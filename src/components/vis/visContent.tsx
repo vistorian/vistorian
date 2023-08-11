@@ -24,10 +24,12 @@ function VisContent(props: IVisContentProps) {
   let viewer: any
   // network data generated from netpan
   const [networkData, setNetworkData] = useState({})
-  const [sceneJSON, setSceneJSON] = useState({})
+  const [sceneJSON, setSceneJSON] = useState<any>({})
   // rect/lasso selection mouseup position
   const [offsetData, setOffsetData] = useState<[number, number]>([0, 0])
   const [selectType, setSelectType] = useState<string>('rect')
+  // current selected motif in the pattern card
+  const [currentMotif, setCurrentMotif] = useState('0')
 
   const containerId = `visSvg${viewerId}`
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
@@ -156,7 +158,7 @@ function VisContent(props: IVisContentProps) {
           <PatternSelection type={selectType} setType={setSelectType} />
         </>
       }
-      {/* pattern card */}
+      {/* pattern card & overlays */}
       {(props.type === 'xplainer') ? 
       <>
         {motifs.contextHolder}
@@ -165,7 +167,26 @@ function VisContent(props: IVisContentProps) {
           setOpen={motifs.setOpen}
           motifs={motifs.motifs}
           offset={offsetData}
+          currentMotif={currentMotif}
+          setCurrentMotif={setCurrentMotif}
         />
+        {motifs.open ? <>
+          {motifs.motifsBound.map((bounds: any, index: number) => {
+            const offsetX = sceneJSON.items[0].x
+            const offsetY = visType === 'timearcs' ? sceneJSON.items[0].y + 24 : sceneJSON.items[0].y
+            return <div 
+            key={index}
+            style={{
+              width: bounds.x2-bounds.x1,
+              height: bounds.y2-bounds.y1,
+              border: index === Number(currentMotif) ? '2px solid #E17918' : '1px solid #E17918',
+              backgroundColor: index === Number(currentMotif) ? 'rgba(225, 121, 24, 0.5)' : 'rgba(225, 121, 24, 0.1)',
+              position: "absolute",
+              zIndex: index === Number(currentMotif) ? 3: 2,
+              transform: `translate(${bounds.x1 + offsetX}px, ${bounds.y1 + offsetY}px)`
+            }} />
+          })}
+        </> : null}
       </> : null}
     </>
   )

@@ -1,5 +1,5 @@
 import { createUseStyles } from 'react-jss'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Divider, Button, Modal, Tooltip } from 'antd'
 import { DeleteFilled, FileAddFilled } from '@ant-design/icons'
 import Data from './data'
@@ -96,6 +96,19 @@ function Wizard() {
   const [netSource, setNetSource] = useState<boolean|undefined>()
   // whenever clicking create a visualization, trigger re-mounting the component
   const [triggerReMount, setTriggerReMount] = useState<number>(123)
+
+  async function loadAndStoreFiles(files: string[]) {
+    for (const filename of files) {
+      const response = await fetch(`/data/${filename}`)
+      const text = await response.text()
+      window.localStorage.setItem(filename, text)
+    }
+  }
+
+  useEffect(() => {
+    const filesToStore = ['UPLOADED_FILE_marieboucher.csv', 'UPLOADED_FILE_les-mis-links.csv', 'UPLOADED_FILE_les-mis-nodes.csv', 'NETWORK_WIZARD_marieboucher', 'NETWORK_WIZARD_les-mis']
+    loadAndStoreFiles(filesToStore)
+  }, []);
 
   // handle the initialization using local storage
   const loadedFiles = Object.keys(window.localStorage)

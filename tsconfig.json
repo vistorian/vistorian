@@ -10,6 +10,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false,
     "jsx": "react-jsx",
 
     /* Linting */
@@ -27,7 +29,8 @@
   "include": ["src"],
   "exclude": [
     "src/components/wizard/network/steps/deprecated/*",
-    "src/components/wizard/network/preview/*"
+    "src/components/wizard/network/preview/*",
+    "src/components/xplainer/motifs/*"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
