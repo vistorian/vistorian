@@ -33,7 +33,6 @@ function hashSourceTarget(source: string, target: string) {
 }
 
 export function* findParallelLinks(network: Graph): Generator<StrongLink> {
-    // let edgeToNodes: Record<string, [string, string]> = {};
     let sourceTargetToEdge: Record<string, string[]> = {};
     for (let edge of network.edges()) {
         let [source, target] = network.extremities(edge);

@@ -3,8 +3,10 @@ import Graph, {MultiGraph} from "graphology";
 import {findCliques} from "./cliques";
 import {findConnectors} from "./findConnectors";
 import {findFans} from "./fan";
-import {findBridges, findHubs} from "./hubs";
-import {NetworkPattern} from "./motif";
+import {findBridges, findHubs, findIsolatedNodes} from "./hubs";
+import {BiClique, Bipartite, NetworkPattern} from "./motif";
+import {findParallelLinks, findStrongLinks, findWeakLinks} from "./linksPatterns";
+import {isBiClique, isBipartite} from "./bipartite";
 
 export type NodeId = string;
 export type LinkTuple = [NodeId, NodeId];
@@ -52,20 +54,29 @@ export class PatternDetectors {
         // this.allMotifs = [...this.cliques, ...this.connectors, ...this.fans];
         let motifFound: NetworkPattern[] = [];
         for (let motif of this.findMotif()) {
-            if (motif.isContainedBy(this.nodes)) {
+            if (motif.isContainedBy(this.nodes, this.links)) {
                 // console.log(motif.nodes,  motif.constructor.name);
                 motifFound.push(motif.copy())
             }
         }
+
+        if (isBipartite(this.nodes, this.graph)) motifFound.push(new Bipartite(this.nodes))
+        if (isBiClique(this.nodes, this.graph)) motifFound.push(new BiClique(this.nodes))
+
         return motifFound;
     }
 
     *findMotif(): Generator<NetworkPattern> {
         yield* findHubs(this.graph);
         yield* findBridges(this.graph);
+        yield* findIsolatedNodes(this.graph);
 
         yield* findCliques(this.graph);
         yield* findConnectors(this.graph);
         yield* findFans(this.graph);
+
+        yield* findParallelLinks(this.graph);
+        yield* findWeakLinks(this.graph);
+        yield* findStrongLinks(this.graph);
     }
 }

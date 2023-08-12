@@ -3469,6 +3469,13 @@ grapheme-splitter@^1.0.4:
   resolved "https://registry.npmjs.org/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz"
   integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
 
+graphology-bipartite@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.npmjs.org/graphology-bipartite/-/graphology-bipartite-0.0.3.tgz"
+  integrity sha512-mLYHs42l5xdEKWzmqQ432kEHwM0klNPZBtuS05X5h5pIYIVp++ChcLtU7Gt8sPaVg72ohOEx2BU7rALM80UJBA==
+  dependencies:
+    graphology-utils "^2.4.1"
+
 graphology-indices@^0.17.0:
   version "0.17.0"
   resolved "https://registry.npmjs.org/graphology-indices/-/graphology-indices-0.17.0.tgz"
@@ -3486,6 +3493,13 @@ graphology-metrics@^2.2.0:
     graphology-utils "^2.4.4"
     mnemonist "^0.39.0"
 
+graphology-operators@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.npmjs.org/graphology-operators/-/graphology-operators-1.6.0.tgz"
+  integrity sha512-yfnVNsFd6plBw7r6Td4luGlNoQn9MKI56EZ/NcFcRmvu/D1R8eWHjpipNUdBjl5MVV8iSW8e/XuY8YsjRDnLoA==
+  dependencies:
+    graphology-utils "^2.0.0"
+
 graphology-shortest-path@^2.0.0:
   version "2.0.2"
   resolved "https://registry.npmjs.org/graphology-shortest-path/-/graphology-shortest-path-2.0.2.tgz"
@@ -3496,12 +3510,12 @@ graphology-shortest-path@^2.0.0:
     graphology-utils "^2.4.3"
     mnemonist "^0.39.0"
 
-graphology-types@^0.24.7, graphology-types@>=0.20.0, graphology-types@>=0.23.0, graphology-types@>=0.24.0:
+graphology-types@^0.24.7, graphology-types@>=0.19.0, graphology-types@>=0.20.0, graphology-types@>=0.23.0, graphology-types@>=0.24.0:
   version "0.24.7"
   resolved "https://registry.npmjs.org/graphology-types/-/graphology-types-0.24.7.tgz"
   integrity sha512-tdcqOOpwArNjEr0gNQKCXwaNCWnQJrog14nJNQPeemcLnXQUUGrsCWpWkVKt46zLjcS6/KGoayeJfHHyPDlvwA==
 
-graphology-utils@^2.4.2, graphology-utils@^2.4.3, graphology-utils@^2.4.4:
+graphology-utils@^2.0.0, graphology-utils@^2.4.1, graphology-utils@^2.4.2, graphology-utils@^2.4.3, graphology-utils@^2.4.4:
   version "2.5.2"
   resolved "https://registry.npmjs.org/graphology-utils/-/graphology-utils-2.5.2.tgz"
   integrity sha512-ckHg8MXrXJkOARk56ZaSCM1g1Wihe2d6iTmz1enGOz4W/l831MBCKSayeFQfowgF8wd+PQ4rlch/56Vs/VZLDQ==

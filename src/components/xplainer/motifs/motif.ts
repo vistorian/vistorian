@@ -28,7 +28,7 @@ export class NetworkPattern {
         return this.nodes.length;
     }
 
-    isContainedBy(nodes: NodeId[]) {
+    isContainedBy(nodes: NodeId[], links: LinkId[]) {
         for (let node of this.nodes) {
             if (!nodes.includes(node)) {
                 return false;
@@ -61,9 +61,24 @@ export class Bridge extends NodePattern {
     }
 }
 
+export class IsolatedNode extends NodePattern {
+    constructor(nodes: NodeId[]) {
+        super(nodes);
+    }
+}
+
 export class LinkPattern extends NetworkPattern {
     constructor(links: LinkId[]) {
         super(null, links);
+    }
+
+    isContainedBy(nodes: NodeId[], links: LinkId[]) {
+        for (let link of this.links) {
+            if (!links.includes(link)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
@@ -124,5 +139,18 @@ export class Connector extends NetworkPattern {
 
     addAnchors(nodes: NodeId[]) {
         nodes.forEach(node => this.addAnchor(node));
+    }
+}
+
+
+export class Bipartite extends NetworkPattern {
+    constructor(nodes: NodeId[]) {
+        super(nodes);
+    }
+}
+
+export class BiClique extends NetworkPattern {
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 }
