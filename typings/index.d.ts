@@ -128,7 +128,8 @@ interface VisContentOptions {
   nodeTypeInShape: boolean | null,
   nodeTypeShapeScheme: string | string[] | null,
   nodeLabel: string | null,
-  lableImportance: any
+  lableImportance: any,
+  timeFormat: string | null,
 }
 
 

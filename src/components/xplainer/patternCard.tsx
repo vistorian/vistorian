@@ -25,13 +25,13 @@ interface IPatternCardProps {
   setOpen: (d: boolean) => void
   motifs: NetworkPattern[]
   offset: [number, number]
+  currentMotif: string
+  setCurrentMotif: (d: string) => void
 }
 
 function PatternCard (props: IPatternCardProps) {
-  const { open, setOpen, motifs, offset } = props
+  const { open, setOpen, motifs, offset, currentMotif, setCurrentMotif} = props
   const classes = useStyles()
-
-  const [current, setCurrent] = useState('0')
 
   const getMenuItems = () => {
     return motifs.map((motif: any, index: number) => {
@@ -43,11 +43,11 @@ function PatternCard (props: IPatternCardProps) {
   }
 
   const onClick = (e: any) => {
-    setCurrent(e.key)
+    setCurrentMotif(e.key)
   }
 
   useEffect(()=>{
-    setCurrent('0')
+    setCurrentMotif('-1')
   }, [motifs])
 
   return (
@@ -64,10 +64,10 @@ function PatternCard (props: IPatternCardProps) {
       <Menu
         mode="horizontal"
         onClick={onClick}
-        selectedKeys={[current]}
+        selectedKeys={currentMotif === '-1' ? [] : [currentMotif]}
         items={getMenuItems()}
       />
-      <Pattern motif={motifs[Number(current)]} />
+      <Pattern motif={motifs[Number(currentMotif)]} />
     </div>
   )
 }

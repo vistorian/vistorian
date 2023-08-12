@@ -21,6 +21,10 @@
       "value": "[timeRange]"
     },
     {
+      "name": "timeFormat",
+      "value": "[timeFormat]"
+    },
+    {
       "name": "nodeTypeInShape",
       "value": "[nodeTypeInShape]"
     },

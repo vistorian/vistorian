@@ -1,0 +1,23 @@
+{
+  "name": {
+    "name": "marieboucher"
+  },
+  "format": {
+    "format": "tabular"
+  },
+  "linkTableConfig": {
+    "file": "marieboucher.csv",
+    "hasHeaderRow": true,
+    "directed": true,
+    "sourceNodeLabel": "Name1",
+    "targetNodeLabel": "Name2",
+    "linkType": "Content",
+    "withTime": true,
+    "time": "Date",
+    "timeFormat": "%d/%m/%Y"
+  },
+  "locationTableConfig": null,
+  "extraNodeConfig": {
+    "hasExtraNode": false
+  }
+}

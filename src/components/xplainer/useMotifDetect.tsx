@@ -4,9 +4,12 @@ import { LinkTuple, PatternDetectors } from "./motifs/patternDetectors";
 import { uniqBy } from "lodash-es";
 import { message } from "antd";
 
+// networkData records all the data
+// sceneJSON records all the positions
 const useMotifDectect = (networkData: any, sceneJSON: any) => {
   const [open, setOpen] = useState(false)
   const [motifs, setMotifs] = useState<NetworkPattern[]>([])
+  const [motifsBound, setMotifsBound] = useState<any[]>([])
   const [messageApi, contextHolder] = message.useMessage()
 
   const getBounds = (newVal: any) => {
@@ -48,11 +51,39 @@ const useMotifDectect = (networkData: any, sceneJSON: any) => {
       let links: LinkTuple[] = uniqBy(newVal.links, 'id').map((entry: any) => [entry.source.id, entry.target.id])
       let bounds = getBounds(newVal)
       console.log('bounds:', bounds)
+      let boundsId: any
+      if (bounds.nodes.length > 0) {
+        boundsId = bounds.nodes.map((b: any) => b.mark.id)
+      }
       
       let result = patternDetector.run(nodes, links)
+      console.log('nodes:', nodes, "links:", links)
       if (result.length > 0) {
         setMotifs(result)
         setOpen(true)
+        // get bounds for each motif
+        const getMotifsBound = result.map(motif => {
+          let minX1: number | null = null, maxX2: number | null = null, minY1: number | null = null, maxY2: number|null = null
+          motif.nodes.forEach(nodeId => {
+            let idx = boundsId.indexOf(nodeId)
+            if (idx > -1) {
+              let mark = bounds.nodes[idx].mark.bounds
+              minX1 = minX1 ? (mark.x1 < minX1 ? mark.x1 : minX1) : mark.x1 
+              minY1 = minY1 ? (mark.y1 < minY1 ? mark.y1 : minY1) : mark.y1 
+              maxX2 = maxX2 ? (mark.x2 > maxX2 ? mark.x2 : maxX2) : mark.x2 
+              maxY2 = maxY2 ? (mark.y2 > maxY2 ? mark.y2 : maxY2) : mark.y2 
+            }
+            else {
+              console.log('cannot find this node in the selected nodes')
+            }
+          })
+          if (minX1 && maxX2 && minY1 && maxY2) {
+            return {x1: minX1, x2: maxX2, y1: minY1, y2: maxY2}
+          }
+          return null
+        })
+        console.log('motifBounds:', getMotifsBound)
+        setMotifsBound(getMotifsBound)
       }
       else {
         setMotifs([])
@@ -68,7 +99,7 @@ const useMotifDectect = (networkData: any, sceneJSON: any) => {
       console.log('motifs:', result)
     }
   }
-  return { open, setOpen, motifs, detectMotifs, contextHolder}
+  return { open, setOpen, motifs, detectMotifs, motifsBound, contextHolder}
 }
 
 

@@ -138,11 +138,11 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     }
   }
 
-  let networkSpec = []
+  let networkSpec: any[] = []
   // is "id" correct default for case when only link-table used?
   const idField = config.extraNodeConfig?.hasExtraNode ? config.extraNodeConfig.nodeID : "id"
 
-  const baseNetworkSpec = {
+  const baseNetworkSpec: any = {
     "name": "network",
     "parts": [
       {
@@ -223,7 +223,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 
   // =========== if vis is timearcs, generate staic network without time =========== 
   if (visType === 'timearcs') {
-    const staticNetworkSpec = {
+    const staticNetworkSpec: any = {
       "name": "staticNetwork",
       "nodes": config.extraNodeConfig?.hasExtraNode ? "nodes" : undefined,
       "links": "links",

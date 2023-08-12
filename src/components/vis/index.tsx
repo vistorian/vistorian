@@ -59,6 +59,7 @@ function Vis(props: IVisProps) {
   const nodeTypeInShape: boolean = networkCfg.linkTableConfig?.linkType?.length as number > 0
   const nodeLabel: string = networkCfg.extraNodeConfig?.nodeLabel ? `"datum.data.${networkCfg.extraNodeConfig?.nodeLabel}"` : `"datum.id"`
   const lableImportance = 15
+  const timeFormat = networkCfg.linkTableConfig?.withTime ? `"${networkCfg.linkTableConfig.timeFormat}"` : null
 
   let options: VisContentOptions = {
     timeRange: timeRange,
@@ -66,7 +67,8 @@ function Vis(props: IVisProps) {
     nodeTypeInShape: nodeTypeInShape,
     nodeTypeShapeScheme: nodeTypeShapeScheme,
     nodeLabel: nodeLabel,
-    lableImportance: lableImportance
+    lableImportance: lableImportance,
+    timeFormat: timeFormat
   }
 
   const modeBtnRender = () => {
