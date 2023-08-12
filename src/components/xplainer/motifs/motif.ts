@@ -1,16 +1,17 @@
 // import {Network, NetworkNode} from "./netpan";
 import Graph from "graphology";
 import {NetworkNode} from "./netpan";
-import {NodeId} from "./patternDetectors";
+import {LinkId, LinkTuple, NodeId} from "./patternDetectors";
 
 export class NetworkPattern {
-    network: Graph;
     // nodes: NetworkNode[];
     nodes: NodeId[];
+    // links: LinkTuple[];
+    links: LinkId[];
 
-    constructor(nodes: NodeId[], network: Graph) {
-        this.network = network;
+    constructor(nodes: NodeId[], links: LinkId[]) {
         this.nodes = nodes ? nodes : [];
+        this.links = links ? links : [];
     }
 
     type() {
@@ -43,33 +44,59 @@ export class NetworkPattern {
 }
 
 export class NodePattern extends NetworkPattern {
-    constructor(nodes: NodeId[], network: Graph) {
-        super(nodes, network);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 }
 
 export class Hub extends NodePattern {
-    constructor(nodes: NodeId[], network: Graph) {
-        super(nodes, network);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 }
 
 export class Bridge extends NodePattern {
-    constructor(nodes: NodeId[], network: Graph) {
-        super(nodes, network);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 }
+
+export class LinkPattern extends NetworkPattern {
+    constructor(links: LinkId[]) {
+        super(null, links);
+    }
+}
+
+export class ParallelLinks extends LinkPattern {
+    constructor(links: LinkId[]) {
+        super(links);
+    }
+}
+
+export class StrongLink extends LinkPattern {
+    constructor(links: LinkId[]) {
+        super(links);
+    }
+}
+
+export class WeakLink extends LinkPattern {
+    constructor(links: LinkId[]) {
+        super(links);
+    }
+}
+
 
 
 export class Clique extends NetworkPattern {
-    constructor(nodes: NodeId[], network: Graph) {
-        super(nodes, network);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 }
 
+
 export class Fan extends NetworkPattern {
-    constructor(nodes: NodeId[], network: Graph) {
-        super(nodes, network);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 }
 
@@ -77,8 +104,8 @@ export class Connector extends NetworkPattern {
     spanners: NodeId[] = [];
     anchors: NodeId[] = []
 
-    constructor(nodes: NodeId[], network: Graph) {
-        super(nodes, network);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 
     addSpanner(node: NodeId) {

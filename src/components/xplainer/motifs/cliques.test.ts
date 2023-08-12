@@ -1,13 +1,20 @@
 import {findCliques} from "./cliques";
 import Graph from "graphology";
-import MBNetpanNetwork  from "./templates/mb-NETPAN-static-network.json";
+// import MBNetpanNetwork  from "./templates/mb-NETPAN-static-network.json";
+import MBNetpanNetwork  from "../../../../public/data/mb-NETPAN-static-network.json";
+import miserablesNetpanNetwork  from "../../../../public/data/miserables-NETPAN-static-network.json";
 import {PatternDetectors} from "./patternDetectors";
 
 
-function MBGraph() {
+export function MBGraph() {
     // @ts-ignore
     let patternDetector = new PatternDetectors(MBNetpanNetwork);
+    return patternDetector.graph;
+}
 
+export function miserables() {
+    // @ts-ignore
+    let patternDetector = new PatternDetectors(miserablesNetpanNetwork);
     return patternDetector.graph;
 }
 
@@ -40,11 +47,5 @@ test("clique", () => {
 test("MB", () => {
         let graph: Graph = MBGraph();
         let c = findCliques(graph);
-        console.log(c)
-
-        // for (let cli of c) {
-        //     console.log(1000, cli.nodes)
-        // }
-        // expect(nodes.every(n =>  typeof(n.louvain) === "number" )).toBe(true);
     }
 )

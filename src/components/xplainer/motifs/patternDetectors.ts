@@ -8,6 +8,7 @@ import {NetworkPattern} from "./motif";
 
 export type NodeId = string;
 export type LinkTuple = [NodeId, NodeId];
+export type LinkId = string;
 
 
 export class PatternDetectors {
@@ -31,7 +32,13 @@ export class PatternDetectors {
             this.graph.addNode(node.id);
         })
         this.network.links.forEach(link => {
-            this.graph.addEdge(link.source.id, link.target.id);
+            // this.graph.addEdge(link.source.id, link.target.id);
+            this.graph.addEdgeWithKey(link.id, link.source.id, link.target.id, link);
+            // @ts-ignore
+            delete link.source
+            // @ts-ignore
+            delete link.target;
+            this.graph.replaceEdgeAttributes(link.id, link);
         })
     }
 
