@@ -4,9 +4,10 @@ import {findCliques} from "./cliques";
 import {findConnectors} from "./findConnectors";
 import {findFans} from "./fan";
 import {findBridges, findHubs, findIsolatedNodes} from "./hubs";
-import {BiClique, Bipartite, NetworkPattern} from "./motif";
+import {BiClique, Bipartite, NetworkPattern, ParallelLinks} from "./motif";
 import {findParallelLinks, findStrongLinks, findWeakLinks} from "./linksPatterns";
 import {isBiClique, isBipartite} from "./bipartite";
+import {findBursts, findRepeatedLinks} from "./dynamicMotifs";
 
 export type NodeId = string;
 export type LinkTuple = [NodeId, NodeId];
@@ -20,8 +21,8 @@ export class PatternDetectors {
     // nodes: NetworkNode[];
     // links: NetworkLink[];
 
-    nodes: NodeId[];
-    links: LinkTuple[];
+    // nodes: NodeId[];
+    // links: LinkTuple[];
 
 
     constructor(network: Network) {
@@ -36,17 +37,30 @@ export class PatternDetectors {
         this.network.links.forEach(link => {
             // this.graph.addEdge(link.source.id, link.target.id);
             this.graph.addEdgeWithKey(link.id, link.source.id, link.target.id, link);
+
+            // console.log(typeof link.id)
+            // console.log(this.graph.edges(link.source.id, link.target.id))
+
             // @ts-ignore
             delete link.source
             // @ts-ignore
             delete link.target;
             this.graph.replaceEdgeAttributes(link.id, link);
+
+
         })
     }
 
-    run(nodes: NodeId[], links: LinkTuple[]): NetworkPattern[] {
-        this.nodes = nodes;
-        this.links = links;
+    // run(nodes: NodeId[], links: LinkId[]): NetworkPattern[] {
+    run(nodes: NetworkNode[], links: NetworkLink[]): NetworkPattern[] {
+        // this.nodes = nodes;
+        // TODO: links not work yet, transform to link ids
+        // this.links = links;
+
+        let nodesIds: NodeId[] = nodes.map(n => n.id);
+
+        // Convert to string as link ids in NetPan are numbers but get converted as string in graphology
+        let linksIds = links.map(n => `${n.id}`);
 
         // this.cliques = Array.from(findCliques(this.graph));
         // this.connectors = Array.from(findConnectors(this.graph));
@@ -54,14 +68,22 @@ export class PatternDetectors {
         // this.allMotifs = [...this.cliques, ...this.connectors, ...this.fans];
         let motifFound: NetworkPattern[] = [];
         for (let motif of this.findMotif()) {
-            if (motif.isContainedBy(this.nodes, this.links)) {
+            // if (motif instanceof ParallelLinks) {
+            //     console.log(motif)
+            // }
+
+            // if (motif.isContainedBy(this.nodes, this.links)) {
+            if (motif.isContainedBy(nodesIds, linksIds)) {
                 // console.log(motif.nodes,  motif.constructor.name);
                 motifFound.push(motif.copy())
             }
         }
 
-        if (isBipartite(this.nodes, this.graph)) motifFound.push(new Bipartite(this.nodes))
-        if (isBiClique(this.nodes, this.graph)) motifFound.push(new BiClique(this.nodes))
+        // if (isBipartite(this.nodes, this.graph)) motifFound.push(new Bipartite(this.nodes))
+        // if (isBiClique(this.nodes, this.graph)) motifFound.push(new BiClique(this.nodes))
+        if (isBipartite(nodesIds, this.graph)) motifFound.push(new Bipartite(nodesIds))
+        if (isBiClique(nodesIds, this.graph)) motifFound.push(new BiClique(nodesIds))
+
 
         return motifFound;
     }
@@ -78,5 +100,8 @@ export class PatternDetectors {
         yield* findParallelLinks(this.graph);
         yield* findWeakLinks(this.graph);
         yield* findStrongLinks(this.graph);
+
+        yield* findBursts(this.graph);
+        yield* findRepeatedLinks(this.graph);
     }
 }

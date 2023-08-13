@@ -34,6 +34,15 @@ export class NetworkPattern {
                 return false;
             }
         }
+
+        if (links) {
+            for (let link of this.links) {
+                if (!links.includes(link)) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
@@ -100,6 +109,22 @@ export class WeakLink extends LinkPattern {
     }
 }
 
+// Time related patterns
+export class RepeatedLinks extends LinkPattern {
+    constructor(links: LinkId[]) {
+        super(links);
+    }
+}
+
+export class Burst extends NetworkPattern {
+    constructor(nodes: NodeId[], links: LinkId[]) {
+        super(nodes, links);
+    }
+
+    isContainedBy(nodes: NodeId[], links: LinkId[]): boolean {
+        return super.isContainedBy(nodes, links);
+    }
+}
 
 
 export class Clique extends NetworkPattern {
