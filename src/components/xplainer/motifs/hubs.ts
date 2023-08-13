@@ -1,6 +1,6 @@
 import Graph from "graphology";
 import {calculateMean, calculateStandardDeviation} from "./utils";
-import {Bridge, Hub} from "./motif";
+import {Bridge, Hub, IsolatedNode} from "./motif";
 import betweennessCentrality from 'graphology-metrics/centrality/betweenness';
 
 
@@ -40,6 +40,14 @@ export function* findBridges(network: Graph): Generator<Bridge> {
         let bc = centralities[node];
         if (bc > mean + 2 * std) {
             yield new Bridge([node], network);
+        }
+    }
+}
+
+export function* findIsolatedNodes(network: Graph): Generator<Bridge> {
+    for (const node of network.nodes()) {
+        if (network.degree(node) === 0) {
+            yield new IsolatedNode([node]);
         }
     }
 }

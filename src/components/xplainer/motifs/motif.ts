@@ -1,16 +1,17 @@
 // import {Network, NetworkNode} from "./netpan";
 import Graph from "graphology";
 import {NetworkNode} from "./netpan";
-import {NodeId} from "./patternDetectors";
+import {LinkId, LinkTuple, NodeId} from "./patternDetectors";
 
 export class NetworkPattern {
-    network: Graph;
     // nodes: NetworkNode[];
     nodes: NodeId[];
+    // links: LinkTuple[];
+    links: LinkId[];
 
-    constructor(nodes: NodeId[], network: Graph) {
-        this.network = network;
+    constructor(nodes: NodeId[], links: LinkId[]) {
         this.nodes = nodes ? nodes : [];
+        this.links = links ? links : [];
     }
 
     type() {
@@ -27,12 +28,21 @@ export class NetworkPattern {
         return this.nodes.length;
     }
 
-    isContainedBy(nodes: NodeId[]) {
+    isContainedBy(nodes: NodeId[], links: LinkId[]) {
         for (let node of this.nodes) {
             if (!nodes.includes(node)) {
                 return false;
             }
         }
+
+        if (links) {
+            for (let link of this.links) {
+                if (!links.includes(link)) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
@@ -43,33 +53,90 @@ export class NetworkPattern {
 }
 
 export class NodePattern extends NetworkPattern {
-    constructor(nodes: NodeId[], network: Graph) {
-        super(nodes, network);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 }
 
 export class Hub extends NodePattern {
-    constructor(nodes: NodeId[], network: Graph) {
-        super(nodes, network);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 }
 
 export class Bridge extends NodePattern {
-    constructor(nodes: NodeId[], network: Graph) {
-        super(nodes, network);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
+    }
+}
+
+export class IsolatedNode extends NodePattern {
+    constructor(nodes: NodeId[]) {
+        super(nodes);
+    }
+}
+
+export class LinkPattern extends NetworkPattern {
+    constructor(links: LinkId[]) {
+        super(null, links);
+    }
+
+    isContainedBy(nodes: NodeId[], links: LinkId[]) {
+        for (let link of this.links) {
+            if (!links.includes(link)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+export class ParallelLinks extends LinkPattern {
+    constructor(links: LinkId[]) {
+        super(links);
+    }
+}
+
+export class StrongLink extends LinkPattern {
+    constructor(links: LinkId[]) {
+        super(links);
+    }
+}
+
+export class WeakLink extends LinkPattern {
+    constructor(links: LinkId[]) {
+        super(links);
+    }
+}
+
+// Time related patterns
+export class RepeatedLinks extends LinkPattern {
+    constructor(links: LinkId[]) {
+        super(links);
+    }
+}
+
+export class Burst extends NetworkPattern {
+    constructor(nodes: NodeId[], links: LinkId[]) {
+        super(nodes, links);
+    }
+
+    isContainedBy(nodes: NodeId[], links: LinkId[]): boolean {
+        return super.isContainedBy(nodes, links);
     }
 }
 
 
 export class Clique extends NetworkPattern {
-    constructor(nodes: NodeId[], network: Graph) {
-        super(nodes, network);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 }
 
+
 export class Fan extends NetworkPattern {
-    constructor(nodes: NodeId[], network: Graph) {
-        super(nodes, network);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 }
 
@@ -77,8 +144,8 @@ export class Connector extends NetworkPattern {
     spanners: NodeId[] = [];
     anchors: NodeId[] = []
 
-    constructor(nodes: NodeId[], network: Graph) {
-        super(nodes, network);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 
     addSpanner(node: NodeId) {
@@ -97,5 +164,18 @@ export class Connector extends NetworkPattern {
 
     addAnchors(nodes: NodeId[]) {
         nodes.forEach(node => this.addAnchor(node));
+    }
+}
+
+
+export class Bipartite extends NetworkPattern {
+    constructor(nodes: NodeId[]) {
+        super(nodes);
+    }
+}
+
+export class BiClique extends NetworkPattern {
+    constructor(nodes: NodeId[]) {
+        super(nodes);
     }
 }

@@ -28,10 +28,10 @@ export function* findCliques(network: Graph) {
                 let subg_q = subg.filter(n => adj_q.includes(n))
 
                 if (subg_q.length == 0) {
-                    // let clique = new Clique([...Q], network)
-                    let clique = new Clique(Q, network)
-                    yield clique;
-                    // yield Q;
+                    if (Q.length > 2) {
+                        let clique = new Clique(Q);
+                        yield clique;
+                    }
                 } else {
                     let cand_q = cand.filter(n => adj_q.includes(n))
                     if (cand_q) {
