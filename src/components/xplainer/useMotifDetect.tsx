@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import { NetworkPattern } from "./motifs/motif";
 import { LinkTuple, PatternDetectors } from "./motifs/patternDetectors";
-import { uniqBy } from "lodash-es";
+import { cloneDeep, uniqBy } from "lodash-es";
 import { message } from "antd";
+import { NetworkLink } from "./motifs/netpan";
 
 // networkData records all the data
 // sceneJSON records all the positions
 const useMotifDectect = (networkData: any, sceneJSON: any) => {
   const [open, setOpen] = useState(false)
   const [motifs, setMotifs] = useState<NetworkPattern[]>([])
+  // relocate the motif range
   const [motifsBound, setMotifsBound] = useState<any[]>([])
   const [messageApi, contextHolder] = message.useMessage()
 
+  // get the bounds of the selected nodes & links
   const getBounds = (newVal: any) => {
     const nodesId = newVal.nodes.map((n: any) => n.id)
     const linksId = newVal.links.map((l: any) => l.id)
@@ -19,10 +22,10 @@ const useMotifDectect = (networkData: any, sceneJSON: any) => {
     const nodesToProcess: any[] = [sceneJSON]
     let bounds: any = {nodes: [], links: []}
     while (nodesToProcess.length > 0) {
-      const node = nodesToProcess.pop();
+      const entry = nodesToProcess.pop();
 
-      if ("items" in node) {
-        for (const child of node.items) {
+      if ("items" in entry) {
+        for (const child of entry.items) {
           nodesToProcess.push(child);
           if ("id" in child ) {
             if (linksId.indexOf(child.id) > -1 && child.items.length > 0) {
@@ -31,8 +34,8 @@ const useMotifDectect = (networkData: any, sceneJSON: any) => {
           }
         }
       } else {
-        if (nodesId.indexOf(node.mark.id) > -1) {
-          bounds.nodes.push(node);
+        if (nodesId.indexOf(entry.mark.id) > -1 && entry.mark.dataset.endsWith(".nodes")) {
+          bounds.nodes.push(entry);
         }
       }
     }
@@ -40,24 +43,23 @@ const useMotifDectect = (networkData: any, sceneJSON: any) => {
   }
 
   const detectMotifs = (newVal: any) => {
-    console.log('detectMotifs:', newVal)
-
     // currently only allow for one vis in Learning Mode
-    if (Object.keys(networkData).length > 0) {
-      let patternDetector = new PatternDetectors({ nodes: networkData.nodes, links: networkData.links })
+    if (Object.keys(networkData).length > 0 && newVal.nodes.length > 0) {
+      let patternDetector = new PatternDetectors(networkData)
 
       let nodes = newVal.nodes.map((entry: any) => entry.id)
       // TODO: due to netpan sceneJSON linkpath has two items
-      let links: LinkTuple[] = uniqBy(newVal.links, 'id').map((entry: any) => [entry.source.id, entry.target.id])
+      let links: any[] = uniqBy(newVal.links, 'id')
+      // .map((entry: any) => [entry.source.id, entry.target.id])
+      console.log('nodes:', nodes, "links:", links)
       let bounds = getBounds(newVal)
-      console.log('bounds:', bounds)
       let boundsId: any
       if (bounds.nodes.length > 0) {
         boundsId = bounds.nodes.map((b: any) => b.mark.id)
       }
+      console.log('bounds:', bounds)
       
       let result = patternDetector.run(nodes, links)
-      console.log('nodes:', nodes, "links:", links)
       if (result.length > 0) {
         setMotifs(result)
         setOpen(true)
@@ -82,7 +84,8 @@ const useMotifDectect = (networkData: any, sceneJSON: any) => {
           }
           return null
         })
-        console.log('motifBounds:', getMotifsBound)
+        console.log('motifs:', result)
+        // console.log('motifBounds:', getMotifsBound)
         setMotifsBound(getMotifsBound)
       }
       else {
@@ -96,7 +99,6 @@ const useMotifDectect = (networkData: any, sceneJSON: any) => {
           })
         }
       }
-      console.log('motifs:', result)
     }
   }
   return { open, setOpen, motifs, detectMotifs, motifsBound, contextHolder}

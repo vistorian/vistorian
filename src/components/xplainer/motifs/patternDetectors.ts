@@ -8,6 +8,7 @@ import {BiClique, Bipartite, NetworkPattern, ParallelLinks} from "./motif";
 import {findParallelLinks, findStrongLinks, findWeakLinks} from "./linksPatterns";
 import {isBiClique, isBipartite} from "./bipartite";
 import {findBursts, findRepeatedLinks} from "./dynamicMotifs";
+import { cloneDeep } from "lodash-es";
 
 export type NodeId = string;
 export type LinkTuple = [NodeId, NodeId];
@@ -40,12 +41,13 @@ export class PatternDetectors {
 
             // console.log(typeof link.id)
             // console.log(this.graph.edges(link.source.id, link.target.id))
-
+            
+            const copyLink = cloneDeep(link)
             // @ts-ignore
-            delete link.source
+            delete copyLink.source
             // @ts-ignore
-            delete link.target;
-            this.graph.replaceEdgeAttributes(link.id, link);
+            delete copyLink.target;
+            this.graph.replaceEdgeAttributes(copyLink.id, copyLink);
 
 
         })
@@ -81,8 +83,8 @@ export class PatternDetectors {
 
         // if (isBipartite(this.nodes, this.graph)) motifFound.push(new Bipartite(this.nodes))
         // if (isBiClique(this.nodes, this.graph)) motifFound.push(new BiClique(this.nodes))
-        if (isBipartite(nodesIds, this.graph)) motifFound.push(new Bipartite(nodesIds))
-        if (isBiClique(nodesIds, this.graph)) motifFound.push(new BiClique(nodesIds))
+        // if (isBipartite(nodesIds, this.graph)) motifFound.push(new Bipartite(nodesIds))
+        // if (isBiClique(nodesIds, this.graph)) motifFound.push(new BiClique(nodesIds))
 
 
         return motifFound;

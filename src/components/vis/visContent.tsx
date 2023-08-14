@@ -7,6 +7,7 @@ import PatternCard from "../xplainer/patternCard"
 import useMotifDetect from '../xplainer/useMotifDetect'
 import * as d3 from 'd3'
 import PatternSelection from "../xplainer/patternSelection"
+import { PatternDetectors } from "../xplainer/motifs/patternDetectors"
 
 
 interface IVisContentProps {
@@ -58,7 +59,7 @@ function VisContent(props: IVisContentProps) {
   // }
 
   let motifs = useMotifDetect(networkData, sceneJSON)
-  type ParamChangeCallbacks = { [paramNamee: string]: (newVal: string | number) => void } // refer to netpan
+  type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
   const getParamCallbacks = () => {
     let cb: ParamChangeCallbacks = {}
     switch (props.type) {
@@ -92,6 +93,7 @@ function VisContent(props: IVisContentProps) {
     })
     // @ts-ignore
     console.log('VIEW STATE:', viewer.state, viewer.sceneJSON)
+    // let patternDetector = new PatternDetectors(viewer.state.network)
     setNetworkData(viewer.state.network)
     setSceneJSON(viewer.sceneJSON)
 
