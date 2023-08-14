@@ -1,7 +1,7 @@
 import { NetworkConfig } from "../../../typings"
 
 export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => {
-  console.log('config', config)
+  // console.log('config', config)
 
   const linkFileName = config.linkTableConfig?.file
 

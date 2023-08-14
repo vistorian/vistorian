@@ -47,17 +47,16 @@ const useMotifDectect = (networkData: any, sceneJSON: any) => {
     if (Object.keys(networkData).length > 0 && newVal.nodes.length > 0) {
       let patternDetector = new PatternDetectors(networkData)
 
-      let nodes = newVal.nodes.map((entry: any) => entry.id)
-      // TODO: due to netpan sceneJSON linkpath has two items
-      let links: any[] = uniqBy(newVal.links, 'id')
-      // .map((entry: any) => [entry.source.id, entry.target.id])
-      console.log('nodes:', nodes, "links:", links)
+      let nodes = newVal.nodes
+      let links: any[] = uniqBy(newVal.links, 'id') // bug: due to netpan sceneJSON linkpath has two items
+      
       let bounds = getBounds(newVal)
       let boundsId: any
       if (bounds.nodes.length > 0) {
         boundsId = bounds.nodes.map((b: any) => b.mark.id)
       }
-      console.log('bounds:', bounds)
+      console.log('selected nodes:', nodes, "selected links:", links)
+      console.log('selected bounds:', bounds) // the bounds of the selected nodes and links
       
       let result = patternDetector.run(nodes, links)
       if (result.length > 0) {
@@ -85,7 +84,6 @@ const useMotifDectect = (networkData: any, sceneJSON: any) => {
           return null
         })
         console.log('motifs:', result)
-        // console.log('motifBounds:', getMotifsBound)
         setMotifsBound(getMotifsBound)
       }
       else {
