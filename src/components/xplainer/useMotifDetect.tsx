@@ -42,8 +42,8 @@ const useMotifDectect = (networkData: any, sceneJSON: any) => {
     return bounds
   }
 
+  // currently only allow for one vis in Learning Mode
   const detectMotifs = (newVal: any) => {
-    // currently only allow for one vis in Learning Mode
     if (Object.keys(networkData).length > 0 && newVal.nodes.length > 0) {
       let patternDetector = new PatternDetectors(networkData)
 

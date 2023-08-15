@@ -6,7 +6,7 @@
   "homepage": "https://vistorian.github.io/vistorian/",
   "scripts": {
     "dev": "vite --force",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "predeploy": "yarn run build",

@@ -11,6 +11,6 @@ export default defineConfig({
     terserOptions: {
       keep_classnames: true,  // Preserve class names
       keep_fnames: true,      // Preserve function names
-    },
+    }
   },
 })

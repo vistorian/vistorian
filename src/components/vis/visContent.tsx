@@ -7,7 +7,6 @@ import PatternCard from "../xplainer/patternCard"
 import useMotifDetect from '../xplainer/useMotifDetect'
 import * as d3 from 'd3'
 import PatternSelection from "../xplainer/patternSelection"
-import { PatternDetectors } from "../xplainer/motifs/patternDetectors"
 
 
 interface IVisContentProps {
@@ -105,33 +104,21 @@ function VisContent(props: IVisContentProps) {
       container.getElementsByTagName("svg")[0].style["max-height"] = "100%";
     }
     setLoading(false)
-
-
-    const svg = d3.select(`#${containerId}`).select('svg')
-    if (svg) {
-      let g = svg.select("g").select("g")
-
-      // TODO: implement it in netpan
-      // // @ts-ignore
-      // svg.call(d3.zoom()
-      //   // .extent([[0, 0], [width, height]])
-      //   // .scaleExtent([1, 8])
-      //   .on("zoom", zoomed));
-
-      // // @ts-ignore
-      // function zoomed({ transform }) {
-      //   g.attr("transform", transform);
-      // }
-    }
   }
 
   useEffect(() => {
-    const container = document.getElementById(containerId)
-    if (!container) {
-      console.error(`No container with id ${containerId}`);
-      return
+    if(selectType !== 'all') {
+      const container = document.getElementById(containerId)
+      if (!container) {
+        console.error(`No container with id ${containerId}`);
+        return
+      }
+      update()
     }
-    update()
+    else {
+      motifs.detectMotifs(networkData)
+      setOffsetData([1000, 0])
+    }
   }, [loading, selectType])
 
   const handleMouseUp = (event: any) => {
