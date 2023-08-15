@@ -174,6 +174,7 @@ function VisContent(props: IVisContentProps) {
         />
         {motifs.open ? <>
           {motifs.motifsBound.map((bounds: any, index: number) => {
+            if (!bounds) return
             const offsetX = sceneJSON.items[0].x
             const offsetY = visType === 'timearcs' ? sceneJSON.items[0].y + 24 : sceneJSON.items[0].y
             return <div 
