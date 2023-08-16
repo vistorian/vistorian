@@ -47,9 +47,27 @@ function Pattern (props: IPatternProps) {
         return <span></span>
       case 'Bridge':
         return <span></span>
-      case 'Bridge':
+      case 'Hub':
         return <span></span>
-      case 'Bridge':
+      case 'IsolatedNode':
+        return <span></span>
+      case 'ParallelLinks':
+        return <span></span>
+      case 'StrongLink':
+        return <span></span>
+      case 'WeakLink':
+        return <span></span>
+      case 'RepeatedLinks':
+        return <span></span>
+      case 'Burst':
+        return <span></span>
+      case 'Fan':
+        return <span></span>
+      case 'Connector':
+        return <span></span>
+      case 'Bipartite':
+        return <span></span>
+      case 'BiClique':
         return <span></span>
       default:
         return <span>no matching description.</span>

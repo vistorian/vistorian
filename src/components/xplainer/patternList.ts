@@ -29,6 +29,36 @@ export const patternList: PatternList = {
     explanation: "A highly connected node is a node with many connections. The number of connections is also called the degree of the node or the node degree.",
     variants: []
   },
+  "IsolatedNode": {
+    title: "Isolated Node",
+    explanation: "",
+    variants: []
+  },
+  "ParallelLinks": {
+    title: "Parallel Links",
+    explanation: "",
+    variants: []
+  },
+  "StrongLink": {
+    title: "Strong Link",
+    explanation: "",
+    variants: []
+  },
+  "WeakLink": {
+    title: "Weak Link",
+    explanation: "",
+    variants: []
+  },
+  "RepeatedLinks": {
+    title: "Repeated Links",
+    explanation: "",
+    variants: []
+  },
+  "Burst": {
+    title: "Burst",
+    explanation: "",
+    variants: []
+  },
   "Fan": {
     title: "Fan",
     explanation: "A fan node is a node that with many connections yet few of those have subsequent connections. Hence, the fan node is the only connection between its neighbours and the rest of the graph.",
@@ -37,6 +67,16 @@ export const patternList: PatternList = {
   "Connector": {
     title: "Connector",
     explanation: "A connector is ",
+    variants: []
+  },
+  "Bipartite": {
+    title: "Burst",
+    explanation: "",
+    variants: []
+  },
+  "BiClique": {
+    title: "Burst",
+    explanation: "",
     variants: []
   }
 }
