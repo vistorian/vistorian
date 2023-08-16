@@ -4,11 +4,12 @@ import {findCliques} from "./cliques";
 import {findConnectors} from "./findConnectors";
 import {findFans} from "./fan";
 import {findBridges, findHubs, findIsolatedNodes} from "./hubs";
-import {BiClique, Bipartite, NetworkPattern, ParallelLinks} from "./motif";
+import {BiClique, Bipartite, Cluster, NetworkPattern, ParallelLinks} from "./motif";
 import {findParallelLinks, findStrongLinks, findWeakLinks} from "./linksPatterns";
 import {isBiClique, isBipartite} from "./bipartite";
 import {findBursts, findRepeatedLinks} from "./dynamicMotifs";
 import { cloneDeep } from "lodash-es";
+import {isCluster} from "./clusters";
 
 export type NodeId = string;
 export type LinkTuple = [NodeId, NodeId];
@@ -55,12 +56,7 @@ export class PatternDetectors {
 
     // run(nodes: NodeId[], links: LinkId[]): NetworkPattern[] {
     run(nodes: NetworkNode[], links: NetworkLink[]): NetworkPattern[] {
-        // this.nodes = nodes;
-        // TODO: links not work yet, transform to link ids
-        // this.links = links;
-
-        let nodesIds: NodeId[] = nodes.map(n => n.id);
-
+        let nodesIds: NodeId[] = nodes.map(n => `${n.id}`);
         // Convert to string as link ids in NetPan are numbers but get converted as string in graphology
         let linksIds = links.map(n => `${n.id}`);
 
@@ -70,10 +66,6 @@ export class PatternDetectors {
         // this.allMotifs = [...this.cliques, ...this.connectors, ...this.fans];
         let motifFound: NetworkPattern[] = [];
         for (let motif of this.findMotif()) {
-            // if (motif instanceof ParallelLinks) {
-            //     console.log(motif)
-            // }
-
             // if (motif.isContainedBy(this.nodes, this.links)) {
             if (motif.isContainedBy(nodesIds, linksIds)) {
                 // console.log(motif.nodes,  motif.constructor.name);
@@ -83,10 +75,11 @@ export class PatternDetectors {
 
         // if (isBipartite(this.nodes, this.graph)) motifFound.push(new Bipartite(this.nodes))
         // if (isBiClique(this.nodes, this.graph)) motifFound.push(new BiClique(this.nodes))
-        // if (isBipartite(nodesIds, this.graph)) motifFound.push(new Bipartite(nodesIds))
-        // if (isBiClique(nodesIds, this.graph)) motifFound.push(new BiClique(nodesIds))
+        if (isBipartite(nodesIds, this.graph)) motifFound.push(new Bipartite(nodesIds))
+        if (isBiClique(nodesIds, this.graph)) motifFound.push(new BiClique(nodesIds))
+        if (isCluster(nodesIds, linksIds, this.graph)) motifFound.push(new Cluster(nodesIds))
 
-
+        // console.log("found ", motifFound, nodesIds, linksIds)
         return motifFound;
     }
 

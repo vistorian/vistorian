@@ -8,7 +8,13 @@ type NodePartition = 'A' | 'B';
 
 // No exhaustive search
 export function isBipartite(nodes: NodeId[], network: Graph): [NodePartition[], NodePartition[]] | false {
+    let length = nodes.length;
+    if (length < 4) return false;
+
     const sub = subgraph(network, nodes);
+    let nEdges = sub.edges().length;
+    if (nEdges == 0) return false;
+
 
     const nodePartition: Map<NodeKey, NodePartition> = new Map();
     const visitedNodes: Set<NodeKey> = new Set();

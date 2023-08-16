@@ -179,3 +179,9 @@ export class BiClique extends NetworkPattern {
         super(nodes);
     }
 }
+
+export class Cluster extends NetworkPattern {
+    constructor(nodes: NodeId[]) {
+        super(nodes);
+    }
+}
