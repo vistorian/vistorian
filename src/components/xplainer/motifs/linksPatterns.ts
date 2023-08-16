@@ -3,12 +3,12 @@ import Graph from "graphology";
 import {Hub, ParallelLinks, StrongLink, WeakLink} from "./motif";
 import {calculateMean, calculateStandardDeviation} from "./utils";
 
-const WEIGHT_THRESHOLD = 4;
+const WEIGHT_THRESHOLD = 5;
 
 export function* findStrongLinks(network: Graph): Generator<StrongLink> {
     for (let edge of network.edges()) {
         // TODO: key of weight is currently 'value'
-        let weight = network.getEdgeAttribute(edge, "value");
+        let weight = network.getEdgeAttribute(edge, "linkWeight");
         if (weight > WEIGHT_THRESHOLD) {
             yield new StrongLink([edge]);
         }
@@ -17,7 +17,7 @@ export function* findStrongLinks(network: Graph): Generator<StrongLink> {
 
 export function* findWeakLinks(network: Graph): Generator<WeakLink> {
     for (let edge of network.edges()) {
-        let weight = network.getEdgeAttribute(edge, "value");
+        let weight = network.getEdgeAttribute(edge, "linkWeight");
         if (weight == 1) {
             yield new WeakLink([edge]);
         }
