@@ -1,5 +1,5 @@
 import { Spin } from "antd"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { NetworkConfig, VisContentOptions } from "../../../typings"
 import templates from "../templates/templates"
 import { genSpecFromLinkTable } from "../templates/genSpec"
@@ -7,6 +7,8 @@ import PatternCard from "../xplainer/patternCard"
 import useMotifDetect from '../xplainer/useMotifDetect'
 import * as d3 from 'd3'
 import PatternSelection from "../xplainer/patternSelection"
+import { DndProvider, XYCoord, useDrop } from "react-dnd"
+import { HTML5Backend } from "react-dnd-html5-backend"
 
 
 interface IVisContentProps {
@@ -132,7 +134,28 @@ function VisContent(props: IVisContentProps) {
     return () => {
       window.removeEventListener("mouseup", handleMouseUp)
     }
-  });
+  })
+
+  const moveBox = useCallback(
+    (id: string, left: number, top: number) => {
+      setOffsetData([left, top])
+    },
+    [offsetData, setOffsetData],
+  )
+
+  const [, drop] = useDrop(
+    () => ({
+      accept: 'box',
+      drop(item: any, monitor) {
+        const delta = monitor.getDifferenceFromInitialOffset() as XYCoord
+        const left = Math.round(item.left + delta.x)
+        const top = Math.round(item.top + delta.y)
+        moveBox(item.id, left, top)
+        return undefined
+      },
+    }),
+    [moveBox],
+  )
 
   return (
     <>
@@ -152,6 +175,7 @@ function VisContent(props: IVisContentProps) {
       <>
         {motifs.contextHolder}
         <PatternCard
+          visType={visType}
           open={motifs.open}
           setOpen={motifs.setOpen}
           motifs={motifs.motifs}
@@ -163,16 +187,16 @@ function VisContent(props: IVisContentProps) {
           {motifs.motifsBound.map((bounds: any, index: number) => {
             if (!bounds) return
             const offsetX = sceneJSON.items[0].x
-            const offsetY = visType === 'timearcs' ? sceneJSON.items[0].y + 24 : sceneJSON.items[0].y
+            const offsetY = visType !== 'nodelink' ? sceneJSON.items[0].y + 24 : sceneJSON.items[0].y
             return <div 
             key={index}
             style={{
               width: bounds.x2-bounds.x1,
               height: bounds.y2-bounds.y1,
-              border: index === Number(currentMotif) ? '2px solid #E17918' : '1px solid #E17918',
-              backgroundColor: index === Number(currentMotif) ? 'rgba(225, 121, 24, 0.5)' : 'rgba(225, 121, 24, 0.1)',
+              border: currentMotif === '-1' ? '0.5px solid #E17918' : (index === Number(currentMotif) ? '2px solid #E17918' : '0px'),
+              backgroundColor: currentMotif === '-1' ? 'rgba(225, 121, 24, 0.08)'  : (index === Number(currentMotif) ? 'rgba(225, 121, 24, 0.5)' : 'rgba(225, 121, 24, 0)'),
               position: "absolute",
-              zIndex: index === Number(currentMotif) ? 3: 2,
+              zIndex: 22,
               transform: `translate(${bounds.x1 + offsetX}px, ${bounds.y1 + offsetY}px)`
             }} />
           })}

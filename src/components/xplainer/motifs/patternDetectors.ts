@@ -96,7 +96,7 @@ export class PatternDetectors {
         yield* findWeakLinks(this.graph);
         yield* findStrongLinks(this.graph);
 
-        yield* findBursts(this.graph);
+        // yield* findBursts(this.graph);
         yield* findRepeatedLinks(this.graph);
     }
 }

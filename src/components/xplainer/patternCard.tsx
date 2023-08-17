@@ -4,9 +4,10 @@ import { useEffect, useState } from "react"
 import Pattern from "./pattern"
 import { NetworkPattern } from "./motifs/motif"
 import { CloseOutlined } from '@ant-design/icons'
+import { useDrag } from "react-dnd"
 
 const useStyles = createUseStyles({
-  root: {
+  widget: {
     backgroundColor: "#ffffff",
     backgroundClip: "padding-box",
     borderRadius: 8,
@@ -16,11 +17,12 @@ const useStyles = createUseStyles({
     width: 500,
     flexDirection: 'column',
     position: "absolute",
-    zIndex: 2
+    zIndex: 10
   }
 })
 
 interface IPatternCardProps {
+  visType: string
   open: boolean
   setOpen: (d: boolean) => void
   motifs: NetworkPattern[]
@@ -30,8 +32,10 @@ interface IPatternCardProps {
 }
 
 function PatternCard (props: IPatternCardProps) {
-  const { open, setOpen, motifs, offset, currentMotif, setCurrentMotif} = props
+  const { visType, open, setOpen, motifs, offset, currentMotif, setCurrentMotif} = props
   const classes = useStyles()
+  const id = "xplainer"
+  let left = offset[0], top = offset[1]
 
   const getMenuItems = () => {
     return motifs.map((motif: any, index: number) => {
@@ -50,12 +54,27 @@ function PatternCard (props: IPatternCardProps) {
     setCurrentMotif('-1')
   }, [motifs])
 
+  const [{ isDragging }, drag] = useDrag(
+    () => ({
+      type: 'box',
+      item: { id, left, top },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    }),
+    [id, left, top],
+  )
+
+  if (isDragging) {
+    return <div ref={drag} />
+  }
+
   return (
-    <div className={classes.root}
+    <div id={id} ref={drag} className={classes.widget}
       style={{
-      display: open ? "flex" : "none",
-      transform: `translate(${offset[0]}px, ${offset[1]}px)`
-    }}
+        display: open ? "flex" : "none",
+        transform: `translate(${left}px, ${top}px)`
+      }}
     >
       <CloseOutlined
         style={{ position: 'absolute', right: 10, top: 10 }}
@@ -67,7 +86,7 @@ function PatternCard (props: IPatternCardProps) {
         selectedKeys={currentMotif === '-1' ? [] : [currentMotif]}
         items={getMenuItems()}
       />
-      <Pattern motif={motifs[Number(currentMotif)]} />
+      <Pattern visType={visType} motif={motifs[Number(currentMotif)]} />
     </div>
   )
 }
