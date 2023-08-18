@@ -5,9 +5,8 @@ import { cloneDeep, uniqBy } from "lodash-es";
 import { message } from "antd";
 import { NetworkLink } from "./motifs/netpan";
 
-// networkData records all the data
 // sceneJSON records all the positions
-const useMotifDectect = (networkData: any, sceneJSON: any) => {
+const useMotifDectect = (sceneJSON: any, patternDetector: any) => {
   const [open, setOpen] = useState(false)
   const [motifs, setMotifs] = useState<NetworkPattern[]>([])
   // relocate the motif range
@@ -47,9 +46,7 @@ const useMotifDectect = (networkData: any, sceneJSON: any) => {
 
   // currently only allow for one vis in Learning Mode
   const detectMotifs = (newVal: any) => {
-    if (Object.keys(networkData).length > 0 && newVal.nodes.length > 0) {
-      let patternDetector = new PatternDetectors(networkData)
-
+    if (Object.keys(patternDetector).length > 0 && newVal.nodes.length > 0) {
       let nodes = newVal.nodes
       let links: any[] = uniqBy(newVal.links, 'id') // bug: due to netpan sceneJSON linkpath has two items
       let { bounds, boundsId} = getBounds(newVal)

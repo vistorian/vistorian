@@ -9,6 +9,7 @@ import * as d3 from 'd3'
 import PatternSelection from "../xplainer/patternSelection"
 import { DndProvider, XYCoord, useDrop } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
+import { PatternDetectors } from "../xplainer/motifs/patternDetectors"
 
 
 interface IVisContentProps {
@@ -27,6 +28,7 @@ function VisContent(props: IVisContentProps) {
   // network data generated from netpan
   const [networkData, setNetworkData] = useState({})
   const [sceneJSON, setSceneJSON] = useState<any>({})
+  const [patternDetector, setPatternDetector] = useState<any>({})
   // rect/lasso selection mouseup position
   const [offsetData, setOffsetData] = useState<[number, number]>([0, 0])
   const [selectType, setSelectType] = useState<string>('rect')
@@ -59,7 +61,7 @@ function VisContent(props: IVisContentProps) {
   //   viewer.setParam(selectionName, { nodes, links })
   // }
 
-  let motifs = useMotifDetect(networkData, sceneJSON)
+  let motifs = useMotifDetect(sceneJSON, patternDetector)
   type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
   const getParamCallbacks = () => {
     let cb: ParamChangeCallbacks = {}
@@ -95,8 +97,11 @@ function VisContent(props: IVisContentProps) {
     // @ts-ignore
     console.log('VIEW STATE:', viewer.state, viewer.sceneJSON)
     // let patternDetector = new PatternDetectors(viewer.state.network)
+    let patternDetector = new PatternDetectors(viewer.state.network)
+    console.log('patternDetector', patternDetector.allPatterns)
     setNetworkData(viewer.state.network)
     setSceneJSON(viewer.sceneJSON)
+    setPatternDetector(patternDetector)
 
     const container = document.getElementById(containerId)
     if (container && container.getElementsByTagName("svg").length > 0) {

@@ -25,11 +25,13 @@ export class PatternDetectors {
 
     // nodes: NodeId[];
     // links: LinkTuple[];
+    allPatterns: NetworkPattern[];
 
 
     constructor(network: Network) {
         this.network = network;
         this.netPanGraphToGraphology();
+        this.allPatterns = this.run(network.nodes, network.links)
     }
 
     netPanGraphToGraphology() {
@@ -96,7 +98,7 @@ export class PatternDetectors {
         yield* findWeakLinks(this.graph);
         yield* findStrongLinks(this.graph);
 
-        // yield* findBursts(this.graph);
+        yield* findBursts(this.graph);
         yield* findRepeatedLinks(this.graph);
     }
 }
