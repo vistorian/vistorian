@@ -20,7 +20,7 @@ const useStyles = createUseStyles({
   },
   icon: {
     width: 130,
-    height: 150,
+    height: 130,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -41,22 +41,43 @@ function Pattern (props: IPatternProps) {
   const { motif, visType } = props
   const classes = useStyles()
 
-  let pattern, dataExp, visualExp
+  let pattern, dataExp, visualExp, visualVariables
 
   const genExp = () => {
     let dataExp, visualExp
     switch (motif.type()) {
       case 'Clique':
-        visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the link density is <span className={classes.hl}>{`100%`}</span>. The length of the arc depends on the ordering of the nodes.</span>
         dataExp = <span>A <b>Clique</b> is a group of nodes where every node is connected to every other node of the clique.</span>
+        if (visType === 'timearcs') {
+          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the link density is <span className={classes.hl}>{`100%`}</span>. The length of the arc depends on the ordering of the nodes.</span>
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{`100%`}</span>.</span>
+        }
+        else
+          visualExp = <></>
         break
       case 'Cluster':
-        visualExp = <span></span>
-        dataExp = <span>A <b>cluster</b> refers to a group of nodes that have a high number of connexions between them, higher than in the rest of the graph.</span>
+        dataExp = <span>A <b>Cluster</b> refers to a group of nodes that have a high number of connexions between them, higher than in the rest of the graph.</span>
+        if (visType === 'timearcs') {
+          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the link density is <span className={classes.hl}>{`100%`}</span>. The length of the arc depends on the ordering of the nodes.</span>
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{`100%`}</span>.</span>
+        }
+        else
+          visualExp = <></>
         break
       case 'Bridge':
-        visualExp = <span></span>
         dataExp = <span> <b>Bridge nodes</b> are nodes that act as a connection between different areas and groups in the graph.If removed, they can often create disconnected components.</span>
+        if (visType === 'timearcs') {
+          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the link density is <span className={classes.hl}>{`100%`}</span>. The length of the arc depends on the ordering of the nodes.</span>
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{`100%`}</span>.</span>
+        }
+        else
+          visualExp = <></>
         break
       case 'Hub':
         visualExp = <span></span>
@@ -112,6 +133,35 @@ function Pattern (props: IPatternProps) {
     return { dataExp, visualExp }
   }
 
+  const getVisIcon = () => {
+    if (visType === 'nodelink') {
+      return null
+    }
+    else {
+      return <img src={`./pattern-icons/${visType}/${motif.type()}-1.svg`}/>
+    } 
+  }
+
+  const getVisualVariables = () => {
+    if (visType !== 'nodelink' && pattern[visType].length > 1) {
+      const varibles = pattern[visType]
+      return (<div style={{ marginTop: 25 }}>
+        <span>The selected pattern may visually vary, like: </span>
+        <div style={{ display: 'flex', marginTop: 5 }}>
+          {varibles.map((v: string, i: number) => {
+            if (i > 0)
+            return (
+              <div 
+                key={i}
+                style={{ backgroundColor: '#535353', border: '2px solid #535353', borderRadius: 5 }}>
+                <img style={{ width: 115, height: 115 }} src={`./pattern-icons/${visType}/${motif.type()}-${i+1}.svg`} />
+              </div>)
+          })}
+        </div>
+      </div>)
+    }
+  }
+
   if (motif) {
     if (motif.type() in patternList) {
       pattern = patternList[motif.type()]
@@ -128,49 +178,38 @@ function Pattern (props: IPatternProps) {
     <>
       {pattern ? 
         <div style={{ padding: 12}}>
+          <span>The selected pattern is a <b>{pattern.title}</b> pattern. </span>
           {/* icons */}
-         <div style={{display: 'flex', width: '100%', justifyContent: 'space-around', marginBottom: 10}}>
+         <div style={{display: 'flex', width: '100%', justifyContent: 'space-around', margin: '10px 0px'}}>
           {/* visual pattern icon */}
             <div className={classes.icon} style={{ backgroundColor: '#535353', border: '2px solid #535353', borderRadius: 5 }}>
-              <span style={{ fontSize: 20, fontWeight: 500, color: '#535353' }}>{motif.type()}</span>
-              {/* {visType === 'nodelink' ? <img src={`./pattern-icons/${motif.type()}.svg`} /> : null} */}
-              {visType === 'timearcs' ? <img src="./pattern-icons/c-arcs.svg" /> : null}
+              {/* <span style={{ fontSize: 20, fontWeight: 500, color: '#535353' }}>{motif.type()}</span> */}
+              {getVisIcon()}
             </div>
           {/* data pattern icon */}
             <div className={classes.icon} style={{ border: '2px solid #535353', borderRadius: 5}}>
-              <span style={{fontSize: 20, fontWeight: 500}}>{motif.type()}</span>
-              <img src={`./pattern-icons/${motif.type()}.svg`} />
+              {/* <span style={{fontSize: 20, fontWeight: 500}}>{motif.type()}</span> */}
+              <img src={`./pattern-icons/nodelink/${motif.type()}.svg`} />
             </div>
          </div>
+
           {/* description */}
           <div>
             {dataExp}
           </div>
+
           {/* explain your selection */}
           <div style={{ marginTop: 25}}>
             <span style={{ fontWeight: 600}}>{`In your selection, `}</span>
             {visualExp}
           </div>
-          {/* TODO: */}
-          { (visType === 'timearcs' && motif.type() === 'Clique') ? <div style={{ marginTop: 25 }}>
-            <span>The {motif.type()} pattern in this visualization may also look like: </span>
-            <div style={{display: 'flex', marginTop: 5}}>
-              <div style={{ backgroundColor: '#535353', border: '2px solid #535353', borderRadius: 5 }}>
-                <img style={{ width: 115, height: 115}} src={`./pattern-icons/s-arcs.svg`} />
-              </div>
-              <div style={{ backgroundColor: '#535353', border: '2px solid #535353', borderRadius: 5, marginLeft: 20 }}>
-                <img style={{ width: 115, height: 115 }}  src={`./pattern-icons/b-arcs.svg`} />
-              </div>
-            </div>
-          </div> : null}
+
+          {getVisualVariables()}
 
           {/* relate to variants */}
           <div style={{ marginTop: 25 }}>
-            <span style={{ fontSize: 20, fontWeight: 600 }}>Structural Variations:</span>
+            <span style={{ fontSize: 20, fontWeight: 600 }}>Similar instances:</span>
             <br />
-            <ul>
-              {pattern.variants.map((v) => (<li key={v}>{v}</li>))}
-            </ul>
           </div>
         </div> : null}
     </>

@@ -1,7 +1,8 @@
 export interface PatternContent {
   title: string,
   type: string,
-  variants: string[]
+  timearcs: string[],
+  matrix: string[]
 } 
 
 export interface PatternList {
@@ -12,76 +13,91 @@ export const patternList: PatternList = {
   "Clique": {
     title: "Clique",
     type: 'subgraph',
-    variants: ["Large clique", "Small clique", "Clique with self-link", "Clique without self-link"]
+    timearcs: ['Clique-1'],
+    matrix: ['Clique-1', 'Clique-2']
   },
   "Cluster": {
     title: "Cluster",
     type: 'subgraph',
-    variants: []
+    timearcs: ['Cluster-1'],
+    matrix: ['Cluster-1', 'Cluster-2', 'Cluster-3']
   },
   "Bridge": {
     title: "Bridge Node",
     type: 'node',
-    variants: []
+    timearcs: ['Bridge-1'],
+    matrix: ['Bridge-1', 'Bridge-2', 'Bridge-3']
   },
   "Hub": {
     title: "Highly Connected Node",
     type: 'node',
-    variants: []
+    timearcs: ['Hub-1'],
+    matrix: ['Hub-1']
   },
   "IsolatedNode": {
     title: "Isolated Node",
     type: 'node',
-    variants: []
+    timearcs: ['IsolatedNode-1'],
+    matrix: ['IsolatedNode-1']
   },
   "ParallelLinks": {
     title: "Parallel Links",
     type: 'link',
-    variants: []
+    timearcs: ['ParallelLinks-1', 'ParallelLinks-2'],
+    matrix: ['ParallelLinks-1']
   },
   "StrongLink": {
     title: "Strong Link",
     type: 'link',
-    variants: []
+    timearcs: ['StrongLink-1'],
+    matrix: ['StrongLink-1']
   },
   "WeakLink": {
     title: "Weak Link",
     type: 'link',
-    variants: []
+    timearcs: ['WeakLink-1'],
+    matrix: ['WeakLink-1']
   },
   "SelfLink": {
     title: "Self Link",
     type: 'link',
-    variants: []
+    timearcs: ['SelfLink-1'],
+    matrix: ['SelfLink-1']
   },
   "RepeatedLinks": {
     title: "Repeated Links",
     type: 'temporal',
-    variants: []
+    timearcs: ['RepeatedLinks-1', 'RepeatedLinks-2', 'RepeatedLinks-3', 'RepeatedLinks-4'],
+    matrix: []
   },
   "Fan": {
     title: "Fan",
     type: 'subgraph',
-    variants: []
+    timearcs: ['Fan-1', 'Fan-2', 'Fan-3'],
+    matrix: ['Fan-1']
   },
   "Bipartite": {
     title: "Bi-graph",
     type: 'subgraph',
-    variants: []
+    timearcs: ['Bipartite-1'],
+    matrix: ['Bipartite-1']
   },
   "Connector": {
     title: "Connector",
     type: 'subgraph',
-    variants: []
+    timearcs: ['Connector-1'],
+    matrix: ['Connector-1']
   },
   "Burst": {
     title: "Burst",
     type: 'node',
-    variants: []
+    timearcs: ['Burst-1'],
+    matrix: ['Burst-1']
   },
   "BiClique": {
     title: "BiClique",
     type: 'subgraph',
-    variants: []
+    timearcs: ['BiClique-1'],
+    matrix: ['BiClique-1']
   }
 }

@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NetworkPattern } from "./motifs/motif";
-import { LinkTuple, PatternDetectors } from "./motifs/patternDetectors";
-import { cloneDeep, uniqBy } from "lodash-es";
+import { uniqBy } from "lodash-es";
 import { message } from "antd";
-import { NetworkLink } from "./motifs/netpan";
 
 // sceneJSON records all the positions
 const useMotifDectect = (sceneJSON: any, patternDetector: any) => {
@@ -50,8 +48,8 @@ const useMotifDectect = (sceneJSON: any, patternDetector: any) => {
       let nodes = newVal.nodes
       let links: any[] = uniqBy(newVal.links, 'id') // bug: due to netpan sceneJSON linkpath has two items
       let { bounds, boundsId} = getBounds(newVal)
-      console.log('selected nodes:', nodes, "selected links:", links)
-      console.log('selected bounds:', bounds, boundsId) // the bounds of the selected nodes and links
+      // console.log('selected nodes:', nodes, "selected links:", links)
+      // console.log('selected bounds:', bounds, boundsId) // the bounds of the selected nodes and links
       
       let result = patternDetector.run(nodes, links)
       if (result.length > 0) {
@@ -95,7 +93,7 @@ const useMotifDectect = (sceneJSON: any, patternDetector: any) => {
           }
           return null
         })
-        console.log('motifs:', result)
+        // console.log('motifs:', result)
         setMotifsBound(getMotifsBound)
       }
       else {

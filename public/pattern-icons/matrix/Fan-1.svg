@@ -1,0 +1,20 @@
+<svg width="158" height="158" viewBox="0 0 158 158" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="158" y="158" width="158" height="158" rx="10" transform="rotate(180 158 158)" fill="#535353"/>
+<line x1="42.5" y1="12" x2="42.5" y2="135" stroke="white"/>
+<line x1="103.5" y1="12" x2="103.5" y2="135" stroke="white"/>
+<line x1="123.5" y1="12" x2="123.5" y2="54" stroke="white"/>
+<line x1="62.5" y1="12" x2="62.5" y2="135" stroke="white"/>
+<line x1="83.5" y1="12" x2="83.5" y2="135" stroke="white"/>
+<line x1="123.5" y1="12" x2="123.5" y2="135" stroke="white"/>
+<line x1="144" y1="33.5" x2="21" y2="33.5" stroke="white"/>
+<line x1="144" y1="53.5" x2="21" y2="53.5" stroke="white"/>
+<line x1="144" y1="74.5" x2="21" y2="74.5" stroke="white"/>
+<line x1="144" y1="94.5" x2="21" y2="94.5" stroke="white"/>
+<line x1="144" y1="114.5" x2="21" y2="114.5" stroke="white"/>
+<rect x="21.5" y="12.5" width="122" height="122" stroke="white"/>
+<line opacity="0.18" x1="52" y1="73.5" x2="83" y2="73.5" stroke="#535353"/>
+<line opacity="0.18" x1="82.5" y1="43" x2="82.5" y2="74" stroke="#535353"/>
+<path d="M17 65L7 59.2265V70.7735L17 65ZM4 66H8V64H4V66Z" fill="white"/>
+<rect opacity="0.8" x="83" y="54" width="60" height="20" fill="white"/>
+<rect opacity="0.8" width="21" height="61" transform="matrix(-1 0 0 1 83 74)" fill="white"/>
+</svg>

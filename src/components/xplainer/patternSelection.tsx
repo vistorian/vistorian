@@ -3,7 +3,10 @@ import { createUseStyles } from "react-jss"
 const useStyles = createUseStyles({
   root: {
     display: 'flex',
-    flexDirection: 'column',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    flexDirection: 'row',
     zIndex: 10,
   },
   func: {
@@ -13,7 +16,7 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
     alignItems: 'center',
     border: '1px solid rgba(0, 0, 0, 0.16)',
-    marginBottom: 10,
+    marginRight: 10,
     '&:hover': {
       cursor: 'pointer',
       borderColor: 'transparent',
@@ -32,16 +35,6 @@ function PatternSelection(props: IProps) {
 
   return (
     <div className={classes.root}>
-      <div
-        className={classes.func}
-        onClick={() => props.setType('all')}
-        style={{ background: props.type === 'all' ? 'lightgrey' : 'none' }}
-      >
-        <i
-          className="fa-solid fa-bomb"
-          style={{ fontSize: 34 }}
-        />
-      </div>
       <div 
         className={classes.func} 
         onClick={()=>props.setType('rect')}
@@ -62,6 +55,16 @@ function PatternSelection(props: IProps) {
           <path d="M1 20.9998C1 21.8839 1.35119 22.7317 1.97631 23.3569C2.60143 23.982 3.44928 24.3332 4.33333 24.3332C5.21739 24.3332 6.06523 23.982 6.69036 23.3569C7.31548 22.7317 7.66667 21.8839 7.66667 20.9998C7.66667 20.1158 7.31548 19.2679 6.69036 18.6428C6.06523 18.0177 5.21739 17.6665 4.33333 17.6665C3.44928 17.6665 2.60143 18.0177 1.97631 18.6428C1.35119 19.2679 1 20.1158 1 20.9998Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M4.33301 24.3335C4.33301 26.7002 4.85967 29.0085 5.99967 31.0002" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
+      </div>
+      <div
+        className={classes.func}
+        onClick={() => props.setType('all')}
+        style={{ background: props.type === 'all' ? 'lightgrey' : 'none' }}
+      >
+        <i
+          className="fa-solid fa-bomb"
+          style={{ fontSize: 34 }}
+        />
       </div>
     </div>
   )

@@ -86,7 +86,9 @@ function PatternCard (props: IPatternCardProps) {
         selectedKeys={currentMotif === '-1' ? [] : [currentMotif]}
         items={getMenuItems()}
       />
-      <Pattern visType={visType} motif={motifs[Number(currentMotif)]} />
+      {currentMotif === '-1' ? 
+        <div>There is {motifs.length} patterns in total.</div> 
+        : <Pattern visType={visType} motif={motifs[Number(currentMotif)]} />}
     </div>
   )
 }

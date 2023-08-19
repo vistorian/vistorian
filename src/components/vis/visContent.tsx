@@ -7,8 +7,7 @@ import PatternCard from "../xplainer/patternCard"
 import useMotifDetect from '../xplainer/useMotifDetect'
 import * as d3 from 'd3'
 import PatternSelection from "../xplainer/patternSelection"
-import { DndProvider, XYCoord, useDrop } from "react-dnd"
-import { HTML5Backend } from "react-dnd-html5-backend"
+import { XYCoord, useDrop } from "react-dnd"
 import { PatternDetectors } from "../xplainer/motifs/patternDetectors"
 
 
@@ -98,7 +97,7 @@ function VisContent(props: IVisContentProps) {
     console.log('VIEW STATE:', viewer.state, viewer.sceneJSON)
     // let patternDetector = new PatternDetectors(viewer.state.network)
     let patternDetector = new PatternDetectors(viewer.state.network)
-    console.log('patternDetector', patternDetector.allPatterns)
+    // console.log('patternDetector', patternDetector.allPatterns)
     setNetworkData(viewer.state.network)
     setSceneJSON(viewer.sceneJSON)
     setPatternDetector(patternDetector)
@@ -139,7 +138,7 @@ function VisContent(props: IVisContentProps) {
     return () => {
       window.removeEventListener("mouseup", handleMouseUp)
     }
-  })
+  }, [])
 
   const moveBox = useCallback(
     (id: string, left: number, top: number) => {
@@ -170,10 +169,10 @@ function VisContent(props: IVisContentProps) {
           <PatternSelection type={selectType} setType={setSelectType} />
         </Spin> 
         : 
-        <>
+        <div ref={drop}  style={{position: 'relative'}}>
           <div id={containerId} style={{ width: width }} />
           <PatternSelection type={selectType} setType={setSelectType} />
-        </>
+        </div>
       }
       {/* pattern card & overlays */}
       {(props.type === 'xplainer') ? 
@@ -201,7 +200,7 @@ function VisContent(props: IVisContentProps) {
               border: currentMotif === '-1' ? '0.5px solid #E17918' : (index === Number(currentMotif) ? '2px solid #E17918' : '0px'),
               backgroundColor: currentMotif === '-1' ? 'rgba(225, 121, 24, 0.08)'  : (index === Number(currentMotif) ? 'rgba(225, 121, 24, 0.5)' : 'rgba(225, 121, 24, 0)'),
               position: "absolute",
-              zIndex: 22,
+              zIndex: 2,
               transform: `translate(${bounds.x1 + offsetX}px, ${bounds.y1 + offsetY}px)`
             }} />
           })}
