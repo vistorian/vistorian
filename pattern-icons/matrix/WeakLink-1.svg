@@ -1,0 +1,8 @@
+<svg width="158" height="158" viewBox="0 0 158 158" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="158" y="158" width="158" height="158" rx="10" transform="rotate(180 158 158)" fill="#535353"/>
+<line x1="56.5" y1="20" x2="56.5" y2="134" stroke="white"/>
+<line x1="106.5" y1="20" x2="106.5" y2="134" stroke="white"/>
+<line x1="138" y1="52.5" x2="24" y2="52.5" stroke="white"/>
+<line x1="138" y1="102.5" x2="24" y2="102.5" stroke="white"/>
+<rect opacity="0.4" x="57" y="52" width="49" height="50" fill="white"/>
+</svg>
