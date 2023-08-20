@@ -5,6 +5,7 @@ import Pattern from "./pattern"
 import { NetworkPattern } from "./motifs/motif"
 import { CloseOutlined } from '@ant-design/icons'
 import { useDrag } from "react-dnd"
+import { AllMotifs } from "../../../typings"
 
 const useStyles = createUseStyles({
   widget: {
@@ -27,12 +28,15 @@ interface IPatternCardProps {
   setOpen: (d: boolean) => void
   motifs: NetworkPattern[]
   offset: [number, number]
-  currentMotif: string
-  setCurrentMotif: (d: string) => void
+  allMotifs: AllMotifs
+  setHoverRelatedMotif: (d: NetworkPattern) => void
+  setClickRelatedMotif: (d: NetworkPattern) => void 
+  currentMotif?: string
+  setCurrentMotif?: (d: string) => void
 }
 
 function PatternCard (props: IPatternCardProps) {
-  const { visType, open, setOpen, motifs, offset, currentMotif, setCurrentMotif} = props
+  const { visType, open, setOpen, motifs, offset, allMotifs } = props
   const classes = useStyles()
   const id = "xplainer"
   let left = offset[0], top = offset[1]
@@ -47,11 +51,19 @@ function PatternCard (props: IPatternCardProps) {
   }
 
   const onClick = (e: any) => {
-    setCurrentMotif(e.key)
+    // @ts-ignore
+    props.setCurrentMotif(e.key)
+  }
+
+  const close = () => {
+    setOpen(false)
+    props.setHoverRelatedMotif({} as NetworkPattern)
+    props.setClickRelatedMotif({} as NetworkPattern)
   }
 
   useEffect(()=>{
-    setCurrentMotif('-1')
+    if (props.setCurrentMotif)
+      props.setCurrentMotif('-1')
   }, [motifs])
 
   const [{ isDragging }, drag] = useDrag(
@@ -78,17 +90,39 @@ function PatternCard (props: IPatternCardProps) {
     >
       <CloseOutlined
         style={{ position: 'absolute', right: 10, top: 10 }}
-        onClick={() => setOpen(false)}
+        onClick={() => close()}
       />
-      <Menu
+
+      {props.currentMotif ? 
+      // user select an area and show a list of motifs in this area
+      <> 
+        <Menu
         mode="horizontal"
         onClick={onClick}
-        selectedKeys={currentMotif === '-1' ? [] : [currentMotif]}
+        selectedKeys={props.currentMotif === '-1' ? [] : [props.currentMotif]}
         items={getMenuItems()}
-      />
-      {currentMotif === '-1' ? 
-        <div>There is {motifs.length} patterns in total.</div> 
-        : <Pattern visType={visType} motif={motifs[Number(currentMotif)]} />}
+        />
+        {props.currentMotif === '-1' ?
+          <div>There is {motifs.length} patterns in total.</div>
+          :
+          <Pattern
+            visType={visType}
+            motif={motifs[Number(props.currentMotif)]}
+            allMotifs={allMotifs}
+            setHoverRelatedMotif={props.setHoverRelatedMotif}
+            setClickRelatedMotif={props.setClickRelatedMotif}
+          />}
+      </> : 
+      // jump to related motif
+      <>
+          <Pattern
+            visType={visType}
+            motif={motifs[0]}
+            allMotifs={allMotifs}
+            setHoverRelatedMotif={props.setHoverRelatedMotif}
+            setClickRelatedMotif={props.setClickRelatedMotif}
+          />
+      </>}
     </div>
   )
 }

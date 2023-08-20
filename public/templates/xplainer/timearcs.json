@@ -34,12 +34,6 @@
       "action": "replace",
       "type": "selection",
       "clearOnBackgroundClick": true
-    },
-    {
-      "name": "selected_motif",
-      "network": "network",
-      "action": "replace",
-      "type": "selection"
     }
   ],
 

@@ -1,3 +1,5 @@
+import { NetworkPattern } from "../src/components/xplainer/motifs/motif"
+
 type DataFile = {
   name: string,
   hasHeader: boolean,
@@ -132,6 +134,8 @@ interface VisContentOptions {
   timeFormat: string | null,
 }
 
+type AllMotifs = { [name: string]: NetworkPattern[] }
+
 
 export {
   DataFile,
@@ -150,5 +154,6 @@ export {
   ExtraNodeConfig,
   IStepProps,
   SelectOptionType,
-  VisContentOptions
+  VisContentOptions,
+  AllMotifs
 }

@@ -1,14 +1,14 @@
 import { Spin } from "antd"
 import { useCallback, useEffect, useState } from "react"
-import { NetworkConfig, VisContentOptions } from "../../../typings"
+import { AllMotifs, NetworkConfig, VisContentOptions } from "../../../typings"
 import templates from "../templates/templates"
 import { genSpecFromLinkTable } from "../templates/genSpec"
-import PatternCard from "../xplainer/patternCard"
 import useMotifDetect from '../xplainer/useMotifDetect'
 import * as d3 from 'd3'
 import PatternSelection from "../xplainer/patternSelection"
 import { XYCoord, useDrop } from "react-dnd"
 import { PatternDetectors } from "../xplainer/motifs/patternDetectors"
+import Xplainer from "../xplainer"
 
 
 interface IVisContentProps {
@@ -18,21 +18,22 @@ interface IVisContentProps {
   visType: string
   network: string
   options: VisContentOptions
+  setAllMotifs: (m: AllMotifs) => void
+  showAll: boolean
 }
 
 function VisContent(props: IVisContentProps) {
-  const { viewerId, width, visType, network, options } = props
+  const { viewerId, width, visType, network, options, setAllMotifs } = props
   const [loading, setLoading] = useState<boolean>(true)
   let viewer: any
   // network data generated from netpan
-  const [networkData, setNetworkData] = useState({})
+  // const [networkData, setNetworkData] = useState({})
   const [sceneJSON, setSceneJSON] = useState<any>({})
   const [patternDetector, setPatternDetector] = useState<any>({})
   // rect/lasso selection mouseup position
   const [offsetData, setOffsetData] = useState<[number, number]>([0, 0])
   const [selectType, setSelectType] = useState<string>('rect')
   // current selected motif in the pattern card
-  const [currentMotif, setCurrentMotif] = useState('0')
 
   const containerId = `visSvg${viewerId}`
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
@@ -68,7 +69,9 @@ function VisContent(props: IVisContentProps) {
       case 'explore':
         break
       case 'xplainer': 
-        cb = { pattern_selection: motifs.detectMotifs }
+        cb = { 
+          pattern_selection: motifs.detectMotifs
+        }
         break
       default: 
         break
@@ -96,11 +99,12 @@ function VisContent(props: IVisContentProps) {
     // @ts-ignore
     console.log('VIEW STATE:', viewer.state, viewer.sceneJSON)
     // let patternDetector = new PatternDetectors(viewer.state.network)
-    let patternDetector = new PatternDetectors(viewer.state.network)
-    // console.log('patternDetector', patternDetector.allPatterns)
-    setNetworkData(viewer.state.network)
+    let tmpPatternDetector = new PatternDetectors(viewer.state.network)
+    // console.log('patternDetector', patternDetector.allMotifs)
+    // setNetworkData(viewer.state.network)
     setSceneJSON(viewer.sceneJSON)
-    setPatternDetector(patternDetector)
+    setPatternDetector(tmpPatternDetector)
+    setAllMotifs(patternDetector.allMotifs)
 
     const container = document.getElementById(containerId)
     if (container && container.getElementsByTagName("svg").length > 0) {
@@ -113,19 +117,20 @@ function VisContent(props: IVisContentProps) {
   }
 
   useEffect(() => {
-    if(selectType !== 'all') {
-      const container = document.getElementById(containerId)
-      if (!container) {
-        console.error(`No container with id ${containerId}`);
-        return
-      }
-      update()
+    const container = document.getElementById(containerId)
+    if (!container) {
+      console.error(`No container with id ${containerId}`);
+      return
     }
-    else {
-      motifs.detectMotifs(networkData)
-      setOffsetData([1000, 0])
-    }
+    update()
   }, [loading, selectType])
+
+  // show all motifs bounds above vis
+  useEffect(() => {
+    if (props.showAll && patternDetector && Object.keys(patternDetector).length > 0) {
+      motifs.detectMotifs(patternDetector.network)
+    }
+  }, [props.showAll])
 
   const handleMouseUp = (event: any) => {
     if (event.target instanceof SVGElement || event.target instanceof HTMLCanvasElement) {
@@ -140,13 +145,13 @@ function VisContent(props: IVisContentProps) {
     }
   }, [])
 
+  // drag pattern card
   const moveBox = useCallback(
     (id: string, left: number, top: number) => {
       setOffsetData([left, top])
     },
     [offsetData, setOffsetData],
   )
-
   const [, drop] = useDrop(
     () => ({
       accept: 'box',
@@ -175,37 +180,16 @@ function VisContent(props: IVisContentProps) {
         </div>
       }
       {/* pattern card & overlays */}
-      {(props.type === 'xplainer') ? 
-      <>
-        {motifs.contextHolder}
-        <PatternCard
+      {(props.type === 'xplainer' && Object.keys(patternDetector).length>0) ? 
+        <Xplainer 
+          motifs={motifs}
           visType={visType}
-          open={motifs.open}
-          setOpen={motifs.setOpen}
-          motifs={motifs.motifs}
-          offset={offsetData}
-          currentMotif={currentMotif}
-          setCurrentMotif={setCurrentMotif}
-        />
-        {motifs.open ? <>
-          {motifs.motifsBound.map((bounds: any, index: number) => {
-            if (!bounds) return
-            const offsetX = sceneJSON.items[0].x
-            const offsetY = visType !== 'nodelink' ? sceneJSON.items[0].y + 24 : sceneJSON.items[0].y
-            return <div 
-            key={index}
-            style={{
-              width: bounds.x2-bounds.x1,
-              height: bounds.y2-bounds.y1,
-              border: currentMotif === '-1' ? '0.5px solid #E17918' : (index === Number(currentMotif) ? '2px solid #E17918' : '0px'),
-              backgroundColor: currentMotif === '-1' ? 'rgba(225, 121, 24, 0.08)'  : (index === Number(currentMotif) ? 'rgba(225, 121, 24, 0.5)' : 'rgba(225, 121, 24, 0)'),
-              position: "absolute",
-              zIndex: 2,
-              transform: `translate(${bounds.x1 + offsetX}px, ${bounds.y1 + offsetY}px)`
-            }} />
-          })}
-        </> : null}
-      </> : null}
+          allMotifs={patternDetector.allMotifs}
+          sceneJSON={sceneJSON}
+          pointerOffset={offsetData}
+          visOffset={[sceneJSON.items[0].x, visType !== 'nodelink' ? sceneJSON.items[0].y + 24 : sceneJSON.items[0].y]}
+          showAll={props.showAll}
+        /> : null}
     </>
   )
 }

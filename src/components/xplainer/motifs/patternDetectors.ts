@@ -8,8 +8,9 @@ import {BiClique, Bipartite, Cluster, NetworkPattern, ParallelLinks} from "./mot
 import {findParallelLinks, findStrongLinks, findWeakLinks} from "./linksPatterns";
 import {isBiClique, isBipartite} from "./bipartite";
 import {findBursts, findRepeatedLinks} from "./dynamicMotifs";
-import { cloneDeep } from "lodash-es";
+import { cloneDeep, groupBy } from "lodash-es";
 import {isCluster} from "./clusters";
+import { AllMotifs } from "../../../../typings";
 
 export type NodeId = string;
 export type LinkTuple = [NodeId, NodeId];
@@ -25,13 +26,13 @@ export class PatternDetectors {
 
     // nodes: NodeId[];
     // links: LinkTuple[];
-    allPatterns: NetworkPattern[];
+    allMotifs: AllMotifs;
 
 
     constructor(network: Network) {
         this.network = network;
         this.netPanGraphToGraphology();
-        this.allPatterns = this.run(network.nodes, network.links)
+        this.allMotifs = this.getAll()
     }
 
     netPanGraphToGraphology() {
@@ -100,5 +101,10 @@ export class PatternDetectors {
 
         yield* findBursts(this.graph);
         yield* findRepeatedLinks(this.graph);
+    }
+
+    getAll() {
+        const all = this.run(this.network.nodes, this.network.links)
+        return groupBy(all, motif => motif.type())
     }
 }

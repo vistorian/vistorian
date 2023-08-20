@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { useState } from 'react'
-import { NetworkConfig, VisContentOptions } from '../../../typings'
+import { AllMotifs, NetworkConfig, VisContentOptions } from '../../../typings'
 import { createUseStyles } from 'react-jss'
 import Legend from './legend'
 import TimeSlider from './timeslider'
@@ -10,6 +10,7 @@ import { Button } from 'antd'
 import VisContent from './visContent'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import PatternOverview from '../xplainer/patternOverview'
 
 const useStyles = createUseStyles({
   root: {
@@ -44,6 +45,9 @@ function Vis(props: IVisProps) {
 
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
   const data = JSON.parse(window.localStorage.getItem('UPLOADED_FILE_' + networkCfg.linkTableConfig?.file) as string)
+  // for PatternOverview Component
+  const [allMotifs, setAllMotifs] = useState<AllMotifs>({})
+  const [showAll, setShowAll] = useState<boolean>(false)
 
   // respond to time slider
   let minTime = 0, maxTime = 0
@@ -141,6 +145,11 @@ function Vis(props: IVisProps) {
             nodeTypeEncoding={nodeTypeInShape ? nodeTypeShapeScheme : colorScheme}
             nodeTypeInShape={nodeTypeInShape}
           />
+          <PatternOverview 
+            motifs={allMotifs}
+            checked={showAll}
+            setChecked={setShowAll}
+          />
         </div>
         
         {/* render netpanorama */}
@@ -166,6 +175,8 @@ function Vis(props: IVisProps) {
                     visType={visType}
                     network={network as string}
                     options={options}
+                    setAllMotifs={setAllMotifs}
+                    showAll={showAll}
                   />
                 )
               })}

@@ -16,7 +16,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
-    "antd": "^5.4.5",
+    "antd": "^5.8.4",
     "csvtojson": "^2.0.10",
     "d3": "^7.8.5",
     "d3-time-format": "^4.1.0",

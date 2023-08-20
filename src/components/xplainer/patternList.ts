@@ -1,6 +1,9 @@
+import { NetworkPattern } from "./motifs/motif"
+
 export interface PatternContent {
   title: string,
   type: string,
+  description: string
   timearcs: string[],
   matrix: string[]
 } 
@@ -14,90 +17,105 @@ export const patternList: PatternList = {
     title: "Clique",
     type: 'subgraph',
     timearcs: ['Clique-1'],
-    matrix: ['Clique-1', 'Clique-2']
+    matrix: ['Clique-1', 'Clique-2'],
+    description: 'Cliques are groups of nodes where every node is connected to every other node of the clique.',
   },
   "Cluster": {
     title: "Cluster",
     type: 'subgraph',
     timearcs: ['Cluster-1'],
-    matrix: ['Cluster-1', 'Cluster-2', 'Cluster-3']
+    matrix: ['Cluster-1', 'Cluster-2', 'Cluster-3'],
+    description: 'A cluster refers to a group of nodes that have a high number of connexions between them, higher than in the rest of the graph.',
   },
   "Bridge": {
     title: "Bridge Node",
     type: 'node',
     timearcs: ['Bridge-1'],
-    matrix: ['Bridge-1', 'Bridge-2', 'Bridge-3']
+    matrix: ['Bridge-1', 'Bridge-2', 'Bridge-3'],
+    description: 'Bridge nodes are nodes that act as a connexion between different areas and groups in the graph. If removed, they can often create disconnected components.'
   },
   "Hub": {
     title: "Highly Connected Node",
     type: 'node',
     timearcs: ['Hub-1'],
-    matrix: ['Hub-1']
+    matrix: ['Hub-1'],
+    description: 'A node that has a lot of neighbors in contrast of the rest of the graph.',
   },
   "IsolatedNode": {
     title: "Isolated Node",
     type: 'node',
     timearcs: ['IsolatedNode-1'],
-    matrix: ['IsolatedNode-1']
+    matrix: ['IsolatedNode-1'],
+    description: 'A node without any connection, i.e., with a degree of 0.'
   },
   "ParallelLinks": {
     title: "Parallel Links",
     type: 'link',
     timearcs: ['ParallelLinks-1', 'ParallelLinks-2'],
-    matrix: ['ParallelLinks-1']
+    matrix: ['ParallelLinks-1'],
+    description: 'Parallel links are links that have the two same incident nodes.',
   },
   "StrongLink": {
     title: "Strong Link",
     type: 'link',
     timearcs: ['StrongLink-1'],
-    matrix: ['StrongLink-1']
+    matrix: ['StrongLink-1'],
+    description: 'Link with a weight in the top percentile of the weights distribution.'
   },
   "WeakLink": {
     title: "Weak Link",
     type: 'link',
     timearcs: ['WeakLink-1'],
-    matrix: ['WeakLink-1']
+    matrix: ['WeakLink-1'],
+    description: 'Link with a weight in the bottom percentile of the weights distribution.'
   },
   "SelfLink": {
     title: "Self Link",
     type: 'link',
     timearcs: ['SelfLink-1'],
-    matrix: ['SelfLink-1']
+    matrix: ['SelfLink-1'],
+    description: 'Self links refer to links that connects a node to itself.'
   },
   "RepeatedLinks": {
     title: "Repeated Links",
     type: 'temporal',
     timearcs: ['RepeatedLinks-1', 'RepeatedLinks-2', 'RepeatedLinks-3', 'RepeatedLinks-4'],
-    matrix: []
+    matrix: [],
+    description: 'Repeated connections consists in the links appearing in different times, between the same two nodes.'
   },
   "Fan": {
     title: "Fan",
     type: 'subgraph',
     timearcs: ['Fan-1', 'Fan-2', 'Fan-3'],
-    matrix: ['Fan-1']
+    matrix: ['Fan-1'],
+    description: 'Fans are nodes that are connected to several other nodes of degree 1.'
   },
   "Bipartite": {
     title: "Bi-graph",
     type: 'subgraph',
     timearcs: ['Bipartite-1'],
-    matrix: ['Bipartite-1']
+    matrix: ['Bipartite-1'],
+    description: 'A bi-graph refers to a group of nodes that can be divided into two sets, and in which connexions can only occur between nodes of different sets. Nodes of the same set can not have any connexions in bi-graphs.'
   },
   "Connector": {
     title: "Connector",
     type: 'subgraph',
     timearcs: ['Connector-1'],
-    matrix: ['Connector-1']
+    matrix: ['Connector-1'],
+    description: ''
   },
   "Burst": {
     title: "Burst",
     type: 'node',
     timearcs: ['Burst-1'],
-    matrix: ['Burst-1']
+    matrix: ['Burst-1'],
+    description: ''
   },
   "BiClique": {
     title: "BiClique",
     type: 'subgraph',
     timearcs: ['BiClique-1'],
-    matrix: ['BiClique-1']
+    matrix: ['BiClique-1'],
+    description: ''
   }
 }

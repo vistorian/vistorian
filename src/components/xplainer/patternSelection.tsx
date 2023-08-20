@@ -56,7 +56,7 @@ function PatternSelection(props: IProps) {
           <path d="M4.33301 24.3335C4.33301 26.7002 4.85967 29.0085 5.99967 31.0002" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
-      <div
+      {/* <div
         className={classes.func}
         onClick={() => props.setType('all')}
         style={{ background: props.type === 'all' ? 'lightgrey' : 'none' }}
@@ -65,7 +65,7 @@ function PatternSelection(props: IProps) {
           className="fa-solid fa-bomb"
           style={{ fontSize: 34 }}
         />
-      </div>
+      </div> */}
     </div>
   )
 }
