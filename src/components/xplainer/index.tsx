@@ -20,7 +20,7 @@ function Xplainer(props: IXplainerPros) {
   // display related motif
   const [hoverRelatedMotif, setHoverRelatedMotif] = useState<NetworkPattern>()
   const [clickRelatedMotif, setClickRelatedMotif] = useState<NetworkPattern>()
-  const [openRelatedMotif, setOpenRelatedMotif] = useState<boolean>(true)
+  // const [openRelatedMotif, setOpenRelatedMotif] = useState<boolean>(true)
   const [open, setOpen] = useState<boolean>(false)
 
   const getRelatedMotifBound = (motif: NetworkPattern) => {
@@ -51,8 +51,8 @@ function Xplainer(props: IXplainerPros) {
       (clickRelatedMotif && relatedMotifBound ) ?
       <PatternCard
         visType={visType}
-        open={openRelatedMotif}
-        setOpen={setOpenRelatedMotif}
+        open={open}
+        setOpen={setOpen}
         motifs={[clickRelatedMotif]}
         offset={[relatedMotifBound.x2 + visOffset[0] + 5, relatedMotifBound.y1 + visOffset[1]]}
         allMotifs={props.allMotifs}
@@ -65,17 +65,28 @@ function Xplainer(props: IXplainerPros) {
     setHoverRelatedMotif({} as NetworkPattern)
     setClickRelatedMotif({} as NetworkPattern)
     setCurrentMotif('-1')
+    if (motifs.motifs.length > 0) {
+      setOpen(true)
+    }
   }, [motifs.motifs])
+
+  useEffect(() => {
+    if (clickRelatedMotif && Object.keys(clickRelatedMotif).length > 0) {
+      setOpen(true)
+    }
+  }, [clickRelatedMotif])
 
   return (
     <>
       {motifs.contextHolder}
       {(clickRelatedMotif && Object.keys(clickRelatedMotif).length > 0) ? 
+        // select a related motif (show single motif)
         getRelatedPatternCard(clickRelatedMotif) : 
+        // show motifs based on user selecteion
         <PatternCard
           visType={visType}
-          open={motifs.open}
-          setOpen={motifs.setOpen}
+          open={open}
+          setOpen={setOpen}
           motifs={motifs.motifs}
           offset={pointerOffset}
           allMotifs={props.allMotifs}
@@ -86,7 +97,7 @@ function Xplainer(props: IXplainerPros) {
         />
       }
       {/* show selected bounds above vis */}
-      { (!clickRelatedMotif || Object.keys(clickRelatedMotif).length === 0) && motifs.open ? <>
+      { (!clickRelatedMotif || Object.keys(clickRelatedMotif).length === 0) && open ? <>
         {motifs.motifsBound.map((bounds: any, index: number) => {
           if (!bounds) return
           return <div 
@@ -103,10 +114,10 @@ function Xplainer(props: IXplainerPros) {
         })}
         </> : null}
 
-        {/* show hovered related motifs */}
+        {/* show hovered related motif bound */}
         {hoverRelatedMotif && Object.keys(hoverRelatedMotif).length > 0 ? getRelatedMotifDiv(hoverRelatedMotif): null}
 
-        {/* show selected related motifs */}
+        {/* show selected related motif bound */}
         {clickRelatedMotif && Object.keys(clickRelatedMotif).length > 0 ? getRelatedMotifDiv(clickRelatedMotif) : null}
     </>
   )

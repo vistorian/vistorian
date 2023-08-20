@@ -80,7 +80,7 @@ export const getMotifBound = (motif: NetworkPattern, bounds: any, boundsId: any)
 
 // sceneJSON records all the positions
 const useMotifDectect = (sceneJSON: any, patternDetector: any) => {
-  const [open, setOpen] = useState(false)
+  // const [open, setOpen] = useState(false)
   const [motifs, setMotifs] = useState<any[]>([])
   // relocate the motif range
   const [motifsBound, setMotifsBound] = useState<any[]>([])
@@ -90,14 +90,15 @@ const useMotifDectect = (sceneJSON: any, patternDetector: any) => {
   const detectMotifs = (newVal: any) => {
     if (Object.keys(patternDetector).length > 0 && newVal.nodes.length > 0) {
       let nodes = newVal.nodes
-      let links: any[] = uniqBy(newVal.links, 'id') // bug: due to netpan sceneJSON linkpath has two items
+      // bug: due to netpan sceneJSON linkpath has two items
+      let links: any[] = uniqBy(newVal.links, 'id') 
       const nodesId = newVal.nodes.map((n: any) => n.id)
       const linksId = newVal.links.map((l: any) => l.id)
       let { bounds, boundsId } = getBounds(nodesId, linksId, sceneJSON)
       // console.log('selected nodes:', nodes, "selected links:", links)
       // console.log('selected bounds:', bounds, boundsId) // the bounds of the selected nodes and links
+
       let result = patternDetector.run(nodes, links)
-      console.log('useHook:', result)
       
       if (result.length > 0) {
         let tmpMotifsBound: any[] = [], tmpMotifs: any[] = []
@@ -105,14 +106,13 @@ const useMotifDectect = (sceneJSON: any, patternDetector: any) => {
           tmpMotifsBound.push(getMotifBound(motif, bounds, boundsId))
         })
         setMotifs(result)
-        setOpen(true)
+        // setOpen(true)
         setMotifsBound(tmpMotifsBound)
       }
       else {
         setMotifs([])
-        setOpen(false)
+        // setOpen(false)
         if ((newVal.nodes.length > 0 || newVal.links.length > 0)) {
-          // message.error('There is no motifs detected in your selection.')
           messageApi.open({
             type: 'warning',
             content: 'There is no motifs detected in your selection.'
@@ -121,7 +121,8 @@ const useMotifDectect = (sceneJSON: any, patternDetector: any) => {
       }
     }
   }
-  return { open, setOpen, motifs, detectMotifs, motifsBound, contextHolder}
+  // return { open, setOpen, motifs, detectMotifs, motifsBound, contextHolder}
+  return { motifs, detectMotifs, motifsBound, contextHolder }
 }
 
 

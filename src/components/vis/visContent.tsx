@@ -187,6 +187,7 @@ function VisContent(props: IVisContentProps) {
           allMotifs={patternDetector.allMotifs}
           sceneJSON={sceneJSON}
           pointerOffset={offsetData}
+          // TODO: 24 is the height of the parameter selection
           visOffset={[sceneJSON.items[0].x, visType !== 'nodelink' ? sceneJSON.items[0].y + 24 : sceneJSON.items[0].y]}
           showAll={props.showAll}
         /> : null}

@@ -266,7 +266,7 @@ function Pattern (props: IPatternProps) {
                 <span>Similar instances:</span>
             </div>
             <ul>
-                {allMotifs[motifType].map((other, index) => {
+                {allMotifs[motifType].slice(0, 10).map((other, index) => {
                   if (JSON.stringify(other) !== JSON.stringify(motif))
                     return <li key={index}>
                       <span 
