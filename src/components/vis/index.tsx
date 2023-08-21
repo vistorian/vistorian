@@ -8,9 +8,9 @@ import { defaultColorScheme, defaultNodeTypeShapeScheme } from '../../../typings
 import { timeParse } from 'd3-time-format'
 import { Button } from 'antd'
 import VisContent from './visContent'
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
-import PatternOverview from '../xplainer/patternOverview'
+// import { DndProvider } from 'react-dnd'
+// import { HTML5Backend } from 'react-dnd-html5-backend'
+import Overview from '../xplainer/overview'
 
 const useStyles = createUseStyles({
   root: {
@@ -30,7 +30,7 @@ const useStyles = createUseStyles({
     flexDirection: "column",
   },
   right: {
-    width: "calc(100% - 320px)"
+    width: "calc(100% - 352px)"
   }
 })
 
@@ -145,7 +145,7 @@ function Vis(props: IVisProps) {
             nodeTypeEncoding={nodeTypeInShape ? nodeTypeShapeScheme : colorScheme}
             nodeTypeInShape={nodeTypeInShape}
           />
-          <PatternOverview 
+          <Overview 
             motifs={allMotifs}
             checked={showAll}
             setChecked={setShowAll}
@@ -163,7 +163,7 @@ function Vis(props: IVisProps) {
             /> 
           : null}
           {/* render vis */}
-          <DndProvider backend={HTML5Backend}>
+          {/* <DndProvider backend={HTML5Backend}> */}
             <div style={{ width: '100%', display: 'flex' }}>
               {visTypeList.map((visType, idx) => {
                 return (
@@ -181,7 +181,7 @@ function Vis(props: IVisProps) {
                 )
               })}
             </div>
-          </DndProvider>
+          {/* </DndProvider> */}
         </div>
     </div>
   )

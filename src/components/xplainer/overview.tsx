@@ -9,7 +9,7 @@ interface Props {
   setChecked: (b: boolean) => void
 }
 
-function PatternOverview(props: Props) {
+function Overview(props: Props) {
 
   const getTetxt = (name: string) => {
     if (name in patternList) {
@@ -59,4 +59,4 @@ function PatternOverview(props: Props) {
   )
 }
 
-export default PatternOverview
+export default Overview

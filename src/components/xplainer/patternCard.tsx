@@ -19,7 +19,9 @@ const useStyles = createUseStyles({
     boxSizing: "border-box",
     width: 500,
     flexDirection: 'column',
-    position: "absolute",
+    position: "relative",
+    top: 0,
+    right: 0,
     zIndex: 10
   }
 })
@@ -29,24 +31,23 @@ interface IPatternCardProps {
   open: boolean
   setOpen: (d: boolean) => void
   motifs: NetworkPattern[]
-  offset: [number, number]
+  showClickRelatedMotif: boolean
   allMotifs: AllMotifs
   setHoverRelatedMotif: (d: NetworkPattern) => void
   setClickRelatedMotif: (d: NetworkPattern) => void 
-  currentMotif?: string
-  setCurrentMotif?: (d: string) => void
+  setSelectedMotifNo: (d: [number, number]) => void
 }
 
 function PatternCard (props: IPatternCardProps) {
-  const { visType, open, setOpen, motifs, offset, allMotifs } = props
+  const { visType, open, setOpen, motifs, showClickRelatedMotif, allMotifs } = props
   const groupByType = groupBy(motifs, motif => motif.type())
   // console.log('groupByType', groupByType)
 
   const classes = useStyles()
   const id = "xplainer"
-  let left = offset[0], top = offset[1]
+  // let left = offset[0], top = offset[1]
 
-  const [topMenuKey, setTopMenuKey] = useState<number>(0)
+  const [topMenuKey, setTopMenuKey] = useState<number>(showClickRelatedMotif ? 0 : -1)
   const [subMenuKey, setSubMenuKey] = useState<number>(0)
 
   const getTopMenuItems = () => {
@@ -59,11 +60,11 @@ function PatternCard (props: IPatternCardProps) {
   }
 
   const getSubMenuItems = (topMenuKey: number) => {
-    if (Object.keys(groupByType).length > 0) {
+    if (Object.keys(groupByType).length > 0 && topMenuKey !== -1) {
       const name = Object.keys(groupByType)[topMenuKey]
       return groupByType[name].map((item, index) => {
         return {
-          label: `${name} #${index + 1}`,
+          label: `${patternList[name].title} #${index + 1}`,
           key: index
         }
       })
@@ -71,32 +72,50 @@ function PatternCard (props: IPatternCardProps) {
     else return []
   }
 
+  useEffect(()=>{
+    setSubMenuKey(0)
+  }, [topMenuKey])
+
+  useEffect(() => {
+    props.setSelectedMotifNo([topMenuKey, subMenuKey])
+  }, [topMenuKey, subMenuKey])
+
+
+  useEffect(() => {
+    setTopMenuKey(showClickRelatedMotif ? 0: -1)
+  }, [motifs])
+
   const close = () => {
     setOpen(false)
+    setTopMenuKey(-1)
+    setSubMenuKey(-1)
     props.setHoverRelatedMotif({} as NetworkPattern)
     props.setClickRelatedMotif({} as NetworkPattern)
   }
 
-  const [{ isDragging }, drag] = useDrag(
-    () => ({
-      type: 'box',
-      item: { id, left, top },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
-    }),
-    [id, left, top],
-  )
+  // const [{ isDragging }, drag] = useDrag(
+  //   () => ({
+  //     type: 'box',
+  //     item: { id, left, top },
+  //     collect: (monitor) => ({
+  //       isDragging: monitor.isDragging(),
+  //     }),
+  //   }),
+  //   [id, left, top],
+  // )
 
-  if (isDragging) {
-    return <div ref={drag} />
-  }
+  // if (isDragging) {
+  //   return <div ref={drag} />
+  // }
 
   return (
-    <div id={id} ref={drag} className={classes.widget}
+    <div 
+      id={id} 
+      // ref={drag} 
+      className={classes.widget}
       style={{
         display: open ? "flex" : "none",
-        transform: `translate(${left}px, ${top}px)`
+        // transform: `translate(${left}px, ${top}px)`
       }}
     >
       <CloseOutlined
@@ -107,18 +126,18 @@ function PatternCard (props: IPatternCardProps) {
       {/* motif type -- top menu */}
       <Menu
         mode="horizontal"
-        onClick={(e: any) => setTopMenuKey(e.key)}
-        selectedKeys={[`${topMenuKey}`]}
+        onClick={(e: any) => setTopMenuKey(Number(e.key))}
+        selectedKeys={topMenuKey === -1 ? [] : [`${topMenuKey}`]}
         items={getTopMenuItems()}
       />
       {/* motif instance in a specific type -- sub menu */}
       <Menu
         mode="horizontal"
-        onClick={(e: any) => setSubMenuKey(e.key)}
-        selectedKeys={[`${subMenuKey}`]}
+        onClick={(e: any) => setSubMenuKey(Number(e.key))}
+        selectedKeys={subMenuKey === -1 ? [] : [`${subMenuKey}`]}
         items={getSubMenuItems(topMenuKey)}
       />
-      {Object.keys(groupByType).length > 0 ? <Pattern
+      {(topMenuKey !== -1 && subMenuKey !== -1 && Object.keys(groupByType).length > 0) ? <Pattern
         visType={visType}
         motif={groupByType[Object.keys(groupByType)[topMenuKey]][subMenuKey]}
         allMotifs={allMotifs}

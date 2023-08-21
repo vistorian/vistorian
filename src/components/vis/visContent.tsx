@@ -4,11 +4,13 @@ import { AllMotifs, NetworkConfig, VisContentOptions } from "../../../typings"
 import templates from "../templates/templates"
 import { genSpecFromLinkTable } from "../templates/genSpec"
 import useMotifDetect from '../xplainer/useMotifDetect'
-import * as d3 from 'd3'
 import PatternSelection from "../xplainer/patternSelection"
-import { XYCoord, useDrop } from "react-dnd"
+// import { XYCoord, useDrop } from "react-dnd"
 import { PatternDetectors } from "../xplainer/motifs/patternDetectors"
-import Xplainer from "../xplainer"
+import Overlay from "../xplainer/overlay"
+import { NetworkPattern } from "../xplainer/motifs/motif"
+import PatternCard from "../xplainer/patternCard"
+import { groupBy } from "lodash-es"
 
 
 interface IVisContentProps {
@@ -25,43 +27,16 @@ interface IVisContentProps {
 function VisContent(props: IVisContentProps) {
   const { viewerId, width, visType, network, options, setAllMotifs } = props
   const [loading, setLoading] = useState<boolean>(true)
-  let viewer: any
-  // network data generated from netpan
-  // const [networkData, setNetworkData] = useState({})
-  const [sceneJSON, setSceneJSON] = useState<any>({})
+  const [viewer, setViewer] = useState<any>({})
   const [patternDetector, setPatternDetector] = useState<any>({})
-  // rect/lasso selection mouseup position
-  const [offsetData, setOffsetData] = useState<[number, number]>([0, 0])
+  // pattern selection type: rect | lasso
   const [selectType, setSelectType] = useState<string>('rect')
-  // current selected motif in the pattern card
 
   const containerId = `visSvg${viewerId}`
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
 
-  // let onCoordination = (newVal: any) => {
-  //   console.log('onCoordination:', visType, { newVal })
-  //   // viewers.map(viewer => {
-  //   //   propogateSelection(viewer, "node_selection", newVal)
-  //   // })
-  // }
 
-  // function propogateSelection(viewer: any, selectionName: string, newVal: any) {
-  //   // Internally NetPanorma represents selections as an object containing an array of selected node objects, and an array of selected link objectes
-  //   // This objects must be nodes/links in the correct network (not just identical copies!)
-  //   // If the views we are linking use the same identifiers, then we can link them like this:
-  //   // This is a bit inelegant: I might add a new method to NetPanorama in future to make it unnecessary.
-
-  //   const nodeIds = newVal.nodes.map((n: any) => n.id);
-  //   const linkIds = newVal.links.map((l: any) => l.id);
-
-  //   const networkName = "network"; // the name of the network in which the selection is made - set in specification
-  //   const nodes = viewer.state[networkName].nodes.filter((n: any) => nodeIds.includes(n.id));
-  //   const links = viewer.state[networkName].links.filter((l: any) => linkIds.includes(l.id));
-
-  //   viewer.setParam(selectionName, { nodes, links })
-  // }
-
-  let motifs = useMotifDetect(sceneJSON, patternDetector)
+  let motifs = useMotifDetect(patternDetector)
   type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
   const getParamCallbacks = () => {
     let cb: ParamChangeCallbacks = {}
@@ -87,7 +62,7 @@ function VisContent(props: IVisContentProps) {
     let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
 
     // @ts-ignore
-    viewer = await NetPanoramaTemplateViewer.render(templatePath, {
+    let tmpViewer = await NetPanoramaTemplateViewer.render(templatePath, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
       selectType: `"${selectType}"`,
@@ -97,12 +72,11 @@ function VisContent(props: IVisContentProps) {
       paramCallbacks: getParamCallbacks()
     })
     // @ts-ignore
-    console.log('VIEW STATE:', viewer.state, viewer.sceneJSON)
-    // let patternDetector = new PatternDetectors(viewer.state.network)
-    let tmpPatternDetector = new PatternDetectors(viewer.state.network)
-    // console.log('patternDetector', patternDetector.allMotifs)
+    console.log('VIEW STATE:', tmpViewer.state, tmpViewer.sceneJSON)
+    let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network)
+    // console.log('patternDetector', tmpPatternDetector.allMotifs)
     // setNetworkData(viewer.state.network)
-    setSceneJSON(viewer.sceneJSON)
+    setViewer(tmpViewer)
     setPatternDetector(tmpPatternDetector)
     setAllMotifs(patternDetector.allMotifs)
 
@@ -132,69 +106,114 @@ function VisContent(props: IVisContentProps) {
     }
   }, [props.showAll])
 
-  const handleMouseUp = (event: any) => {
-    if (event.target instanceof SVGElement || event.target instanceof HTMLCanvasElement) {
-      setOffsetData([event.offsetX, event.offsetY])
-    }    
-  }
+  // drag pattern card
+  // const moveBox = useCallback(
+  //   (id: string, left: number, top: number) => {
+  //     setOffsetData([left, top])
+  //   },
+  //   [offsetData, setOffsetData],
+  // )
+  // const [, drop] = useDrop(
+  //   () => ({
+  //     accept: 'box',
+  //     drop(item: any, monitor) {
+  //       const delta = monitor.getDifferenceFromInitialOffset() as XYCoord
+  //       const left = Math.round(item.left + delta.x)
+  //       const top = Math.round(item.top + delta.y)
+  //       moveBox(item.id, left, top)
+  //       return undefined
+  //     },
+  //   }),
+  //   [moveBox],
+  // )
+
+  // Xplainer related state
+  const [hoverRelatedMotif, setHoverRelatedMotif] = useState<NetworkPattern>({} as NetworkPattern)
+  const [clickRelatedMotif, setClickRelatedMotif] = useState<NetworkPattern>({} as NetworkPattern)
+  const [selectedMotifNo, setSelectedMotifNo] = useState<[number, number]>([-1, 0])
+  const [open, setOpen] = useState<boolean>(false)
 
   useEffect(() => {
-    window.addEventListener("mouseup", handleMouseUp)
-    return () => {
-      window.removeEventListener("mouseup", handleMouseUp)
+    setHoverRelatedMotif({} as NetworkPattern)
+    setClickRelatedMotif({} as NetworkPattern)
+    if (motifs.motifs.length > 0) {
+      setOpen(true)
     }
-  }, [])
+  }, [motifs.motifs])
 
-  // drag pattern card
-  const moveBox = useCallback(
-    (id: string, left: number, top: number) => {
-      setOffsetData([left, top])
-    },
-    [offsetData, setOffsetData],
-  )
-  const [, drop] = useDrop(
-    () => ({
-      accept: 'box',
-      drop(item: any, monitor) {
-        const delta = monitor.getDifferenceFromInitialOffset() as XYCoord
-        const left = Math.round(item.left + delta.x)
-        const top = Math.round(item.top + delta.y)
-        moveBox(item.id, left, top)
-        return undefined
-      },
-    }),
-    [moveBox],
-  )
+  useEffect(() => {
+    if (Object.keys(viewer).length > 0) {
+      let nodeIds: string[] | number[] = [], 
+        linkIds: string[] | number[] = []
+      // select a related motif
+      if (Object.keys(clickRelatedMotif).length > 0) {
+        // console.log('clickRelatedMotif', clickRelatedMotif)
+        nodeIds = clickRelatedMotif.nodes
+        linkIds = clickRelatedMotif.links
+      }
+      // selecta a motif from user selection area
+      else if (selectedMotifNo[0] !== -1) {
+        const groupByType = groupBy(motifs.motifs, (motif) => motif.type())
+        const thisMotif = groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]
+        // console.log('thisMotif', groupByType, thisMotif)
+        nodeIds = thisMotif.nodes
+        linkIds = thisMotif.links
+      }
+
+      const networkName = "network"; 
+      // @ts-ignore
+      const nodes = viewer.state[networkName].nodes.filter((n: any) => nodeIds.includes(n.id));
+      // @ts-ignore
+      const links = viewer.state[networkName].links.filter((l: any) => linkIds.includes(l.id));
+      viewer.setParam('selected_graph', { nodes, links })
+    }
+  }, [selectedMotifNo, clickRelatedMotif])
 
   return (
-    <>
-      {loading ? 
-        <Spin tip="Loading" size="small">
-          <div id={containerId} style={{ width: width }} />
-          <PatternSelection type={selectType} setType={setSelectType} />
-        </Spin> 
-        : 
-        <div 
-          ref={drop}  
-          style={{position: 'relative'}}
+    loading ? 
+      <Spin tip="Loading" size="small">
+        <div id={containerId} style={{ width: width }} />
+        <PatternSelection type={selectType} setType={setSelectType} />
+      </Spin> 
+      : 
+      <div // ref={drop}  
+        style={{position: 'relative', display: 'flex', width: '100%'}}
+      >
+        <div id={containerId} 
+        // style={{ width: width }}  // for exploration mode
+        style={{ overflow: 'scroll', position: "relative"}}
         >
-          <div id={containerId} style={{ width: width }} />
-          <PatternSelection type={selectType} setType={setSelectType} />
+          {/* show motif overlays above vis */}
+          <Overlay 
+            motifs={motifs}
+            open={open}
+            sceneJSON={viewer.sceneJSON}
+            // TODO: 24 is the height of the parameter selection
+            visOffset={[viewer.sceneJSON.items[0].x, visType !== 'nodelink' ? viewer.sceneJSON.items[0].y + 24 : viewer.sceneJSON.items[0].y]}
+            hoverRelatedMotif={hoverRelatedMotif}
+            clickRelatedMotif={clickRelatedMotif}
+            selectedMotifNo={selectedMotifNo}
+          />
         </div>
-      }
-      {/* pattern card & overlays */}
-      {(props.type === 'xplainer' && Object.keys(patternDetector).length>0) ? 
-        <Xplainer 
-          motifs={motifs}
-          visType={visType}
-          allMotifs={patternDetector.allMotifs}
-          sceneJSON={sceneJSON}
-          pointerOffset={offsetData}
-          // TODO: 24 is the height of the parameter selection
-          visOffset={[sceneJSON.items[0].x, visType !== 'nodelink' ? sceneJSON.items[0].y + 24 : sceneJSON.items[0].y]}
-          showAll={props.showAll}
-        /> : null}
-    </>
+        {/* pattern card */}
+        {(props.type === 'xplainer' && Object.keys(patternDetector).length>0) ? 
+          <>
+            {motifs.contextHolder}
+            <PatternCard
+              visType={visType}
+              open={open}
+              setOpen={setOpen}
+              motifs={(Object.keys(clickRelatedMotif).length > 0) ? [clickRelatedMotif] : motifs.motifs}
+              showClickRelatedMotif={Object.keys(clickRelatedMotif).length > 0}
+              allMotifs={patternDetector.allMotifs}
+              setHoverRelatedMotif={setHoverRelatedMotif}
+              setClickRelatedMotif={setClickRelatedMotif}
+              setSelectedMotifNo={setSelectedMotifNo}
+            />
+          </>: null}
+        {/* rect selection or lasso */}
+        <PatternSelection type={selectType} setType={setSelectType} />
+      </div>
   )
 }
 export default VisContent

@@ -9,6 +9,12 @@
       "clearOnBackgroundClick": true
     },
     {
+      "name": "selected_graph",
+      "network": "network",
+      "action": "replace",
+      "type": "selection"
+    },
+    {
       "name": "timeRange", 
       "value": "[timeRange]"
     },
@@ -166,6 +172,10 @@
             },
             {
               "inSelection": "pattern_selection.nodes",
+              "value": 1
+            },
+            {
+              "inSelection": "selected_graph.nodes",
               "value": 1
             }
           ],

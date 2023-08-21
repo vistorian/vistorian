@@ -37,7 +37,7 @@ export const getBounds = (nodesId: any, linksId: any, sceneJSON: any) => {
   return { bounds, boundsId }
 }
 
-// get the motif bound
+// get the bound of the motif
 export const getMotifBound = (motif: NetworkPattern, bounds: any, boundsId: any) => {
   // get bounds for each motif
   let minX1: number | null = null, maxX2: number | null = null, minY1: number | null = null, maxY2: number | null = null
@@ -79,39 +79,35 @@ export const getMotifBound = (motif: NetworkPattern, bounds: any, boundsId: any)
 }
 
 // sceneJSON records all the positions
-const useMotifDectect = (sceneJSON: any, patternDetector: any) => {
-  // const [open, setOpen] = useState(false)
+const useMotifDectect = (patternDetector: any) => {
   const [motifs, setMotifs] = useState<any[]>([])
-  // relocate the motif range
-  const [motifsBound, setMotifsBound] = useState<any[]>([])
   const [messageApi, contextHolder] = message.useMessage()
 
   // currently only allow for one vis in Learning Mode
   const detectMotifs = (newVal: any) => {
+    // console.log('detectMotifs:', newVal)
     if (Object.keys(patternDetector).length > 0 && newVal.nodes.length > 0) {
       let nodes = newVal.nodes
       // bug: due to netpan sceneJSON linkpath has two items
       let links: any[] = uniqBy(newVal.links, 'id') 
-      const nodesId = newVal.nodes.map((n: any) => n.id)
-      const linksId = newVal.links.map((l: any) => l.id)
-      let { bounds, boundsId } = getBounds(nodesId, linksId, sceneJSON)
+      // const nodesId = newVal.nodes.map((n: any) => n.id)
+      // const linksId = newVal.links.map((l: any) => l.id)
+      // let { bounds, boundsId } = getBounds(nodesId, linksId, sceneJSON)
       // console.log('selected nodes:', nodes, "selected links:", links)
       // console.log('selected bounds:', bounds, boundsId) // the bounds of the selected nodes and links
 
       let result = patternDetector.run(nodes, links)
       
       if (result.length > 0) {
-        let tmpMotifsBound: any[] = [], tmpMotifs: any[] = []
-        result.forEach((motif) => {
-          tmpMotifsBound.push(getMotifBound(motif, bounds, boundsId))
-        })
+        // let tmpMotifsBound: any[] = [], tmpMotifs: any[] = []
+        // result.forEach((motif) => {
+        //   tmpMotifsBound.push(getMotifBound(motif, bounds, boundsId))
+        // })
         setMotifs(result)
-        // setOpen(true)
-        setMotifsBound(tmpMotifsBound)
+        // setMotifsBound(tmpMotifsBound)
       }
       else {
         setMotifs([])
-        // setOpen(false)
         if ((newVal.nodes.length > 0 || newVal.links.length > 0)) {
           messageApi.open({
             type: 'warning',
@@ -121,8 +117,7 @@ const useMotifDectect = (sceneJSON: any, patternDetector: any) => {
       }
     }
   }
-  // return { open, setOpen, motifs, detectMotifs, motifsBound, contextHolder}
-  return { motifs, detectMotifs, motifsBound, contextHolder }
+  return { motifs, setMotifs, detectMotifs, contextHolder }
 }
 
 
