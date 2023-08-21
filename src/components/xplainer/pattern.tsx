@@ -86,7 +86,7 @@ function Pattern (props: IPatternProps) {
   const { motif, visType, allMotifs, setHoverRelatedMotif, setClickRelatedMotif } = props
   const classes = useStyles()
 
-  const motifType = motif.type()
+  const motifType = motif ? motif.type() : ''
   let pattern, dataExp, visualExp, visualVariables
 
   const genExp = () => {
@@ -280,7 +280,7 @@ function Pattern (props: IPatternProps) {
                           setClickRelatedMotif(other)
                           // setHoverRelatedMotif({} as NetworkPattern)
                         }}>
-                        {motifType} ({index})
+                        {`${motifType} #${index}`}
                         </span>
                       </li>
                 })}

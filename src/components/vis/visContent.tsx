@@ -174,7 +174,10 @@ function VisContent(props: IVisContentProps) {
           <PatternSelection type={selectType} setType={setSelectType} />
         </Spin> 
         : 
-        <div ref={drop}  style={{position: 'relative'}}>
+        <div 
+          ref={drop}  
+          style={{position: 'relative'}}
+        >
           <div id={containerId} style={{ width: width }} />
           <PatternSelection type={selectType} setType={setSelectType} />
         </div>

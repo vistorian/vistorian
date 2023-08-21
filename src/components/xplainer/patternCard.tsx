@@ -6,6 +6,8 @@ import { NetworkPattern } from "./motifs/motif"
 import { CloseOutlined } from '@ant-design/icons'
 import { useDrag } from "react-dnd"
 import { AllMotifs } from "../../../typings"
+import { groupBy } from "lodash-es"
+import { PatternList, patternList } from "./patternList"
 
 const useStyles = createUseStyles({
   widget: {
@@ -37,22 +39,36 @@ interface IPatternCardProps {
 
 function PatternCard (props: IPatternCardProps) {
   const { visType, open, setOpen, motifs, offset, allMotifs } = props
+  const groupByType = groupBy(motifs, motif => motif.type())
+  // console.log('groupByType', groupByType)
+
   const classes = useStyles()
   const id = "xplainer"
   let left = offset[0], top = offset[1]
 
-  const getMenuItems = () => {
-    return motifs.map((motif: any, index: number) => {
+  const [topMenuKey, setTopMenuKey] = useState<number>(0)
+  const [subMenuKey, setSubMenuKey] = useState<number>(0)
+
+  const getTopMenuItems = () => {
+    return Object.keys(groupByType).map((name: string, index: number) => {
       return {
-        label: motif.type(),
-        key: `${index}`
+        label: `${patternList[name].title} (${groupByType[name].length})`,
+        key: index
       }
     })
   }
 
-  const onClick = (e: any) => {
-    // @ts-ignore
-    props.setCurrentMotif(e.key)
+  const getSubMenuItems = (topMenuKey: number) => {
+    if (Object.keys(groupByType).length > 0) {
+      const name = Object.keys(groupByType)[topMenuKey]
+      return groupByType[name].map((item, index) => {
+        return {
+          label: `${name} #${index + 1}`,
+          key: index
+        }
+      })
+    }
+    else return []
   }
 
   const close = () => {
@@ -60,11 +76,6 @@ function PatternCard (props: IPatternCardProps) {
     props.setHoverRelatedMotif({} as NetworkPattern)
     props.setClickRelatedMotif({} as NetworkPattern)
   }
-
-  useEffect(()=>{
-    if (props.setCurrentMotif)
-      props.setCurrentMotif('-1')
-  }, [motifs])
 
   const [{ isDragging }, drag] = useDrag(
     () => ({
@@ -93,36 +104,28 @@ function PatternCard (props: IPatternCardProps) {
         onClick={() => close()}
       />
 
-      {props.currentMotif ? 
-      // user select an area and show a list of motifs in this area
-      <> 
-        <Menu
+      {/* motif type -- top menu */}
+      <Menu
         mode="horizontal"
-        onClick={onClick}
-        selectedKeys={props.currentMotif === '-1' ? [] : [props.currentMotif]}
-        items={getMenuItems()}
-        />
-        {props.currentMotif === '-1' ?
-          <div>There is {motifs.length} patterns in total.</div>
-          :
-          <Pattern
-            visType={visType}
-            motif={motifs[Number(props.currentMotif)]}
-            allMotifs={allMotifs}
-            setHoverRelatedMotif={props.setHoverRelatedMotif}
-            setClickRelatedMotif={props.setClickRelatedMotif}
-          />}
-      </> : 
-      // jump to related motif
-      <>
-          <Pattern
-            visType={visType}
-            motif={motifs[0]}
-            allMotifs={allMotifs}
-            setHoverRelatedMotif={props.setHoverRelatedMotif}
-            setClickRelatedMotif={props.setClickRelatedMotif}
-          />
-      </>}
+        onClick={(e: any) => setTopMenuKey(e.key)}
+        selectedKeys={[`${topMenuKey}`]}
+        items={getTopMenuItems()}
+      />
+      {/* motif instance in a specific type -- sub menu */}
+      <Menu
+        mode="horizontal"
+        onClick={(e: any) => setSubMenuKey(e.key)}
+        selectedKeys={[`${subMenuKey}`]}
+        items={getSubMenuItems(topMenuKey)}
+      />
+      {Object.keys(groupByType).length > 0 ? <Pattern
+        visType={visType}
+        motif={groupByType[Object.keys(groupByType)[topMenuKey]][subMenuKey]}
+        allMotifs={allMotifs}
+        setHoverRelatedMotif={props.setHoverRelatedMotif}
+        setClickRelatedMotif={props.setClickRelatedMotif}
+      /> : null}
+      
     </div>
   )
 }

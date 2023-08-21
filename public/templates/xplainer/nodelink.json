@@ -170,7 +170,8 @@
             }
           ],
           "value": 0.1
-        }
+        },
+        "tooltip": { "expression": "datum.id"}
       }
     }
   ]
