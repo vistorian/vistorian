@@ -73,7 +73,7 @@ function VisContent(props: IVisContentProps) {
     })
     // @ts-ignore
     console.log('VIEW STATE:', tmpViewer.state, tmpViewer.sceneJSON)
-    let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network)
+    let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType === 'timearcs')
     // console.log('patternDetector', tmpPatternDetector.allMotifs)
     // setNetworkData(viewer.state.network)
     setViewer(tmpViewer)

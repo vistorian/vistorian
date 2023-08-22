@@ -133,19 +133,27 @@ function Pattern (props: IPatternProps) {
           visualExp = <span>the cluster has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{ }</span>. They are closed to each other in the canvas. </span>
         break
       case 'Bridge':
-        dataExp = <span> <b>Bridge nodes</b> are nodes that act as a connection between different areas and groups in the graph.If removed, they can often create disconnected components.</span>
+        dataExp = <span>A <b>Bridge</b> is a <span className={classes.category}>node</span> pattern, which acts as a connection between different areas and groups in the graph. If removed, they can often create disconnected components in the graph.</span>
+        // TODO: 
         if (visType === 'timearcs') {
-          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the link density is <span className={classes.hl}>{`100%`}</span>. The length of the arc depends on the ordering of the nodes.</span>
+          visualExp = <span>the bridge node </span>
         }
         else if (visType === 'matrix') {
-          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{`100%`}</span>.</span>
+          visualExp = <span>the bridge node </span>
         }
         else
           visualExp = <></>
         break
       case 'Hub':
-        visualExp = <span></span>
-        dataExp = <span>A highly connected node is a node that has a lot of neighbors in contrast of the rest of the graph.</span>
+        dataExp = <span>A <b>Highly connected node</b> is a <span className={classes.category}>node</span> pattern, which has a lot of neighbors in contrast of the rest of the graph.</span>
+        if (visType === 'timearcs') {
+          visualExp = <span>the bridge node </span>
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span>the bridge node </span>
+        }
+        else
+          visualExp = <></>
         break
       case 'IsolatedNode':
         visualExp = <span></span>
@@ -173,7 +181,7 @@ function Pattern (props: IPatternProps) {
         break
       case 'Burst':
         visualExp = <span></span>
-        dataExp = <span>A <b>cluster</b> refers to a group of nodes that have a high number of connexions between them, higher than in the rest of the graph.</span>
+        dataExp = <span>A <b>Burst</b> is a <span className={classes.category}>node</span> pattern, whose connections are higher than the rest of the graph in this time span.</span>
         break
       case 'Fan':
         visualExp = <span></span>
