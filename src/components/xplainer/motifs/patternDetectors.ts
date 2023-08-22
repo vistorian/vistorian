@@ -5,10 +5,10 @@ import {findConnectors} from "./findConnectors";
 import {findFans} from "./fan";
 import {findBridges, findHubs, findIsolatedNodes} from "./hubs";
 import {BiClique, Bipartite, Cluster, NetworkPattern, ParallelLinks} from "./motif";
-import {findParallelLinks, findStrongLinks, findWeakLinks} from "./linksPatterns";
+import {findParallelLinks, findSelfLinks, findStrongLinks, findWeakLinks} from "./linksPatterns";
 import {isBiClique, isBipartite} from "./bipartite";
 import {findBursts, findRepeatedLinks} from "./dynamicMotifs";
-import { cloneDeep } from "lodash-es";
+import cloneDeep from 'lodash/cloneDeep'
 import {isCluster} from "./clusters";
 
 export type NodeId = string;
@@ -20,6 +20,7 @@ export class PatternDetectors {
     network: Network;
     // graphologyNet: Graph = new Graph();
     graph: Graph = new MultiGraph();
+    isDynamic: boolean;
     // nodes: NetworkNode[];
     // links: NetworkLink[];
 
@@ -27,8 +28,9 @@ export class PatternDetectors {
     // links: LinkTuple[];
 
 
-    constructor(network: Network) {
+    constructor(network: Network, isDynamic: boolean) {
         this.network = network;
+        this.isDynamic = isDynamic;
         this.netPanGraphToGraphology();
     }
 
@@ -49,8 +51,6 @@ export class PatternDetectors {
             // @ts-ignore
             delete copyLink.target;
             this.graph.replaceEdgeAttributes(copyLink.id, copyLink);
-
-
         })
     }
 
@@ -60,10 +60,6 @@ export class PatternDetectors {
         // Convert to string as link ids in NetPan are numbers but get converted as string in graphology
         let linksIds = links.map(n => `${n.id}`);
 
-        // this.cliques = Array.from(findCliques(this.graph));
-        // this.connectors = Array.from(findConnectors(this.graph));
-        // this.fans = Array.from(findFans(this.graph));
-        // this.allMotifs = [...this.cliques, ...this.connectors, ...this.fans];
         let motifFound: NetworkPattern[] = [];
         for (let motif of this.findMotif()) {
             // if (motif.isContainedBy(this.nodes, this.links)) {
@@ -73,13 +69,14 @@ export class PatternDetectors {
             }
         }
 
-        // if (isBipartite(this.nodes, this.graph)) motifFound.push(new Bipartite(this.nodes))
-        // if (isBiClique(this.nodes, this.graph)) motifFound.push(new BiClique(this.nodes))
         if (isBipartite(nodesIds, this.graph)) motifFound.push(new Bipartite(nodesIds))
         if (isBiClique(nodesIds, this.graph)) motifFound.push(new BiClique(nodesIds))
-        if (isCluster(nodesIds, linksIds, this.graph)) motifFound.push(new Cluster(nodesIds))
+        // if (isCluster(nodesIds, linksIds, this.graph)) motifFound.push(new Cluster(nodesIds))
 
-        // console.log("found ", motifFound, nodesIds, linksIds)
+        let cluster = isCluster(nodesIds, linksIds, this.graph);
+        if (cluster) motifFound.push(cluster);
+        // if (isCluster(nodesIds, linksIds, this.graph)) motifFound.push(new Cluster(nodesIds))
+
         return motifFound;
     }
 
@@ -92,11 +89,14 @@ export class PatternDetectors {
         yield* findConnectors(this.graph);
         yield* findFans(this.graph);
 
+        yield* findSelfLinks(this.graph);
         yield* findParallelLinks(this.graph);
         yield* findWeakLinks(this.graph);
         yield* findStrongLinks(this.graph);
 
-        yield* findBursts(this.graph);
-        yield* findRepeatedLinks(this.graph);
+        if (this.isDynamic) {
+            yield* findBursts(this.graph);
+            yield* findRepeatedLinks(this.graph);
+        }
     }
 }

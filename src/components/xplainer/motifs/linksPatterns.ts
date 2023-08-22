@@ -1,9 +1,19 @@
 import Graph from "graphology";
 
-import {Hub, ParallelLinks, StrongLink, WeakLink} from "./motif";
+import {Hub, ParallelLinks, SelfLink, StrongLink, WeakLink} from "./motif";
 import {calculateMean, calculateStandardDeviation} from "./utils";
 
 const WEIGHT_THRESHOLD = 5;
+
+
+export function* findSelfLinks(network: Graph): Generator<StrongLink> {
+    for (let edge of network.edges()) {
+        let [source, target] = network.extremities(edge);
+        if (source == target) {
+            return new SelfLink([edge])
+        }
+    }
+}
 
 export function* findStrongLinks(network: Graph): Generator<StrongLink> {
     for (let edge of network.edges()) {
@@ -26,9 +36,9 @@ export function* findWeakLinks(network: Graph): Generator<WeakLink> {
 
 function hashSourceTarget(source: string, target: string) {
     if (source < target) {
-        return source.concat(target);
+        return source.concat("-").concat(target);
     } else {
-        return target.concat(source);
+        return target.concat("-").concat(source);
     }
 }
 
@@ -37,6 +47,8 @@ export function* findParallelLinks(network: Graph): Generator<ParallelLinks> {
     for (let edge of network.edges()) {
         let [source, target] = network.extremities(edge);
         let hash = hashSourceTarget(source, target);
+
+        // console.log(edge, source, target, hash)
         if (sourceTargetToEdge[hash]) {
             sourceTargetToEdge[hash].push(edge)
         } else {
