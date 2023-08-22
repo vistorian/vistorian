@@ -32,6 +32,16 @@ function PatternSelection(props: IProps) {
 
   return (
     <div className={classes.root}>
+      <div
+        className={classes.func}
+        onClick={() => props.setType('all')}
+        style={{ background: props.type === 'all' ? 'lightgrey' : 'none' }}
+      >
+        <i
+          className="fa-solid fa-bomb"
+          style={{ fontSize: 34 }}
+        />
+      </div>
       <div 
         className={classes.func} 
         onClick={()=>props.setType('rect')}

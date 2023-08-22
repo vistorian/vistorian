@@ -1,5 +1,5 @@
 import { Spin } from "antd"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { NetworkConfig, VisContentOptions } from "../../../typings"
 import templates from "../templates/templates"
 import { genSpecFromLinkTable } from "../templates/genSpec"
@@ -7,6 +7,8 @@ import PatternCard from "../xplainer/patternCard"
 import useMotifDetect from '../xplainer/useMotifDetect'
 import * as d3 from 'd3'
 import PatternSelection from "../xplainer/patternSelection"
+import { DndProvider, XYCoord, useDrop } from "react-dnd"
+import { HTML5Backend } from "react-dnd-html5-backend"
 import { PatternDetectors } from "../xplainer/motifs/patternDetectors"
 
 
@@ -26,6 +28,7 @@ function VisContent(props: IVisContentProps) {
   // network data generated from netpan
   const [networkData, setNetworkData] = useState({})
   const [sceneJSON, setSceneJSON] = useState<any>({})
+  const [patternDetector, setPatternDetector] = useState<any>({})
   // rect/lasso selection mouseup position
   const [offsetData, setOffsetData] = useState<[number, number]>([0, 0])
   const [selectType, setSelectType] = useState<string>('rect')
@@ -58,7 +61,7 @@ function VisContent(props: IVisContentProps) {
   //   viewer.setParam(selectionName, { nodes, links })
   // }
 
-  let motifs = useMotifDetect(networkData, sceneJSON)
+  let motifs = useMotifDetect(sceneJSON, patternDetector)
   type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
   const getParamCallbacks = () => {
     let cb: ParamChangeCallbacks = {}
@@ -94,8 +97,11 @@ function VisContent(props: IVisContentProps) {
     // @ts-ignore
     console.log('VIEW STATE:', viewer.state, viewer.sceneJSON)
     // let patternDetector = new PatternDetectors(viewer.state.network)
+    let patternDetector = new PatternDetectors(viewer.state.network)
+    console.log('patternDetector', patternDetector.allPatterns)
     setNetworkData(viewer.state.network)
     setSceneJSON(viewer.sceneJSON)
+    setPatternDetector(patternDetector)
 
     const container = document.getElementById(containerId)
     if (container && container.getElementsByTagName("svg").length > 0) {
@@ -105,33 +111,21 @@ function VisContent(props: IVisContentProps) {
       container.getElementsByTagName("svg")[0].style["max-height"] = "100%";
     }
     setLoading(false)
-
-
-    const svg = d3.select(`#${containerId}`).select('svg')
-    if (svg) {
-      let g = svg.select("g").select("g")
-
-      // TODO: implement it in netpan
-      // // @ts-ignore
-      // svg.call(d3.zoom()
-      //   // .extent([[0, 0], [width, height]])
-      //   // .scaleExtent([1, 8])
-      //   .on("zoom", zoomed));
-
-      // // @ts-ignore
-      // function zoomed({ transform }) {
-      //   g.attr("transform", transform);
-      // }
-    }
   }
 
   useEffect(() => {
-    const container = document.getElementById(containerId)
-    if (!container) {
-      console.error(`No container with id ${containerId}`);
-      return
+    if(selectType !== 'all') {
+      const container = document.getElementById(containerId)
+      if (!container) {
+        console.error(`No container with id ${containerId}`);
+        return
+      }
+      update()
     }
-    update()
+    else {
+      motifs.detectMotifs(networkData)
+      setOffsetData([1000, 0])
+    }
   }, [loading, selectType])
 
   const handleMouseUp = (event: any) => {
@@ -145,7 +139,28 @@ function VisContent(props: IVisContentProps) {
     return () => {
       window.removeEventListener("mouseup", handleMouseUp)
     }
-  });
+  })
+
+  const moveBox = useCallback(
+    (id: string, left: number, top: number) => {
+      setOffsetData([left, top])
+    },
+    [offsetData, setOffsetData],
+  )
+
+  const [, drop] = useDrop(
+    () => ({
+      accept: 'box',
+      drop(item: any, monitor) {
+        const delta = monitor.getDifferenceFromInitialOffset() as XYCoord
+        const left = Math.round(item.left + delta.x)
+        const top = Math.round(item.top + delta.y)
+        moveBox(item.id, left, top)
+        return undefined
+      },
+    }),
+    [moveBox],
+  )
 
   return (
     <>
@@ -165,6 +180,7 @@ function VisContent(props: IVisContentProps) {
       <>
         {motifs.contextHolder}
         <PatternCard
+          visType={visType}
           open={motifs.open}
           setOpen={motifs.setOpen}
           motifs={motifs.motifs}
@@ -176,16 +192,16 @@ function VisContent(props: IVisContentProps) {
           {motifs.motifsBound.map((bounds: any, index: number) => {
             if (!bounds) return
             const offsetX = sceneJSON.items[0].x
-            const offsetY = visType === 'timearcs' ? sceneJSON.items[0].y + 24 : sceneJSON.items[0].y
+            const offsetY = visType !== 'nodelink' ? sceneJSON.items[0].y + 24 : sceneJSON.items[0].y
             return <div 
             key={index}
             style={{
               width: bounds.x2-bounds.x1,
               height: bounds.y2-bounds.y1,
-              border: index === Number(currentMotif) ? '2px solid #E17918' : '1px solid #E17918',
-              backgroundColor: index === Number(currentMotif) ? 'rgba(225, 121, 24, 0.5)' : 'rgba(225, 121, 24, 0.1)',
+              border: currentMotif === '-1' ? '0.5px solid #E17918' : (index === Number(currentMotif) ? '2px solid #E17918' : '0px'),
+              backgroundColor: currentMotif === '-1' ? 'rgba(225, 121, 24, 0.08)'  : (index === Number(currentMotif) ? 'rgba(225, 121, 24, 0.5)' : 'rgba(225, 121, 24, 0)'),
               position: "absolute",
-              zIndex: index === Number(currentMotif) ? 3: 2,
+              zIndex: 22,
               transform: `translate(${bounds.x1 + offsetX}px, ${bounds.y1 + offsetY}px)`
             }} />
           })}

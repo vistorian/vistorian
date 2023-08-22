@@ -1,0 +1,18 @@
+<svg width="158" height="158" viewBox="0 0 158 158" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="2" y="2" width="154" height="154" rx="8" stroke="white" stroke-width="4"/>
+<path d="M34 30L76 79" stroke="#363636" stroke-width="3"/>
+<path d="M22 59L76 79" stroke="#363636" stroke-width="3"/>
+<path d="M68 19L76 79" stroke="#363636" stroke-width="3"/>
+<path d="M120 129L78 80" stroke="#363636" stroke-width="3"/>
+<path d="M132 100L78 80" stroke="#363636" stroke-width="3"/>
+<path d="M86 140L78 80" stroke="#363636" stroke-width="3"/>
+<path d="M122 133.5L89 141.5L136.5 102.5L122 133.5Z" stroke="#363636" stroke-width="3"/>
+<path d="M33 29L21.5 59L66.5 18.5L33 29Z" stroke="#363636" stroke-width="3"/>
+<circle cx="76" cy="78" r="13.75" fill="#363636" stroke="white" stroke-width="1.5"/>
+<circle cx="21.5" cy="58.5" r="9.25" fill="#363636" stroke="white" stroke-width="1.5"/>
+<circle cx="33.5" cy="29.5" r="9.25" fill="#363636" stroke="white" stroke-width="1.5"/>
+<circle cx="67.5" cy="18.5" r="9.25" fill="#363636" stroke="white" stroke-width="1.5"/>
+<circle cx="137.5" cy="101.5" r="9.25" transform="rotate(-180 137.5 101.5)" fill="#363636" stroke="white" stroke-width="1.5"/>
+<circle cx="123.5" cy="132.5" r="9.25" transform="rotate(-180 123.5 132.5)" fill="#363636" stroke="white" stroke-width="1.5"/>
+<circle cx="87.5" cy="140.5" r="9.25" transform="rotate(-180 87.5 140.5)" fill="#363636" stroke="white" stroke-width="1.5"/>
+</svg>

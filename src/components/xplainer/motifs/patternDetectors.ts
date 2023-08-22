@@ -26,12 +26,14 @@ export class PatternDetectors {
 
     // nodes: NodeId[];
     // links: LinkTuple[];
+    allPatterns: NetworkPattern[];
 
 
     constructor(network: Network, isDynamic: boolean) {
         this.network = network;
         this.isDynamic = isDynamic;
         this.netPanGraphToGraphology();
+        this.allPatterns = this.run(network.nodes, network.links)
     }
 
     netPanGraphToGraphology() {

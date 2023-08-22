@@ -1,0 +1,27 @@
+<svg width="158" height="158" viewBox="0 0 158 158" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="2" y="2" width="154" height="154" rx="8" stroke="white" stroke-width="4"/>
+<path d="M40 38H119" stroke="#363636" stroke-width="3"/>
+<path d="M40 70H119" stroke="#363636" stroke-width="3"/>
+<path d="M40 107H119" stroke="#363636" stroke-width="3"/>
+<path d="M40 107L119 70" stroke="#363636" stroke-width="3"/>
+<path d="M42 38L119 70" stroke="#363636" stroke-width="3"/>
+<path d="M41 70L119 107" stroke="#363636" stroke-width="3"/>
+<circle cx="40.5" cy="106.5" r="9.25" fill="#363636" stroke="white" stroke-width="1.5"/>
+<circle cx="40.5" cy="69.5" r="9.25" fill="#363636" stroke="white" stroke-width="1.5"/>
+<circle cx="40.5" cy="37.5" r="9.25" fill="#363636" stroke="white" stroke-width="1.5"/>
+<circle cx="118.5" cy="36.5" r="9.25" fill="white" stroke="#363636" stroke-width="1.5"/>
+<circle cx="118.5" cy="69.5" r="9.25" fill="white" stroke="#363636" stroke-width="1.5"/>
+<path d="M118.5 115.75C123.609 115.75 127.75 111.609 127.75 106.5C127.75 101.391 123.609 97.25 118.5 97.25C113.391 97.25 109.25 101.391 109.25 106.5C109.25 111.609 113.391 115.75 118.5 115.75Z" fill="white" stroke="#363636" stroke-width="1.5"/>
+<path d="M40 38H119" stroke="#363636" stroke-width="3"/>
+<path d="M40 70H119" stroke="#363636" stroke-width="3"/>
+<path d="M40 107H119" stroke="#363636" stroke-width="3"/>
+<path d="M40 107L119 70" stroke="#363636" stroke-width="3"/>
+<path d="M42 38L119 70" stroke="#363636" stroke-width="3"/>
+<path d="M41 70L119 107" stroke="#363636" stroke-width="3"/>
+<circle cx="40.5" cy="106.5" r="9.25" fill="#363636" stroke="white" stroke-width="1.5"/>
+<circle cx="40.5" cy="69.5" r="9.25" fill="#363636" stroke="white" stroke-width="1.5"/>
+<circle cx="40.5" cy="37.5" r="9.25" fill="#363636" stroke="white" stroke-width="1.5"/>
+<circle cx="118.5" cy="36.5" r="9.25" fill="white" stroke="#363636" stroke-width="1.5"/>
+<circle cx="118.5" cy="69.5" r="9.25" fill="white" stroke="#363636" stroke-width="1.5"/>
+<path d="M118.5 115.75C123.609 115.75 127.75 111.609 127.75 106.5C127.75 101.391 123.609 97.25 118.5 97.25C113.391 97.25 109.25 101.391 109.25 106.5C109.25 111.609 113.391 115.75 118.5 115.75Z" fill="white" stroke="#363636" stroke-width="1.5"/>
+</svg>

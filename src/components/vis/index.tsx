@@ -8,6 +8,8 @@ import { defaultColorScheme, defaultNodeTypeShapeScheme } from '../../../typings
 import { timeParse } from 'd3-time-format'
 import { Button } from 'antd'
 import VisContent from './visContent'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 const useStyles = createUseStyles({
   root: {
@@ -152,21 +154,23 @@ function Vis(props: IVisProps) {
             /> 
           : null}
           {/* render vis */}
-          <div style={{ width: '100%', display: 'flex'}}>
-            {visTypeList.map((visType, idx) => {
-              return (
-                <VisContent 
-                  type={props.type}
-                  key={idx}
-                  viewerId={idx}
-                  width={`${100/visTypeList.length}%`}
-                  visType={visType}
-                  network={network as string}
-                  options={options}
-                />
-              )
-            })}
-          </div>
+          <DndProvider backend={HTML5Backend}>
+            <div style={{ width: '100%', display: 'flex' }}>
+              {visTypeList.map((visType, idx) => {
+                return (
+                  <VisContent
+                    type={props.type}
+                    key={idx}
+                    viewerId={idx}
+                    width={`${100 / visTypeList.length}%`}
+                    visType={visType}
+                    network={network as string}
+                    options={options}
+                  />
+                )
+              })}
+            </div>
+          </DndProvider>
         </div>
     </div>
   )
