@@ -4,7 +4,6 @@ import { uniqBy } from "lodash-es";
 import { message } from "antd";
 
 // get the bounds of the selected nodes & links
-// export const getBounds = (newVal: any, sceneJSON: any) => {
 export const getBounds = (nodesId: any, linksId: any, sceneJSON: any) => {
   // const nodesId = newVal.nodes.map((n: any) => n.id)
   // const linksId = newVal.links.map((l: any) => l.id)
@@ -90,21 +89,10 @@ const useMotifDectect = (patternDetector: any) => {
       let nodes = newVal.nodes
       // bug: due to netpan sceneJSON linkpath has two items
       let links: any[] = uniqBy(newVal.links, 'id') 
-      // const nodesId = newVal.nodes.map((n: any) => n.id)
-      // const linksId = newVal.links.map((l: any) => l.id)
-      // let { bounds, boundsId } = getBounds(nodesId, linksId, sceneJSON)
-      // console.log('selected nodes:', nodes, "selected links:", links)
-      // console.log('selected bounds:', bounds, boundsId) // the bounds of the selected nodes and links
-
       let result = patternDetector.run(nodes, links)
       
       if (result.length > 0) {
-        // let tmpMotifsBound: any[] = [], tmpMotifs: any[] = []
-        // result.forEach((motif) => {
-        //   tmpMotifsBound.push(getMotifBound(motif, bounds, boundsId))
-        // })
         setMotifs(result)
-        // setMotifsBound(tmpMotifsBound)
       }
       else {
         setMotifs([])

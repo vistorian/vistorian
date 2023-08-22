@@ -1,6 +1,6 @@
 import Graph from "graphology";
 
-import {Burst, Hub, RepeatedLinks} from "./motif";
+import {BackAndForth, Burst, Hub, RepeatedLinks} from "./motif";
 import {findParallelLinks} from "./linksPatterns";
 
 
@@ -25,6 +25,25 @@ export function* findRepeatedLinks(network: Graph, timeKey: string = "Date"): Ge
     //
     // repeatedLinks = repeatedLinks.filter(rl => rl);
     // return repeatedLinks;
+}
+
+
+export function* findBackandForth(network: Graph, timeKey: string = "Date") {
+    loop:
+    for (let rl of findRepeatedLinks(network)) {
+        let source, target;
+        for (let links of rl.links) {
+            if (!source) {
+                [source, target] = network.extremities(links)
+            } else {
+                let [source2, target2] = network.extremities(links)
+                if ((source == target2) && (target == source2)) {
+                    yield new BackAndForth(rl.links)
+                    continue loop;
+                }
+            }
+        }
+    }
 }
 
 

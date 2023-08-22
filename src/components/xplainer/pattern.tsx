@@ -19,6 +19,22 @@ const useStyles = createUseStyles({
       zIndex: -1,
     }
   },
+  category: {
+    position: 'relative',
+    fontWeight: 600,
+    color: "#676767"
+    // '&:after': {
+    //   content: '""',
+    //   backgroundColor: '#FFE0B2',
+    //   height: '110%',
+    //   position: 'absolute',
+    //   bottom: '-5%',
+    //   right: '-2%',
+    //   width: '104%',
+    //   borderRadius: 4,
+    //   zIndex: -1,
+    // }
+  },
   icon: {
     width: 130,
     height: 130,
@@ -54,6 +70,7 @@ const useStyles = createUseStyles({
     paddingTop: 5,
     paddingBottom: 5,
     backgroundColor: '#F9F9F9',
+    zIndex: 0,
     '&:before': {
       content: '""',
       backgroundColor: '#EC9B50',
@@ -93,26 +110,27 @@ function Pattern (props: IPatternProps) {
     let dataExp, visualExp
     switch (motifType) {
       case 'Clique':
-        dataExp = <span>A <b>Clique</b> is a group of nodes where every node is connected to every other node of the clique.</span>
+        dataExp = <span>A <b>Clique</b> is a <span className={classes.category}>subgraph</span> pattern, where a group of nodes are connected to every other node of the clique.</span>
         if (visType === 'timearcs') {
           visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the link density is <span className={classes.hl}>{`100%`}</span>. The length of the arc depends on the ordering of the nodes.</span>
         }
         else if (visType === 'matrix') {
-          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{`100%`}</span>.</span>
+          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{`100%`}</span>. They form a full block.</span>
         }
         else
-          visualExp = <></>
+          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{`100%`}</span>.</span>
         break
       case 'Cluster':
-        dataExp = <span>A <b>Cluster</b> refers to a group of nodes that have a high number of connexions between them, higher than in the rest of the graph.</span>
+        dataExp = <span>A <b>Cluster</b> is a <span className={classes.category}>subgraph</span> pattern, wh refers to a group of nodes that have a high number of connexions between them, higher than in the rest of the graph.</span>
+        // TODO:
         if (visType === 'timearcs') {
-          visualExp = <span>the cluster has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the link density is <span className={classes.hl}>{`100%`}</span>. The length of the arc depends on the ordering of the nodes.</span>
+          visualExp = <span>the cluster has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the link density is <span className={classes.hl}>{}</span>. The length of the arc depends on the ordering of the nodes.</span>
         }
         else if (visType === 'matrix') {
-          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{`100%`}</span>.</span>
+          visualExp = <span>the cluster has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{}</span>.</span>
         }
         else
-          visualExp = <></>
+          visualExp = <span>the cluster has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{ }</span>. They are closed to each other in the canvas. </span>
         break
       case 'Bridge':
         dataExp = <span> <b>Bridge nodes</b> are nodes that act as a connection between different areas and groups in the graph.If removed, they can often create disconnected components.</span>

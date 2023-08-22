@@ -91,6 +91,12 @@ export class LinkPattern extends NetworkPattern {
     }
 }
 
+export class SelfLink extends LinkPattern {
+    constructor(links: LinkId[]) {
+        super(links);
+    }
+}
+
 export class ParallelLinks extends LinkPattern {
     constructor(links: LinkId[]) {
         super(links);
@@ -111,6 +117,12 @@ export class WeakLink extends LinkPattern {
 
 // Time related patterns
 export class RepeatedLinks extends LinkPattern {
+    constructor(links: LinkId[]) {
+        super(links);
+    }
+}
+
+export class BackAndForth extends LinkPattern {
     constructor(links: LinkId[]) {
         super(links);
     }
@@ -181,6 +193,12 @@ export class BiClique extends NetworkPattern {
 }
 
 export class Cluster extends NetworkPattern {
+    constructor(nodes: NodeId[]) {
+        super(nodes);
+    }
+}
+
+export class ClusterSubset extends NetworkPattern {
     constructor(nodes: NodeId[]) {
         super(nodes);
     }
