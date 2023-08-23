@@ -28,7 +28,7 @@ export function* findCliques(network: Graph) {
                 let subg_q = subg.filter(n => adj_q.includes(n))
 
                 if (subg_q.length == 0) {
-                    if (Q.length > 2) {
+                    if (Q.length > 4) {
                         let clique = new Clique(Q);
                         yield clique;
                     }
