@@ -1,6 +1,6 @@
 import Graph from "graphology";
 
-import {Hub, ParallelLinks, SelfLink, StrongLink, WeakLink} from "./motif";
+import {ParallelLinks, SelfLink, StrongLink, WeakLink} from "./motif";
 import {calculateMean, calculateStandardDeviation} from "./utils";
 
 const WEIGHT_THRESHOLD = 5;
@@ -16,20 +16,37 @@ export function* findSelfLinks(network: Graph): Generator<StrongLink> {
 }
 
 export function* findStrongLinks(network: Graph): Generator<StrongLink> {
-    for (let edge of network.edges()) {
-        // TODO: key of weight is currently 'value'
+    let weightDist = []
+    network.forEachEdge(edge => {
         let weight = network.getEdgeAttribute(edge, "linkWeight");
-        if (weight > WEIGHT_THRESHOLD) {
+        weightDist.push(weight);
+    })
+    let mean = calculateMean(weightDist);
+    let std = calculateStandardDeviation(weightDist);
+
+    for (let edge of network.edges()) {
+        // TODO: key of weight
+        let weight = network.getEdgeAttribute(edge, "linkWeight");
+        // if (weight > WEIGHT_THRESHOLD) {
+        if (weight > mean + 2 * std)
             yield new StrongLink([edge]);
-        }
     }
 }
 
 export function* findWeakLinks(network: Graph): Generator<WeakLink> {
+    let weightDist = []
+    network.forEachEdge(edge => {
+        let weight = network.getEdgeAttribute(edge, "linkWeight");
+        weightDist.push(weight);
+    })
+    let mean = calculateMean(weightDist);
+    let std = calculateStandardDeviation(weightDist);
+
     for (let edge of network.edges()) {
         let weight = network.getEdgeAttribute(edge, "linkWeight");
         if (weight == 1) {
-            yield new WeakLink([edge]);
+            if (weight < mean - 2 * std)
+                yield new WeakLink([edge]);
         }
     }
 }
