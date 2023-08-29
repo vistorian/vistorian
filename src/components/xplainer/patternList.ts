@@ -20,6 +20,13 @@ export const patternList: PatternList = {
     matrix: ['Clique-1', 'Clique-2'],
     description: 'Cliques are groups of nodes where every node is connected to every other node of the clique.',
   },
+  "ClusterSubset": {
+    title: "Cluster Subset",
+    type: 'subgraph',
+    timearcs: ['Cluster-1'],
+    matrix: ['Cluster-1', 'Cluster-2'],
+    description: 'It is a subset of a cluster.',
+  },
   "Cluster": {
     title: "Cluster",
     type: 'subgraph',

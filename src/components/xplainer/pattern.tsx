@@ -3,11 +3,15 @@ import { NetworkPattern } from "./motifs/motif"
 import { patternList } from "./patternList"
 import { Tag, message } from "antd"
 import { AllMotifs } from "../../../typings"
+import { find } from "lodash-es"
+import { timeFormat, timeParse } from "d3-time-format"
 
 const useStyles = createUseStyles({
   hl: {
     position: 'relative',
     fontWeight: 600,
+    whiteSpace: "pre",
+    wordBreak: 'break-word',
     '&:after': {
       content: '""',
       backgroundColor: '#FFE0B2',
@@ -22,7 +26,7 @@ const useStyles = createUseStyles({
   category: {
     position: 'relative',
     fontWeight: 600,
-    color: "#676767"
+    textDecoration: 'underline',
     // '&:after': {
     //   content: '""',
     //   backgroundColor: '#FFE0B2',
@@ -95,111 +99,194 @@ interface IPatternProps {
   motif: NetworkPattern
   visType: string
   allMotifs: AllMotifs
+  networkData: any
   setHoverRelatedMotif: (d: NetworkPattern) => void
   setClickRelatedMotif: (d: NetworkPattern) => void
 }
 
 function Pattern (props: IPatternProps) {
-  const { motif, visType, allMotifs, setHoverRelatedMotif, setClickRelatedMotif } = props
+  const { motif, visType, allMotifs, networkData, setHoverRelatedMotif, setClickRelatedMotif } = props
   const classes = useStyles()
 
   const motifType = motif ? motif.type() : ''
   let pattern, dataExp, visualExp, visualVariables
+  // console.log('networkData', networkData)
 
   const genExp = () => {
-    let dataExp, visualExp
+    let dataExp, visualExp, link, node
     switch (motifType) {
       case 'Clique':
-        dataExp = <span>A <b>Clique</b> is a <span className={classes.category}>subgraph</span> pattern, where a group of nodes are connected to every other node of the clique.</span>
+        dataExp = <span>A <b>Clique</b> is a <span className={classes.category}>subgraph pattern</span>, where a group of nodes are connected to every other node of the clique.</span>
         if (visType === 'timearcs') {
-          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the link density is <span className={classes.hl}>{`100%`}</span>. The length of the arc depends on the ordering of the nodes.</span>
+          visualExp = <span>The selection has <span className={classes.tag}>full arcs</span> among <span className={classes.hl}>{motif.nodes.length}</span> nodes. That is, the link density is <span className={classes.hl}>{`100%`}</span>. The size of the clique only relates to the number of nodes. The arc length depends on the positions of the respective nodes.</span>
         }
         else if (visType === 'matrix') {
-          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{`100%`}</span>. They form a full block.</span>
+          visualExp = <span>The selection has a <span className={classes.tag}>complete block</span> with <span className={classes.hl}>{motif.nodes.length}</span> nodes without missing cells inside. The size of the clique only relates to the number of nodes (rows / columns). Sometimes, the block may split, but can appear by reordering.</span>
         }
         else
-          visualExp = <span>the clique has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{`100%`}</span>.</span>
+          visualExp = <span></span>
         break
       case 'Cluster':
-        dataExp = <span>A <b>Cluster</b> is a <span className={classes.category}>subgraph</span> pattern, wh refers to a group of nodes that have a high number of connexions between them, higher than in the rest of the graph.</span>
-        // TODO:
+        dataExp = <span>A <b>Cluster</b> is a <span className={classes.category}>subgraph pattern</span>, which refers to a group of nodes that have a high number of connections among them, higher than that of the rest of the graph.</span>
         if (visType === 'timearcs') {
-          visualExp = <span>the cluster has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the link density is <span className={classes.hl}>{}</span>. The length of the arc depends on the ordering of the nodes.</span>
+          visualExp = <span>The selection is a <span className={classes.tag}>cluster</span> of <span className={classes.hl}>{motif.nodes.length}</span> nodes. These nodes are not fully connected, otherwise they form a clique. The cluster detection uses the louvain algorighm. The size of the cluster only relates to the number of nodes. The arc length depends on the positions of the respective nodes. </span>
         }
         else if (visType === 'matrix') {
-          visualExp = <span>the cluster has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{}</span>.</span>
+          visualExp = <span>The selection has a <span className={classes.tag}>fragmented block</span> with <span className={classes.hl}>{motif.nodes.length}</span> nodes. It contains empty cells, otherwise they form a clique. The size of the cluster only relates to the number of nodes (rows / columns). The cluster detection uses the louvain algorighm.</span>
         }
         else
-          visualExp = <span>the cluster has <span className={classes.hl}>{motif.nodes.length}</span> nodes, and the density is <span className={classes.hl}>{ }</span>. They are closed to each other in the canvas. </span>
+          visualExp = <span> node-link </span>
         break
-      case 'Bridge':
-        dataExp = <span>A <b>Bridge</b> is a <span className={classes.category}>node</span> pattern, which acts as a connection between different areas and groups in the graph. If removed, they can often create disconnected components in the graph.</span>
-        // TODO: 
+      case 'ClusterSubset':
+        dataExp = <span>A <b>Cluster Subset</b> is a <span className={classes.category}>subgraph pattern</span>, which indicates your selection is part of a large cluster. </span>
         if (visType === 'timearcs') {
-          visualExp = <span>the bridge node </span>
+          visualExp = <span>The selection is <span className={classes.tag}>part of a cluster</span>. There are <span className={classes.hl}>{motif.nodes.length}</span> nodes in your selection. These nodes are not fully connected, otherwise they form a clique. The cluster detection uses the louvain algorighm. The size of the cluster only relates to the number of nodes. The arc length depends on the positions of the respective nodes. </span>
         }
         else if (visType === 'matrix') {
-          visualExp = <span>the bridge node </span>
+          visualExp = <span>The selection is <span className={classes.tag}>part of a fragmented block</span> as a large block. There are <span className={classes.hl}>{motif.nodes.length}</span> nodes. It contains empty cells, otherwise they form a clique. The size of the cluster only relates to the number of nodes (rows / columns). The cluster detection uses the louvain algorighm.</span>
+        }
+        else
+          visualExp = <span>node-link </span>
+        break
+      case 'Bridge':
+        // TODO:
+        dataExp = <span>A <b>Bridge</b> is a <span className={classes.category}>node pattern</span>, which acts as a connection between different areas and groups in the graph. If removed, they can often create disconnected components in the graph.</span>
+        node = find(networkData.nodes, (n) => n.id == motif.nodes[0])
+        if (visType === 'timearcs') {
+          visualExp = <span>The selection is <span className={classes.hl}>node {motif.nodes[0]}</span> which has opposite arcs over time. If removed, its original neighbors would be disconnected to the whole graph. </span>
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span> The selection is a <span className={classes.tag}>row/column</span> <span className={classes.hl}>node {motif.nodes[0]}</span>. If removed, its orginal neigbors would not form blocks (clusters). </span>
         }
         else
           visualExp = <></>
         break
       case 'Hub':
-        dataExp = <span>A <b>Highly connected node</b> is a <span className={classes.category}>node</span> pattern, which has a lot of neighbors in contrast of the rest of the graph.</span>
+        dataExp = <span>A <b>Highly Connected Node</b> is a <span className={classes.category}>node pattern</span>, which has a lot of neighbors in contrast of the rest of the graph.</span>
+        node = find(networkData.nodes, (n) => n.id == motif.nodes[0])
+        // console.log('Hub:', node)
+        // TODO: calc connections & time 
         if (visType === 'timearcs') {
-          visualExp = <span>the bridge node </span>
+          visualExp = <span>The selection is part of a <span className={classes.tag}>dotted row</span> (<span className={classes.hl}>node {motif.nodes[0]}</span>). It has <span className={classes.hl}>xx</span> connections at <span className={classes.hl}>xx</span> different points in time in total, and is ranked top <span className={classes.hl}>xx</span> in the network. The time point <span className={classes.hl}>xx</span> has the most connections of <span className={classes.hl}>xx</span>. </span>
         }
         else if (visType === 'matrix') {
-          visualExp = <span>the bridge node </span>
+          visualExp = <span> The selection is part of a <span className={classes.tag}>dense row / column</span> (<span className={classes.hl}>node {motif.nodes[0]}</span>). It has <span className={classes.hl}>xx</span> cells colored in total, i.e., <span className={classes.hl}>xx</span> connections and is ranked the top <span className={classes.hl}>xx</span> in the network. </span>
         }
         else
           visualExp = <></>
         break
-      case 'IsolatedNode':
-        visualExp = <span></span>
-        dataExp = <span>An isolated node is a node without any connection, i.e., with a degree of 0.</span>
-        break
+      // case 'IsolatedNode':
+      //   visualExp = <span></span>
+      //   dataExp = <span>An isolated node is a node without any connection, i.e., with a degree of 0.</span>
+      //   break
       case 'ParallelLinks':
-        visualExp = <span></span>
-        dataExp = <span>Parallel links are links that have the two same incident nodes.</span>
+        dataExp = <span><b>Parallel links</b> are a <span className={classes.category}>link pattern</span>, which have the two same nodes.</span>
+        link = find(networkData.links, (l) => l.id == motif.links[0])
+        // console.log('ParallelLinks:', link)
+        if (visType === 'timearcs') {
+          visualExp = <span>The selection has <span className={classes.hl}>{motif.links.length}</span> <span className={classes.tag}>parallel arcs</span> between <span className={classes.hl}>node {link.source.data.name}</span> and <span className={classes.hl}>node {link.target.data.name}</span> at <span className={classes.hl}> time {timeFormat('%d/%m/%Y')(link.data._time)}</span>. That means these two nodes have <span className={classes.hl}>{motif.links.length}</span> connections at the same time. </span>
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span>The selection is a <span className={classes.tag}>split cell</span> at the intersection of row (<span className={classes.hl}>node {link.source.id}</span>) and column (<span className={classes.hl}>node {link.target.id}</span>), which means these two nodes have <span className={classes.hl}>{motif.links.length}</span> diifferent connections.</span>
+        }
+        else
+          visualExp = <></>
         break
       case 'StrongLink':
-        visualExp = <span></span>
-        dataExp = <span>Link with a weight in the top percentile of the weights distribution.</span>
+        dataExp = <span>A <b>Strong Link</b> is a <span className={classes.category}>link pattern</span>, whose weight is in the top percentile of the weights distribution.</span>
+        link = find(networkData.links, (l) => l.id == motif.links[0])
+        if (visType === 'timearcs') {
+          visualExp = <span> The selection is a <span className={classes.tag}>thick arc</span> which connects the <span className={classes.hl}>node {link.source.data.name}</span> and <span className={classes.hl}>node {link.target.data.name}</span> with a link weight of <span className={classes.hl}>{link.linkWeight}</span>. The length of the arc depends on the positions of the respective nodes, and does not convey the link properties.</span>           
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span>The selection is a <span className={classes.tag}>solid cell</span> at the intersection of row (<span className={classes.hl}>node {link.source.id}</span>) and column (<span className={classes.hl}>node {link.target.id}</span>) with a link weight of <span className={classes.hl}>{link.linkWeight}</span>.</span>
+        }
+        else
+          visualExp = <></>
         break
       case 'WeakLink':
-        visualExp = <span></span>
-        dataExp = <span>Link with a weight in the bottom percentile of the weights distribution.</span>
+        dataExp = <span>A <b>Weak Link</b> is a <span className={classes.category}>link pattern</span>, whose weight is in the bottom percentile of the weights distribution.</span>
+        link = find(networkData.links, (l) => l.id == motif.links[0])
+        if (visType === 'timearcs') {
+          visualExp = <span> The selection is a <span className={classes.tag}>thin arc</span> which connects the <span className={classes.hl}>node {link.source.data.name}</span> and <span className={classes.hl}>node {link.target.data.name}</span> with a link weight of <span className={classes.hl}>{link.linkWeight}</span>. The length of the arc depends on the positions of the respective nodes, and does not convey the link properties.</span>
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span>The selection is a transparent cell at the intersection of row (<span className={classes.hl}>node {link.source.id}</span>) and column (<span className={classes.hl}>node {link.target.id}</span>) with a link weight of <span className={classes.hl}>{link.linkWeight}</span>.</span>
+        }
+        else
+          visualExp = <></>
         break
       case 'SelfLink':
-        visualExp = <span></span>
-        dataExp = <span>Self links refer to links that connects a node to itself.</span>
+        dataExp = <span>A <b>Self Link</b> is a <span className={classes.category}>link pattern</span>, which connects a node to itself.</span>
+        link = find(networkData.links, (l) => l.id == motif.links[0])
+        if (visType === 'timearcs') {
+          visualExp = <span>The selection is a self arc that connects the <span className={classes.hl}>node {link.source.data.name}</span> to itself on <span className={classes.hl}>time {timeFormat('%d/%m/%Y')(link.data._time)}</span>.</span>
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span>The selection is a filled cell on the matrix diagonal, which means a link that connects the node <span className={classes.hl}>{link.source.id}</span> to itself. </span>
+        }
+        else
+          visualExp = <></>
         break
       case 'RepeatedLinks':
-        visualExp = <span></span>
-        dataExp = <span>Repeated Links are links between the same two nodes but appear in different times."</span>
-        break
-      case 'Burst':
-        visualExp = <span></span>
-        dataExp = <span>A <b>Burst</b> is a <span className={classes.category}>node</span> pattern, whose connections are higher than the rest of the graph in this time span.</span>
+        dataExp = <span><b>Repeated Links</b> are a <span className={classes.category}>link pattern</span>, which have the same two nodes but appear in different times.</span>
+        link = find(networkData.links, (l) => l.id == motif.links[0])
+        if (visType === 'timearcs') {
+          visualExp = <span> The selection has <span className={classes.hl}>{motif.links.length}</span> <span className={classes.tag}>repeated arcs</span> between <span className={classes.hl}>node {link.source.data.name}</span> and <span className={classes.hl}>node {link.target.data.name}</span> at <span className={classes.hl}>{motif.links.length}</span> different times.There is no specific regularity among times of connections. </span>
+        }
+        // TODO:
+        else if (visType === 'matrix') {
+          visualExp = <span>n/a</span>
+        }
+        else
+          visualExp = <></>
         break
       case 'Fan':
-        visualExp = <span></span>
         dataExp = <span>Fans are nodes that are connected to several other nodes of degree 1.</span>
+        // TODO:
+        if (visType === 'timearcs') {
+          visualExp = <span>The selection has a node <span className={classes.hl}>xx</span> connecting to <span className={classes.hl}>{motif.nodes.length-1}</span> nodes which only connects to this node. The subgraph may look like S-arcs, C-arcs, B-arcs, etc. The size of the fan only relates to the number of the nodes, while the arc length depends on the positions of the respective nodes. </span>
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span>tbd</span>
+        }
+        else
+          visualExp = <></>
         break
-      case 'Connector':
-        visualExp = <span></span>
-        dataExp = <span></span>
-        break
+      // case 'Connector':
+      //   visualExp = <span></span>
+      //   dataExp = <span></span>
+      //   break
       case 'Bipartite':
-        visualExp = <span></span>
-        dataExp = <span></span>
+        dataExp = <span>A <b>Bi-graph</b> is a <span className={classes.category}>subgraph pattern</span>, which has a group of nodes that can be divided into two sets, and in which connections can only occur between nodes of different sets. Nodes of the same set can not have any connections in bi-graphs.</span>
+        // TODO:
+        if (visType === 'timearcs') {
+          visualExp = <span>The selection has <span className={classes.hl}>{motif.nodes.length}</span> nodes.The subgraph may look like rainbow arcs.</span>
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span>tbd</span>
+        }
+        else
+          visualExp = <></>
         break
-      case 'BiClique':
-        visualExp = <span></span>
-        dataExp = <span>A bi-graph refers to a group of nodes that can be divided into two sets, and in which connexions can only occur between nodes of different sets. Nodes of the same set can not have any connexions in bi-graphs.</span>
+      // case 'BiClique':
+      //   visualExp = <span></span>
+      //   dataExp = <span>A bi-graph refers to a group of nodes that can be divided into two sets, and in which connexions can only occur between nodes of different sets. Nodes of the same set can not have any connexions in bi-graphs.</span>
+      //   break
+      case 'Burst':
+        dataExp = <span>A <b>Burst</b> is a <span className={classes.category}>node pattern</span>, whose connections are higher than the rest of the graph in this time span.</span>
+        // TODO:
+        if (visType === 'timearcs') {
+          visualExp = <span>tbd</span>
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span>tbd</span>
+        }
+        else
+          visualExp = <></>
         break
       default:
+        dataExp = <span>no matching description</span>
         visualExp = <span>no matching description.</span>
     }
     return { dataExp, visualExp }
@@ -225,13 +312,14 @@ function Pattern (props: IPatternProps) {
         </div>
         <div style={{ display: 'flex', marginTop: 5 }}>
           {varibles.map((v: string, i: number) => {
-            if (i > 0)
-            return (
-              <div 
-                key={i}
-                style={{ backgroundColor: '#535353', border: '2px solid #535353', borderRadius: 5, marginRight: 8 }}>
-                <img style={{ width: 115, height: 115 }} src={`./pattern-icons/${visType}/${motifType}-${i+1}.svg`} />
-              </div>)
+            if (i > 0) {
+              return (
+                <div
+                  key={i}
+                  style={{ backgroundColor: '#535353', border: '2px solid #535353', borderRadius: 5, marginRight: 8 }}>
+                  <img style={{ width: 115, height: 115 }} src={`./pattern-icons/${visType}/${motifType}-${i + 1}.svg`} />
+                </div>)
+            }
           })}
         </div>
       </div>)
@@ -277,7 +365,7 @@ function Pattern (props: IPatternProps) {
 
           {/* explain your selection */}
           <div style={{ marginTop: 25}}>
-            <span style={{ fontWeight: 600}}>{`In your selection, `}</span>
+            {/* <span style={{ fontWeight: 600}}>{`In your selection, `}</span> */}
             {visualExp}
           </div>
 
@@ -285,7 +373,7 @@ function Pattern (props: IPatternProps) {
           {getVisualVariations()}
 
           {/* relate to variants when have more than one instances in this network */}
-          {allMotifs[motifType].length > 1 ? 
+          {motifType in allMotifs && allMotifs[motifType].length > 1 ? 
           <div style={{ marginTop: 25 }}>
             <div style={{display: 'flex', alignItems: 'center'}}>
                 <div className={classes.diamond}></div>

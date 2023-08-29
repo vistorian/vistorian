@@ -10,7 +10,7 @@ import { PatternDetectors } from "../xplainer/motifs/patternDetectors"
 import Overlay from "../xplainer/overlay"
 import { NetworkPattern } from "../xplainer/motifs/motif"
 import PatternCard from "../xplainer/patternCard"
-import { groupBy } from "lodash-es"
+import { flatMap, groupBy } from "lodash-es"
 
 
 interface IVisContentProps {
@@ -21,7 +21,7 @@ interface IVisContentProps {
   network: string
   options: VisContentOptions
   setAllMotifs: (m: AllMotifs) => void
-  showAll: boolean
+  selectedTypes: string[]
 }
 
 function VisContent(props: IVisContentProps) {
@@ -34,7 +34,7 @@ function VisContent(props: IVisContentProps) {
 
   const containerId = `visSvg${viewerId}`
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
-
+  // console.log(window.localStorage.getItem("UPLOADED_FILE_survey1.csv"))
 
   let motifs = useMotifDetect(patternDetector)
   type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
@@ -99,13 +99,6 @@ function VisContent(props: IVisContentProps) {
     update()
   }, [loading, selectType])
 
-  // show all motifs bounds above vis
-  useEffect(() => {
-    if (props.showAll && patternDetector && Object.keys(patternDetector).length > 0) {
-      motifs.detectMotifs(patternDetector.network)
-    }
-  }, [props.showAll])
-
   // drag pattern card
   // const moveBox = useCallback(
   //   (id: string, left: number, top: number) => {
@@ -141,33 +134,48 @@ function VisContent(props: IVisContentProps) {
     }
   }, [motifs.motifs])
 
+  // show all motifs bounds above vis
   useEffect(() => {
-    if (Object.keys(viewer).length > 0) {
-      let nodeIds: string[] | number[] = [], 
-        linkIds: string[] | number[] = []
-      // select a related motif
-      if (Object.keys(clickRelatedMotif).length > 0) {
-        // console.log('clickRelatedMotif', clickRelatedMotif)
-        nodeIds = clickRelatedMotif.nodes
-        linkIds = clickRelatedMotif.links
-      }
-      // selecta a motif from user selection area
-      else if (selectedMotifNo[0] !== -1) {
-        const groupByType = groupBy(motifs.motifs, (motif) => motif.type())
-        const thisMotif = groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]
-        // console.log('thisMotif', groupByType, thisMotif)
-        nodeIds = thisMotif.nodes
-        linkIds = thisMotif.links
-      }
-
-      const networkName = "network"; 
-      // @ts-ignore
-      const nodes = viewer.state[networkName].nodes.filter((n: any) => nodeIds.includes(n.id));
-      // @ts-ignore
-      const links = viewer.state[networkName].links.filter((l: any) => linkIds.includes(l.id));
-      viewer.setParam('selected_graph', { nodes, links })
+    if (props.selectedTypes.length > 0 && patternDetector && Object.keys(patternDetector).length > 0) {
+      // motifs.detectMotifs(patternDetector.network)
+      // motifs.setMotifs(flatMap(patternDetector.allMotifs))
+      // console.log(props.selectedTypes, flatMap(patternDetector.allMotifs).filter((motif: any) => props.selectedTypes.includes(motif.type())))
+      motifs.setMotifs(flatMap(patternDetector.allMotifs).filter((motif: any) => props.selectedTypes.includes(motif.type())))
     }
-  }, [selectedMotifNo, clickRelatedMotif])
+    else {
+      setOpen(false)
+    }
+  }, [props.selectedTypes])
+
+
+  // highlight selected nodes & links in the motif
+  // useEffect(() => {
+  //   if (Object.keys(viewer).length > 0) {
+  //     let nodeIds: string[] | number[] = [], 
+  //       linkIds: string[] | number[] = []
+  //     // select a related motif
+  //     if (Object.keys(clickRelatedMotif).length > 0) {
+  //       // console.log('clickRelatedMotif', clickRelatedMotif)
+  //       nodeIds = clickRelatedMotif.nodes
+  //       linkIds = clickRelatedMotif.links
+  //     }
+  //     // selecta a motif from user selection area
+  //     else if (selectedMotifNo[0] !== -1) {
+  //       const groupByType = groupBy(motifs.motifs, (motif) => motif.type())
+  //       const thisMotif = groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]
+  //       // console.log('thisMotif', groupByType, thisMotif)
+  //       nodeIds = thisMotif.nodes
+  //       linkIds = thisMotif.links
+  //     }
+
+  //     const networkName = "network"; 
+  //     // @ts-ignore
+  //     const nodes = viewer.state[networkName].nodes.filter((n: any) => nodeIds.includes(n.id));
+  //     // @ts-ignore
+  //     const links = viewer.state[networkName].links.filter((l: any) => linkIds.includes(l.id));
+  //     viewer.setParam('selected_graph', { nodes, links })
+  //   }
+  // }, [selectedMotifNo, clickRelatedMotif])
 
   return (
     loading ? 
@@ -206,6 +214,7 @@ function VisContent(props: IVisContentProps) {
               motifs={(Object.keys(clickRelatedMotif).length > 0) ? [clickRelatedMotif] : motifs.motifs}
               showClickRelatedMotif={Object.keys(clickRelatedMotif).length > 0}
               allMotifs={patternDetector.allMotifs}
+              networkData={viewer.state.network}
               setHoverRelatedMotif={setHoverRelatedMotif}
               setClickRelatedMotif={setClickRelatedMotif}
               setSelectedMotifNo={setSelectedMotifNo}

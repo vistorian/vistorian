@@ -17,7 +17,8 @@ const useStyles = createUseStyles({
     boxShadow: "0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)",
     padding: 12,
     boxSizing: "border-box",
-    width: 500,
+    minWidth: 500,
+    maxWidth: 500,
     flexDirection: 'column',
     position: "relative",
     top: 0,
@@ -33,13 +34,14 @@ interface IPatternCardProps {
   motifs: NetworkPattern[]
   showClickRelatedMotif: boolean
   allMotifs: AllMotifs
+  networkData: any
   setHoverRelatedMotif: (d: NetworkPattern) => void
   setClickRelatedMotif: (d: NetworkPattern) => void 
   setSelectedMotifNo: (d: [number, number]) => void
 }
 
 function PatternCard (props: IPatternCardProps) {
-  const { visType, open, setOpen, motifs, showClickRelatedMotif, allMotifs } = props
+  const { visType, open, setOpen, motifs, showClickRelatedMotif, allMotifs, networkData } = props
   const groupByType = groupBy(motifs, motif => motif.type())
   // console.log('groupByType', groupByType)
 
@@ -52,6 +54,7 @@ function PatternCard (props: IPatternCardProps) {
 
   const getTopMenuItems = () => {
     return Object.keys(groupByType).map((name: string, index: number) => {
+      // console.log(name)
       return {
         label: `${patternList[name].title} (${groupByType[name].length})`,
         key: index
@@ -137,13 +140,15 @@ function PatternCard (props: IPatternCardProps) {
         selectedKeys={subMenuKey === -1 ? [] : [`${subMenuKey}`]}
         items={getSubMenuItems(topMenuKey)}
       />
-      {(topMenuKey !== -1 && subMenuKey !== -1 && Object.keys(groupByType).length > 0) ? <Pattern
-        visType={visType}
-        motif={groupByType[Object.keys(groupByType)[topMenuKey]][subMenuKey]}
-        allMotifs={allMotifs}
-        setHoverRelatedMotif={props.setHoverRelatedMotif}
-        setClickRelatedMotif={props.setClickRelatedMotif}
-      /> : null}
+      {(topMenuKey !== -1 && subMenuKey !== -1 && Object.keys(groupByType).length > 0) ? 
+        <Pattern
+          visType={visType}
+          motif={groupByType[Object.keys(groupByType)[topMenuKey]][subMenuKey]}
+          allMotifs={allMotifs}
+          networkData={networkData}
+          setHoverRelatedMotif={props.setHoverRelatedMotif}
+          setClickRelatedMotif={props.setClickRelatedMotif}
+        /> : null}
       
     </div>
   )

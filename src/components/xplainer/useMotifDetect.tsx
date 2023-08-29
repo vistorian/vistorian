@@ -103,6 +103,7 @@ const useMotifDectect = (patternDetector: any) => {
           })
         }
       }
+      console.log('motifs:', result)
     }
   }
   return { motifs, setMotifs, detectMotifs, contextHolder }

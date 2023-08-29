@@ -47,7 +47,7 @@ function Vis(props: IVisProps) {
   const data = JSON.parse(window.localStorage.getItem('UPLOADED_FILE_' + networkCfg.linkTableConfig?.file) as string)
   // for PatternOverview Component
   const [allMotifs, setAllMotifs] = useState<AllMotifs>({})
-  const [showAll, setShowAll] = useState<boolean>(false)
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
 
   // respond to time slider
   let minTime = 0, maxTime = 0
@@ -146,9 +146,8 @@ function Vis(props: IVisProps) {
             nodeTypeInShape={nodeTypeInShape}
           />
           <Overview 
-            motifs={allMotifs}
-            checked={showAll}
-            setChecked={setShowAll}
+            allMotifs={allMotifs}
+            setSelectedTypes={setSelectedTypes}
           />
         </div>
         
@@ -176,7 +175,7 @@ function Vis(props: IVisProps) {
                     network={network as string}
                     options={options}
                     setAllMotifs={setAllMotifs}
-                    showAll={showAll}
+                    selectedTypes={selectedTypes}
                   />
                 )
               })}
