@@ -59,7 +59,7 @@ function hashSourceTarget(source: string, target: string) {
     }
 }
 
-export function* findParallelLinks(network: Graph): Generator<ParallelLinks> {
+export function* findParallelLinks(network: Graph, isMatrix: boolean): Generator<ParallelLinks> {
     let sourceTargetToEdge: Record<string, string[]> = {};
     for (let edge of network.edges()) {
         let [source, target] = network.extremities(edge);
@@ -74,7 +74,10 @@ export function* findParallelLinks(network: Graph): Generator<ParallelLinks> {
     }
 
     for (let edges of Object.values(sourceTargetToEdge)) {
-        if (edges.length > 1) {
+        if (isMatrix && edges.length > 2) {
+            yield new ParallelLinks(edges);
+        }
+        else if (!isMatrix && edges.length > 1) {
             yield new ParallelLinks(edges);
         }
     }

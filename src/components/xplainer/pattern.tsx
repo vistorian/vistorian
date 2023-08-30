@@ -110,7 +110,7 @@ function Pattern (props: IPatternProps) {
 
   const motifType = motif ? motif.type() : ''
   let pattern, dataExp, visualExp, visualVariables
-  // console.log('networkData', networkData)
+  console.log('Pattern', motif)
 
   const genExp = () => {
     let dataExp, visualExp, link, node
@@ -153,10 +153,10 @@ function Pattern (props: IPatternProps) {
         dataExp = <span>A <b>Bridge</b> is a <span className={classes.category}>node pattern</span>, which acts as a connection between different areas and groups in the graph. If removed, they can often create disconnected components in the graph.</span>
         node = find(networkData.nodes, (n) => n.id == motif.nodes[0])
         if (visType === 'timearcs') {
-          visualExp = <span>The selection is <span className={classes.hl}>node {motif.nodes[0]}</span> which has opposite arcs over time. If removed, its original neighbors would be disconnected to the whole graph. </span>
+          visualExp = <span>The selection is <span className={classes.hl}>node {node.data.name}</span> which has opposite arcs over time. If removed, its original neighbors would be disconnected to the whole graph. </span>
         }
         else if (visType === 'matrix') {
-          visualExp = <span> The selection is a <span className={classes.tag}>row/column</span> <span className={classes.hl}>node {motif.nodes[0]}</span>. If removed, its orginal neigbors would not form blocks (clusters). </span>
+          visualExp = <span> The selection is a <span className={classes.tag}>row/column</span> <span className={classes.hl}>node {node.data.name}</span>. If removed, its orginal neigbors would not form blocks (clusters). </span>
         }
         else
           visualExp = <></>

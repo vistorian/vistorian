@@ -34,6 +34,13 @@
       "action": "replace",
       "type": "selection",
       "clearOnBackgroundClick": true
+    },
+    {
+      "name": "selected_marks",
+      "network": "network",
+      "action": "replace",
+      "type": "selection",
+      "clearOnBackgroundClick": true
     }
   ],
 
@@ -150,12 +157,12 @@
         "strokeOpacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "pattern_selection.nodes",
+              "selectionIsEmpty": "selected_marks.nodes",
               "value": 0.3
             },
             {
-              "inSelection": "pattern_selection.links",
-              "value": 0.8
+              "inSelection": "selected_marks.links",
+              "value": 1
             }
           ],
           "value": 0.3
@@ -181,11 +188,11 @@
         "opacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "pattern_selection.nodes",
+              "selectionIsEmpty": "selected_marks.nodes",
               "value": 1
             },
             {
-              "inSelection": "pattern_selection.nodes",
+              "inSelection": "selected_marks.nodes",
               "value": 1
             }
           ],

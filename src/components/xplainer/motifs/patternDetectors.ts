@@ -23,6 +23,7 @@ export class PatternDetectors {
     // graphologyNet: Graph = new Graph();
     graph: Graph = new MultiGraph();
     isDynamic: boolean;
+    isMatrix: boolean;
     // nodes: NetworkNode[];
     // links: NetworkLink[];
 
@@ -31,9 +32,10 @@ export class PatternDetectors {
     allMotifs: AllMotifs;
 
 
-    constructor(network: Network, isDynamic: boolean) {
+    constructor(network: Network, visType: string) {
         this.network = network;
-        this.isDynamic = isDynamic;
+        this.isDynamic = visType === 'timearcs';
+        this.isMatrix = visType === 'matrix';
         this.netPanGraphToGraphology();
         this.allMotifs = this.getAll()
     }
@@ -94,12 +96,12 @@ export class PatternDetectors {
         yield* findFans(this.graph);
 
         yield* findSelfLinks(this.graph);
-        yield* findParallelLinks(this.graph);
+        yield* findParallelLinks(this.graph, this.isMatrix);
         yield* findWeakLinks(this.graph);
         yield* findStrongLinks(this.graph);
 
         if (this.isDynamic) {
-            yield* findBursts(this.graph);
+            // yield* findBursts(this.graph);
             yield* findRepeatedLinks(this.graph);
         }
     }

@@ -10,7 +10,7 @@ import { PatternDetectors } from "../xplainer/motifs/patternDetectors"
 import Overlay from "../xplainer/overlay"
 import { NetworkPattern } from "../xplainer/motifs/motif"
 import PatternCard from "../xplainer/patternCard"
-import { flatMap, groupBy } from "lodash-es"
+import { flatMap, groupBy, uniq } from "lodash-es"
 
 
 interface IVisContentProps {
@@ -73,7 +73,7 @@ function VisContent(props: IVisContentProps) {
     })
     // @ts-ignore
     console.log('VIEW STATE:', tmpViewer.state, tmpViewer.sceneJSON)
-    let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType === 'timearcs')
+    let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType)
     // console.log('patternDetector', tmpPatternDetector.allMotifs)
     // setNetworkData(viewer.state.network)
     setViewer(tmpViewer)
@@ -123,6 +123,7 @@ function VisContent(props: IVisContentProps) {
   // Xplainer related state
   const [hoverRelatedMotif, setHoverRelatedMotif] = useState<NetworkPattern>({} as NetworkPattern)
   const [clickRelatedMotif, setClickRelatedMotif] = useState<NetworkPattern>({} as NetworkPattern)
+  // related to the pattern card menu. get the pattern
   const [selectedMotifNo, setSelectedMotifNo] = useState<[number, number]>([-1, 0])
   const [open, setOpen] = useState<boolean>(false)
 
@@ -149,33 +150,43 @@ function VisContent(props: IVisContentProps) {
 
 
   // highlight selected nodes & links in the motif
-  // useEffect(() => {
-  //   if (Object.keys(viewer).length > 0) {
-  //     let nodeIds: string[] | number[] = [], 
-  //       linkIds: string[] | number[] = []
-  //     // select a related motif
-  //     if (Object.keys(clickRelatedMotif).length > 0) {
-  //       // console.log('clickRelatedMotif', clickRelatedMotif)
-  //       nodeIds = clickRelatedMotif.nodes
-  //       linkIds = clickRelatedMotif.links
-  //     }
-  //     // selecta a motif from user selection area
-  //     else if (selectedMotifNo[0] !== -1) {
-  //       const groupByType = groupBy(motifs.motifs, (motif) => motif.type())
-  //       const thisMotif = groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]
-  //       // console.log('thisMotif', groupByType, thisMotif)
-  //       nodeIds = thisMotif.nodes
-  //       linkIds = thisMotif.links
-  //     }
+  useEffect(() => {
+    if (Object.keys(viewer).length > 0) {
+      let nodeIds: string[] | number[] = [], 
+        linkIds: string[] | number[] = []
+      // a related motif
+      if (Object.keys(clickRelatedMotif).length > 0) {
+        // console.log('clickRelatedMotif', clickRelatedMotif)
+        nodeIds = clickRelatedMotif.nodes
+        linkIds = clickRelatedMotif.links
+      }
+      // a motif from user selection
+      else if (selectedMotifNo[0] !== -1) {
+        const groupByType = groupBy(motifs.motifs, (motif) => motif.type())
+        const thisMotif = groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]
+        console.log('thisMotif', groupByType, thisMotif)
+        nodeIds = thisMotif.nodes
+        linkIds = thisMotif.links
+      }
 
-  //     const networkName = "network"; 
-  //     // @ts-ignore
-  //     const nodes = viewer.state[networkName].nodes.filter((n: any) => nodeIds.includes(n.id));
-  //     // @ts-ignore
-  //     const links = viewer.state[networkName].links.filter((l: any) => linkIds.includes(l.id));
-  //     viewer.setParam('selected_graph', { nodes, links })
-  //   }
-  // }, [selectedMotifNo, clickRelatedMotif])
+      const networkName = "network"; 
+      // @ts-ignore
+      const links = viewer.state[networkName].links.filter((l: any) => linkIds.includes(`${l.id}`));
+      if (nodeIds.length === 0) {
+        links.map((l: any) => {
+          // @ts-ignore
+          nodeIds.push(l.source.id, l.target.id)
+        })
+        // @ts-ignore
+        nodeIds = uniq(nodeIds)
+        console.log('nodeIds', nodeIds)
+      }
+      // @ts-ignore
+      const nodes = viewer.state[networkName].nodes.filter((n: any) => nodeIds.includes(`${n.id}`));
+      console.log('links:', links)
+      viewer.setParam('selected_marks', { nodes, links })
+    }
+  }, [selectedMotifNo, clickRelatedMotif])
 
   return (
     loading ? 
