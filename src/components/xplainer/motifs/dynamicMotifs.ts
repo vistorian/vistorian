@@ -16,7 +16,6 @@ export function* findRepeatedLinksAndBF(network: Graph, timeKey: string = "Date"
         // for (let edge of network.edges()) {
         //     console.log(111, network.getEdgeAttributes(edge))
         // }
-        console.log(111, pl)
 
         if (timesSet.size > 1) {
         // if (times.length > 1) {
@@ -37,7 +36,6 @@ export function* findRepeatedLinksAndBF(network: Graph, timeKey: string = "Date"
             yield new RepeatedLinks(pl.links)
         }
     }
-    console.log("dddd")
 
     // let parallelLinks = findParallelLinks(network);
     // let repeatedLinks =  Array.from( parallelLinks ).map(pl => {
