@@ -1,5 +1,7 @@
 // import {Network, NetworkNode} from "./netpan";
 import Graph from "graphology";
+import subgraph from 'graphology-operators/subgraph';
+
 import {NetworkNode} from "./netpan";
 import {LinkId, LinkTuple, NodeId} from "./patternDetectors";
 
@@ -48,13 +50,25 @@ export class NetworkPattern {
 
     copy(): NetworkPattern {
         this.nodes = [...this.nodes]
+        // this.links = [...this.links]
         return this;
+    }
+
+    // Find the links in the pattern from the list of nodes and the network
+    extendLinks(network: Graph) {
+        let subg = subgraph(network, this.nodes);
+        this.links = subg.edges();
+        // console.log(links)
     }
 }
 
 export class NodePattern extends NetworkPattern {
     constructor(nodes: NodeId[]) {
         super(nodes);
+    }
+
+    extendLinks(network: Graph) {
+        //
     }
 }
 
@@ -81,6 +95,10 @@ export class LinkPattern extends NetworkPattern {
         super(null, links);
     }
 
+    extendLinks(network: Graph) {
+        //
+    }
+
     isContainedBy(nodes: NodeId[], links: LinkId[]) {
         for (let link of this.links) {
             if (!links.includes(link)) {
@@ -88,6 +106,10 @@ export class LinkPattern extends NetworkPattern {
             }
         }
         return true;
+    }
+
+    size(): number {
+        return this.links.length;
     }
 }
 
