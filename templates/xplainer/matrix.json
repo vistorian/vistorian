@@ -24,6 +24,13 @@
             "action": "replace",
             "type": "selection",
             "clearOnBackgroundClick": true
+        },
+        {
+            "name": "selected_marks",
+            "network": "network",
+            "action": "replace",
+            "type": "selection",
+            "clearOnBackgroundClick": true
         }
     ],
     "scales": [
@@ -100,12 +107,12 @@
                             "value": "0"
                         },
                         {
-                            "inSelection": "pattern_selection.links",
+                            "inSelection": "selected_marks.links",
                             "scale": "opacity",
                             "expression": "datum.data[0].linkWeight"
                         },
                         {
-                            "selectionIsNotEmpty": "pattern_selection.links",
+                            "selectionIsNotEmpty": "selected_marks.links",
                             "value": 0.1
                         }
                     ],

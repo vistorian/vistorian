@@ -9,10 +9,11 @@
       "clearOnBackgroundClick": true
     },
     {
-      "name": "selected_graph",
+      "name": "selected_marks",
       "network": "network",
       "action": "replace",
-      "type": "selection"
+      "type": "selection",
+      "clearOnBackgroundClick": true
     },
     {
       "name": "timeRange", 
@@ -110,12 +111,11 @@
               "value": 0
             },
             {
-              "selectionIsEmpty": "pattern_selection.nodes",
-              "field": "linkWeight",
-              "scale": "edgeOpacity"
+              "selectionIsEmpty": "selected_marks.nodes",
+              "value": 1
             },
             {
-              "inSelection": "pattern_selection.links",
+              "inSelection": "selected_marks.links",
               "value": 1
             }
           ],
@@ -167,15 +167,11 @@
         "opacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "pattern_selection.nodes",
+              "selectionIsEmpty": "selected_marks.nodes",
               "value": 1
             },
             {
-              "inSelection": "pattern_selection.nodes",
-              "value": 1
-            },
-            {
-              "inSelection": "selected_graph.nodes",
+              "inSelection": "selected_marks.nodes",
               "value": 1
             }
           ],
