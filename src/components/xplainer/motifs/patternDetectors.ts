@@ -4,14 +4,17 @@ import {findCliques} from "./cliques";
 import {findConnectors} from "./findConnectors";
 import {findFans} from "./fan";
 import {findBridges, findHubs, findIsolatedNodes} from "./hubs";
-import {BiClique, Bipartite, Cluster, NetworkPattern, ParallelLinks} from "./motif";
+import {BiClique, Bipartite, Clique, Cluster, NetworkPattern, NodePattern, ParallelLinks} from "./motif";
 import {findParallelLinks, findSelfLinks, findStrongLinks, findWeakLinks} from "./linksPatterns";
 import {isBiClique, isBipartite} from "./bipartite";
 import {findBursts, findRepeatedLinks} from "./dynamicMotifs";
 import cloneDeep from 'lodash/cloneDeep'
-import {isCluster} from "./clusters";
+import {findClusters, isCluster} from "./clusters";
 import { AllMotifs } from "../../../../typings";
-import { groupBy } from "lodash-es";
+// import { groupBy } from "lodash-es";
+// import _ from "lodash-es";
+import * as _ from "lodash";
+
 
 export type NodeId = string;
 export type LinkTuple = [NodeId, NodeId];
@@ -23,11 +26,8 @@ export class PatternDetectors {
     // graphologyNet: Graph = new Graph();
     graph: Graph = new MultiGraph();
     isDynamic: boolean;
-    // nodes: NetworkNode[];
-    // links: NetworkLink[];
 
-    // nodes: NodeId[];
-    // links: LinkTuple[];
+    cliques: Clique[] = [];
     allMotifs: AllMotifs;
 
 
@@ -64,12 +64,30 @@ export class PatternDetectors {
         // Convert to string as link ids in NetPan are numbers but get converted as string in graphology
         let linksIds = links.map(n => `${n.id}`);
 
+        this.cliques = [];
+
         let motifFound: NetworkPattern[] = [];
+
+        motifLoop:
         for (let motif of this.findMotif()) {
-            // if (motif.isContainedBy(this.nodes, this.links)) {
+            if (motif.links.length == 0 && !(motif instanceof NodePattern)) {
+                motif.extendLinks(this.graph);
+            }
+
             if (motif.isContainedBy(nodesIds, linksIds)) {
-                // console.log(motif.nodes,  motif.constructor.name);
+                if (motif.type() == Clique.name) {
+                    this.cliques.push(motif)
+                } else if (motif.type() == Cluster.name) {
+                    for (let clique of this.cliques) {
+                        if (motif.isContainedBy(clique.nodes)) {
+                            continue motifLoop;
+                        }
+                    }
+                }
+
+                // TODO: Copy because generator delete nodes in memory (from networkx algorithms only I think)
                 motifFound.push(motif.copy())
+                // motifFound.push(motif)
             }
         }
 
@@ -77,9 +95,8 @@ export class PatternDetectors {
         if (isBiClique(nodesIds, this.graph)) motifFound.push(new BiClique(nodesIds))
         // if (isCluster(nodesIds, linksIds, this.graph)) motifFound.push(new Cluster(nodesIds))
 
-        let cluster = isCluster(nodesIds, linksIds, this.graph);
-        if (cluster) motifFound.push(cluster);
-        // if (isCluster(nodesIds, linksIds, this.graph)) motifFound.push(new Cluster(nodesIds))
+        // let cluster = isCluster(nodesIds, linksIds, this.graph);
+        // if (cluster) motifFound.push(cluster);
 
         return motifFound;
     }
@@ -90,7 +107,8 @@ export class PatternDetectors {
         yield* findIsolatedNodes(this.graph);
 
         yield* findCliques(this.graph);
-        yield* findConnectors(this.graph);
+        yield* findClusters(this.graph);
+        // yield* findConnectors(this.graph);
         yield* findFans(this.graph);
 
         yield* findSelfLinks(this.graph);
@@ -106,6 +124,6 @@ export class PatternDetectors {
 
     getAll() {
         const all = this.run(this.network.nodes, this.network.links)
-        return groupBy(all, motif => motif.type())
+        return _.groupBy(all, motif => motif.type())
     }
 }
