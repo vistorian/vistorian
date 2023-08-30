@@ -92,7 +92,7 @@ export class PatternDetectors {
         }
 
         if (isBipartite(nodesIds, this.graph)) motifFound.push(new Bipartite(nodesIds))
-        if (isBiClique(nodesIds, this.graph)) motifFound.push(new BiClique(nodesIds))
+        // if (isBiClique(nodesIds, this.graph)) motifFound.push(new BiClique(nodesIds))
         // if (isCluster(nodesIds, linksIds, this.graph)) motifFound.push(new Cluster(nodesIds))
 
         // let cluster = isCluster(nodesIds, linksIds, this.graph);
@@ -104,7 +104,7 @@ export class PatternDetectors {
     *findMotif(): Generator<NetworkPattern> {
         yield* findHubs(this.graph);
         yield* findBridges(this.graph);
-        yield* findIsolatedNodes(this.graph);
+        // yield* findIsolatedNodes(this.graph);
 
         yield* findCliques(this.graph);
         yield* findClusters(this.graph);
