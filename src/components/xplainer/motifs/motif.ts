@@ -107,6 +107,10 @@ export class LinkPattern extends NetworkPattern {
         }
         return true;
     }
+
+    size(): number {
+        return this.links.length;
+    }
 }
 
 export class SelfLink extends LinkPattern {

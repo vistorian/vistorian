@@ -29,7 +29,6 @@ test("mb", () => {
         // let links = [["Marie Boucher", "Hubert Antheaume"], ["Marie Boucher", "Maude Lequere"]];
 
         let motifs = patternDetector.run(nodes, links);
-        console.log(2, motifs)
         expect(motifs[0].type()).toEqual("Hub");
         expect(motifs[6].type()).toEqual("ParallelLinks");
         // expect(motifs[9].type()).toEqual("Clique");

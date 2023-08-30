@@ -98,7 +98,16 @@ export class PatternDetectors {
         // let cluster = isCluster(nodesIds, linksIds, this.graph);
         // if (cluster) motifFound.push(cluster);
 
+        this.sortPatterns(motifFound);
         return motifFound;
+    }
+
+    sortPatterns(patterns: NetworkPattern[]) {
+        patterns.sort((a, b) => {
+            if (a.type() == b.type()) {
+                return b.size() - a.size();
+            }
+        })
     }
 
     *findMotif(): Generator<NetworkPattern> {
@@ -124,6 +133,7 @@ export class PatternDetectors {
 
     getAll() {
         const all = this.run(this.network.nodes, this.network.links)
+        console. log(2, all);
         return _.groupBy(all, motif => motif.type())
     }
 }
