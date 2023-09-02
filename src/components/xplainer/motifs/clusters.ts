@@ -52,6 +52,21 @@ export function* findClusters(network: Graph) {
     });
 
     for (let [community, nodes] of Object.entries(groups)) {
-        yield new Cluster(nodes);
+
+        let length = nodes.length;
+        let maxNumberLinks = length * (length - 1) / 2;
+        let nLinks = links.length;
+
+        let links: any[] = [];
+        for (let link of network.edges()) {
+            let [s, t] = network.extremities(link);
+            if (nodes.includes(s) || nodes.includes(t)) {
+                links.push(link);
+            }
+        }
+
+        let density = links.length / maxNumberLinks;
+
+        yield new Cluster(nodes, density);
     }
 }

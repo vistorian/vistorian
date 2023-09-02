@@ -1,5 +1,5 @@
 import {Network, NetworkLink, NetworkNode} from "./netpan";
-import Graph, {MultiGraph} from "graphology";
+import Graph, {MultiGraph, UndirectedGraph} from "graphology";
 import {findCliques} from "./cliques";
 import {findConnectors} from "./findConnectors";
 import {findFans} from "./fan";
@@ -24,7 +24,8 @@ export type LinkId = string;
 export class PatternDetectors {
     network: Network;
     // graphologyNet: Graph = new Graph();
-    graph: Graph = new MultiGraph();
+    graph: MultiGraph = new MultiGraph();
+    undirectedGraph: UndirectedGraph = new UndirectedGraph();
     isDynamic: boolean;
 
     cliques: Clique[] = [];
@@ -39,16 +40,19 @@ export class PatternDetectors {
     }
 
     netPanGraphToGraphology() {
+        // TODO: not optimal to have 2 different graph representations
         this.network.nodes.forEach(node => {
             this.graph.addNode(node.id);
+            this.undirectedGraph.addNode(node.id);
         })
         this.network.links.forEach(link => {
             // this.graph.addEdge(link.source.id, link.target.id);
             this.graph.addEdgeWithKey(link.id, link.source.id, link.target.id, link);
 
-            // console.log(typeof link.id)
-            // console.log(this.graph.edges(link.source.id, link.target.id))
-            
+            if (!this.undirectedGraph.hasUndirectedEdge(link.source.id, link.target.id)) {
+                this.undirectedGraph.addEdge(link.source.id, link.target.id);
+            }
+
             const copyLink = cloneDeep(link)
             // @ts-ignore
             delete copyLink.source
@@ -138,7 +142,7 @@ export class PatternDetectors {
 
     getAll() {
         const all = this.run(this.network.nodes, this.network.links)
-        console. log(2, all);
+        // console. log(2, all);
         return _.groupBy(all, motif => motif.type())
     }
 }

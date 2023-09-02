@@ -24,7 +24,7 @@ export function* findHubs(network: Graph): Generator<Hub> {
     for (let node of network.nodes()) {
         let degree = network.degree(node);
         if (degree > mean + 2 * std) {
-            yield new Hub([node], network);
+            yield new Hub([node], degree);
         }
     }
 }
@@ -39,7 +39,7 @@ export function* findBridges(network: Graph): Generator<Bridge> {
     for (let node of network.nodes()) {
         let bc = centralities[node];
         if (bc > mean + 2 * std) {
-            yield new Bridge([node], network);
+            yield new Bridge([node], bc);
         }
     }
 }

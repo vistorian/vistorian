@@ -4,6 +4,7 @@ import subgraph from 'graphology-operators/subgraph';
 
 import {NetworkNode} from "./netpan";
 import {LinkId, LinkTuple, NodeId} from "./patternDetectors";
+import {density} from "graphology-metrics/graph";
 
 export class NetworkPattern {
     // nodes: NetworkNode[];
@@ -73,14 +74,24 @@ export class NodePattern extends NetworkPattern {
 }
 
 export class Hub extends NodePattern {
-    constructor(nodes: NodeId[]) {
+    degree: number;
+
+    constructor(nodes: NodeId[], degree) {
         super(nodes);
+        this.degree = degree;
+    }
+
+    measure() {
+        return this.degree;
     }
 }
 
 export class Bridge extends NodePattern {
-    constructor(nodes: NodeId[]) {
+    betweennesss: number;
+
+    constructor(nodes: NodeId[], betweenness: number) {
         super(nodes);
+        this.betweennesss = betweenness;
     }
 }
 
@@ -126,14 +137,18 @@ export class ParallelLinks extends LinkPattern {
 }
 
 export class StrongLink extends LinkPattern {
-    constructor(links: LinkId[]) {
+    weight: number;
+    constructor(links: LinkId[], weight: number) {
         super(links);
+        this.weight = weight;
     }
 }
 
 export class WeakLink extends LinkPattern {
-    constructor(links: LinkId[]) {
+    weight: number;
+    constructor(links: LinkId[], weight) {
         super(links);
+        this.weight = weight;
     }
 }
 
@@ -209,14 +224,33 @@ export class Bipartite extends NetworkPattern {
 }
 
 export class BiClique extends NetworkPattern {
+    setA: NodeId[] = [];
+    setB: NodeId[] = [];
+
     constructor(nodes: NodeId[]) {
         super(nodes);
+    }
+
+    setNodesSetA(nodes: any[]) {
+        this.setA = nodes;
+        super.addNodes(nodes);
+    }
+
+    setNodesSetB(nodes: any[]) {
+        this.setB = nodes;
+        super.addNodes(nodes);
     }
 }
 
 export class Cluster extends NetworkPattern {
-    constructor(nodes: NodeId[]) {
+    density: number;
+    constructor(nodes: NodeId[], density: number) {
         super(nodes);
+        this.density = density;
+    }
+
+    measure() {
+        return this.density;
     }
 }
 

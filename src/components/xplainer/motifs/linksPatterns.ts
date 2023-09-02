@@ -29,7 +29,7 @@ export function* findStrongLinks(network: Graph): Generator<StrongLink> {
         let weight = network.getEdgeAttribute(edge, "linkWeight");
         // if (weight > WEIGHT_THRESHOLD) {
         if (weight > mean + 2 * std)
-            yield new StrongLink([edge]);
+            yield new StrongLink([edge], weight);
     }
 }
 
@@ -46,7 +46,7 @@ export function* findWeakLinks(network: Graph): Generator<WeakLink> {
         let weight = network.getEdgeAttribute(edge, "linkWeight");
         if (weight == 1) {
             if (weight < mean - 2 * std)
-                yield new WeakLink([edge]);
+                yield new WeakLink([edge], weight);
         }
     }
 }
