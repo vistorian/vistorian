@@ -12,7 +12,7 @@
                 "labels": [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
                 "label": "Seriation"
             },
-            "value": "optimal-leaf-order"
+            "value": "barycentre"
         },
         {
             "name": "timeRange",
