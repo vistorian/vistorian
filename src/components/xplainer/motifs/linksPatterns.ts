@@ -10,7 +10,7 @@ export function* findSelfLinks(network: Graph): Generator<StrongLink> {
     for (let edge of network.edges()) {
         let [source, target] = network.extremities(edge);
         if (source == target) {
-            return new SelfLink([edge])
+            return new SelfLink([edge], network.getEdgeAttribute(edge, "linkWeight"))
         }
     }
 }
@@ -29,7 +29,7 @@ export function* findStrongLinks(network: Graph): Generator<StrongLink> {
         let weight = network.getEdgeAttribute(edge, "linkWeight");
         // if (weight > WEIGHT_THRESHOLD) {
         if (weight > mean + 2 * std)
-            yield new StrongLink([edge]);
+            yield new StrongLink([edge], weight);
     }
 }
 
@@ -46,7 +46,7 @@ export function* findWeakLinks(network: Graph): Generator<WeakLink> {
         let weight = network.getEdgeAttribute(edge, "linkWeight");
         if (weight == 1) {
             if (weight < mean - 2 * std)
-                yield new WeakLink([edge]);
+                yield new WeakLink([edge], weight);
         }
     }
 }
@@ -75,10 +75,10 @@ export function* findParallelLinks(network: Graph, isMatrix: boolean): Generator
 
     for (let edges of Object.values(sourceTargetToEdge)) {
         if (isMatrix && edges.length > 2) {
-            yield new ParallelLinks(edges);
+            yield new ParallelLinks(edges, 0);
         }
         else if (!isMatrix && edges.length > 1) {
-            yield new ParallelLinks(edges);
+            yield new ParallelLinks(edges, 0);
         }
     }
 }

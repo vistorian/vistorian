@@ -27,7 +27,7 @@ export function* findRepeatedLinksAndBF(network: Graph, timeKey: string = "Date"
                 } else {
                     let [source2, target2] = network.extremities(links)
                     if ((source == target2) && (target == source2)) {
-                        yield new BackAndForth(pl.links)
+                        // yield new BackAndForth(pl.links)
                         continue loop;
                     }
                 }

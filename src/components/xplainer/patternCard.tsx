@@ -32,26 +32,24 @@ interface IPatternCardProps {
   open: boolean
   setOpen: (d: boolean) => void
   motifs: NetworkPattern[]
-  showClickRelatedMotif: boolean
   allMotifs: AllMotifs
   networkData: any
   setHoverRelatedMotif: (d: NetworkPattern) => void
   setClickRelatedMotif: (d: NetworkPattern) => void 
+  selectedMotifNo: [number, number]
   setSelectedMotifNo: (d: [number, number]) => void
 }
 
 function PatternCard (props: IPatternCardProps) {
-  const { visType, open, setOpen, motifs, showClickRelatedMotif, allMotifs, networkData } = props
+  const { visType, open, setOpen, motifs, allMotifs, networkData, selectedMotifNo, setSelectedMotifNo } = props
   const groupByType = groupBy(motifs, motif => motif.type())
-  // console.log('groupByType', groupByType)
+  // console.log('motifs:', motifs, 'selectedMotifNo', selectedMotifNo)
 
   const classes = useStyles()
   const id = "xplainer"
   // let left = offset[0], top = offset[1]
 
-  const [topMenuKey, setTopMenuKey] = useState<number>(showClickRelatedMotif ? 0 : -1)
-  const [subMenuKey, setSubMenuKey] = useState<number>(0)
-
+  // draw top menu items
   const getTopMenuItems = () => {
     return Object.keys(groupByType).map((name: string, index: number) => {
       // console.log(name)
@@ -62,9 +60,11 @@ function PatternCard (props: IPatternCardProps) {
     })
   }
 
+  // draw sub menu items
   const getSubMenuItems = (topMenuKey: number) => {
     if (Object.keys(groupByType).length > 0 && topMenuKey !== -1) {
       const name = Object.keys(groupByType)[topMenuKey]
+      // console.log('topMenuKey:', topMenuKey, 'name', name)
       return groupByType[name].map((item, index) => {
         return {
           label: `${patternList[name].title} #${index + 1}`,
@@ -75,23 +75,9 @@ function PatternCard (props: IPatternCardProps) {
     else return []
   }
 
-  useEffect(()=>{
-    setSubMenuKey(0)
-  }, [topMenuKey])
-
-  useEffect(() => {
-    props.setSelectedMotifNo([topMenuKey, subMenuKey])
-  }, [topMenuKey, subMenuKey])
-
-
-  useEffect(() => {
-    setTopMenuKey(showClickRelatedMotif ? 0: -1)
-  }, [motifs])
-
   const close = () => {
     setOpen(false)
-    setTopMenuKey(-1)
-    setSubMenuKey(-1)
+    setSelectedMotifNo([-1, 0])
     props.setHoverRelatedMotif({} as NetworkPattern)
     props.setClickRelatedMotif({} as NetworkPattern)
   }
@@ -129,25 +115,26 @@ function PatternCard (props: IPatternCardProps) {
       {/* motif type -- top menu */}
       <Menu
         mode="horizontal"
-        onClick={(e: any) => setTopMenuKey(Number(e.key))}
-        selectedKeys={topMenuKey === -1 ? [] : [`${topMenuKey}`]}
+        onClick={(e: any) => setSelectedMotifNo([Number(e.key), 0])}
+        selectedKeys={selectedMotifNo[0] === -1 ? [] : [`${selectedMotifNo[0]}`]}
         items={getTopMenuItems()}
       />
       {/* motif instance in a specific type -- sub menu */}
       <Menu
         mode="horizontal"
-        onClick={(e: any) => setSubMenuKey(Number(e.key))}
-        selectedKeys={subMenuKey === -1 ? [] : [`${subMenuKey}`]}
-        items={getSubMenuItems(topMenuKey)}
+        onClick={(e: any) => setSelectedMotifNo([selectedMotifNo[0], Number(e.key)])}
+        selectedKeys={selectedMotifNo[1] === -1 ? [] : [`${selectedMotifNo[1]}`]}
+        items={getSubMenuItems(selectedMotifNo[0])}
       />
-      {(topMenuKey !== -1 && subMenuKey !== -1 && Object.keys(groupByType).length > 0) ? 
+      {(selectedMotifNo[0] !== -1 && selectedMotifNo[1] !== -1 && Object.keys(groupByType).length > 0) ? 
         <Pattern
           visType={visType}
-          motif={groupByType[Object.keys(groupByType)[topMenuKey]][subMenuKey]}
+          motif={groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]}
           allMotifs={allMotifs}
           networkData={networkData}
           setHoverRelatedMotif={props.setHoverRelatedMotif}
           setClickRelatedMotif={props.setClickRelatedMotif}
+          setSelectedMotifNo={setSelectedMotifNo}
         /> : null}
       
     </div>

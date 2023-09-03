@@ -63,8 +63,17 @@ export class NetworkPattern {
 }
 
 export class NodePattern extends NetworkPattern {
-    constructor(nodes: NodeId[]) {
-        super(nodes);
+    neighbors: number
+    degree: number
+
+    constructor(nodes: NodeId[], degree: number, neighbors: number) {
+        super(nodes, null);  
+        this.degree = degree
+        this.neighbors = neighbors
+    }
+
+    size(): number {
+        return this.degree
     }
 
     extendLinks(network: Graph) {
@@ -73,26 +82,28 @@ export class NodePattern extends NetworkPattern {
 }
 
 export class Hub extends NodePattern {
-    constructor(nodes: NodeId[]) {
-        super(nodes);
+    constructor(nodes: NodeId[], degree: number, neighbors: number) {
+        super(nodes, degree, neighbors);
     }
 }
 
 export class Bridge extends NodePattern {
-    constructor(nodes: NodeId[]) {
-        super(nodes);
+    constructor(nodes: NodeId[], degree: number, neighbors: number) {
+        super(nodes, degree, neighbors);
     }
 }
 
 export class IsolatedNode extends NodePattern {
-    constructor(nodes: NodeId[]) {
-        super(nodes);
+    constructor(nodes: NodeId[], degree: number, neighbors: number) {
+        super(nodes, degree, neighbors);
     }
 }
 
 export class LinkPattern extends NetworkPattern {
-    constructor(links: LinkId[]) {
+    weight: number
+    constructor(links: LinkId[], weight: number) {
         super(null, links);
+        this.weight = weight
     }
 
     extendLinks(network: Graph) {
@@ -109,31 +120,33 @@ export class LinkPattern extends NetworkPattern {
     }
 
     size(): number {
-        return this.links.length;
+        if (this.constructor.name === 'StrongLink' || this.constructor.name === 'WeakLink')
+            return this.weight
+        else return this.links.length;
     }
 }
 
 export class SelfLink extends LinkPattern {
-    constructor(links: LinkId[]) {
-        super(links);
+    constructor(links: LinkId[], weight: number) {
+        super(links, weight);
     }
 }
 
 export class ParallelLinks extends LinkPattern {
-    constructor(links: LinkId[]) {
-        super(links);
+    constructor(links: LinkId[], weight: number) {
+        super(links, weight);
     }
 }
 
 export class StrongLink extends LinkPattern {
-    constructor(links: LinkId[]) {
-        super(links);
+    constructor(links: LinkId[], weight: number) {
+        super(links, weight);
     }
 }
 
 export class WeakLink extends LinkPattern {
-    constructor(links: LinkId[]) {
-        super(links);
+    constructor(links: LinkId[], weight: number) {
+        super(links, weight);
     }
 }
 

@@ -72,7 +72,7 @@ function VisContent(props: IVisContentProps) {
       paramCallbacks: getParamCallbacks()
     })
     // @ts-ignore
-    console.log('VIEW STATE:', tmpViewer.state, tmpViewer.sceneJSON)
+    // console.log('VIEW STATE:', tmpViewer.state, tmpViewer.sceneJSON)
     let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType)
     // console.log('patternDetector', tmpPatternDetector.allMotifs)
     // setNetworkData(viewer.state.network)
@@ -138,9 +138,6 @@ function VisContent(props: IVisContentProps) {
   // show all motifs bounds above vis
   useEffect(() => {
     if (props.selectedTypes.length > 0 && patternDetector && Object.keys(patternDetector).length > 0) {
-      // motifs.detectMotifs(patternDetector.network)
-      // motifs.setMotifs(flatMap(patternDetector.allMotifs))
-      // console.log(props.selectedTypes, flatMap(patternDetector.allMotifs).filter((motif: any) => props.selectedTypes.includes(motif.type())))
       motifs.setMotifs(flatMap(patternDetector.allMotifs).filter((motif: any) => props.selectedTypes.includes(motif.type())))
     }
     else {
@@ -156,7 +153,6 @@ function VisContent(props: IVisContentProps) {
         linkIds: string[] | number[] = []
       // a related motif
       if (Object.keys(clickRelatedMotif).length > 0) {
-        // console.log('clickRelatedMotif', clickRelatedMotif)
         nodeIds = clickRelatedMotif.nodes
         linkIds = clickRelatedMotif.links
       }
@@ -164,14 +160,16 @@ function VisContent(props: IVisContentProps) {
       else if (selectedMotifNo[0] !== -1) {
         const groupByType = groupBy(motifs.motifs, (motif) => motif.type())
         const thisMotif = groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]
-        console.log('thisMotif', groupByType, thisMotif)
         nodeIds = thisMotif.nodes
         linkIds = thisMotif.links
       }
+      // console.log('nodeIds', nodeIds, 'linkIds:', linkIds)
 
       const networkName = "network"; 
+      let links: any = [], nodes: any = []
       // @ts-ignore
-      const links = viewer.state[networkName].links.filter((l: any) => linkIds.includes(`${l.id}`));
+      links = viewer.state[networkName].links.filter((l: any) => linkIds.includes(`${l.id}`));
+      // for link patterns which only have links, find their nodes
       if (nodeIds.length === 0) {
         links.map((l: any) => {
           // @ts-ignore
@@ -179,11 +177,20 @@ function VisContent(props: IVisContentProps) {
         })
         // @ts-ignore
         nodeIds = uniq(nodeIds)
-        console.log('nodeIds', nodeIds)
       }
       // @ts-ignore
-      const nodes = viewer.state[networkName].nodes.filter((n: any) => nodeIds.includes(`${n.id}`));
-      console.log('links:', links)
+      nodes = viewer.state[networkName].nodes.filter((n: any) => nodeIds.includes(`${n.id}`));
+      // for matrix, find hubs & bridge nodes
+      if (visType === 'matrix' && linkIds.length === 0) {
+        links = viewer.state[networkName].links.filter((l: any) => {
+          // @ts-ignore
+          if (nodeIds.includes(`${l.source.id}`) || nodeIds.includes(`${l.target.id}`)) {
+            return true
+          }
+          return false
+        })
+      }
+      // console.log('nodes:', nodes, 'links:', links, viewer.state[networkName])
       viewer.setParam('selected_marks', { nodes, links })
     }
   }, [selectedMotifNo, clickRelatedMotif])
@@ -223,11 +230,11 @@ function VisContent(props: IVisContentProps) {
               open={open}
               setOpen={setOpen}
               motifs={(Object.keys(clickRelatedMotif).length > 0) ? [clickRelatedMotif] : motifs.motifs}
-              showClickRelatedMotif={Object.keys(clickRelatedMotif).length > 0}
               allMotifs={patternDetector.allMotifs}
               networkData={viewer.state.network}
               setHoverRelatedMotif={setHoverRelatedMotif}
               setClickRelatedMotif={setClickRelatedMotif}
+              selectedMotifNo={selectedMotifNo}
               setSelectedMotifNo={setSelectedMotifNo}
             />
           </>: null}

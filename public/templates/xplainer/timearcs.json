@@ -131,7 +131,7 @@
         "text": { "expression": "datum.id"},
         "align": "right",
         "dx": -15,
-        "fontSize": 6
+        "fontSize": 8
       }
     },
     {
@@ -151,6 +151,7 @@
         "start": "source",
         "end": "target",
         "shape": "curveSymmetric",
+        "parallelLinksType": "[parallelLinksType]",
         "stroke": { "field": "linkType", "scale": "edgeColor" },
         "directionForShape": {  "ordering": "staticOrder" },
         "strokeWidth": 1,

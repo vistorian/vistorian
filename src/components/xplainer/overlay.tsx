@@ -12,15 +12,19 @@ interface IOverlayProps {
   selectedMotifNo: [number, number]
 }
 
+// components for displaying all overlays
 function Overlay(props: IOverlayProps) {
   const { motifs, open, sceneJSON, visOffset, hoverRelatedMotif, clickRelatedMotif, selectedMotifNo } = props
 
+  // calc motif bounds
   const getRelatedMotifBound = (motif: NetworkPattern) => {
+    // console.log('getRelatedMotifBound:', motif)
     const relatedBound = getBounds(motif.nodes, motif.links, sceneJSON)
     const relatedMotifBound = getMotifBound(motif, relatedBound.bounds, relatedBound.boundsId)
     return relatedMotifBound
   }
 
+  // render component
   const getRelatedMotifDiv = (motif: NetworkPattern) => {
     const relatedMotifBound = getRelatedMotifBound(motif)
     return (
@@ -32,14 +36,14 @@ function Overlay(props: IOverlayProps) {
     )
   }
   
-  // show all motif bounds in user selection area
+  // show all motif bounds in user selection area / overview mode
   const getUserMotifsDiv = (motifs: NetworkPattern[]) => {
     const groupByType = groupBy(motifs, (motif) => motif.type())
     return motifs.map((motif: NetworkPattern, index: number) => {
       const bound = getRelatedMotifBound(motif)
       let status: number = 0
       if (selectedMotifNo[0] === -1) {
-        status = 1
+        status = 1 // overview mode
       }
       else {
         const selectedMotif = groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]
@@ -79,6 +83,7 @@ function Overlay(props: IOverlayProps) {
 
 
 
+// single overlay div ui
 interface ItemProps {
   bounds: any,
   // 0-not disply; 1-overview all motifs in the user selection area; 2-selected motif
@@ -88,13 +93,15 @@ interface ItemProps {
 
 function OverlayItem(props: ItemProps) {
   const { bounds, status, visOffset } = props
+  // console.log('Overlay Item:', bounds)
   return (
     <div
       style={{
         width: bounds.x2 - bounds.x1,
         height: bounds.y2 - bounds.y1,
-        border: status === 0 ? '0px' : (status === 1 ? '0.5px solid #E17918' : '1px solid #E17918'),
-        backgroundColor: status === 0 ? 'rgba(225, 121, 24, 0)' : (status === 1 ? 'rgba(225, 121, 24, 0.08)' : 'rgba(225, 121, 24, 0.2)'),
+        border: status === 0 ? '0px' : (status === 1 ? '0.5px solid #E17918' : '2px solid #E17918'),
+        backgroundColor: status === 1 ? 'rgba(225, 121, 24, 0.1)' : 'rgba(225, 121, 24, 0)' ,
+        // backgroundColor: status === 0 ? 'rgba(225, 121, 24, 0)' : (status === 1 ? 'rgba(225, 121, 24, 0.1)' : 'rgba(225, 121, 24, 0.2)'),
         zIndex: 3,
         position: "absolute", 
         left: bounds.x1 + visOffset[0],

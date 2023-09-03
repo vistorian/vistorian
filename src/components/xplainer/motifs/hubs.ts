@@ -1,5 +1,6 @@
 import Graph from "graphology";
 import {calculateMean, calculateStandardDeviation} from "./utils";
+import subgraph from 'graphology-operators/subgraph';
 import {Bridge, Hub, IsolatedNode} from "./motif";
 import betweennessCentrality from 'graphology-metrics/centrality/betweenness';
 
@@ -24,7 +25,8 @@ export function* findHubs(network: Graph): Generator<Hub> {
     for (let node of network.nodes()) {
         let degree = network.degree(node);
         if (degree > mean + 2 * std) {
-            yield new Hub([node], network);
+            let neighbors = network.neighbors(node).length
+            yield new Hub([node], degree, neighbors);
         }
     }
 }
@@ -39,7 +41,9 @@ export function* findBridges(network: Graph): Generator<Bridge> {
     for (let node of network.nodes()) {
         let bc = centralities[node];
         if (bc > mean + 2 * std) {
-            yield new Bridge([node], network);
+            let degree = network.degree(node);
+            let neighbors = network.neighbors(node).length
+            yield new Bridge([node], degree, neighbors);
         }
     }
 }
@@ -47,7 +51,7 @@ export function* findBridges(network: Graph): Generator<Bridge> {
 export function* findIsolatedNodes(network: Graph): Generator<Bridge> {
     for (const node of network.nodes()) {
         if (network.degree(node) === 0) {
-            yield new IsolatedNode([node]);
+            yield new IsolatedNode([node], 0, 0);
         }
     }
 }

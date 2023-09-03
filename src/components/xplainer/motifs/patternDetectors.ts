@@ -130,7 +130,7 @@ export class PatternDetectors {
         yield* findStrongLinks(this.graph);
 
         if (this.isDynamic) {
-            yield* findBursts(this.graph);
+            // yield* findBursts(this.graph);
             // yield* findRepeatedLinks(this.graph);
             yield* findRepeatedLinksAndBF(this.graph);
         }
@@ -138,7 +138,7 @@ export class PatternDetectors {
 
     getAll() {
         const all = this.run(this.network.nodes, this.network.links)
-        console. log(2, all);
+        // console.log(2, all);
         return _.groupBy(all, motif => motif.type())
     }
 }

@@ -14,7 +14,7 @@ interface Props {
 function Overview(props: Props) {
   const [tags, setTags] = useState<boolean[]>([])
 
-  const getTetxt = (name: string) => {
+  const getText = (name: string) => {
     if (name in patternList) {
       return patternList[name].description
     }
@@ -26,7 +26,7 @@ function Overview(props: Props) {
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
         <div style={{display: 'flex', alignItems: 'center'}}>
           <img 
-            src={`./pattern-icons/nodelink/${name}.svg`}
+            src={`./pattern-icons/${name}.png`}
             style={{width: 30, height: 30, marginRight: 8, border: '1px solid #535353', borderRadius: 4}} />
           <span>{patternList[name].title}</span>
         </div>
@@ -40,7 +40,7 @@ function Overview(props: Props) {
       return ({
         key: index,
         label: getPanel(motif, props.allMotifs[motif].length),
-        children: <p>{getTetxt(motif)}</p>
+        children: <p>{getText(motif)}</p>
       })
     }) as CollapseProps['items']
     return items
@@ -55,6 +55,21 @@ function Overview(props: Props) {
           onClick={() => {const tmp = [...tags]; tmp[index] = !tags[index]; setTags(tmp)}}>
             {patternList[motif].title}
           </Tag>
+      })}
+    </>)
+  }
+
+  const getFilteredTags = () => {
+    const all = Object.keys(props.allMotifs)
+    const others = Object.keys(patternList).filter(p => !all.includes(p))
+    return (<>
+      {others.map((motif: string, index: number) => {
+        return <Tag
+          key={index}
+          color={tags[index] ? '#E17918' : 'default'}
+          onClick={() => { const tmp = [...tags]; tmp[index] = !tags[index]; setTags(tmp) }}>
+          {patternList[motif].title}
+        </Tag>
       })}
     </>)
   }
@@ -101,6 +116,12 @@ function Overview(props: Props) {
           bordered={false}
           defaultActiveKey={[]}
         /> : null}
+
+      {/* <div style={{ marginBottom: 10 }}>
+        <span style={{ fontWeight: 'bold' }}>Patterns not in this network:</span> <br />
+        {(props.allMotifs) ?
+          getFilteredTags() : null}
+      </div> */}
     </div>
   )
 }

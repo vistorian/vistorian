@@ -132,6 +132,7 @@ interface VisContentOptions {
   nodeLabel: string | null,
   lableImportance: any,
   timeFormat: string | null,
+  parallelLinksType: string | null,
 }
 
 type AllMotifs = { [name: string]: NetworkPattern[] }

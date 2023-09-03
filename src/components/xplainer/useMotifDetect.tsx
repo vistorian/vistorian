@@ -9,6 +9,7 @@ export const getBounds = (nodesId: any, linksId: any, sceneJSON: any) => {
   // const linksId = newVal.links.map((l: any) => l.id)
 
   const nodesToProcess: any[] = [sceneJSON]
+  // console.log('nodesId:', nodesId, 'sceneJSON:', sceneJSON )
   let bounds: any = { nodes: [], links: [] }
   let boundsId = { nodes: [] as string[], links: [] as string[] }
 
@@ -19,14 +20,14 @@ export const getBounds = (nodesId: any, linksId: any, sceneJSON: any) => {
       for (const child of entry.items) {
         nodesToProcess.push(child);
         if ("id" in child) {
-          if (linksId.indexOf(child.id) > -1 && child.items.length > 0) {
+          if (linksId.includes(`${child.id}`) && child.items.length > 0) {
             bounds.links.push(child)
             boundsId.links.push(`${child.id}`)
           }
         }
       }
     } else {
-      if (nodesId.indexOf(entry.mark.id) > -1 && entry.mark.dataset.endsWith(".nodes")) {
+      if (nodesId.includes(`${entry.mark.id}`) && entry.mark.dataset.endsWith(".nodes")) {
         bounds.nodes.push(entry);
         boundsId.nodes.push(`${entry.mark.id}`)
       }
@@ -103,7 +104,7 @@ const useMotifDectect = (patternDetector: any) => {
           })
         }
       }
-      console.log('motifs:', result)
+      // console.log('motifs:', result)
     }
   }
   return { motifs, setMotifs, detectMotifs, contextHolder }

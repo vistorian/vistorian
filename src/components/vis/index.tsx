@@ -66,6 +66,8 @@ function Vis(props: IVisProps) {
   const nodeLabel: string = networkCfg.extraNodeConfig?.nodeLabel ? `"datum.data.${networkCfg.extraNodeConfig?.nodeLabel}"` : `"datum.id"`
   const lableImportance = 15
   const timeFormat = networkCfg.linkTableConfig?.withTime ? `"${networkCfg.linkTableConfig.timeFormat}"` : null
+  // TODO: temporal solution for user study
+  const parallelLinksType = networkCfg.linkTableConfig?.file === 'marieboucher.csv' ? `"line"` : `"null"`
 
   let options: VisContentOptions = {
     timeRange: timeRange,
@@ -74,7 +76,8 @@ function Vis(props: IVisProps) {
     nodeTypeShapeScheme: nodeTypeShapeScheme,
     nodeLabel: nodeLabel,
     lableImportance: lableImportance,
-    timeFormat: timeFormat
+    timeFormat: timeFormat,
+    parallelLinksType: parallelLinksType
   }
 
   const modeBtnRender = () => {
