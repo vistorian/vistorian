@@ -9,7 +9,8 @@ import {PatternDetectors} from "./patternDetectors";
 export function MBGraph() {
     // @ts-ignore
     let patternDetector = new PatternDetectors(MBNetpanNetwork);
-    return patternDetector.graph;
+    // return patternDetector.graph;
+    return patternDetector.undirectedGraph;
 }
 
 export function miserables() {

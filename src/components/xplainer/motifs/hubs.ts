@@ -41,9 +41,8 @@ export function* findBridges(network: Graph): Generator<Bridge> {
     for (let node of network.nodes()) {
         let bc = centralities[node];
         if (bc > mean + 2 * std) {
-            let degree = network.degree(node);
             let neighbors = network.neighbors(node).length
-            yield new Bridge([node], degree, neighbors);
+            yield new Bridge([node], bc, neighbors);
         }
     }
 }
@@ -51,7 +50,7 @@ export function* findBridges(network: Graph): Generator<Bridge> {
 export function* findIsolatedNodes(network: Graph): Generator<Bridge> {
     for (const node of network.nodes()) {
         if (network.degree(node) === 0) {
-            yield new IsolatedNode([node], 0, 0);
+            yield new IsolatedNode([node]);
         }
     }
 }

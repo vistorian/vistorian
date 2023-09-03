@@ -4,6 +4,7 @@ import subgraph from 'graphology-operators/subgraph';
 
 import {NetworkNode} from "./netpan";
 import {LinkId, LinkTuple, NodeId} from "./patternDetectors";
+import {density} from "graphology-metrics/graph";
 
 export class NetworkPattern {
     // nodes: NetworkNode[];
@@ -63,17 +64,9 @@ export class NetworkPattern {
 }
 
 export class NodePattern extends NetworkPattern {
-    neighbors: number
-    degree: number
 
-    constructor(nodes: NodeId[], degree: number, neighbors: number) {
+    constructor(nodes: NodeId[]) {
         super(nodes, null);  
-        this.degree = degree
-        this.neighbors = neighbors
-    }
-
-    size(): number {
-        return this.degree
     }
 
     extendLinks(network: Graph) {
@@ -82,20 +75,50 @@ export class NodePattern extends NetworkPattern {
 }
 
 export class Hub extends NodePattern {
+    degree: number;
+    neighbors: number;
+
     constructor(nodes: NodeId[], degree: number, neighbors: number) {
-        super(nodes, degree, neighbors);
+        super(nodes);
+        this.degree = degree;
+        this.neighbors = neighbors
+    }
+
+    size(): number {
+        return this.measure()
+    }
+
+    measure() {
+        return this.degree;
     }
 }
 
 export class Bridge extends NodePattern {
-    constructor(nodes: NodeId[], degree: number, neighbors: number) {
-        super(nodes, degree, neighbors);
+    betweennesss: number;
+    neighbors: number;
+
+    constructor(nodes: NodeId[], betweenness: number, neighbors: number) {
+        super(nodes);
+        this.betweennesss = betweenness;
+        this.neighbors = neighbors;
+    }
+
+    size(): number {
+        return this.measure()
+    }
+
+    measure() {
+        return this.betweennesss;
     }
 }
 
 export class IsolatedNode extends NodePattern {
-    constructor(nodes: NodeId[], degree: number, neighbors: number) {
-        super(nodes, degree, neighbors);
+    constructor(nodes: NodeId[]) {
+        super(nodes);
+    }
+
+    measure() {
+        return 0;
     }
 }
 
@@ -139,14 +162,18 @@ export class ParallelLinks extends LinkPattern {
 }
 
 export class StrongLink extends LinkPattern {
+    weight: number;
     constructor(links: LinkId[], weight: number) {
-        super(links, weight);
+        super(links);
+        this.weight = weight;
     }
 }
 
 export class WeakLink extends LinkPattern {
-    constructor(links: LinkId[], weight: number) {
-        super(links, weight);
+    weight: number;
+    constructor(links: LinkId[], weight) {
+        super(links);
+        this.weight = weight;
     }
 }
 
@@ -222,14 +249,33 @@ export class Bipartite extends NetworkPattern {
 }
 
 export class BiClique extends NetworkPattern {
+    setA: NodeId[] = [];
+    setB: NodeId[] = [];
+
     constructor(nodes: NodeId[]) {
         super(nodes);
+    }
+
+    setNodesSetA(nodes: any[]) {
+        this.setA = nodes;
+        super.addNodes(nodes);
+    }
+
+    setNodesSetB(nodes: any[]) {
+        this.setB = nodes;
+        super.addNodes(nodes);
     }
 }
 
 export class Cluster extends NetworkPattern {
-    constructor(nodes: NodeId[]) {
+    density: number;
+    constructor(nodes: NodeId[], density: number) {
         super(nodes);
+        this.density = density;
+    }
+
+    measure() {
+        return this.density;
     }
 }
 

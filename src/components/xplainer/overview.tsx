@@ -49,6 +49,7 @@ function Overview(props: Props) {
   const getTags = () => {
     return (<>
       {Object.keys(props.allMotifs).map((motif: string, index: number) => {
+        // console.log('motif:', motif)
         return <Tag 
           key={index}
           color={tags[index] ? '#E17918' : 'default'} 

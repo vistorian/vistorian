@@ -1,5 +1,5 @@
 import {NodeId} from "./patternDetectors";
-import Graph, {NodeKey} from "graphology";
+import Graph, {NodeKey, UndirectedGraph} from "graphology";
 
 import subgraph from 'graphology-operators/subgraph';
 
@@ -73,37 +73,124 @@ export function isBiClique(nodes: NodeId[], network: Graph) {
 }
 
 
-export function* findBipartite(graph: Graph) {
-    for (const node of graph.nodes()) {
-        rec(graph, [node], graph.neighbors(node))
-        graph.dropNode(node)
+class TreeNode {
+    children: Map<number, TreeNode>;
+    biclique: number[];
+
+    constructor() {
+        this.children = new Map<number, TreeNode>();
+        this.biclique = [];
     }
 }
 
-// function rec(G, S, C) {
-//     return S;
-//
-//     while
-// }
+class GeneralizedSuffixTree {
+    root: TreeNode;
 
-// Procedure Main(G = (V, E))
-// 2 foreach v ∈ V do
-// 3 Rec(G, {v} , N(v));
-// 4 G ← G \ {v};
-// 5 Subprocedure Rec(G, S, C (S, G))
-// 6 output(S);
-// 7 while C (S, G) 6= ∅ do
-// 8 u ← the smallest child generator in C (S, G);
-// 9 C (S, G) ← C (S, G) \ {u};
-// 10 S
-// 0 ← S ∪ {u};
-// 11 Rec(G, S0
-// , ComputeChildGen(C (S, G), u, G));
-// 12 G ← G \ {u};
-// 13 Subprocedure ComputeChildGen(C (S, G), u, G)
-// 14 if u ∈ CL (S, G) then
-// 15 C (S ∪ {u} , G) ← C (S, G) \ (CL (S, G) ∩ N(u));
-// 16 else if u ∈ CR (S, G) then
-// 17 C (S ∪ {u} , G) ← C (S, G) \ (CR (S, G) ∩ N(u));
-// 18 C (S ∪ {u} , G) ← C (S ∪ {u} , G) ∪ Γ (S, u, G);
-// 19 return C (S ∪ {v} , G);
+    constructor() {
+        this.root = new TreeNode();
+    }
+
+    insert(suffix: number[]) {
+        let node = this.root;
+        for (const vertex of suffix) {
+            if (!node.children.has(vertex)) {
+                node.children.set(vertex, new TreeNode());
+            }
+            node = node.children.get(vertex)!;
+        }
+        node.biclique = suffix;
+    }
+
+    search(suffix: number[]): TreeNode | null {
+        let node = this.root;
+        for (const vertex of suffix) {
+            if (!node.children.has(vertex)) {
+                return null;
+            }
+            node = node.children.get(vertex)!;
+        }
+        return node;
+    }
+}
+
+export function findMaximalInducedBicliques(G: Graph): number[][] {
+    const n = G.size;
+
+    // random ordering
+    const ordering = G.nodes();
+    console.log(n)
+
+    const T = new GeneralizedSuffixTree();
+    for (let i = 0; i < n; i++) {
+
+        // Check edges and formula
+        const GiNodes = [...ordering.slice(i, i + 1), ...ordering.slice(i + 1)]; // Construct Gi according to Definition 1.
+        const Gi = subgraph(G, GiNodes)
+
+        // let GiUn = Gi.to
+
+        console.log("Independant")
+        const independentSets = findAllMaximalIndependentSets(Gi);
+        console.log("Independant2")
+        for (const I of independentSets) {
+            if (I.length > 0) {
+                T.insert(I);
+                const existingI = T.search(I);
+                if (existingI === null) {
+                    console.log("Output:", I); // Output the maximal induced biclique.
+                }
+            }
+        }
+    }
+    // Return all maximal induced bicliques found.
+    return [];
+}
+
+export function findAllMaximalIndependentSets(G: Graph): string[][] {
+    const independentSets: string[][] = [];
+    const exploredSets = new Set<string>();
+
+    function isIndependentSet(nodes: string[]): boolean {
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                if (G.hasEdge(nodes[i], nodes[j]) || (G.hasEdge(nodes[j], nodes[i]))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function findMaximalIndependentSets(
+        currentSet: string[],
+        remainingNodes: string[]
+    ) {
+        if (isIndependentSet(currentSet)) {
+            const sortedSet = [...currentSet].sort().join(',');
+            if (!exploredSets.has(sortedSet)) {
+                independentSets.push([...currentSet]);
+                exploredSets.add(sortedSet);
+            }
+        }
+
+        if (remainingNodes.length === 0) {
+            return;
+        }
+
+        const node = remainingNodes.pop();
+
+        // Include the node in the current set
+        currentSet.push(node!);
+        findMaximalIndependentSets(currentSet, [...remainingNodes]);
+
+        // Exclude the node from the current set
+        currentSet.pop();
+        findMaximalIndependentSets(currentSet, [...remainingNodes]);
+    }
+
+    const allNodes = [...G.nodes()];
+    findMaximalIndependentSets([], allNodes);
+
+    return independentSets;
+}
+

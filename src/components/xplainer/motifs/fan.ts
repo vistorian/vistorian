@@ -18,7 +18,7 @@ export function* findFans(network: Graph) {
             })
 
             if (leaves.size >= 2) {
-                yield new Fan([node, ...leaves], network)
+                yield new Fan([node, ...leaves])
             }
         }
     }

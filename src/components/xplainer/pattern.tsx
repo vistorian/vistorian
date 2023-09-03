@@ -295,8 +295,9 @@ function Pattern (props: IPatternProps) {
         break
       case 'Cluster':
         dataExp = <span>A <b>Cluster</b> is a <span className={classes.category}>subgraph pattern</span>, which refers to a group of nodes that have a high number of connections among them, higher than that of the rest of the graph.</span>
-        // console.log('Cluster:', motif)
         density = motif.links.length / (motif.nodes.length * motif.nodes.length) * 100
+        // console.log('Cluster:', motif)
+        
         if (visType === 'timearcs') {
           visualExp = <span>This pattern shows a set of circles with many arcs between any two circles. It often appears as a dense set of overlapping circles. The cluster can also be split into separate areas that are far away, but densely connected between them. The higher the ration of arcs on the number of circles, the more links the cluster has, the denser it is.</span>
           description = <span>Your selection is a cluster of with <span className={classes.hl}>{motif.nodes.length}</span> nodes and <span className={classes.hl}>{motif.links.length}</span> links. This results in a density of <span className={classes.hl}>{density.toFixed(1)}%</span> of all possible links between these nodes. If the density was 1, the pattern would be a clique. Here, we use the Louvain clustering algorighm.</span>

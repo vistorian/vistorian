@@ -24,6 +24,7 @@
     "graphology": "^0.25.1",
     "graphology-bipartite": "^0.0.3",
     "graphology-communities-louvain": "^2.0.1",
+    "graphology-components": "^1.5.4",
     "graphology-metrics": "^2.2.0",
     "graphology-operators": "^1.6.0",
     "graphology-types": "^0.24.7",

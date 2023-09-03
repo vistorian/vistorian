@@ -118,7 +118,8 @@
                     ],
                     "scale": "opacity",
                     "expression": "datum.data[0].linkWeight"
-                }
+                },
+                "tooltip": {"expression": "datum.key[0].id + ' -> ' + datum.key[1].id + (datum.data.length > 0 ? ' (degree:' + datum.data[0].linkWeight + ')': 0) " }
             }
         }
     ]
