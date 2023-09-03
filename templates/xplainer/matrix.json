@@ -70,12 +70,12 @@
                 "field": "source.id",
                 "align": "right",
                 "dx": -15,
-                "fontSize": 8
+                "fontSize": 10
             },
             "colLabels": {
                 "field": "target.id",
                 "dx": 15,
-                "fontSize": 8
+                "fontSize": 10
             },
             "rowLines": { "stroke": "lightgrey" },
             "colLines": { "stroke": "lightgrey" },
@@ -118,7 +118,8 @@
                     ],
                     "scale": "opacity",
                     "expression": "datum.data[0].linkWeight"
-                }
+                },
+                "tooltip": {"expression": "datum.key[0].id + ' -> ' + datum.key[1].id + (datum.data.length > 0 ? ' (degree:' + datum.data[0].linkWeight + ')': 0) " }
             }
         }
     ]
