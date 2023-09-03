@@ -52,10 +52,8 @@ export function* findClusters(network: Graph) {
     });
 
     for (let [community, nodes] of Object.entries(groups)) {
-
         let length = nodes.length;
         let maxNumberLinks = length * (length - 1) / 2;
-        let nLinks = links.length;
 
         let links: any[] = [];
         for (let link of network.edges()) {

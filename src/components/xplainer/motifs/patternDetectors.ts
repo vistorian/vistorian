@@ -14,6 +14,7 @@ import { AllMotifs } from "../../../../typings";
 // import { groupBy } from "lodash-es";
 // import _ from "lodash-es";
 import * as _ from "lodash";
+import {findBicliques} from "./bicliques";
 
 
 export type NodeId = string;
@@ -123,6 +124,7 @@ export class PatternDetectors {
         yield* findClusters(this.graph);
         // yield* findConnectors(this.graph);
         yield* findFans(this.graph);
+        yield* findBicliques(this.graph);
 
         yield* findSelfLinks(this.graph);
 
