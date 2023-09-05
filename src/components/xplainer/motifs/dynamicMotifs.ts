@@ -33,7 +33,7 @@ export function* findRepeatedLinksAndBF(network: Graph, timeKey: string = "Date"
                 }
             }
 
-            yield new RepeatedLinks(pl.links)
+            // yield new RepeatedLinks(pl.links)
         }
     }
 
