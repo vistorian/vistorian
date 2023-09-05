@@ -110,7 +110,7 @@ function Pattern (props: IPatternProps) {
   const classes = useStyles()
 
   const motifType = motif ? motif.type() : ''
-  // const motifType: string = 'RepeatedLinks'
+  // const motifType: string = 'SelfLink'
   let pattern, dataExp, visualExp, description
   // console.log('Pattern', motif) 
 
@@ -163,7 +163,7 @@ function Pattern (props: IPatternProps) {
         break
       case 'SelfLink':
         dataExp = <span>A <b>Self Link</b> is a <span className={classes.category}>link pattern</span>, which connects a node to itself.</span>
-        link = find(networkData.links, (l) => l.id == motif.links[0])
+        // link = find(networkData.links, (l) => l.id == motif.links[0])
         if (visType === 'timearcs') {
           visualExp = <span>This pattern is an arc that goes back to the same node it originates. It is visible as a small circle besides a node.</span>
 
@@ -172,7 +172,7 @@ function Pattern (props: IPatternProps) {
         else if (visType === 'matrix') {
           visualExp = <span>This pattern shows a single filled cell located along the diagonal of the matrix.</span>
 
-          description = <span>Your selected link belongs to node <span className={classes.hl}>{link.source.id}</span>.</span>
+          // description = <span>Your selected link belongs to node <span className={classes.hl}>{link.source.id}</span>.</span>
         }
         else {
           visualExp = <span>This pattern is a small loop that goes back to the same node it originates.</span>
@@ -535,8 +535,8 @@ function Pattern (props: IPatternProps) {
                 ghost
                 defaultActiveKey={[]}
               />}
-
           </div> : null}
+
         </div> : null}
     </>
   )

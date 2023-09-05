@@ -1,6 +1,6 @@
 {
-  "width": 3000,
   "x": 120,
+  "width": 3000,
 
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
