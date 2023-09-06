@@ -55,11 +55,22 @@ export class NetworkPattern {
         return this;
     }
 
+    findIfDynamic(network: Graph, timeKey: string = "_time") {
+        for (let link of this.links) {
+            console.log(network.getEdgeAttributes(link))
+        }
+
+        let times = this.links.map(link => network.getEdgeAttribute(link, "data")[timeKey]);
+        let timesSec = times.map(t => new Date(t))
+
+        console.log(times, timesSec);
+        // let timesSet = new Set(timesSec);
+    }
+
     // Find the links in the pattern from the list of nodes and the network
     extendLinks(network: Graph) {
         let subg = subgraph(network, this.nodes);
         this.links = subg.edges();
-        // console.log(links)
     }
 }
 

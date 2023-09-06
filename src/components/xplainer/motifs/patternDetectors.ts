@@ -83,6 +83,9 @@ export class PatternDetectors {
                 motif.extendLinks(this.graph);
             }
 
+            // TODO
+            // motif.findIfDynamic(this.graph);
+
             if (motif.isContainedBy(nodesIds, linksIds)) {
                 if (motif.type() == Clique.name) {
                     this.cliques.push(motif)
@@ -144,7 +147,6 @@ export class PatternDetectors {
 
     getAll() {
         const all = this.run(this.network.nodes, this.network.links)
-        // console. log(2, all);
         return _.groupBy(all, motif => motif.type())
     }
 }
