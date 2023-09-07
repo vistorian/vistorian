@@ -51,7 +51,7 @@ export function* findWeakLinks(network: Graph): Generator<WeakLink> {
     }
 }
 
-function hashSourceTarget(source: string, target: string) {
+export function hashSourceTarget(source: string, target: string) {
     if (source < target) {
         return source.concat("-").concat(target);
     } else {
@@ -65,7 +65,6 @@ export function* findParallelLinks(network: Graph, isMatrix: boolean): Generator
         let [source, target] = network.extremities(edge);
         let hash = hashSourceTarget(source, target);
 
-        // console.log(edge, source, target, hash)
         if (sourceTargetToEdge[hash]) {
             sourceTargetToEdge[hash].push(edge)
         } else {
