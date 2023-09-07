@@ -1,8 +1,6 @@
 {
     "x": 120,
     "y": 120,
-    "width": 1200,
-    "height": 1200,
     "data": "[dataDefinition]",
     "networks": "[networksDefinition]",
     "parameters": [
