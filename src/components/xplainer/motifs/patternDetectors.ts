@@ -103,7 +103,8 @@ export class PatternDetectors {
             }
         }
 
-        if (isBipartite(nodesIds, this.graph)) motifFound.push(new Bipartite(nodesIds))
+        // if (isBipartite(nodesIds, this.graph)) motifFound.push(new Bipartite(nodesIds))
+        
         // if (isBiClique(nodesIds, this.graph)) motifFound.push(new BiClique(nodesIds))
         // if (isCluster(nodesIds, linksIds, this.graph)) motifFound.push(new Cluster(nodesIds))
 

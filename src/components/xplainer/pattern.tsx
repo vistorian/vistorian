@@ -110,7 +110,7 @@ function Pattern (props: IPatternProps) {
   const classes = useStyles()
 
   const motifType = motif ? motif.type() : ''
-  // const motifType: string = 'SelfLink'
+  // const motifType: string = 'Bipartite'
   let pattern, dataExp, visualExp, description
   // console.log('Pattern', motif) 
 
@@ -172,7 +172,7 @@ function Pattern (props: IPatternProps) {
         else if (visType === 'matrix') {
           visualExp = <span>This pattern shows a single filled cell located along the diagonal of the matrix.</span>
 
-          // description = <span>Your selected link belongs to node <span className={classes.hl}>{link.source.id}</span>.</span>
+          description = <span>Your selected link belongs to node <span className={classes.hl}>{link.source.id}</span>.</span>
         }
         else {
           visualExp = <span>This pattern is a small loop that goes back to the same node it originates.</span>
@@ -514,15 +514,15 @@ function Pattern (props: IPatternProps) {
           </div>
 
           {/* explain the selection statistics */}
-          <div style={{ marginTop: 25 }}>
+          {/* <div style={{ marginTop: 25 }}>
             {description}
-          </div>
+          </div> */}
 
           {/* provide visual variations */}
           {getVisualVariations()}
 
           {/* relate to variants when have more than one instances in this network */}
-          {motifType in allMotifs && allMotifs[motifType].length > 1 ? 
+          {/* {motifType in allMotifs && allMotifs[motifType].length > 1 ? 
           <div style={{ marginTop: 25 }}>
             <div style={{display: 'flex', alignItems: 'center'}}>
                 <div className={classes.diamond}></div>
@@ -535,7 +535,7 @@ function Pattern (props: IPatternProps) {
                 ghost
                 defaultActiveKey={[]}
               />}
-          </div> : null}
+          </div> : null} */}
 
         </div> : null}
     </>

@@ -65,7 +65,7 @@ export const patternList: PatternList = {
   "ParallelLinks": {
     title: "Parallel Links",
     type: 'link',
-    nodelink: 3,
+    nodelink: 0,
     timearcs: 0,
     matrix: 0,
     description: 'Parallel links are links that have the two same incident nodes.',
