@@ -11,7 +11,6 @@ import {MBGraph} from "./cliques.test";
 test("mb", () => {
         // @ts-ignore
         let patternDetector = new PatternDetectors(MBNetpanNetwork);
-        let graph = patternDetector.graph;
 
         let nodesIds = [
             'Charles Moruan',
@@ -33,5 +32,22 @@ test("mb", () => {
         expect(motifs[6].type()).toEqual("ParallelLinks");
         // expect(motifs[9].type()).toEqual("Clique");
         // expect(motifs[3].type()).toEqual("ParallelLinks");
+    }
+)
+
+test("mb-dynamic", () => {
+        // @ts-ignore
+        let patternDetector = new PatternDetectors(MBNetpanNetwork, "timearcs");
+        console.log(patternDetector.allMotifs)
+
+        let nodesIds = [
+            'Charles Moruan',
+            'Marie Boucher et Hubert Antheaume Cie',
+            'Maude Lequere',
+            'Robert Miron'
+        ];
+
+        let nodes = patternDetector.network.nodes.filter(n => nodesIds.includes(n.id));
+        let links = patternDetector.network.links.filter(d => d.data.Name1 == 'Marie Boucher et Hubert Antheaume Cie' || d.data.Name2 == 'Marie Boucher et Hubert Antheaume Cie')
     }
 )

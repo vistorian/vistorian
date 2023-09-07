@@ -1,7 +1,7 @@
 import Graph from "graphology";
 import {MBGraph, miserables} from "./cliques.test";
 import {findParallelLinks, findStrongLinks} from "./linksPatterns";
-import {findBursts} from "./dynamicMotifs";
+import {findBursts, findRepeatedLinksAndBFonDynNetPan} from "./dynamicMotifs";
 
 test("MB-links-patterns", () => {
         let graph: Graph = MBGraph();
@@ -12,3 +12,13 @@ test("MB-links-patterns", () => {
         }
     }
 )
+
+// test("MB-backandforth", () => {
+//         let graph: Graph = MBGraph();
+//         let motifs = findRepeatedLinksAndBFonDynNetPan(graph);
+//
+//         for (let m of motifs) {
+//             console.log(b)
+//         }
+//     }
+// )

@@ -1,7 +1,65 @@
 import Graph from "graphology";
 
-import {BackAndForth, Burst, Hub, RepeatedLinks} from "./motif";
-import {findParallelLinks} from "./linksPatterns";
+import {BackAndForth, Burst, Hub, ParallelLinks, RepeatedLinks} from "./motif";
+import {findParallelLinks, hashSourceTarget} from "./linksPatterns";
+
+
+
+function getStaticNodeId(dynNodeId: string) {
+    return dynNodeId.split(" (")[0]
+}
+
+// Use the data model of netpen for dynamic networks
+export function* findRepeatedLinksAndBFonDynNetPan(network: Graph, timeKey: string = "Date"): Generator<RepeatedLinks> {
+    let sourceTargetToEdge: Record<string, string[]> = {};
+
+    for (let edge of network.edges()) {
+        let [source, target] = network.extremities(edge);
+        // console.log(network.getNodeAttributes(source))
+        let [sourceStatic, targetStatic] = [getStaticNodeId(source), getStaticNodeId(target)]
+
+        // console.log(source, sourceStatic)
+
+        // let [sourceNode, targetNode] = [network.no(source), network.nodes(target)]
+        let hash = hashSourceTarget(sourceStatic, targetStatic);
+        // console.log(hash)
+
+        if (sourceTargetToEdge[hash]) {
+            sourceTargetToEdge[hash].push(edge)
+        } else {
+            sourceTargetToEdge[hash] = [edge]
+        }
+    }
+
+    loop:
+    for (let edges of Object.values(sourceTargetToEdge)) {
+        let times = edges.map(link => network.getEdgeAttribute(link, "data")[timeKey]);
+        let timesSet = new Set(times);
+        // console.log("TT ", times)
+
+        if (timesSet.size > 1) {
+            let s;
+            let t;
+            let isBF = false;
+            for (let link of edges) {
+                if (!s) {
+                    [s, t] = network.extremities(link)
+                } else {
+                    let [source2, target2] = network.extremities(link)
+                    if (s == target2) {
+                        isBF = true;
+                    }
+                }
+            }
+
+            if (isBF) {
+                yield new BackAndForth(edges);
+            } else {
+                yield new RepeatedLinks(edges);
+            }
+        }
+    }
+}
 
 
 export function* findRepeatedLinksAndBF(network: Graph, timeKey: string = "Date"): Generator<RepeatedLinks> {

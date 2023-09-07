@@ -7,7 +7,12 @@ import {findBridges, findHubs, findIsolatedNodes} from "./hubs";
 import {BiClique, Bipartite, Clique, Cluster, NetworkPattern, NodePattern, ParallelLinks} from "./motif";
 import {findParallelLinks, findSelfLinks, findStrongLinks, findWeakLinks} from "./linksPatterns";
 import {isBiClique, isBipartite} from "./bipartite";
-import {findBursts, findRepeatedLinks, findRepeatedLinksAndBF} from "./dynamicMotifs";
+import {
+    findBursts,
+    findRepeatedLinks,
+    findRepeatedLinksAndBF,
+    findRepeatedLinksAndBFonDynNetPan
+} from "./dynamicMotifs";
 import cloneDeep from 'lodash/cloneDeep'
 import {findClusters, isCluster} from "./clusters";
 import { AllMotifs } from "../../../../typings";
@@ -142,7 +147,9 @@ export class PatternDetectors {
         if (this.isDynamic) {
             // yield* findBursts(this.graph);
             // yield* findRepeatedLinks(this.graph);
-            yield* findRepeatedLinksAndBF(this.graph);
+            // yield* findRepeatedLinksAndBF(this.graph);
+            yield* findRepeatedLinksAndBFonDynNetPan(this.graph);
+            // console.log()
         }
     }
 
