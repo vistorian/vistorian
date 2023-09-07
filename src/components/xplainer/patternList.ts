@@ -116,16 +116,16 @@ export const patternList: PatternList = {
     nodelink: 3,
     timearcs: 3,
     matrix: 3,
-    description: 'A bi-graph refers to a group of nodes that can be divided into two sets, and in which connexions can only occur between nodes of different sets. Nodes of the same set can not have any connexions in bi-graphs.'
+    description: 'A bi-graph refers to a group of nodes that can be divided into two sets, and in which connexions can only occur between nodes of different sets. Nodes of the same set can not have any connections in bi-graphs.'
   },
-  // "BackAndForth": {
-  //   title: "Back And Forth",
-  //   type: 'link',
-  //   nodelink: 0,
-  //   timearcs: 0,
-  //   matrix: 0,
-  //   description: ''
-  // },
+  "BackAndForth": {
+    title: "Back And Forth",
+    type: 'link',
+    nodelink: 0,
+    timearcs: 3,
+    matrix: 0,
+    description: 'A back and forth link appears in directed networks when two nodes are connected to each other in the respective opposite direction at different time.'
+  },
   // "Connector": {
   //   title: "Connector",
   //   type: 'subgraph',

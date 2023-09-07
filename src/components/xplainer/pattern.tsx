@@ -181,7 +181,7 @@ function Pattern (props: IPatternProps) {
         }
         break
       case 'ParallelLinks':
-        dataExp = <span><b>Parallel links</b> are a <span className={classes.category}>link pattern</span>, which have the two same nodes.</span>
+        dataExp = <span><b>Parallel links</b> are a <span className={classes.category}>link pattern</span>, which have the two same nodes in the same time.</span>
         link = find(networkData.links, (l) => l.id == motif.links[0])
         // console.log('ParallelLinks:', link)
         if (visType === 'timearcs') {
@@ -207,6 +207,23 @@ function Pattern (props: IPatternProps) {
           visualExp = <span>This pattern shows several arcs that connect the same two nodes but happen at different times.The more arcs there are, the more links connect the two nodes. The regularity of horizontal distances between lines refers to the regularity of connections in time. The vertical length of an arc has no per-se meaning; it merely reflects the distance of nodes on the vertical ordering.</span>
 
           description = <span> Your selection has <span className={classes.hl}>{motif.links.length}</span> <span className={classes.tag}>repeated links</span> that happened <span className={classes.hl}>{motif.links.length}</span> different times between node <span className={classes.hl}>{link.source.data.name}</span> and node <span className={classes.hl}>{link.target.data.name}</span>.</span>
+        }
+        else if (visType === 'matrix') {
+          visualExp = <span>n/a</span>
+          description = <span>n/a</span>
+        }
+        else {
+          visualExp = <span>n/a</span>
+          description = <span>n/a</span>
+        }
+        break
+      case 'BackAndForth':
+        dataExp = <span><b>Back and Forth Links</b> are a <span className={classes.category}>link pattern</span> , which have two same nodes in the respective opposite direction at different time.</span>
+        link = find(networkData.links, (l) => l.id == motif.links[0])
+        if (visType === 'timearcs') {
+          visualExp = <span>This pattern shows several arcs that connect the same two nodes in the respective opposite direction, forming a back and forth connection. The vertical length of an arc has no per-se meaning; it merely reflects the distance of nodes on the vertical ordering.</span>
+
+          description = <span> Your selection has <span className={classes.hl}>{motif.links.length}</span> <span className={classes.tag}>back and forth links</span> that happened between node <span className={classes.hl}>{link.source.data.name}</span> and node <span className={classes.hl}>{link.target.data.name}</span>.</span>
         }
         else if (visType === 'matrix') {
           visualExp = <span>n/a</span>
@@ -385,6 +402,10 @@ function Pattern (props: IPatternProps) {
       prefix = 'timearcs_t'
       post = 'ParallelLinks'
     }
+    if (motifType && motifType === 'BackAndForth') {
+      prefix = 'timearcs_t'
+      post = 'BackAndForth'
+    }
     return <img src={`./pattern-icons/${prefix}_${post}.png`} />
   }
 
@@ -395,6 +416,10 @@ function Pattern (props: IPatternProps) {
       if (motifType && motifType === 'RepeatedLinks') {
         prefix = 'timearcs_t'
         post = 'ParallelLinks'
+      }
+      if (motifType && motifType === 'BackAndForth') {
+        prefix = 'timearcs_t'
+        post = 'BackAndForth'
       }
       return (
       <div style={{ marginTop: 25 }}>
@@ -514,15 +539,15 @@ function Pattern (props: IPatternProps) {
           </div>
 
           {/* explain the selection statistics */}
-          {/* <div style={{ marginTop: 25 }}>
+          <div style={{ marginTop: 25 }}>
             {description}
-          </div> */}
+          </div>
 
           {/* provide visual variations */}
           {getVisualVariations()}
 
           {/* relate to variants when have more than one instances in this network */}
-          {/* {motifType in allMotifs && allMotifs[motifType].length > 1 ? 
+          {motifType in allMotifs && allMotifs[motifType].length > 1 ? 
           <div style={{ marginTop: 25 }}>
             <div style={{display: 'flex', alignItems: 'center'}}>
                 <div className={classes.diamond}></div>
@@ -535,7 +560,7 @@ function Pattern (props: IPatternProps) {
                 ghost
                 defaultActiveKey={[]}
               />}
-          </div> : null} */}
+          </div> : null}
 
         </div> : null}
     </>
