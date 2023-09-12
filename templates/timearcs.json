@@ -129,10 +129,11 @@
         "start": "source",
         "end": "target",
         "shape": "curveSymmetric",
+        "parallelLinksType": "null",
         "stroke": { "field": "linkType", "scale": "edgeColor" },
         "directionForShape": {  "ordering": "staticOrder" },
         "strokeWidth": 1,
-        "strokeOpacity": 0.3,
+        "strokeOpacity": 0.8,
         "tooptip": { "expression": "datum"}
       }
     },
