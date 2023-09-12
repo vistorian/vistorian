@@ -133,7 +133,7 @@
         "stroke": { "field": "linkType", "scale": "edgeColor" },
         "directionForShape": {  "ordering": "staticOrder" },
         "strokeWidth": 1,
-        "strokeOpacity": 0.6,
+        "strokeOpacity": 0.4,
         "tooptip": { "expression": "datum"}
       }
     },
