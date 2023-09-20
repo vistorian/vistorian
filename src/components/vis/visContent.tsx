@@ -236,6 +236,7 @@ function VisContent(props: IVisContentProps) {
               setClickRelatedMotif={setClickRelatedMotif}
               selectedMotifNo={selectedMotifNo}
               setSelectedMotifNo={setSelectedMotifNo}
+              sceneJSON={viewer.sceneJSON}
             />
           </>: null}
         {/* rect selection or lasso */}

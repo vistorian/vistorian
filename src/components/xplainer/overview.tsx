@@ -28,7 +28,7 @@ function Overview(props: Props) {
         <div style={{display: 'flex', alignItems: 'center'}}>
           <img 
             src={`./pattern-icons/${name}.png`}
-            style={{width: 30, height: 30, marginRight: 8, border: '1px solid #535353', borderRadius: 4}} />
+            style={{width: 30, marginRight: 8, border: '1px solid #535353', borderRadius: 4}} />
           <span>{patternList[name].title}</span>
         </div>
         <span>{cnt}</span>

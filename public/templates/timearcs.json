@@ -102,8 +102,8 @@
       "layout": "staticLayout",
       "mark": {
         "type": "rule",
-        "stroke": "#eeeeee",
-        "strokeWidth": 4,
+        "stroke": "#f0f0f0",
+        "strokeWidth": 2,
         "x": 0,
         "x2": { "expression": "bounds.width" },
         "tooptip": { "expression": "datum"}
@@ -129,10 +129,11 @@
         "start": "source",
         "end": "target",
         "shape": "curveSymmetric",
+        "parallelLinksType": "null",
         "stroke": { "field": "linkType", "scale": "edgeColor" },
         "directionForShape": {  "ordering": "staticOrder" },
         "strokeWidth": 1,
-        "strokeOpacity": 0.3,
+        "strokeOpacity": 0.4,
         "tooptip": { "expression": "datum"}
       }
     },

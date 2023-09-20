@@ -125,7 +125,7 @@ function Vis(props: IVisProps) {
           {/* show network names */}
           <div style={{ display: 'flex', flexDirection: 'column'}}>
           {/* TODO: return to network preview */}
-            <Link
+            {/* <Link
               to={`./#/wizard`}
               target='_blank'
               style={{ marginRight: 10, marginBottom: 10 }}
@@ -137,7 +137,7 @@ function Vis(props: IVisProps) {
                 Return to Network View
               </Button>
             </Link>
-            {modeBtnRender()}
+            {modeBtnRender()} */}
             <span style={{ background: '#eee', marginBottom: 3, fontSize: 18 }}><b>Network:</b>&nbsp;{network}</span>
           </div>
 
@@ -156,14 +156,14 @@ function Vis(props: IVisProps) {
         
         {/* render netpanorama */}
         <div className={classes.right}>
-          {networkCfg.linkTableConfig?.withTime ? 
+          {/* {networkCfg.linkTableConfig?.withTime ? 
             <TimeSlider 
               network={network as string} 
               minTime={minTime} 
               maxTime={maxTime}
               setTimeRange={setTimeRange}
             /> 
-          : null}
+          : null} */}
           {/* render vis */}
           {/* <DndProvider backend={HTML5Backend}> */}
             <div style={{ width: '100%', display: 'flex' }}>

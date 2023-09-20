@@ -42,9 +42,9 @@
         },
         {
             "name": "cellColor",
-            "type": "linear",
-            "scheme": "reds",
-            "domain": { "data": "network.links", "field": "linkWeight" }
+            "type": "ordinal",
+            "range": "[colorScheme]",
+            "domain": { "data": "network.links", "field": "linkType" }
         }
     ],
     "orderings": [
@@ -98,7 +98,7 @@
                         "value": "white"
                     },
                     "scale": "cellColor",
-                    "expression": "datum.data[0].linkWeight"
+                    "expression": "datum.data[0].linkType"
                 },
                 "opacity": {
                     "conditions": [
@@ -108,14 +108,16 @@
                         },
                         {
                             "inSelection": "selected_marks.links",
-                            "value": 1
+                            "scale": "opacity",
+                            "expression": "datum.data[0].linkWeight"
                         },
                         {
                             "selectionIsNotEmpty": "selected_marks.links",
                             "value": 0.1
                         }
                     ],
-                    "value": 1
+                    "scale": "opacity",
+                    "expression": "datum.data[0].linkWeight"
                 },
                 "tooltip": {"expression": "datum.key[0].id + ' -> ' + datum.key[1].id + (datum.data.length > 0 ? ' (degree:' + datum.data[0].linkWeight + ')': 0) " }
             }

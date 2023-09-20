@@ -39,7 +39,7 @@ export const patternList: PatternList = {
     description: 'A cluster refers to a group of nodes that have a high number of connexions between them, higher than in the rest of the graph.',
   },
   "Bridge": {
-    title: "Bridge Node",
+    title: "Bridge",
     type: 'node',
     nodelink: 3,
     timearcs: 3,
@@ -111,7 +111,7 @@ export const patternList: PatternList = {
     description: 'Fans are nodes that are connected to several other nodes of degree 1.'
   },
   "Bipartite": {
-    title: "Bi-graph",
+    title: "Biclique",
     type: 'subgraph',
     nodelink: 3,
     timearcs: 3,
