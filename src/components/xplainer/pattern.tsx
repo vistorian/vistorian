@@ -497,6 +497,9 @@ function Pattern (props: IPatternProps) {
     }
   }
 
+  // TODO: 24 is the height of the parameter selection
+  const visOffset = [sceneJSON.items[0].x, visType !== 'nodelink' ? sceneJSON.items[0].y + 24 : sceneJSON.items[0].y]
+
   // calc motif bounds
   const getRelatedMotifBound = (motif: NetworkPattern) => {
     // console.log('getRelatedMotifBound:', motif)
@@ -507,14 +510,14 @@ function Pattern (props: IPatternProps) {
 
   const getSnapshot =  (listId: string, motif: NetworkPattern) => {
     const ele = document.querySelector("#visSvg0 svg")
-    if (ele && !document.querySelector(`#${listId} svg`)) {
+    if (ele) {
       const eleClone = ele.cloneNode(true) as SVGElement
       const bounds = getRelatedMotifBound(motif)
       if (bounds) {
         eleClone.setAttribute("width", `${bounds.x2-bounds.x1}`)
         eleClone.setAttribute("height", `${bounds.y2-bounds.y1}`)
-        eleClone.setAttribute("viewBox", `${bounds.x1} ${bounds.y1} ${bounds.x2-bounds.x1} ${bounds.y2-bounds.y1}`)
-        // document.querySelector(`#${listId} svg`)?.remove()
+        eleClone.setAttribute("viewBox", `${bounds.x1+visOffset[0]} ${bounds.y1+visOffset[1]} ${bounds.x2-bounds.x1} ${bounds.y2-bounds.y1}`)
+        document.querySelector(`#${listId} svg`)?.remove()
         document.querySelector(`#${listId}`)?.appendChild(eleClone)
       }
       return <></>

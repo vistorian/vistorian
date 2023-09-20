@@ -156,14 +156,14 @@ function Vis(props: IVisProps) {
         
         {/* render netpanorama */}
         <div className={classes.right}>
-          {/* {networkCfg.linkTableConfig?.withTime ? 
+          {networkCfg.linkTableConfig?.withTime ? 
             <TimeSlider 
               network={network as string} 
               minTime={minTime} 
               maxTime={maxTime}
               setTimeRange={setTimeRange}
             /> 
-          : null} */}
+          : null}
           {/* render vis */}
           {/* <DndProvider backend={HTML5Backend}> */}
             <div style={{ width: '100%', display: 'flex' }}>
