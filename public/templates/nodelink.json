@@ -1,4 +1,9 @@
 {  
+  "zoom": true,
+  "pan": {
+    "modifierKeyRequired": []
+  },
+  
   "data": "[dataDefinition]",
   "parameters": [
     {

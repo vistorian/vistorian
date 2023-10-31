@@ -117,7 +117,7 @@
                     ],
                     "value": 1
                 },
-                "tooltip": {"expression": "datum.key[0].id + ' -> ' + datum.key[1].id + (datum.data.length > 0 ? ' (degree:' + datum.data[0].linkWeight + ')': 0) " }
+                "tooltip": {"expression": "datum.key[0].data.name + ' -> ' + datum.key[1].data.name + (datum.data.length > 0 ? ' (weight:' + datum.data[0].linkWeight + ')': 0) " }
             }
         }
     ]

@@ -38,7 +38,7 @@ interface IPatternCardProps {
   setClickRelatedMotif: (d: NetworkPattern) => void 
   selectedMotifNo: [number, number]
   setSelectedMotifNo: (d: [number, number]) => void
-  sceneJSON: any
+  snapshots: any
 }
 
 function PatternCard (props: IPatternCardProps) {
@@ -136,7 +136,7 @@ function PatternCard (props: IPatternCardProps) {
           setHoverRelatedMotif={props.setHoverRelatedMotif}
           setClickRelatedMotif={props.setClickRelatedMotif}
           setSelectedMotifNo={setSelectedMotifNo}
-          sceneJSON={props.sceneJSON}
+          snapshots={props.snapshots}
         /> : null}
       
     </div>

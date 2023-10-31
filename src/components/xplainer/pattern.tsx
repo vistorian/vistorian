@@ -5,7 +5,6 @@ import { Collapse, CollapseProps, Tag, message } from "antd"
 import { AllMotifs } from "../../../typings"
 import { chunk, find, findIndex } from "lodash-es"
 import { timeFormat, timeParse } from "d3-time-format"
-import { getBounds, getMotifBound } from "./useMotifDetect"
 
 const useStyles = createUseStyles({
   hl: {
@@ -110,11 +109,11 @@ interface IPatternProps {
   setHoverRelatedMotif: (d: NetworkPattern) => void
   setClickRelatedMotif: (d: NetworkPattern) => void
   setSelectedMotifNo: (d: [number, number]) => void
-  sceneJSON: any
+  snapshots: any
 }
 
 function Pattern (props: IPatternProps) {
-  const { motif, visType, allMotifs, networkData, setHoverRelatedMotif, setClickRelatedMotif, setSelectedMotifNo, sceneJSON } = props
+  const { motif, visType, allMotifs, networkData, setHoverRelatedMotif, setClickRelatedMotif, setSelectedMotifNo } = props
   const classes = useStyles()
 
   const motifType = motif ? motif.type() : ''
@@ -288,7 +287,7 @@ function Pattern (props: IPatternProps) {
           description = <span>n/a</span>
         }
         else {
-          visualExp = <span>n/a</span>
+          visualExp = <span>This pattern shows several arcs that connect the same two nodes in the respective opposite direction, forming a back and forth connection. For better readability, arcs have different heights so they appear as a bundle.</span>
           description = <span>n/a</span>
         }
         break
@@ -461,7 +460,8 @@ function Pattern (props: IPatternProps) {
       post = 'ParallelLinks'
     }
     if (motifType && motifType === 'BackAndForth') {
-      prefix = 'timearcs_t'
+      prefix = 'timearcs_s'
+      // prefix = "nodelink"
       post = 'BackAndForth'
     }
     return <img src={`./pattern-icons/${prefix}_${post}.png`} />
@@ -476,7 +476,8 @@ function Pattern (props: IPatternProps) {
         post = 'ParallelLinks'
       }
       if (motifType && motifType === 'BackAndForth') {
-        prefix = 'timearcs_t'
+        prefix = 'timearcs_s'
+        // prefix = "nodelink"
         post = 'BackAndForth'
       }
       return (
@@ -497,37 +498,39 @@ function Pattern (props: IPatternProps) {
     }
   }
 
-  // TODO: 24 is the height of the parameter selection
-  const visOffset = [sceneJSON.items[0].x, visType !== 'nodelink' ? sceneJSON.items[0].y + 24 : sceneJSON.items[0].y]
-
-  // calc motif bounds
-  const getRelatedMotifBound = (motif: NetworkPattern) => {
-    // console.log('getRelatedMotifBound:', motif)
-    const relatedBound = getBounds(motif.nodes, motif.links, sceneJSON)
-    const relatedMotifBound = getMotifBound(motif, relatedBound.bounds, relatedBound.boundsId)
-    return relatedMotifBound
-  }
-
-  const getSnapshot =  (listId: string, motif: NetworkPattern) => {
-    const ele = document.querySelector("#visSvg0 svg")
-    if (ele) {
-      const eleClone = ele.cloneNode(true) as SVGElement
-      const bounds = getRelatedMotifBound(motif)
-      if (bounds) {
-        eleClone.setAttribute("width", `${bounds.x2-bounds.x1}`)
-        eleClone.setAttribute("height", `${bounds.y2-bounds.y1}`)
-        eleClone.setAttribute("viewBox", `${bounds.x1+visOffset[0]} ${bounds.y1+visOffset[1]} ${bounds.x2-bounds.x1} ${bounds.y2-bounds.y1}`)
-        document.querySelector(`#${listId} svg`)?.remove()
-        document.querySelector(`#${listId}`)?.appendChild(eleClone)
-      }
-      return <></>
+  // const getSnapshot =  (listId: string, motif: NetworkPattern) => {
+  const getSnapshot = (index: number) => {
+    if (visType === 'matrix' && motifType === 'Clique') {
+      document.querySelector(`#instances${index} img`)?.remove()
+      const img = document.createElement("img")
+      img.setAttribute('src', `./tmp/clique${index}.png`)
+      const naturalWidth = img.naturalWidth
+      img.setAttribute('width', `${naturalWidth * 0.6}px`)
+      document.querySelector(`#instances${index}`)?.appendChild(img)
     }
+    else {
+      const ele = document.querySelector("#visSvg0Copy svg")
+      if (ele) {
+        document.querySelector(`#instances${index} svg`)?.remove()
+        document.querySelector(`#instances${index}`)?.appendChild(props.snapshots[index])
+        //   const eleClone = ele.cloneNode(true) as SVGElement
+        //   const bounds = getRelatedMotifBound(motif)
+        //   if (bounds) {
+        //     eleClone.setAttribute("width", `${bounds.x2-bounds.x1}`)
+        //     eleClone.setAttribute("height", `${bounds.y2-bounds.y1}`)
+        //     eleClone.setAttribute("viewBox", `${bounds.x1+visOffset[0]} ${bounds.y1+visOffset[1]} ${bounds.x2-bounds.x1} ${bounds.y2-bounds.y1}`)
+        //     document.querySelector(`#${listId} svg`)?.remove()
+        //     document.querySelector(`#${listId}`)?.appendChild(eleClone)
+        //   }
+      }
+    }
+    return <></>
   }
 
   const getList = () => {
     return <ul>
       {allMotifs[motifType].map((other, index) => {
-        if (JSON.stringify(other) !== JSON.stringify(motif))
+        // if (JSON.stringify(other) !== JSON.stringify(motif))
           return <li key={index} id={`instances${index}`}>
             <span
               className={classes.instance}
@@ -544,7 +547,7 @@ function Pattern (props: IPatternProps) {
               }}>
               {`${patternList[motifType].title} #${index}`}
             </span>
-            {getSnapshot(`instances${index}`, other)}
+            {getSnapshot(index)}
           </li>
       })}
     </ul> 
@@ -556,15 +559,16 @@ function Pattern (props: IPatternProps) {
    * @return {*} 
    */
   const getItems = () => {
-    const chunks = chunk(allMotifs[motifType], 10)
+    const chunkGap = 5
+    const chunks = chunk(allMotifs[motifType], chunkGap)
     const items = chunks.map((chunk, index) => {
       return ({
         key: index,
-        label: <span> {`${patternList[motifType].title} [${index * 10}, ${index * 10 + 9}]`}</span>,
+        label: <span> {`${patternList[motifType].title} [${index * chunkGap}, ${index * chunkGap + (chunkGap-1)}]`}</span>,
         children: <ul>
           {chunk.map((other, idx) => {
             // if (JSON.stringify(other) !== JSON.stringify(motif))
-              return <li key={idx}>
+            return <li key={idx} id={`instances${index * chunkGap + idx}`}>
                 <span
                   className={classes.instance}
                   onMouseOver={() => {
@@ -578,8 +582,9 @@ function Pattern (props: IPatternProps) {
                     setSelectedMotifNo([0, 0])
                     // setHoverRelatedMotif({} as NetworkPattern)
                   }}>
-                  {`${patternList[motifType].title} #${index * 10 + idx}`}
+                  {`${patternList[motifType].title} #${index * chunkGap + idx}`}
                 </span>
+                {getSnapshot(index * chunkGap + idx)}
               </li>
           })}
         </ul>
@@ -604,7 +609,6 @@ function Pattern (props: IPatternProps) {
     }
   }
 
-
   return (
     <>
       {pattern ? 
@@ -624,9 +628,9 @@ function Pattern (props: IPatternProps) {
           </div>
 
           {/* explain the selection statistics */}
-          <div style={{ marginTop: 5 }}>
+          {/* <div style={{ marginTop: 5 }}>
             {description}
-          </div>
+          </div> */}
 
           <div style={{marginTop: 15}}>
             <span style={{ fontSize: 18, fontWeight: 700 }}>{getVisualTitle()} pattern</span>
@@ -648,7 +652,7 @@ function Pattern (props: IPatternProps) {
           
 
           {/* relate to variants when have more than one instances in this network */}
-          {motifType in allMotifs && allMotifs[motifType].length > 1 ? 
+          {/* {motifType in allMotifs && allMotifs[motifType].length > 1 ? 
           <div style={{ marginTop: 15 }}>
               <span style={{ fontSize: 18, fontWeight: 700 }}>Browse related <span style={{ textDecoration: 'underline' }}>{getVisualTitle()}</span> and <span style={{ textDecoration: 'underline' }}>{pattern.title}</span></span>
             <div style={{display: 'flex', alignItems: 'center'}}>
@@ -662,7 +666,7 @@ function Pattern (props: IPatternProps) {
                 ghost
                 defaultActiveKey={[]}
               />}
-          </div> : null}
+          </div> : null} */}
 
         </div> : null}
     </>

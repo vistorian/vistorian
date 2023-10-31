@@ -6,11 +6,13 @@ import Legend from './legend'
 import TimeSlider from './timeslider'
 import { defaultColorScheme, defaultNodeTypeShapeScheme } from '../../../typings/constant'
 import { timeParse } from 'd3-time-format'
-import { Button } from 'antd'
+import { Button, Tooltip } from 'antd'
 import VisContent from './visContent'
+import { ExportOutlined } from '@ant-design/icons'
 // import { DndProvider } from 'react-dnd'
 // import { HTML5Backend } from 'react-dnd-html5-backend'
 import Overview from '../xplainer/overview'
+import ModeSelection from './modeSelection'
 
 const useStyles = createUseStyles({
   root: {
@@ -80,50 +82,23 @@ function Vis(props: IVisProps) {
     parallelLinksType: parallelLinksType
   }
 
-  const modeBtnRender = () => {
-    switch(props.type) {
-      case 'explore': 
-        return <Link
-          to={`/vis/${visTypes}/network/${network}/xplainer`}
-          target='_blank'
-          style={{ marginRight: 10, marginBottom: 10 }}
-        >
-          <Button
-            type='primary'
-            style={{ width: '100%', fontWeight: 700 }}
-          >
-            Jump to Learning Mode
-          </Button>
-        </Link>
-      case 'xplainer': 
-        return <Link
-          to={`/vis/${visTypes}/network/${network}`}
-          target='_blank'
-          style={{ marginRight: 10, marginBottom: 10 }}
-        >
-          <Button
-            type='primary'
-            style={{ width: '100%', fontWeight: 700 }}
-          >
-            Jump to Exploration Mode
-          </Button>
-        </Link>
-      default:
-        return <></>
-    }
-  }
-
   return (
     <div className={classes.root}>
         <div className={classes.left}>
           <div className={classes.header}>
             <a href="./" style={{ marginBottom: "20px", }}>
-              <img src="./logos/logo-vistorian.png" style={{ width: 200 }} />
+            <img src={props.type === 'xplainer' ? "./logos/logo-xplainer.png" : "./logos/logo-vistorian.png"} style={{ width: 200 }} />
             </a>
           </div>
-          
+
+          <ModeSelection 
+            type={props.type}
+            visTypes={visTypes as string}
+            network={network as string}
+          />
+
           {/* show network names */}
-          <div style={{ display: 'flex', flexDirection: 'column'}}>
+        <div style={{ background: '#eee', marginTop: 5, padding: '0px 5px' , display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           {/* TODO: return to network preview */}
             {/* <Link
               to={`./#/wizard`}
@@ -136,9 +111,21 @@ function Vis(props: IVisProps) {
               >
                 Return to Network View
               </Button>
-            </Link>
-            {modeBtnRender()} */}
-            <span style={{ background: '#eee', marginBottom: 3, fontSize: 18 }}><b>Network:</b>&nbsp;{network}</span>
+            </Link> */}
+            <span style={{ fontSize: 18 }}>
+              <b>Network:</b>&nbsp;{network}
+            </span>
+            <Tooltip title="Return to Network View">
+              <Link
+                to={`/wizard`}
+                target='_blank'
+              >
+                <Button
+                  type="text"
+                  icon={<ExportOutlined />}
+                />
+              </Link>
+            </Tooltip>
           </div>
 
           {/* show legends */}
@@ -148,10 +135,12 @@ function Vis(props: IVisProps) {
             nodeTypeEncoding={nodeTypeInShape ? nodeTypeShapeScheme : colorScheme}
             nodeTypeInShape={nodeTypeInShape}
           />
-          <Overview 
+          {/* show pattern overview */}
+          {props.type === 'xplainer' ? <Overview
             allMotifs={allMotifs}
             setSelectedTypes={setSelectedTypes}
-          />
+          /> : null}
+          
         </div>
         
         {/* render netpanorama */}

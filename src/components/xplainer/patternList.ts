@@ -18,7 +18,7 @@ export const patternList: PatternList = {
     title: "Clique",
     type: 'subgraph',
     nodelink: 3,
-    timearcs: 0,
+    timearcs: 3,
     matrix: 3,
     description: 'Cliques are groups of nodes where every node is connected to every other node of the clique.',
   },
@@ -65,15 +65,15 @@ export const patternList: PatternList = {
   "ParallelLinks": {
     title: "Parallel Links",
     type: 'link',
-    nodelink: 0,
-    timearcs: 0,
+    nodelink: 3,
+    timearcs: 3,
     matrix: 0,
     description: 'Parallel links are links that have the two same incident nodes.',
   },
   "StrongLink": {
     title: "Strong Link",
     type: 'link',
-    nodelink: 0,
+    nodelink: 3,
     timearcs: 0,
     matrix: 0,
     description: 'Link with a weight in the top percentile of the weights distribution.'
@@ -81,7 +81,7 @@ export const patternList: PatternList = {
   "WeakLink": {
     title: "Weak Link",
     type: 'link',
-    nodelink: 0,
+    nodelink: 3,
     timearcs: 0,
     matrix: 0,
     description: 'Link with a weight in the bottom percentile of the weights distribution.'
@@ -115,14 +115,14 @@ export const patternList: PatternList = {
     type: 'subgraph',
     nodelink: 3,
     timearcs: 3,
-    matrix: 3,
+    matrix: 0,
     description: 'A bi-graph refers to a group of nodes that can be divided into two sets, and in which connexions can only occur between nodes of different sets. Nodes of the same set can not have any connections in bi-graphs.'
   },
   "BackAndForth": {
     title: "Back And Forth",
     type: 'link',
-    nodelink: 0,
-    timearcs: 3,
+    nodelink: 3,
+    timearcs: 1,
     matrix: 0,
     description: 'A back and forth link appears in directed networks when two nodes are connected to each other in the respective opposite direction at different time.'
   },

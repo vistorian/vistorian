@@ -2,6 +2,11 @@
   "width": 3000,
   "x": 120,
 
+  "zoom": true,
+  "pan": {
+    "modifierKeyRequired": []
+  },
+
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
 
