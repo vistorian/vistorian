@@ -1,0 +1,97 @@
+{
+  "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
+  "groupings": [
+    {
+      "name": "groupedBySource",
+      "data": "network.links",
+      "common": ["source.id"]
+    }
+  ],
+  "orderings": [
+    {
+      "name": "order",
+      "data": "groupedBySource",
+      "orderBy": {
+        "field": "size",
+        "direction": "descending"
+      }
+    }
+  ],
+  "layouts": [
+    {
+      "name": "layout",
+      "data": "groupedBySource",
+      "pattern": "cartesian",
+      "y": [
+        {
+          "order": "order"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "opacity",
+      "type": "linear",
+      "range": [
+        0.2,
+        1
+      ],
+      "domain": {
+        "data": "network.links",
+        "field": "linkWeight"
+      }
+    },
+    {
+      "name": "cellColor",
+      "type": "ordinal",
+      "range": "[colorScheme]",
+      "domain": {
+        "data": "network.links",
+        "field": "linkType"
+      }
+    }
+  ],
+  "vis": [
+    {
+      "entries": "groupedBySource",
+      "layout": "layout",
+      "mark": {
+        "type": "text",
+        "text": {
+          "field": "key[0]"
+        },
+        "x": 100,
+        "align": "right"
+      }
+    },
+    {
+      "entries": "groupedBySource",
+      "layout": "layout",
+      "vis": [
+        {
+          "entries": "entry.data",
+          "mark": {
+            "type": "square",
+            "fill": {
+              "scale": "cellColor",
+              "expression": "datum.linkType"
+            },
+            "opacity": {
+              "scale": "opacity",
+              "expression": "datum.linkWeight"
+            },
+            "area": 100,
+            "x": {
+              "expression": "index * 13 + 120"
+            },
+            "tooltip": {
+              "expression": " datum.source.id + ' --- '+ datum.linkType +'--> ' + datum.target.id + '' "
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

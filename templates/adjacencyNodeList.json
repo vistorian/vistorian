@@ -1,0 +1,99 @@
+{  
+  "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
+  "groupings": [
+    {
+      "name": "groupedBySource",
+      "data": "network.links",
+      "common": ["source.id"]
+    },
+    {
+      "name": "groupedBySourceAndTarget",
+      "data": "network.links",
+      "common": [
+        "source.id", "target.id"
+      ]
+    }
+  ],
+  "orderings": [
+    {
+      "name": "order",
+      "data": "groupedBySource",
+      "orderBy": {
+        "field": "size",
+        "direction": "descending"
+      }
+    }
+  ],
+  "layouts": [
+    {
+      "name": "layout",
+      "data": "groupedBySource",
+      "pattern": "cartesian",
+      "y": [
+        {
+          "order": "order"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "opacity",
+      "type": "linear",
+      "range": [ 0.2, 1 ],
+      "domain": { "data": "groupedBySourceAndTarget", "field": "size" }
+    },
+    {
+      "name": "cellColor",
+      "type": "ordinal",
+      "range": "[colorScheme]",
+      "domain": { "data": "network.links", "field": "linkType" }
+    }
+  ],
+  "vis": [
+    {
+      "entries": "groupedBySource",
+      "layout": "layout",
+      "mark": {
+        "type": "text",
+        "text": {
+          "field": "key[0]"
+        },
+        "x": 100,
+        "align": "right"
+      }
+    },
+    {
+      "entries": "groupedBySource",
+      "layout": "layout",
+      "groupings": [
+        {
+          "name": "groupedByTarget",
+          "data": "entry.data",
+          "common": ["target.id"]
+        }
+      ],
+      "vis": [
+        {
+          "entries": "groupedByTarget",
+          "mark": {
+            "type": "circle",
+            "fill": "#F28527",
+            "opacity": {
+              "scale": "opacity",
+              "expression": "datum.size"
+            },
+            "area": 100,
+            "x": {
+              "expression": "index * 13 + 120"
+            },
+            "tooltip": {
+              "expression": "datum.key + ' (' + datum.size + ')'"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

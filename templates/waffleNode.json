@@ -1,0 +1,84 @@
+{
+  "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
+
+  "orderings": [
+    {
+      "name": "degree_order",
+      "data": "network.nodes",
+      "orderBy": "degree"
+    }
+  ],
+
+  "layouts": [
+    {
+      "name": "layout",
+      "data": "network.nodes",
+      "order": "degree_order",
+      "pattern": "row-by-row",
+      "numRows": 15
+    }
+  ],  
+   "scales": [
+    {
+      "name": "radius",
+      "type": "linear",
+      "range": [ 15, 150 ],
+      "domain": { "data": "network.nodes",  "field": "degree" }
+    },
+    {
+      "name": "nodeShape",
+      "type": "ordinal",
+      "range": "[nodeTypeShapeScheme]",
+      "domain": { "data": "network.nodes",  "field": "data.type0" }
+    },
+    {
+      "name": "nodeColor",
+      "type": "ordinal",
+      "range": "[colorScheme]",
+      "domain": { "data": "network.nodes",  "field": "data.type0" }
+    },
+    {
+      "name": "edgeColor",
+      "type": "ordinal",
+      "range": "[colorScheme]",
+      "domain": { "data": "network.links", "field": "linkType" }
+    },
+    {
+      "name": "edgeWidth",
+      "type": "linear",
+      "range": [ 1.2, 3],
+      "domain": { "data": "network.links", "field": "linkWeight" }
+    },
+    {
+      "name": "edgeOpacity",
+      "type": "linear",
+      "range": [0.2, 0.8],
+      "domain": { "data": "network.links", "field": "linkWeight" }
+    }
+  ],
+  "vis": [
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "mark": {
+        "type": "circle",
+        "size": 100,
+        "fill": {
+          "field": "data.type0",
+          "scale": "nodeColor"
+        },
+        "stroke": "white"
+      }
+    },
+    {
+      "entries": "network.links",
+      "layout": "layout",
+      "mark": {
+        "type": "linkpath",
+        "start": "source",
+        "end": "target"
+      }
+    }
+  ]
+}

@@ -1,5 +1,12 @@
-{  
+{    
+  "zoom": true,
+  "pan": {
+    "modifierKeyRequired": null
+  },
+
   "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
+
   "parameters": [
     {
       "name": "node_selection",
@@ -24,7 +31,7 @@
       "value": "[nodeTypeInShape]"
     }
   ],
-  "networks": "[networksDefinition]",
+
   "layouts": [
     {
       "name": "layout",
@@ -33,6 +40,7 @@
       "avoidOverlap": true
     }
   ],
+
   "scales": [
     {
       "name": "radius",
@@ -86,9 +94,13 @@
               "value": "grey"
             }
           ], 
-          "field": "linkType", "scale": "edgeColor" 
+          "field": "linkType", 
+          "scale": "edgeColor" 
         },
-        "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth"},
+        "strokeWidth": { 
+          "field": "linkWeight", 
+          "scale": "edgeWidth"
+        },
         "opacity":  { 
           "conditions": [
             {
