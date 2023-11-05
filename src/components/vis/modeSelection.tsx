@@ -17,7 +17,7 @@ function ModeSelection(props: IModeSelectionProps) {
     <div style={{ display: 'flex'}}>
       {modes.map((mode: string, index: number) => {
         if (props.type === mode) {
-          return <Tooltip title={mode}>
+          return <Tooltip key={mode} title={mode}>
             <Button
               type='primary'
               icon={icons[index]}
@@ -27,7 +27,7 @@ function ModeSelection(props: IModeSelectionProps) {
           </Tooltip>
         }
         else {
-          return <Tooltip title={mode}>
+          return <Tooltip key={mode} title={mode}>
             <Link
               to={`/vis/${props.visTypes}/network/${props.network}/${mode === 'explore' ? '' : mode}`}
               target='_blank'

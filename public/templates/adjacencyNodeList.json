@@ -1,15 +1,17 @@
-{
-  "zoom": true,
-  "pan": {"modifierKeyRequired": []},
-  
+{  
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
   "groupings": [
     {
       "name": "groupedBySource",
       "data": "network.links",
+      "common": ["source.id"]
+    },
+    {
+      "name": "groupedBySourceAndTarget",
+      "data": "network.links",
       "common": [
-        "source.id"
+        "source.id", "target.id"
       ]
     }
   ],
@@ -37,13 +39,16 @@
   ],
   "scales": [
     {
-      "name": "linkColor",
+      "name": "opacity",
+      "type": "linear",
+      "range": [ 0.2, 1 ],
+      "domain": { "data": "groupedBySourceAndTarget", "field": "size" }
+    },
+    {
+      "name": "cellColor",
       "type": "ordinal",
-      "scheme": "category10",
-      "domain": {
-        "data": "network.links",
-        "field": "linkType"
-      }
+      "range": "[colorScheme]",
+      "domain": { "data": "network.links", "field": "linkType" }
     }
   ],
   "vis": [
@@ -62,21 +67,29 @@
     {
       "entries": "groupedBySource",
       "layout": "layout",
+      "groupings": [
+        {
+          "name": "groupedByTarget",
+          "data": "entry.data",
+          "common": ["target.id"]
+        }
+      ],
       "vis": [
         {
-          "entries": "entry.data",
+          "entries": "groupedByTarget",
           "mark": {
-            "type": "square",
-            "fill": {
-              "field": "linkType",
-              "scale": "linkColor"
+            "type": "circle",
+            "fill": "#F28527",
+            "opacity": {
+              "scale": "opacity",
+              "expression": "datum.size"
             },
             "area": 100,
             "x": {
               "expression": "index * 13 + 120"
             },
             "tooltip": {
-              "expression": " datum.source.id + ' --- '+ datum.linkType +'--> ' + datum.target.id + '' "
+              "expression": "datum.key + ' (' + datum.size + ')'"
             }
           }
         }

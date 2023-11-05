@@ -39,7 +39,7 @@ function Legend(props: ILegendProps) {
 
   return (
     <div>
-      <p style={{ fontSize: 18 }}><b>Legend:</b></p>
+      <p style={{ fontSize: 18, marginBottom: 5 }}><b>Legend:</b></p>
       {/* link type */}
       {config.linkTableConfig?.linkType ? <>
         <span>Link Types:</span>

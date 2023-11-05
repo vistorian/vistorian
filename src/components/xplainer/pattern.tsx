@@ -628,9 +628,9 @@ function Pattern (props: IPatternProps) {
           </div>
 
           {/* explain the selection statistics */}
-          {/* <div style={{ marginTop: 5 }}>
+          <div style={{ marginTop: 5 }}>
             {description}
-          </div> */}
+          </div>
 
           <div style={{marginTop: 15}}>
             <span style={{ fontSize: 18, fontWeight: 700 }}>{getVisualTitle()} pattern</span>
@@ -652,7 +652,7 @@ function Pattern (props: IPatternProps) {
           
 
           {/* relate to variants when have more than one instances in this network */}
-          {/* {motifType in allMotifs && allMotifs[motifType].length > 1 ? 
+          {motifType in allMotifs && allMotifs[motifType].length > 1 ? 
           <div style={{ marginTop: 15 }}>
               <span style={{ fontSize: 18, fontWeight: 700 }}>Browse related <span style={{ textDecoration: 'underline' }}>{getVisualTitle()}</span> and <span style={{ textDecoration: 'underline' }}>{pattern.title}</span></span>
             <div style={{display: 'flex', alignItems: 'center'}}>
@@ -666,7 +666,7 @@ function Pattern (props: IPatternProps) {
                 ghost
                 defaultActiveKey={[]}
               />}
-          </div> : null} */}
+          </div> : null}
 
         </div> : null}
     </>

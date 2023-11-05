@@ -1,4 +1,9 @@
 {
+    "zoom": true,
+    "pan": {
+        "modifierKeyRequired": null
+    },
+
     "x": 120,
     "y": 120,
     "data": "[dataDefinition]",
@@ -8,15 +13,18 @@
             "name": "seriationMethod",
             "bind": {
                 "input": "select",
-                "options": [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
-                "labels": [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
-                "label": "Seriation"
+                "options": [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca"],
+                "labels": ["optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca"],
+                "label": "Sort by"
             },
             "value": "optimal-leaf-order"
         },
         {
-            "name": "timeRange",
-            "value": "[timeRange]"
+            "name": "link_selection",
+            "network": "network",
+            "type": "selection",
+            "action": "replace",
+            "clearOnBackgroundClick": true
         }
     ],
     "scales": [
@@ -24,19 +32,25 @@
             "name": "opacity",
             "type": "linear",
             "range": [ 0.2, 1 ],
-            "domain": { "data": "network.links", "field": "linkWeight" }
+            "domain": {
+                "data": "network.links",
+                "field": "linkWeight"
+            }
         },
         {
             "name": "cellColor",
             "type": "ordinal",
             "range": "[colorScheme]",
-            "domain": { "data": "network.links", "field": "linkType" }
+            "domain": {
+                "data": "network.links",
+                "field": "linkType"
+            }
         }
     ],
     "orderings": [
         {
             "name": "order",
-            "method": { "parameter": "seriationMethod" },
+            "method": {"parameter": "seriationMethod"},
             "network": "network"
         }
     ],
@@ -44,8 +58,14 @@
         {
             "name": "adjacencyMatrix",
             "data": "network.links",
-            "rowOrder": { "order": "order", "field": "source" },
-            "colOrder": { "order": "order", "field": "target" },
+            "rowOrder": {
+                "order": "order",
+                "field": "source"
+            },
+            "colOrder": {
+                "order": "order",
+                "field": "target"
+            },
             "symmetric": true
         }
     ],
@@ -65,11 +85,26 @@
             },
             "rowLines": { "stroke": "lightgrey" },
             "colLines": { "stroke": "lightgrey" },
+            "actions": [
+                {
+                    "interaction": "select",
+                    "using": "cursor",
+                    "event": "mouseover",
+                    "action": "replace",
+                    "selection": "link_selection"
+                }
+            ],
             "mark": {
                 "type": "square",
-                "area": { "expression": "(bounds.width * bounds.height)" },
-                "x": { "expression": "bounds.x + bounds.width/2" },
-                "y": { "expression": "bounds.y + bounds.height/2" },
+                "area": {
+                    "expression": "(bounds.width * bounds.height)"
+                },
+                "x": {
+                    "expression": "bounds.x + bounds.width/2"
+                },
+                "y": {
+                    "expression": "bounds.y + bounds.height/2"
+                },
                 "fill": {
                     "condition": {
                         "test": "datum.size < 1",
@@ -85,6 +120,16 @@
                     },
                     "scale": "opacity",
                     "expression": "datum.data[0].linkWeight"
+                },
+                "stroke": "black",
+                "strokeWidth": {
+                    "conditions": [
+                        {
+                            "inSelection": "link_selection.links",
+                            "value": 1
+                        }
+                    ],
+                    "value": 0
                 },
                 "tooltip": {
                     "expression": "datum.key[0].id + ' -> ' + datum.key[1].id "

@@ -1,9 +1,4 @@
 {
-  "zoom": true,
-  "pan": {
-    "modifierKeyRequired": []
-  },
-
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
 
@@ -14,8 +9,7 @@
           "input": "select",
           "options":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
           "labels":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
-          "label": "Node ordering"
-
+          "label": "Optimized ordering by"
       },
       "value": "optimal-leaf-order"
     },

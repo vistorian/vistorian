@@ -1,6 +1,6 @@
 import { Spin } from "antd"
 import { useCallback, useEffect, useState } from "react"
-import { AllMotifs, NetworkConfig, VisContentOptions } from "../../../typings"
+import { AllMotifs, NetworkConfig } from "../../../typings"
 import templates from "../templates/templates"
 import { genSpecFromLinkTable } from "../templates/genSpec"
 import useMotifDetect, { getBounds, getMotifBound } from '../xplainer/useMotifDetect'
@@ -19,7 +19,7 @@ interface IVisContentProps {
   width: string
   visType: string
   network: string
-  options: VisContentOptions
+  options: any
   setAllMotifs: (m: AllMotifs) => void
   selectedTypes: string[]
 }
@@ -27,17 +27,17 @@ interface IVisContentProps {
 function VisContent(props: IVisContentProps) {
   const { viewerId, width, visType, network, options, setAllMotifs } = props
   const [loading, setLoading] = useState<boolean>(true)
+  const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
+
+  const containerId = `visSvg${viewerId}`
   const [viewer, setViewer] = useState<any>({})
+
+  // pattern-xplainer variables
   const [patternDetector, setPatternDetector] = useState<any>({})
   // pattern selection type: rect | lasso
   const [selectType, setSelectType] = useState<string>('rect')
-
-  const containerId = `visSvg${viewerId}`
-  // const containerIdCopy = `visSvg${viewerId}Copy`
-  const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
-  // console.log(window.localStorage.getItem("UPLOADED_FILE_survey1.csv"))
-
   let motifs = useMotifDetect(patternDetector)
+
   type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
   const getParamCallbacks = () => {
     let cb: ParamChangeCallbacks = {}
@@ -54,8 +54,6 @@ function VisContent(props: IVisContentProps) {
     }
     return cb
   }
-
-  // const [viewerCopy, setViewerCopy] = useState<any>({})
   const update = async () => {
     // let renderer = visType === 'matrix' ? 'canvas' : 'svg'
     let renderer = 'svg'
@@ -67,35 +65,21 @@ function VisContent(props: IVisContentProps) {
     let tmpViewer = await NetPanoramaTemplateViewer.render(templatePath, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
-      selectType: `"${selectType}"`,
+      selectType: `"${selectType}"`, // used for pattern xplainer
       ...options
     }, containerId, {
       renderer: renderer,
       paramCallbacks: getParamCallbacks()
     })
-
     // @ts-ignore
-    // let viewer1 = await NetPanoramaTemplateViewer.render(templatePath, {
-    //   dataDefinition: JSON.stringify(spec.data),
-    //   networksDefinition: JSON.stringify(spec.network),
-    //   selectType: `"${selectType}"`,
-    //   ...options
-    // }, containerIdCopy, {
-    //   renderer: renderer,
-    //   paramCallbacks: getParamCallbacks()
-    // })
-    // setViewerCopy(viewer1)
-
-
-    // @ts-ignore
-    // console.log('VIEW STATE:', tmpViewer.state, tmpViewer.sceneJSON)
-    let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType)
-    // console.log('patternDetector', tmpPatternDetector.allMotifs)
-    // setNetworkData(viewer.state.network)
+    console.log('VIEW STATE:', tmpViewer.state)
     setViewer(tmpViewer)
-    setPatternDetector(tmpPatternDetector)
-    setAllMotifs(patternDetector.allMotifs)
-
+    if (props.type === 'xplainer') {
+      let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType)
+      setPatternDetector(tmpPatternDetector)
+      setAllMotifs(patternDetector.allMotifs)
+    }
+    
     const container = document.getElementById(containerId)
     if (container && container.getElementsByTagName("svg").length > 0) {
       // @ts-ignore
@@ -103,15 +87,6 @@ function VisContent(props: IVisContentProps) {
       // @ts-ignore
       container.getElementsByTagName("svg")[0].style["max-height"] = "100%";
     }
-
-
-    // const containerCopy = document.getElementById(containerIdCopy)
-    // if (containerCopy && containerCopy.getElementsByTagName("svg").length > 0) {
-    //   // @ts-ignore
-    //   containerCopy.getElementsByTagName("svg")[0].style["max-width"] = "100%";
-    //   // @ts-ignore
-    //   containerCopy.getElementsByTagName("svg")[0].style["max-height"] = "100%";
-    // }
 
     setLoading(false)
   }
@@ -124,27 +99,6 @@ function VisContent(props: IVisContentProps) {
     }
     update()
   }, [loading, selectType])
-
-  // drag pattern card
-  // const moveBox = useCallback(
-  //   (id: string, left: number, top: number) => {
-  //     setOffsetData([left, top])
-  //   },
-  //   [offsetData, setOffsetData],
-  // )
-  // const [, drop] = useDrop(
-  //   () => ({
-  //     accept: 'box',
-  //     drop(item: any, monitor) {
-  //       const delta = monitor.getDifferenceFromInitialOffset() as XYCoord
-  //       const left = Math.round(item.left + delta.x)
-  //       const top = Math.round(item.top + delta.y)
-  //       moveBox(item.id, left, top)
-  //       return undefined
-  //     },
-  //   }),
-  //   [moveBox],
-  // )
 
   // Xplainer related state
   const [hoverRelatedMotif, setHoverRelatedMotif] = useState<NetworkPattern>({} as NetworkPattern)
@@ -222,35 +176,6 @@ function VisContent(props: IVisContentProps) {
   }, [selectedMotifNo, clickRelatedMotif])
 
 
-  // const getRelatedMotifBound = (motif: NetworkPattern) => {
-  //   // console.log('getRelatedMotifBound:', motif)
-  //   const relatedBound = getBounds(motif.nodes, motif.links, viewerCopy.sceneJSON)
-  //   const relatedMotifBound = getMotifBound(motif, relatedBound.bounds, relatedBound.boundsId)
-  //   return relatedMotifBound
-  // }
-
-
-  // const getSnapshot = (motif: NetworkPattern) => {
-  //   const ele = document.querySelector("#visSvg0Copy svg")
-  //   if (ele) {
-  //     const eleClone = ele.cloneNode(true) as SVGElement
-  //     // TODO: 24 is the height of the parameter selection
-  //     // const visOffset = [viewerCopy.sceneJSON.items[0].x, visType !== 'nodelink' ? viewerCopy.sceneJSON.items[0].y + 24 : viewerCopy.sceneJSON.items[0].y]
-  //     const visOffset = [viewerCopy.sceneJSON.items[0].x, visType !== 'nodelink' ? viewerCopy.sceneJSON.items[0].y : viewerCopy.sceneJSON.items[0].y]
-  //     const bounds = getRelatedMotifBound(motif)
-  //     if (bounds) {
-  //       eleClone.setAttribute("width", `${bounds.x2 - bounds.x1}`)
-  //       eleClone.setAttribute("height", `${bounds.y2 - bounds.y1}`)
-  //       eleClone.setAttribute("viewBox", `${bounds.x1 + visOffset[0]} ${bounds.y1 + visOffset[1]} ${bounds.x2 - bounds.x1} ${bounds.y2 - bounds.y1}`)
-  //       // document.querySelector(`#${listId} svg`)?.remove()
-  //       // document.querySelector(`#${listId}`)?.appendChild(eleClone)
-  //     }
-  //     // return <></>
-  //     return eleClone
-  //   }
-  //   return
-  // }
-
   // record motif bounds
   const [snapshots, setSnapshots] = useState<any>({})
   useEffect(() => {
@@ -264,75 +189,38 @@ function VisContent(props: IVisContentProps) {
       let groupByType = groupBy(motifs.motifs, (motif) => motif.type())
       thisMotif = groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]
     }
-    // if (viewerCopy && motifs && selectedMotifNo[0]!== -1 && Object.keys(viewerCopy).length > 0) {
-    //   let tmp: any = {}
-    //   patternDetector.allMotifs[thisMotif.type()].map((other, idx) => {
-    //     // if (JSON.stringify(other) !== JSON.stringify(thisMotif)) {
-    //       // let nodeIds: string[] | number[] = other.nodes,
-    //       //   linkIds: string[] | number[] = other.links
-    //       // const networkName = "network";
-    //       // let links: any = [], nodes: any = []
-    //       // // @ts-ignore
-    //       // links = viewerCopy.state[networkName].links.filter((l: any) => linkIds.includes(`${l.id}`));
-    //       // // for link patterns which only have links, find their nodes
-    //       // if (nodeIds.length === 0) {
-    //       //   links.map((l: any) => {
-    //       //     // @ts-ignore
-    //       //     nodeIds.push(l.source.id, l.target.id)
-    //       //   })
-    //       //   // @ts-ignore
-    //       //   nodeIds = uniq(nodeIds)
-    //       // }
-    //       // // @ts-ignore
-    //       // nodes = viewerCopy.state[networkName].nodes.filter((n: any) => nodeIds.includes(`${n.id}`));
-    //       // // for matrix, find hubs & bridge nodes
-    //       // if (visType === 'matrix' && linkIds.length === 0) {
-    //       //   links = viewerCopy.state[networkName].links.filter((l: any) => {
-    //       //     // @ts-ignore
-    //       //     if (nodeIds.includes(`${l.source.id}`) || nodeIds.includes(`${l.target.id}`)) {
-    //       //       return true
-    //       //     }
-    //       //     return false
-    //       //   })
-    //       // }
-    //       // // console.log('nodes:', nodes, 'links:', links)
-    //       // viewerCopy.setParam('selected_marks', { nodes, links })
-    //       const tt = {[idx]: getSnapshot(other)}
-    //       tmp = {...tmp, ...tt}
-    //     // }
-    //   })
-    //   // console.log(tmp)
-    //   setSnapshots(tmp)
-    // }
   }, [selectedMotifNo, clickRelatedMotif])
 
   return (
     loading ?
       <Spin tip="Loading" size="small">
         <div id={containerId} style={{ width: width }} />
-        <PatternSelection type={selectType} setType={setSelectType} />
+        {props.type === 'xplainer' ? <PatternSelection type={selectType} setType={setSelectType} /> : null}
       </Spin>
       :
-      <div // ref={drop}  
+      <div
         style={{ position: 'relative', display: 'flex', width: '100%' }}
       >
         <div id={containerId}
-          // style={{ width: width }}  // for exploration mode
-          style={{ overflow: 'scroll', position: "relative" }}
+          style={{ width: width }}  // for exploration mode
+          // style={{ overflow: 'scroll', position: "relative" }} // for xplainer mode
         >
+          {/* ======= pattern xplainer ======= */}
           {/* show motif overlays above vis */}
-          <Overlay
-            motifs={motifs}
-            open={open}
-            sceneJSON={viewer.sceneJSON}
-            // TODO: 24 is the height of the parameter selection
-            visOffset={[viewer.sceneJSON.items[0].x, visType !== 'nodelink' ? viewer.sceneJSON.items[0].y + 24 : viewer.sceneJSON.items[0].y]}
-            hoverRelatedMotif={hoverRelatedMotif}
-            clickRelatedMotif={clickRelatedMotif}
-            selectedMotifNo={selectedMotifNo}
-          />
+          {(props.type === 'xplainer' && Object.keys(patternDetector).length > 0) ? 
+            <Overlay
+              motifs={motifs}
+              open={open}
+              sceneJSON={viewer.sceneJSON}
+              // TODO: 24 is the height of the parameter selection
+              visOffset={[viewer.sceneJSON.items[0].x, visType !== 'nodelink' ? viewer.sceneJSON.items[0].y + 24 : viewer.sceneJSON.items[0].y]}
+              hoverRelatedMotif={hoverRelatedMotif}
+              clickRelatedMotif={clickRelatedMotif}
+              selectedMotifNo={selectedMotifNo}
+            /> : null}
         </div>
-        {/* pattern card */}
+
+        {/* ======= pattern xplainer ======= */}
         {(props.type === 'xplainer' && Object.keys(patternDetector).length > 0) ?
           <>
             {motifs.contextHolder}
@@ -352,10 +240,7 @@ function VisContent(props: IVisContentProps) {
           </> : null}
         {/* rect selection or lasso */}
         {props.type === 'xplainer' ? <PatternSelection type={selectType} setType={setSelectType} /> : null}
-        {/* capture the content */}
-        {/* <div id={containerIdCopy}
-          style={{ overflow: 'scroll', position: "relative", display: 'none'}}
-        ></div> */}
+        
       </div>
   )
 }

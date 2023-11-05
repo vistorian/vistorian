@@ -1,7 +1,4 @@
-{
-  "zoom": true,
-  "pan": {"modifierKeyRequired": []},
-  
+{  
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
 
@@ -17,7 +14,7 @@
     {
       "name": "jigsaw",
       "pattern": "cartesian",
-      "x": [{"scale": "axis", "field": "_type"}],
+      "x": [{"scale": "axis", "field": "id"}],
       "y": [{"order": "degree"}],
       "data": "network.nodes",
       "positioning": "start"
@@ -56,8 +53,7 @@
       "mark": {
         "type": "circle",
         "area": { "field": "degree", "scale": "radius" },
-        "fill": { "expression": "datum._type === 'type1' ? 'red' : 'blue' "},
-        "tooltip": {"expression": "datum.id + ' (degree ' + datum.degree + ')' "}
+        "fill": { "expression": "datum._type === 'type1' ? 'red' : 'blue' "}
       }
     }
 

@@ -28,6 +28,7 @@ type Template = {
   label: string,
   image: string,
   template: string,
+  manual: string
 }
 
 type OperationType = "data" | "network" | null
@@ -124,17 +125,6 @@ interface SelectOptionType {
   label: string
 }
 
-interface VisContentOptions {
-  timeRange: [number, number] | null,
-  colorScheme: string | string[] | null,
-  nodeTypeInShape: boolean | null,
-  nodeTypeShapeScheme: string | string[] | null,
-  nodeLabel: string | null,
-  lableImportance: any,
-  timeFormat: string | null,
-  parallelLinksType: string | null,
-}
-
 type AllMotifs = { [name: string]: NetworkPattern[] }
 
 
@@ -155,6 +145,5 @@ export {
   ExtraNodeConfig,
   IStepProps,
   SelectOptionType,
-  VisContentOptions,
   AllMotifs
 }
