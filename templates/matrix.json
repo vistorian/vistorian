@@ -6,6 +6,7 @@
 
     "x": 120,
     "y": 120,
+    
     "data": "[dataDefinition]",
     "networks": "[networksDefinition]",
     "parameters": [
