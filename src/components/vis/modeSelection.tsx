@@ -9,7 +9,9 @@ interface IModeSelectionProps {
 }
 
 function ModeSelection(props: IModeSelectionProps) {
-  const modes: string[] = ['explore', 'xplainer', 'design']
+  // const modes: string[] = ['explore', 'xplainer', 'design']
+  const modes: string[] = ['explore', 'xplainer']
+  const modesNames: string[] = ['Explorer', 'Explainer']
 
   const icons = [<FileSearchOutlined />, <BulbOutlined />, <FormOutlined />]
   
@@ -23,6 +25,7 @@ function ModeSelection(props: IModeSelectionProps) {
               icon={icons[index]}
               size="large"
             >
+              {modesNames[index]}
             </Button>
           </Tooltip>
         }
@@ -37,6 +40,7 @@ function ModeSelection(props: IModeSelectionProps) {
                 icon={icons[index]}
                 size="large"
               >
+                {modesNames[index]}
               </Button>
             </Link>
           </Tooltip>

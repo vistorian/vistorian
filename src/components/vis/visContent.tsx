@@ -11,7 +11,7 @@ import Overlay from "../xplainer/overlay"
 import { NetworkPattern } from "../xplainer/motifs/motif"
 import PatternCard from "../xplainer/patternCard"
 import { flatMap, groupBy, uniq } from "lodash-es"
-
+// import * as d3 from 'd3'
 
 interface IVisContentProps {
   type: string // "explore" || "xplainer"
@@ -55,11 +55,12 @@ function VisContent(props: IVisContentProps) {
     return cb
   }
   const update = async () => {
-    // let renderer = visType === 'matrix' ? 'canvas' : 'svg'
-    let renderer = 'svg'
+    let renderer = visType === 'matrix' ? 'canvas' : 'svg'
+    // let renderer = 'svg'
     let template = templates.filter(t => t.key === visType)[0]
     let templatePath = props.type === 'explore' ? `./templates/${template.template}` : `./templates/xplainer/${template.template}`
     let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
+    // console.log('spec:', spec)
 
     // @ts-ignore
     let tmpViewer = await NetPanoramaTemplateViewer.render(templatePath, {
@@ -73,6 +74,7 @@ function VisContent(props: IVisContentProps) {
     })
     // @ts-ignore
     console.log('VIEW STATE:', tmpViewer.state)
+    // console.log(JSON.stringify(tmpViewer.spec))
     setViewer(tmpViewer)
     if (props.type === 'xplainer') {
       let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType)
@@ -86,6 +88,7 @@ function VisContent(props: IVisContentProps) {
       container.getElementsByTagName("svg")[0].style["max-width"] = "100%";
       // @ts-ignore
       container.getElementsByTagName("svg")[0].style["max-height"] = "100%";
+      // d3.select(`#${containerId}`).selectAll('text').attr('pointer-events', 'none')
     }
 
     setLoading(false)

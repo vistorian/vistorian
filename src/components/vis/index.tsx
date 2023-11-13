@@ -14,23 +14,23 @@ import templates from '../templates/templates'
 
 const useStyles = createUseStyles({
   root: {
-    display: "flex",
-    justifyContent: "flex-start",
     height: '100%',
-  },
-  left: {
-    width: 280,
-    height: '100%',
-    borderRight: '1px solid #d9d9d9',
-    marginRight: 20,
-    paddingRight: 20
+    width: '100%'
   },
   header: {
     display: "flex",
-    flexDirection: "column",
+    justifyContent: "space-between",
+    boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.08)',
+    marginBottom: 20,
+    paddingBottom: 10
+  },
+  left: {
+    display: "flex",
+    alignItems: "end"
   },
   right: {
-    width: "calc(100% - 352px)"
+    display: "flex",
+    alignItems: "end"
   }
 })
 
@@ -64,131 +64,99 @@ function Vis(props: IVisProps) {
   const nodeTypeShapeScheme = defaultNodeTypeShapeScheme
   const nodeTypeInShape: boolean = networkCfg.linkTableConfig?.linkType?.length as number > 0
   const nodeLabel: string = networkCfg.extraNodeConfig?.nodeLabel ? `"datum.data.${networkCfg.extraNodeConfig?.nodeLabel}"` : `"datum.id"`
-  const lableImportance = 15
   const timeFormat = networkCfg.linkTableConfig?.withTime ? `"${networkCfg.linkTableConfig.timeFormat}"` : null
   // TODO: temporal solution for user study
-  const parallelLinksType = networkCfg.linkTableConfig?.file === 'marieboucher.csv' ? `"line"` : `"null"`
+  // const parallelLinksType = networkCfg.linkTableConfig?.file === 'marieboucher.csv' ? `"line"` : `"null"`
 
   let options: any = {
-    // timeRange: timeRange,
     colorScheme: colorScheme,
     nodeTypeInShape: nodeTypeInShape,
     nodeTypeShapeScheme: nodeTypeShapeScheme,
     nodeLabel: nodeLabel,
-    lableImportance: lableImportance,
     timeFormat: timeFormat,
-    parallelLinksType: parallelLinksType
+    // parallelLinksType: parallelLinksType
   }
 
   return (
     <div className={classes.root}>
+      {/* header */}
+      <div className={classes.header}>
         <div className={classes.left}>
-          {/* logo */}
-          <div className={classes.header}>
-            <a href="./" style={{ marginBottom: "20px", }}>
-            <img src={props.type === 'xplainer' ? "./logos/logo-xplainer.png" : "./logos/logo-vistorian.png"} style={{ width: 200 }} />
-            </a>
-          </div>
-
-          <ModeSelection 
+          <a href="./" style={{ marginRight: "20px"}}>
+            <img src={props.type === 'xplainer' ? "./logos/logo-xplainer.png" : "./logos/logo-vistorian.png"} style={{ width: 150 }} />
+          </a>
+          <ModeSelection
             type={props.type}
             visTypes={visTypes as string}
             network={network as string}
           />
-
-        {/* show network names */}
-        <div style={{ background: '#eee', marginTop: 10, padding: '0px 5px' , display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          {/* TODO: return to network preview */}
-          <span style={{ fontSize: 18 }}>
-            <b>Network:</b>&nbsp;{network}
-          </span>
-          <Tooltip title="Return to Network View">
-            <Link
-              to={`/wizard`}
-              target='_blank'
-            >
-              <Button
-                type="text"
-                icon={<ExportOutlined />}
-              />
-            </Link>
-          </Tooltip>
         </div>
-
-        {/* show visualization names */}
-        <div style={{ 
-            background: '#eee', 
-            marginTop: 10, 
-            padding: '0px 5px', 
-          }}>
-          {/* TODO: return to network preview */}
-          <span style={{ fontSize: 18 }}>
-            <b>Visualization:</b>&nbsp;
-            {visTypeList.map((visType: string, index: number) => {
-              const item = templates.filter(t => t.key === visType)[0]
-              return <span key={index}>
-                {item.label}
-                <Tooltip title="Jump to Manuals">
-                  <Link
-                    to={item.manual}
-                    target='_blank'
-                  >
-                    <Button
-                      type="text"
-                      icon={<QuestionCircleOutlined />}
-                    />
-                  </Link>
-                </Tooltip>
-              </span>
-            })}
-          </span>
-        </div>
-
-          {/* show legends */}
-          <Legend 
-            network={network as string} 
-            linkTypeEncoding={colorScheme}
-            nodeTypeEncoding={nodeTypeInShape ? nodeTypeShapeScheme : colorScheme}
-            nodeTypeInShape={nodeTypeInShape}
-          />
-          {/* show pattern overview */}
-          {props.type === 'xplainer' ? <Overview
-            allMotifs={allMotifs}
-            setSelectedTypes={setSelectedTypes}
-          /> : null}
-          
-        </div>
-        
-        {/* render netpanorama */}
+        {/* network name & data name*/}
         <div className={classes.right}>
-          {/* TODO: move timeslider to be inside netpan */}
-          {/* {networkCfg.linkTableConfig?.withTime ? 
-            <TimeSlider 
-              network={network as string} 
-              minTime={minTime} 
-              maxTime={maxTime}
-              setTimeRange={setTimeRange}
-            /> 
-          : null} */}
-          {/* render vis */}
-            <div style={{ width: '100%', display: 'flex' }}>
-              {visTypeList.map((visType, idx) => {
-                return (
-                  <VisContent
-                    type={props.type}
-                    key={idx}
-                    viewerId={idx}
-                    width={`${100 / visTypeList.length}%`}
-                    visType={visType}
-                    network={network as string}
-                    options={options}
-                    setAllMotifs={setAllMotifs}
-                    selectedTypes={selectedTypes}
-                  />
-                )
+          {/* show network names */}
+          <div style={{ marginRight: 8}}>
+            {/* TODO: return to network preview */}
+            <span style={{ fontSize: 18 }}>
+              <b>Network:</b>&nbsp;{network}
+            </span>
+            <Tooltip title="Return to Network View">
+              <Link
+                to={`/wizard`}
+                target='_blank'
+              >
+                <Button
+                  type="text"
+                  icon={<ExportOutlined />}
+                />
+              </Link>
+            </Tooltip>
+          </div>
+
+          {/* show visualization names */}
+          <div>
+            {/* TODO: return to network preview */}
+            <span style={{ fontSize: 18 }}>
+              <b>Visualization:</b>&nbsp;
+              {visTypeList.map((visType: string, index: number) => {
+                const item = templates.filter(t => t.key === visType)[0]
+                return <span key={index}>
+                  {item.label}
+                  <Tooltip title="Jump to Manuals">
+                    <Link
+                      to={item.manual}
+                      target='_blank'
+                    >
+                      <Button
+                        type="text"
+                        icon={<QuestionCircleOutlined />}
+                      />
+                    </Link>
+                  </Tooltip>
+                </span>
               })}
-            </div>
+            </span>
+          </div>
         </div>
+      </div>
+
+      {/* render vis */}
+      <div style={{ width: '100%', display: 'flex' }}>
+        {visTypeList.map((visType, idx) => {
+          return (
+            <VisContent
+              type={props.type}
+              key={idx}
+              viewerId={idx}
+              width={`${100 / visTypeList.length}%`}
+              visType={visType}
+              network={network as string}
+              options={options}
+              setAllMotifs={setAllMotifs}
+              selectedTypes={selectedTypes}
+            />
+          )
+        })}
+      </div>
     </div>
   )
 }
