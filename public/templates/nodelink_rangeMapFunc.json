@@ -223,23 +223,6 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
-      "ifInSelection": "node_selection.nodes",
-      "occlusion": true,
-      "mark": {
-        "type": "text",
-        "text": { "expression": "[nodeLabel]" },
-        "cursor": "none",
-        "dx": 5,
-        "dy": 5,
-        "fontSize": 13,
-        "fontWeight": "bold",
-        "stroke": "white",
-        "strokeWidth": 0.3
-      }
-    },
-    {
-      "entries": "network.nodes",
-      "layout": "layout",
       "occlusion": {"field": "degree"},
       "mark": {
         "type": "text",
@@ -247,6 +230,10 @@
           "conditions": [
             {
               "selectionIsEmpty": "node_selection.nodes",
+              "value": { "expression": "[nodeLabel]"}
+            },
+            {
+              "inSelection": "node_selection.nodes",
               "value": { "expression": "[nodeLabel]"}
             }
           ]

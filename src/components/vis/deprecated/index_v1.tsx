@@ -1,16 +1,16 @@
 import { Link, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { createUseStyles } from 'react-jss'
-import { AllMotifs, NetworkConfig } from '../../../typings'
-import { defaultColorScheme, defaultNodeTypeShapeScheme } from '../../../typings/constant'
+import { AllMotifs, NetworkConfig } from '../../../../typings'
+import { defaultColorScheme, defaultNodeTypeShapeScheme } from '../../../../typings/constant'
 import { timeParse } from 'd3-time-format'
 import { Button, Tooltip } from 'antd'
 import { ExportOutlined, QuestionCircleOutlined } from '@ant-design/icons'
-import Legend from './legend'
-import VisContent from './visContent'
-import Overview from '../xplainer/overview'
-import ModeSelection from './modeSelection'
-import templates from '../templates/templates'
+import Legend from '../legend'
+import VisContent from '../visContent'
+import Overview from '../../xplainer/overview'
+import ModeSelection from '../modeSelection'
+import templates from '../../templates/templates'
 
 const useStyles = createUseStyles({
   root: {

@@ -1,4 +1,4 @@
-import { Button, Tooltip } from "antd"
+import { Button } from "antd"
 import { Link } from "react-router-dom"
 import { FileSearchOutlined, BulbOutlined, FormOutlined } from '@ant-design/icons'
 
@@ -9,7 +9,6 @@ interface IModeSelectionProps {
 }
 
 function ModeSelection(props: IModeSelectionProps) {
-  // const modes: string[] = ['explore', 'xplainer', 'design']
   const modes: string[] = ['explore', 'xplainer']
   const modesNames: string[] = ['Explorer', 'Explainer']
 
@@ -19,21 +18,22 @@ function ModeSelection(props: IModeSelectionProps) {
     <div style={{ display: 'flex'}}>
       {modes.map((mode: string, index: number) => {
         if (props.type === mode) {
-          return <Tooltip key={mode} title={mode}>
+          return (
             <Button
               type='primary'
               icon={icons[index]}
               size="large"
+              key={index}
             >
               {modesNames[index]}
             </Button>
-          </Tooltip>
-        }
+          )}
         else {
-          return <Tooltip key={mode} title={mode}>
+          return (
             <Link
               to={`/vis/${props.visTypes}/network/${props.network}/${mode === 'explore' ? '' : mode}`}
               target='_blank'
+              key={index}
             >
               <Button
                 type='text'
@@ -42,9 +42,8 @@ function ModeSelection(props: IModeSelectionProps) {
               >
                 {modesNames[index]}
               </Button>
-            </Link>
-          </Tooltip>
-        }
+            </Link> 
+        )}
       })}
     </div>
   )

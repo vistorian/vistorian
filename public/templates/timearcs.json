@@ -48,11 +48,11 @@
       "bind": {
         "input": "range",
         "label": "Node Size",
-        "min": "1",
-        "max": "3",
+        "min": "2",
+        "max": "8",
         "step": "0.02"
       },
-      "value": 1
+      "value": 3
     },
     {
       "name": "nodeOpacityParam",
@@ -70,7 +70,7 @@
       "bind": {
         "input": "range",
         "label": "Link Width",
-        "min": "1",
+        "min": "0.5",
         "max": "3",
         "step": "0.02"
       },
@@ -81,11 +81,11 @@
       "bind": {
         "input": "range",
         "label": "Link Opacity",
-        "min": "0.1",
+        "min": "0",
         "max": "1",
         "step": "0.02"
       },
-      "value": 1
+      "value": 0.4
     }
   ],
 
@@ -198,10 +198,18 @@
         "end": "target",
         "shape": "curveSymmetric",
         "parallelLinksType": "null",
-        "stroke": { "field": "linkType", "scale": "edgeColor" },
+        "stroke": { 
+          "conditions": [
+            {
+              "test": "!params.nodeTypeInShape",
+              "value": "grey"
+            }
+          ],
+          "field": "linkType", "scale": "edgeColor" 
+        },
         "directionForShape": {  "ordering": "staticOrder" },
-        "strokeWidth": 1,
-        "strokeOpacity": 0.4,
+        "strokeWidth": {"expression": "params.linkWidthParam"},
+        "strokeOpacity": {"expression": "params.linkOpacityParam"},
         "tooptip": { "expression": "datum"}
       }
     },
@@ -219,7 +227,9 @@
       ],
       "mark": {
         "type": "circle",
-        "area": { "field": "degree", "scale": "radius" },
+        "area": { 
+          "expression": "10 + datum.degree * params.nodeSizeParam"
+         },
         "fill": {
           "conditions": [
             {

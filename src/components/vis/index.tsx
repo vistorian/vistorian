@@ -44,21 +44,11 @@ function Vis(props: IVisProps) {
   const visTypeList = visTypes?.split('+') as string[]
 
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
-  const data = JSON.parse(window.localStorage.getItem('UPLOADED_FILE_' + networkCfg.linkTableConfig?.file) as string)
+  // const data = JSON.parse(window.localStorage.getItem('UPLOADED_FILE_' + networkCfg.linkTableConfig?.file) as string)
+  
   // for PatternOverview Component
   const [allMotifs, setAllMotifs] = useState<AllMotifs>({})
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
-
-  // respond to time slider
-  // let minTime = 0, maxTime = 0
-  // if (networkCfg.linkTableConfig?.withTime) {
-  //   const timeColumn = networkCfg.linkTableConfig?.time as string
-  //   const timeFmt = networkCfg.linkTableConfig?.timeFormat as string
-  //   const timeArray = data.map((d: any) => timeParse(timeFmt)(d[timeColumn])?.getTime())
-  //   minTime = Math.min(...timeArray)
-  //   maxTime = Math.max(...timeArray)
-  // }
-  // const [timeRange, setTimeRange] = useState<[number, number]>([minTime, maxTime])
 
   const colorScheme = defaultColorScheme
   const nodeTypeShapeScheme = defaultNodeTypeShapeScheme

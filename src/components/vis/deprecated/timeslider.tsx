@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import noUiSlider from 'nouislider'
 import 'nouislider/dist/nouislider.css'
 import './timeslider.css'
-import { NetworkConfig } from "../../../typings"
+import { NetworkConfig } from "../../../../typings"
 import { timeParse, timeFormat } from 'd3-time-format'
 
 interface ITimeSliderProps {
