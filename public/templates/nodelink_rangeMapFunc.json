@@ -67,7 +67,7 @@
         "max": "1",
         "step": "0.02"
       },
-      "value": 0.6
+      "value": 1
     }
   ],
 
@@ -140,13 +140,15 @@
           "scale": "edgeColor" 
         },
         "strokeWidth": { 
-          "expression": "1.2 + 0.1 * datum.linkWeight * params.linkWidthParam"
+          "field": "linkWeight",
+          "scale": "edgeWidth"
         },
         "opacity":  { 
           "conditions": [
             {
               "selectionIsEmpty": "node_selection.nodes",
-              "expression": "params.linkOpacityParam"
+              "field": "linkWeight",
+              "scale": "edgeOpacity"
             },
             {
               "inSelection": "neighbours.links",
@@ -188,9 +190,7 @@
           ],
           "field": "data.type0", "scale": "nodeShape"
         },
-        "area": { 
-          "expression": "40 + datum.degree * params.nodeSizeParam"
-        },
+        "area": { "field": "degree", "scale": "radius" },
         "fill": {
           "conditions": [
             {
