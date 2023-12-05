@@ -37,7 +37,7 @@
         {
             "name": "opacity",
             "type": "linear",
-            "range": [ 0.2, 1 ],
+            "range": [ 0.4, 1 ],
             "domain": { "data": "network.links", "field": "linkWeight" }
         },
         {
@@ -108,7 +108,8 @@
                         },
                         {
                             "inSelection": "selected_marks.links",
-                            "value": 1
+                            "scale": "opacity",
+                            "expression": "datum.data[0].linkWeight"
                         },
                         {
                             "selectionIsNotEmpty": "selected_marks.links",
