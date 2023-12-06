@@ -81,13 +81,25 @@ function graphBicliques() {
     graphData.addNode(4)
     graphData.addNode(5)
     graphData.addNode(6)
+    graphData.addNode(7)
+    graphData.addNode(8)
+    graphData.addNode(9)
 
-    graphData.addEdge(1, 5)
-    graphData.addEdge(4, 5)
+    // Biclique 1
     graphData.addEdge(5, 3)
     graphData.addEdge(6, 2)
     graphData.addEdge(5, 2)
     graphData.addEdge(6, 3)
+
+    graphData.addEdge(1, 5)
+
+    // Biclique 2
+    graphData.addEdge(1, 4)
+    graphData.addEdge(7, 4)
+    graphData.addEdge(8, 1)
+    graphData.addEdge(8, 7)
+    graphData.addEdge(9, 1)
+    graphData.addEdge(9, 7)
 
     return graphData
 }
@@ -106,12 +118,13 @@ test("leastBiClique", () => {
     }
 )
 
-test("findBiClique", () => {
-        // let B = lexBicliques(graph)
-        // console.log(B)
 
-        let B2 = lexBicliques(graphBicliques())
-        console.log(B2)
+test("findBiCliqueSimple", () => {
+        let graph = graphBicliques();
+        let B = findBicliques(graph)
+        for (let bc of B) {
+            console.log(bc)
+        }
     }
 )
 
