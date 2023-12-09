@@ -19,6 +19,7 @@ export function miserables() {
     return patternDetector.graph;
 }
 
+
 test("clique", () => {
         let graph = new Graph();
         graph.addNode(1)
