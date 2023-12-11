@@ -11,27 +11,37 @@ import {MBGraph, miserables} from "./cliques.test";
 import {findBicliques, leastBiclique, lexBicliques} from "./bicliques";
 
 
-let graph = new Graph();
-graph.addNode(1)
-graph.addNode(2)
-graph.addNode(3)
-graph.addNode(4)
-graph.addNode(5)
-graph.addNode(6)
-graph.addNode(7)
-graph.addNode(8)
 
+function graphBicliques() {
+    let graphData = new UndirectedGraph();
+    graphData.addNode(1)
+    graphData.addNode(2)
+    graphData.addNode(3)
+    graphData.addNode(4)
+    graphData.addNode(5)
+    graphData.addNode(6)
+    graphData.addNode(7)
+    graphData.addNode(8)
+    graphData.addNode(9)
 
-graph.addEdge(1, 4)
-graph.addEdge(1, 5)
-graph.addEdge(2, 4)
-graph.addEdge(2, 5)
-graph.addEdge(3, 4)
-graph.addEdge(3, 5)
-graph.addEdge(5, 7)
-graph.addEdge(5, 8)
-graph.addEdge(6, 7)
-graph.addEdge(6, 8)
+    // Biclique 1
+    graphData.addEdge(5, 3)
+    graphData.addEdge(6, 2)
+    graphData.addEdge(5, 2)
+    graphData.addEdge(6, 3)
+
+    graphData.addEdge(1, 5)
+
+    // Biclique 2
+    graphData.addEdge(1, 4)
+    graphData.addEdge(7, 4)
+    graphData.addEdge(8, 1)
+    graphData.addEdge(8, 7)
+    graphData.addEdge(9, 1)
+    graphData.addEdge(9, 7)
+
+    return graphData
+}
 
 
 test("bipartite", () => {
@@ -73,47 +83,22 @@ test("maximalIndependantSet", () => {
 )
 
 
-function graphBicliques() {
-    let graphData = new UndirectedGraph();
-    graphData.addNode(1)
-    graphData.addNode(2)
-    graphData.addNode(3)
-    graphData.addNode(4)
-    graphData.addNode(5)
-    graphData.addNode(6)
-    graphData.addNode(7)
-    graphData.addNode(8)
-    graphData.addNode(9)
-
-    // Biclique 1
-    graphData.addEdge(5, 3)
-    graphData.addEdge(6, 2)
-    graphData.addEdge(5, 2)
-    graphData.addEdge(6, 3)
-
-    graphData.addEdge(1, 5)
-
-    // Biclique 2
-    graphData.addEdge(1, 4)
-    graphData.addEdge(7, 4)
-    graphData.addEdge(8, 1)
-    graphData.addEdge(8, 7)
-    graphData.addEdge(9, 1)
-    graphData.addEdge(9, 7)
-
-    return graphData
-}
 
 
 test("leastBiClique", () => {
+
+    let graph = graphBicliques();
+    let nodeOrder = graph.nodes();
+    console.log(nodeOrder)
+
         // let B =leastBiclique(graph, [], ["2"], ["4", "5"])
-        let B = leastBiclique(graph, ["1"], [])
+        let B = leastBiclique(graph, ["1"], [], nodeOrder)
         console.log(B)
 
-        let B2 = leastBiclique(graph, ["5"], [])
+        let B2 = leastBiclique(graph, ["5"], [], nodeOrder)
         console.log(B2)
-
-        let B3 = leastBiclique(graph, ["8"], [])
+        //
+        let B3 = leastBiclique(graph, ["7"], [], nodeOrder)
         console.log(B3)
     }
 )
@@ -121,6 +106,9 @@ test("leastBiClique", () => {
 
 test("findBiCliqueSimple", () => {
         let graph = graphBicliques();
+
+        let nodeOrder = graph.nodes();
+
         let B = findBicliques(graph)
         for (let bc of B) {
             console.log(bc)
@@ -139,6 +127,7 @@ test("findBiCliqueMiserable", () => {
 
 test("findBiCliqueMB", () => {
         let graph = MBGraph();
+
         let B = findBicliques(graph)
         for (let bc of B) {
             console.log(bc)
