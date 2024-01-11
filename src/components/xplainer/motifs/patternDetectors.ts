@@ -57,7 +57,7 @@ export class PatternDetectors {
         })
         this.network.links.forEach(link => {
             // this.graph.addEdge(link.source.id, link.target.id);
-            this.graph.addEdgeWithKey(link.id, link.source.id, link.target.id, link);
+            this.graph.addEdgeWithKey(link.id ?? link.index, link.source.id, link.target.id, link);
 
             if (!this.undirectedGraph.hasUndirectedEdge(link.source.id, link.target.id)) {
                 this.undirectedGraph.addEdge(link.source.id, link.target.id);
@@ -68,7 +68,7 @@ export class PatternDetectors {
             delete copyLink.source
             // @ts-ignore
             delete copyLink.target;
-            this.graph.replaceEdgeAttributes(copyLink.id, copyLink);
+            this.graph.replaceEdgeAttributes(copyLink.id ?? copyLink.index, copyLink);
         })
     }
 
@@ -129,6 +129,8 @@ export class PatternDetectors {
     }
 
     *findMotif(): Generator<NetworkPattern> {
+        let start = new Date().getTime();
+
         yield* findHubs(this.graph);
         yield* findBridges(this.graph);
         // yield* findIsolatedNodes(this.graph);
@@ -137,7 +139,11 @@ export class PatternDetectors {
         yield* findClusters(this.graph);
         // yield* findConnectors(this.graph);
         yield* findFans(this.graph);
-        // yield* findBicliques(this.graph);
+
+        let startBC = new Date().getTime();
+        yield* findBicliques(this.graph);
+        let endBC = new Date().getTime();
+        console.log("TIME ", endBC - startBC);
 
         yield* findSelfLinks(this.graph);
         yield* findParallelLinks(this.graph, this.isMatrix);
@@ -149,8 +155,11 @@ export class PatternDetectors {
             // yield* findRepeatedLinks(this.graph);
             // yield* findRepeatedLinksAndBF(this.graph);
             yield* findRepeatedLinksAndBFonDynNetPan(this.graph);
-            // console.log()
         }
+
+        let end = new Date().getTime();
+
+        console.log("TIMEEND ", end - start);
     }
 
     getAll() {

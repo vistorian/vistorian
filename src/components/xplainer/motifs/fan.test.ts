@@ -20,9 +20,9 @@ test("fans", () => {
 
         let fans = findFans(graph);
 
-        for (let fan of fans) {
-            console.log(1000, fan)
-        }
+        // for (let fan of fans) {
+        //     console.log(1000, fan)
+        // }
         // expect(nodes.every(n =>  typeof(n.louvain) === "number" )).toBe(true);
     }
 )

@@ -72,6 +72,12 @@ export function isBiClique(nodes: NodeId[], network: Graph) {
     return lenA * lenB == sub.edges().length;
 }
 
+export function isBipartiteBiclique(nodesA: NodeId[], nodesB: NodeId[], network: Graph) {
+    const sub = subgraph(network, nodesA.concat(nodesB));
+    let [lenA, lenB] = [nodesA.length, nodesB.length];
+    return lenA * lenB == sub.edges().length;
+}
+
 
 class TreeNode {
     children: Map<number, TreeNode>;
