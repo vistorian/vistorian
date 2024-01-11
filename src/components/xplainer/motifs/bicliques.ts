@@ -77,7 +77,7 @@ export function intersect(A: any[], B: any[]) {
 }
 
 
-const memoInter = new Map();
+// const memoInter = new Map();
 export function inter(A: any[], B: any[]) {
     const key = `${A}|${B}`;
     if (memo.has(key)) {
