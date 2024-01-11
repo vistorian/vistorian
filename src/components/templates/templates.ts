@@ -8,12 +8,13 @@ const templates: Template[] = [
     template: "nodelink.json",
     manual: "https://vistorian.github.io/visualizations.html#node-link",
   },
-  // {
-  //   key: "nodelink_circular",
-  //   label: "Node-link diagram with circular layout",
-  //   image: "nodelink_circular.png",
-  //   template: "nodelink_circular.json"
-  // },
+  {
+    key: "nodelink_circular",
+    label: "Node-link diagram with circular layout",
+    image: "nodelink_circular.png",
+    template: "nodelink_circular.json",
+    manual: "https://vistorian.github.io/visualizations.html#node-link"
+  },
   { 
     key: "matrix", 
     label: "Adjacency matrix", 

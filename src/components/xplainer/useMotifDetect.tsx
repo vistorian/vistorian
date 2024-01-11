@@ -91,6 +91,7 @@ const useMotifDectect = (patternDetector: any) => {
       // bug: due to netpan sceneJSON linkpath has two items
       let links: any[] = uniqBy(newVal.links, 'id') 
       let result = patternDetector.run(nodes, links)
+      // console.log('detectMotifs:', result)
       
       if (result.length > 0) {
         setMotifs(result)

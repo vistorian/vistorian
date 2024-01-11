@@ -106,7 +106,13 @@ function Wizard() {
   }
 
   useEffect(() => {
-    const filesToStore = ['UPLOADED_FILE_marieboucher.csv', 'UPLOADED_FILE_les-mis-links.csv', 'UPLOADED_FILE_les-mis-nodes.csv', 'NETWORK_WIZARD_marieboucher', 'NETWORK_WIZARD_les-mis']
+    const filesToStore = [
+      'UPLOADED_FILE_marieboucher.csv', 
+      'UPLOADED_FILE_les-mis-links.csv', 
+      'UPLOADED_FILE_les-mis-nodes.csv', 
+      'NETWORK_WIZARD_marieboucher', 
+      'NETWORK_WIZARD_les-mis',
+    ]
     loadAndStoreFiles(filesToStore)
   }, []);
 

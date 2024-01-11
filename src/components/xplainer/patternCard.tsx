@@ -1,13 +1,13 @@
 import { createUseStyles } from "react-jss"
 import { Menu, message } from 'antd'
 import { useEffect, useState } from "react"
-import Pattern from "./pattern"
+import Pattern from "./pattern_snapshot"
 import { NetworkPattern } from "./motifs/motif"
 import { CloseOutlined } from '@ant-design/icons'
 import { useDrag } from "react-dnd"
 import { AllMotifs } from "../../../typings"
 import { groupBy } from "lodash-es"
-import { PatternList, patternList } from "./patternList"
+import { patternList } from "./patternList"
 
 const useStyles = createUseStyles({
   widget: {
@@ -98,6 +98,39 @@ function PatternCard (props: IPatternCardProps) {
   //   return <div ref={drag} />
   // }
 
+  const renderPattern = () => {
+    if (selectedMotifNo[0] === -1) {
+      return (
+        <div style={{padding: 12}}>
+          <span style={{ fontSize: 18 }}>
+            Your selection has <b>{motifs.length}</b> network patterns, including 
+            {Object.keys(groupByType).map((name: string, index: number) => {
+            return (
+              <span key={index}><b> {groupByType[name].length} {name}</b>{(index+1) !== Object.keys(groupByType).length ? ',': '.'}</span>
+            )})}
+          </span>
+        </div>
+      )
+    }
+    else if (selectedMotifNo[1] !== -1 && Object.keys(groupByType).length > 0) {
+      return (
+        <Pattern
+          visType={visType}
+          motif={groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]}
+          allMotifs={allMotifs}
+          networkData={networkData}
+          setHoverRelatedMotif={props.setHoverRelatedMotif}
+          setClickRelatedMotif={props.setClickRelatedMotif}
+          setSelectedMotifNo={setSelectedMotifNo}
+          // snapshots={props.snapshots}
+        />
+      )
+    }
+    else {
+      return (<span>Blank</span>)
+    }
+  }
+
   return (
     <div 
       id={id} 
@@ -127,18 +160,7 @@ function PatternCard (props: IPatternCardProps) {
         selectedKeys={selectedMotifNo[1] === -1 ? [] : [`${selectedMotifNo[1]}`]}
         items={getSubMenuItems(selectedMotifNo[0])}
       />
-      {(selectedMotifNo[0] !== -1 && selectedMotifNo[1] !== -1 && Object.keys(groupByType).length > 0) ? 
-        <Pattern
-          visType={visType}
-          motif={groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]}
-          allMotifs={allMotifs}
-          networkData={networkData}
-          setHoverRelatedMotif={props.setHoverRelatedMotif}
-          setClickRelatedMotif={props.setClickRelatedMotif}
-          setSelectedMotifNo={setSelectedMotifNo}
-          snapshots={props.snapshots}
-        /> : null}
-      
+      {renderPattern()}      
     </div>
   )
 }

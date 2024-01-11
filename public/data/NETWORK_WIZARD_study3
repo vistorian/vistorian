@@ -1,0 +1,20 @@
+{
+  "name": {
+    "name": "study3"
+  },
+  "format": {
+    "format": "tabular"
+  },
+  "linkTableConfig": {
+    "file": "study3.csv",
+    "hasHeaderRow": true,
+    "directed": true,
+    "sourceNodeLabel": "source",
+    "targetNodeLabel": "target",
+    "withTime": false
+  },
+  "locationTableConfig": null,
+  "extraNodeConfig": {
+    "hasExtraNode": false
+  }
+}

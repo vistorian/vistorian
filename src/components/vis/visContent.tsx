@@ -11,26 +11,29 @@ import Overlay from "../xplainer/overlay"
 import { NetworkPattern } from "../xplainer/motifs/motif"
 import PatternCard from "../xplainer/patternCard"
 import { flatMap, groupBy, uniq } from "lodash-es"
+import { Mode } from "../../../typings/status.enum"
 // import * as d3 from 'd3'
 
 interface IVisContentProps {
   type: string // "explore" || "xplainer"
   viewerId: number
+  viewer: any
+  setViewer: (v:any) => void
   width: string
   visType: string
   network: string
   options: any
   setAllMotifs: (m: AllMotifs) => void
   selectedTypes: string[]
+  onPropogate: (id: number, newVal: any) => void
 }
 
 function VisContent(props: IVisContentProps) {
-  const { viewerId, width, visType, network, options, setAllMotifs } = props
+  const { viewerId, viewer, setViewer, width, visType, network, options, setAllMotifs } = props
   const [loading, setLoading] = useState<boolean>(true)
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
 
   const containerId = `visSvg${viewerId}`
-  const [viewer, setViewer] = useState<any>({})
 
   // pattern-xplainer variables
   const [patternDetector, setPatternDetector] = useState<any>({})
@@ -38,13 +41,20 @@ function VisContent(props: IVisContentProps) {
   const [selectType, setSelectType] = useState<string>('rect')
   let motifs = useMotifDetect(patternDetector)
 
+  const onChange = (newVal) => {
+    props.onPropogate(viewerId, newVal)
+  }
+
   type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
   const getParamCallbacks = () => {
     let cb: ParamChangeCallbacks = {}
     switch (props.type) {
-      case 'explore':
+      case Mode.Explorer:
+        cb = {
+          node_selection: onChange
+        }
         break
-      case 'xplainer':
+      case Mode.Explainer:
         cb = {
           pattern_selection: motifs.detectMotifs
         }
@@ -58,7 +68,7 @@ function VisContent(props: IVisContentProps) {
     let renderer = visType === 'matrix' ? 'canvas' : 'svg'
     // let renderer = 'svg'
     let template = templates.filter(t => t.key === visType)[0]
-    let templatePath = props.type === 'explore' ? `./templates/${template.template}` : `./templates/xplainer/${template.template}`
+    let templatePath = props.type === Mode.Explorer ? `./templates/${template.template}` : `./templates/xplainer/${template.template}`
     let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
     // console.log('spec:', spec)
 
@@ -73,10 +83,10 @@ function VisContent(props: IVisContentProps) {
       paramCallbacks: getParamCallbacks()
     })
     // @ts-ignore
-    console.log('VIEW STATE:', tmpViewer.state)
+    console.log('VIEW STATE:', viewerId, tmpViewer.state)
     // console.log(JSON.stringify(tmpViewer.spec))
     setViewer(tmpViewer)
-    if (props.type === 'xplainer') {
+    if (props.type === Mode.Explainer) {
       let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType)
       setPatternDetector(tmpPatternDetector)
       setAllMotifs(patternDetector.allMotifs)
@@ -134,7 +144,7 @@ function VisContent(props: IVisContentProps) {
     if (Object.keys(viewer).length > 0) {
       let nodeIds: string[] | number[] = [],
         linkIds: string[] | number[] = []
-      // a related motif
+      // jump to the related motif
       if (Object.keys(clickRelatedMotif).length > 0) {
         nodeIds = clickRelatedMotif.nodes
         linkIds = clickRelatedMotif.links
@@ -194,11 +204,13 @@ function VisContent(props: IVisContentProps) {
     }
   }, [selectedMotifNo, clickRelatedMotif])
 
+
+  // rendering
   return (
     loading ?
       <Spin tip="Loading" size="small">
         <div id={containerId} style={{ width: width }} />
-        {props.type === 'xplainer' ? <PatternSelection type={selectType} setType={setSelectType} /> : null}
+        {props.type === Mode.Explainer ? <PatternSelection type={selectType} setType={setSelectType} /> : null}
       </Spin>
       :
       <div
@@ -208,9 +220,9 @@ function VisContent(props: IVisContentProps) {
           style={{ width: width }}  // for exploration mode
           // style={{ overflow: 'scroll', position: "relative" }} // for xplainer mode
         >
-          {/* ======= pattern xplainer ======= */}
+          {/* ======= pattern Explainer ======= */}
           {/* show motif overlays above vis */}
-          {(props.type === 'xplainer' && Object.keys(patternDetector).length > 0) ? 
+          {(props.type === Mode.Explainer && Object.keys(patternDetector).length > 0) ? 
             <Overlay
               motifs={motifs}
               open={open}
@@ -223,8 +235,8 @@ function VisContent(props: IVisContentProps) {
             /> : null}
         </div>
 
-        {/* ======= pattern xplainer ======= */}
-        {(props.type === 'xplainer' && Object.keys(patternDetector).length > 0) ?
+        {/* ======= pattern Explainer ======= */}
+        {(props.type === Mode.Explainer && Object.keys(patternDetector).length > 0) ?
           <>
             {motifs.contextHolder}
             <PatternCard
@@ -242,7 +254,7 @@ function VisContent(props: IVisContentProps) {
             />
           </> : null}
         {/* rect selection or lasso */}
-        {props.type === 'xplainer' ? <PatternSelection type={selectType} setType={setSelectType} /> : null}
+        {props.type === Mode.Explainer ? <PatternSelection type={selectType} setType={setSelectType} /> : null}
         
       </div>
   )

@@ -40,14 +40,14 @@ const useStyles = createUseStyles({
     // }
   },
   icon: {
-    // width: 130,
-    // height: 130,
+    width: 130,
+    height: 130,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-around',
     '& img': {
-      width: 90,
+      width: 115,
       // height: 115,
     } 
   },
@@ -69,10 +69,10 @@ const useStyles = createUseStyles({
   },
   dataExp : {
     position: 'relative',
-    marginLeft: 12,
+    marginTop: 8,
     paddingLeft: 18,
-    paddingRight: 8,
     paddingTop: 5,
+    paddingBottom: 5,
     backgroundColor: '#F9F9F9',
     zIndex: 0,
     '&:before': {
@@ -82,7 +82,7 @@ const useStyles = createUseStyles({
       position: 'absolute',
       top: 0,
       left: 0,
-      width: '2%',
+      width: '1%',
       zIndex: 2,
     }
   },
@@ -109,7 +109,6 @@ interface IPatternProps {
   setHoverRelatedMotif: (d: NetworkPattern) => void
   setClickRelatedMotif: (d: NetworkPattern) => void
   setSelectedMotifNo: (d: [number, number]) => void
-  snapshots: any
 }
 
 function Pattern (props: IPatternProps) {
@@ -120,56 +119,6 @@ function Pattern (props: IPatternProps) {
   // const motifType: string = 'Bipartite'
   let pattern, dataExp, visualExp, description
   // console.log('Pattern', motif) 
-
-  const getVisualTitle = () => {
-    let visualTitle = ''
-    if (visType === 'nodelink') {
-      visualTitle = pattern.title
-    }
-    else {
-      switch (motifType) {
-        case 'StrongLink':
-          visualTitle = visType === 'matrix' ? 'Solid Cell' : 'Thick Arc'
-          break
-        case 'WeakLink':
-          visualTitle = visType === 'matrix' ? 'Transparent Cell' : 'Thin Arc'
-          break
-        case 'SelfLink':
-          visualTitle = visType === 'matrix' ? 'Cell on Diagonal' : 'Self Arc'
-          break
-        case 'ParallelLinks':
-          visualTitle = visType === 'matrix' ? 'Split Cell' : 'Parallel Arcs'
-          break
-        case 'RepeatedLinks':
-          visualTitle = 'Repeated Arcs'
-          break
-        case 'BackAndForth':
-          visualTitle = 'Leaf Shape'
-          break
-        case 'Hub':
-          visualTitle = visType === 'matrix' ? 'Dense Row&Column' : 'Large Dot'
-          break
-        case 'Bridge':
-          visualTitle = visType === 'matrix' ? 'Bridge Blocks' : 'Opposite Arcs'
-          break
-        case 'Fan':
-          visualTitle = visType === 'matrix' ? 'Free Bar' : 'S-shape'
-          break
-        case 'Clique':
-          visualTitle = visType === 'matrix' ? 'Block' : 'Full Arcs'
-          break
-        case 'Cluster':
-          visualTitle = visType === 'matrix' ? 'Fragmented Block' : 'Partial Arcs'
-          break
-        case 'Bipartite':
-          visualTitle = visType === 'matrix' ? 'Off-diagnoal Blocks' : 'Rainbow Arcs'
-          break
-        default:
-          visualTitle = ''
-      }
-    }
-    return visualTitle
-  }
 
   const toOrdinal = (n: number) => {
     return `${n}` + (['st', 'nd', 'rd'][n < 20 ? (n-1) : (n % 10 -1)] || 'th')
@@ -287,7 +236,7 @@ function Pattern (props: IPatternProps) {
           description = <span>n/a</span>
         }
         else {
-          visualExp = <span>This pattern shows several arcs that connect the same two nodes in the respective opposite direction, forming a back and forth connection. For better readability, arcs have different heights so they appear as a bundle.</span>
+          visualExp = <span>n/a</span>
           description = <span>n/a</span>
         }
         break
@@ -460,8 +409,7 @@ function Pattern (props: IPatternProps) {
       post = 'ParallelLinks'
     }
     if (motifType && motifType === 'BackAndForth') {
-      prefix = 'timearcs_s'
-      // prefix = "nodelink"
+      prefix = 'timearcs_t'
       post = 'BackAndForth'
     }
     return <img src={`./pattern-icons/${prefix}_${post}.png`} />
@@ -476,12 +424,11 @@ function Pattern (props: IPatternProps) {
         post = 'ParallelLinks'
       }
       if (motifType && motifType === 'BackAndForth') {
-        prefix = 'timearcs_s'
-        // prefix = "nodelink"
+        prefix = 'timearcs_t'
         post = 'BackAndForth'
       }
       return (
-      <div style={{ marginLeft: 10 }}>
+      <div style={{ marginTop: 25 }}>
         <div style={{ display: 'flex', alignItems: 'center'}}>
           <div className={classes.diamond}></div>
           <span>The selected pattern may visually vary, like: </span>
@@ -489,49 +436,21 @@ function Pattern (props: IPatternProps) {
         <div style={{ display: 'flex', marginTop: 5 }}>
           {new Array(pattern[visType]).fill(true).map((v: string, i: number) => {
               return (
-                <div key={i} style={{ marginRight: 5 }}>
-                  <img style={{ width: 80, height: 80 }} src={`./pattern-icons/${prefix}_${post}_${i+1}.png`} />
+                <div
+                  key={i}
+                  style={{ marginRight: 5 }}>
+                  <img style={{ width: 115, height: 115 }} src={`./pattern-icons/${prefix}_${post}_${i+1}.png`} />
                 </div>)
           })}
         </div>
       </div>)
     }
   }
-
-  // const getSnapshot =  (listId: string, motif: NetworkPattern) => {
-  const getSnapshot = (index: number) => {
-    if (visType === 'matrix' && motifType === 'Clique') {
-      document.querySelector(`#instances${index} img`)?.remove()
-      const img = document.createElement("img")
-      img.setAttribute('src', `./tmp/clique${index}.png`)
-      const naturalWidth = img.naturalWidth
-      img.setAttribute('width', `${naturalWidth * 0.6}px`)
-      document.querySelector(`#instances${index}`)?.appendChild(img)
-    }
-    else {
-      const ele = document.querySelector("#visSvg0Copy svg")
-      if (ele) {
-        document.querySelector(`#instances${index} svg`)?.remove()
-        document.querySelector(`#instances${index}`)?.appendChild(props.snapshots[index])
-        //   const eleClone = ele.cloneNode(true) as SVGElement
-        //   const bounds = getRelatedMotifBound(motif)
-        //   if (bounds) {
-        //     eleClone.setAttribute("width", `${bounds.x2-bounds.x1}`)
-        //     eleClone.setAttribute("height", `${bounds.y2-bounds.y1}`)
-        //     eleClone.setAttribute("viewBox", `${bounds.x1+visOffset[0]} ${bounds.y1+visOffset[1]} ${bounds.x2-bounds.x1} ${bounds.y2-bounds.y1}`)
-        //     document.querySelector(`#${listId} svg`)?.remove()
-        //     document.querySelector(`#${listId}`)?.appendChild(eleClone)
-        //   }
-      }
-    }
-    return <></>
-  }
-
   const getList = () => {
     return <ul>
       {allMotifs[motifType].map((other, index) => {
-        // if (JSON.stringify(other) !== JSON.stringify(motif))
-          return <li key={index} id={`instances${index}`}>
+        if (JSON.stringify(other) !== JSON.stringify(motif))
+          return <li key={index}>
             <span
               className={classes.instance}
               onMouseOver={() => {
@@ -547,28 +466,21 @@ function Pattern (props: IPatternProps) {
               }}>
               {`${patternList[motifType].title} #${index}`}
             </span>
-            {getSnapshot(index)}
           </li>
       })}
     </ul> 
   }
 
-
-  /**
-   * @description get the similar instances
-   * @return {*} 
-   */
   const getItems = () => {
-    const chunkGap = 5
-    const chunks = chunk(allMotifs[motifType], chunkGap)
+    const chunks = chunk(allMotifs[motifType], 10)
     const items = chunks.map((chunk, index) => {
       return ({
         key: index,
-        label: <span> {`${patternList[motifType].title} [${index * chunkGap}, ${index * chunkGap + (chunkGap-1)}]`}</span>,
+        label: <span> {`${patternList[motifType].title} [${index * 10}, ${index * 10 + 9}]`}</span>,
         children: <ul>
           {chunk.map((other, idx) => {
             // if (JSON.stringify(other) !== JSON.stringify(motif))
-            return <li key={idx} id={`instances${index * chunkGap + idx}`}>
+              return <li key={idx}>
                 <span
                   className={classes.instance}
                   onMouseOver={() => {
@@ -582,9 +494,8 @@ function Pattern (props: IPatternProps) {
                     setSelectedMotifNo([0, 0])
                     // setHoverRelatedMotif({} as NetworkPattern)
                   }}>
-                  {`${patternList[motifType].title} #${index * chunkGap + idx}`}
+                  {`${patternList[motifType].title} #${index * 10 + idx}`}
                 </span>
-                {getSnapshot(index * chunkGap + idx)}
               </li>
           })}
         </ul>
@@ -593,9 +504,6 @@ function Pattern (props: IPatternProps) {
     return items
   }
 
-  /**
-   * @description initialize explanations based on the input motif
-   */
   if (motif) {
     if (motifType in patternList) {
       pattern = patternList[motifType]
@@ -609,52 +517,46 @@ function Pattern (props: IPatternProps) {
     }
   }
 
+
   return (
     <>
       {pattern ? 
-        <div id="pattern" style={{ padding: 12}}>
-
-          <span style={{ fontSize: 18 }}>The selected pattern <span><b>{getVisualTitle()}</b></span> represents a <span><b>{pattern.title}</b></span>.</span>
-
-          <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', marginTop: 10, padding: '10px 0px' }}>
-            {/* data pattern icon */}
+        <div style={{ padding: 12}}>
+          {/* icons */}
+          <div style={{ display: 'flex', width: '100%', justifyContent: 'space-around', margin: '10px 0px', padding: '10px 0px', backgroundColor: '#F9F9F9'}}>
+          {/* visual pattern icon */}
+            <div className={classes.icon}>
+              {getVisIcon()}
+            </div>
+          {/* data pattern icon */}
             <div className={classes.icon}>
               <img src={`./pattern-icons/${motifType}.png`} />
             </div>
-            {/* define data pattern */}
-            <div className={classes.dataExp}>
-              {dataExp}
-            </div>
+         </div>
+
+          <span style={{fontSize: 18}}>This is a <span className={classes.tag}>{pattern.title}</span> pattern. </span>
+
+          {/* define data pattern */}
+          <div className={classes.dataExp}>
+            {dataExp}
           </div>
 
-          {/* explain the selection statistics */}
-          <div style={{ marginTop: 5 }}>
-            {description}
-          </div>
-
-          <div style={{marginTop: 15}}>
-            <span style={{ fontSize: 18, fontWeight: 700 }}>{getVisualTitle()} pattern</span>
-            <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0px' }}>
-              {/* visual pattern icon */}
-              <div className={classes.icon}>
-                {getVisIcon()}
-              </div>
-              {/* provide visual variations */}
-              {getVisualVariations()}
-            </div>
-
-          </div>
           {/* explain why these visuals are considered as the above data patterns */}
-          <div style={{ marginTop: 0, backgroundColor: '#F9F9F9'}}>
+          <div style={{ marginTop: 25}}>
             {visualExp}
           </div>
 
-          
+          {/* explain the selection statistics */}
+          <div style={{ marginTop: 25 }}>
+            {description}
+          </div>
+
+          {/* provide visual variations */}
+          {getVisualVariations()}
 
           {/* relate to variants when have more than one instances in this network */}
           {motifType in allMotifs && allMotifs[motifType].length > 1 ? 
-          <div style={{ marginTop: 15 }}>
-              <span style={{ fontSize: 18, fontWeight: 700 }}>Browse related <span style={{ textDecoration: 'underline' }}>{getVisualTitle()}</span> and <span style={{ textDecoration: 'underline' }}>{pattern.title}</span></span>
+          <div style={{ marginTop: 25 }}>
             <div style={{display: 'flex', alignItems: 'center'}}>
                 <div className={classes.diamond}></div>
                 <span>Similar instances in your network (ranked by the size):</span>

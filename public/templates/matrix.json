@@ -74,13 +74,13 @@
         {
             "table": "adjacencyMatrix",
             "rowLabels": {
-                "field": "source.id",
+                "field": "source.data._label",
                 "align": "right",
                 "dx": -15,
                 "fontSize": 8
             },
             "colLabels": {
-                "field": "target.id",
+                "field": "target.data._label",
                 "dx": 15,
                 "fontSize": 8
             },
@@ -133,7 +133,7 @@
                     "value": 0
                 },
                 "tooltip": {
-                    "expression": "datum.key[0].id + ' -> ' + datum.key[1].id "
+                    "expression": "datum.key[0].data._label + ' -> ' + datum.key[1].data._label + (datum.data.length > 0 ? ' (weight:' + datum.data[0].linkWeight + ')': 0)"
                 }
             }
         }

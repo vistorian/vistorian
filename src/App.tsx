@@ -9,6 +9,11 @@ import {
 import Landing from './components/landing'
 import Wizard from './components/wizard'
 import Vis from './components/vis'
+import { Mode } from '../typings/status.enum'
+// enum Mode {
+//   Explorer = 'Explorer',
+//   Explainer = 'Explainer'
+// }
 
 // BrowserRouter which can not be used in Github pages
 // let router = createBrowserRouter([
@@ -35,8 +40,8 @@ function App() {
           <Route path="/wizard" element={<Wizard />}></Route>
           {/* TODO: direct to related network view */}
           <Route path="/wizard/network/:network" element={<Landing />}></Route>
-          <Route path="/vis/:visTypes/network/:network" element={<Vis type="explore"/>}></Route>
-          <Route path="/vis/:visTypes/network/:network/xplainer" element={<Vis type="xplainer"/>}></Route>
+          <Route path="/vis/:visTypes/network/:network" element={<Vis type={Mode.Explorer}/>}></Route>
+          <Route path={`/vis/:visTypes/network/:network/${Mode.Explainer}`} element={<Vis type={Mode.Explainer} />}></Route>
         </Routes>
       </HashRouter>
     </>

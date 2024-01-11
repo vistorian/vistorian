@@ -1,4 +1,9 @@
 {
+  "zoom": true,
+  "pan": {
+    "modifierKeyRequired": null
+  },
+  
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
 
@@ -17,7 +22,6 @@
       "name": "node_selection",
       "network": "network",
       "type": "selection",
-      "action": "replace",
       "clearOnBackgroundClick": true
     },
     {
@@ -28,8 +32,52 @@
       ]
     },
     {
-      "name": "timeRange",
-      "value": "[timeRange]"
+      "name": "nodeTypeInShape",
+      "value": "[nodeTypeInShape]"
+    },
+    {
+      "name": "nodeSizeParam",
+      "bind": {
+        "input": "range",
+        "label": "Node Size",
+        "min": "1",
+        "max": "3",
+        "step": "0.02"
+      },
+      "value": 1
+    },
+    {
+      "name": "nodeOpacityParam",
+      "bind": {
+        "input": "range",
+        "label": "Node Opacity",
+        "min": "0.1",
+        "max": "1",
+        "step": "0.02"
+      },
+      "value": 1
+    },
+    {
+      "name": "linkWidthParam",
+      "bind": {
+        "input": "range",
+        "label": "Link Width",
+        "min": "1",
+        "max": "3",
+        "step": "0.02"
+      },
+      "value": 1
+    },
+    {
+      "name": "linkOpacityParam",
+      "bind": {
+        "input": "range",
+        "label": "Link Opacity",
+        "min": "0.1",
+        "max": "1",
+        "step": "0.02"
+      },
+      "value": 1
     }
   ],
 
@@ -55,13 +103,20 @@
     {
       "name": "radius",
       "type": "linear",
-      "range": [ 20, 150 ],
+      "range": [ 15, 150 ],
+      "rangeMapFunction": "datum * params.nodeSizeParam",
       "domain": { "data": "network.nodes",  "field": "degree" }
     },
     {
       "name": "nodeShape",
       "type": "ordinal",
       "range": "[nodeTypeShapeScheme]",
+      "domain": { "data": "network.nodes",  "field": "data.type0" }
+    },
+    {
+      "name": "nodeColor",
+      "type": "ordinal",
+      "range": "[colorScheme]",
       "domain": { "data": "network.nodes",  "field": "data.type0" }
     },
     {
@@ -74,12 +129,14 @@
       "name": "edgeWidth",
       "type": "linear",
       "range": [ 1.2, 3],
+      "rangeMapFunction": "datum * params.linkWidthParam",
       "domain": { "data": "network.links", "field": "linkWeight" }
     },
     {
       "name": "edgeOpacity",
       "type": "linear",
       "range": [0.2, 0.8],
+      "rangeMapFunction": "datum * params.linkOpacityParam",
       "domain": { "data": "network.links", "field": "linkWeight" }
     }
   ],
@@ -92,18 +149,22 @@
         "type": "linkpath",
         "start": "source",
         "end": "target",
-        "stroke": { "field": "linkType", "scale": "edgeColor" },
-        "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth"},
+        "stroke": { 
+          "conditions": [
+            {
+              "test": "!params.nodeTypeInShape",
+              "value": "grey"
+            }
+          ],
+          "field": "linkType",
+          "scale": "edgeColor"
+        },
+        "strokeWidth": { "expression": "1.2 + 0.1 * datum.linkWeight * params.linkWidthParam"},
         "opacity":  { 
           "conditions": [
             {
-              "test": "datum.data._time < params.timeRange[0] || datum.data._time > params.timeRange[1]",
-              "value": 0
-            },
-            {
               "selectionIsEmpty": "node_selection.nodes",
-              "field": "linkWeight",
-              "scale": "edgeOpacity"
+              "expression": "params.linkOpacityParam"
             },
             {
               "inSelection": "neighbours.links",
@@ -130,22 +191,31 @@
       "mark": {
         "type": "symbol",
         "shape": {"field": "data.type0", "scale": "nodeShape"},
-        "area": { "field": "degree", "scale": "radius" },
-        "fill": "black",
+        "area": { "expression": "40 + datum.degree * params.nodeSizeParam" },
+        "fill": {
+          "conditions": [
+            {
+              "test": "params.nodeTypeInShape",
+              "value": "black"
+            }
+          ],
+          "field": "data.type0",
+          "scale": "nodeColor"
+        },
         "stroke": "white",
         "opacity": {
           "conditions": [
             {
               "selectionIsEmpty": "node_selection.nodes",
-              "value": 1
+              "expression": "params.nodeOpacityParam"
             },
             {
               "inSelection": "node_selection.nodes",
-              "value": 1
+              "expression": "params.nodeOpacityParam"
             },
             {
               "inSelection": "neighbours.nodes",
-              "value": 1
+              "expression": "params.nodeOpacityParam"
             }
           ],
           "value": 0.1
@@ -170,23 +240,28 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
-      "if": "datum.degree > [lableImportance]",
+      "occlusion": { "field": "degree" },
       "mark": {
         "type": "text",
-        "text": { 
+        "text": {
           "conditions": [
             {
               "selectionIsEmpty": "node_selection.nodes",
-              "value": { "expression": "[nodeLabel]"}
+              "value": { "expression": "[nodeLabel]" }
+            },
+            {
+              "inSelection": "node_selection.nodes",
+               "value": { "expression": "[nodeLabel]" }
             }
           ]
         },
+        "cursor": "none",
         "dx": 5,
         "dy": 5,
         "fontSize": 13,
-        "stroke": "white",
         "fontWeight": "bold",
-        "strokeWidth": 0.5
+        "stroke": "white",
+        "strokeWidth": 0.3
       }
     }
   ]
