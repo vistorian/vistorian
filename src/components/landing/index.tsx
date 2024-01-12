@@ -139,36 +139,36 @@ function Landing() {
 
 				<div className={classes.subDiv}>
 					<div className={classes.menuCol}>
-						<h2 className={classes.h2}>Overview</h2>
-						<a href="https://vistorian.github.io">Project</a>
+						<h2 className={classes.h2}>Use</h2>
+						<a href="#whatis">What is the Vistorian</a>
 						<br />
 						<a href="https://vistorian.github.io/visualizations.html">Visualizations</a>
 						<br />
 						<a href="https://vistorian.github.io/formattingdata.html">Formatting Data</a>
 						<br />
-						<a href="https://vistorian.github.io/networknarratives.html">NetworkNarratives</a>
-					</div>
-
-					<div className={classes.menuCol}>
-						<h2 className={classes.h2}>Learn</h2>
-						<a href="https://vistorian.github.io/gettingstarted.html">Getting Started</a>
+						<a href="https://vistorian.github.io/formattingdata.html">Formatting Data</a>
 						<br />
-						<a href="https://vistorian.github.io/courses.html">Courses</a>
+          </div>
+					<div className={classes.menuCol}>
+						<h2 className={classes.h2}>Resources</h2>
+						{/* <a href="https://vistorian.github.io/gettingstarted.html">Getting Started</a>
+						<br /> */}
+						<a href="https://vistorian.github.io/data.html">Demo Data</a>
+						<br />
+						{/* <a href="https://vistorian.github.io/courses.html">Courses</a>
 						<br />
 						<a href="https://vistorian.github.io/tutorials.html">Workshops</a>
-						<br />
-						<a href="https://vistorian.github.io/Troubleshooting.html">Troubleshooting</a>
-						<br />
+						<br /> */}
 						<a href="https://vistorian.github.io/Resources.html">Network Resources</a>
 					</div>
 
 					<div className={classes.menuCol}>
 						<h2 className={classes.h2}>Context</h2>
-						<a href="https://vistorian.github.io/vistorianLab.html">Research &amp; VistorianLab</a>
-						<br />
 						<a href="https://vistorian.github.io/publications.html">Publications</a>
 						<br />
-						<a href="https://vistorian.github.io/development.html">Contribute</a>
+						{/* <a href="https://vistorian.github.io/vistorianLab.html">Research &amp; VistorianLab</a> */}
+						{/* <br /> */}
+						<a href="index.html#contribute">Contribute</a>
 						<br />
 						<a href="https://vistorian.github.io/team.html">Team</a>
 						<br />
@@ -178,7 +178,7 @@ function Landing() {
 			</div>
 			
       <div className={classes.divCitation}>
-        <h2 className={classes.h2}>What is the Vistorian?</h2>
+        <h2 id="whatis" className={classes.h2}>What is the Vistorian?</h2>
           <p>The Vistorian is an online tool for interactive exploration of dynamic, multivariate, and geographic networks. 
             Though we are a web application, any data you 'upload' stays is stored in your browser. 
             Clearing your browser cache will delete your data. 
@@ -201,7 +201,7 @@ function Landing() {
 
 			<div className={classes.divCitation}>
 
-				<h2 className={classes.h2}>Contact & Contribute</h2>
+				<h2 id="contribute" className={classes.h2}>Contact & Contribute</h2>
 				
         <p>The Vistorian is an active research project at the Vishub at the University of Edinburgh and Inria, France. The Vistorian is free to use by everyone. If you’re using the Vistorian for work, please cite our poster and send us feedback and examples of your work of our gallery. This helps us keeping the Vistorian funded. Similarly, if you find bugs, send us screenshots and descriptions, we’re happy to help you with your data. The Vistorian is open source.</p>
           Main Contact: <a href="mailto:benj.bach@gmail.com">Benjamin Bach</a>
