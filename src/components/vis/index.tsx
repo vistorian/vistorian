@@ -102,7 +102,7 @@ function Vis(props: IVisProps) {
       <div className={classes.header}>
         <div className={classes.left}>
           <a href="./" style={{ marginRight: "20px"}}>
-            <img src={props.type === Mode.Explainer ? "./logos/logo-xplainer.png" : "./logos/logo-vistorian.png"} style={{ width: 150 }} />
+            <img src={props.type === Mode.Explainer ? "./logos/logo-xplainer.png" : "./logos/logo-a.png"} style={{ width: 150 }} />
           </a>
           <ModeSelection
             type={props.type}

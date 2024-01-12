@@ -22,6 +22,7 @@ const useStyles = createUseStyles({
     display: "flex",
     justifyContent: "flex-start",
     height: '100%',
+    color: '#333',
   },
   list: {
     width: 300,
@@ -60,24 +61,25 @@ const useStyles = createUseStyles({
     alignItems: "center",
     lineHeight: "2em",
   },
-  tabName: {
-    width: 170,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    '&:hover': {
-      cursor: 'pointer'
-    }
-  },
-  tabNameFocused: {
-    width: 170,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    fontWeight: 700,
-    backgroundColor: '#FFDF70',
-    '&:hover': {
-      cursor: 'pointer'
-    }
-  },
+  // tabName: { /// BEN: THEY DO NOT SEEM TO BE USED HERE.
+  //   width: 170,
+  //   overflow: "hidden",
+  //   textOverflow: "ellipsis",
+  //   '&:hover': {
+  //     cursor: 'pointer'
+  //   },
+  //   padding: '200px'
+  // },
+  // tabNameFocused: {
+  //   width: 170,
+  //   overflow: "hidden",
+  //   textOverflow: "ellipsis",
+  //   fontWeight: 700,
+  //   backgroundColor: '#FFDF70',
+  //   '&:hover': {
+  //     cursor: 'pointer'
+  //   }
+  // },
   tabFunc: {
     display: "flex",
   }
@@ -285,7 +287,7 @@ function Wizard() {
         <div className={classes.list}>
           <div className={classes.header}>
             <a href="./" style={{ marginBottom: "20px", }}>
-              <img src="./logos/logo-vistorian.png" style={{ width: 200 }} />
+              <img src="./logos/logo-a.png" style={{ width: 290 }} />
             </a>
             <Button  
               type='primary' 

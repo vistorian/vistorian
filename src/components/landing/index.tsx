@@ -37,12 +37,12 @@ const useStyles = createUseStyles({
     marginLeft: 5
   },
   startButton:{
-    fontSize: '23pt',
-    fontWeight: 'bold',
+    fontSize: '20pt',
+    // fontWeight: '',
     color: '#fff',
     textDecoration: 'none',
-    fontFamily: `'Poiret One', 'Helvetica Neue', 'sans-serif'`,
-    height: '60px',
+    fontFamily: `'Reem Kufi Fun', 'Helvetica Neue', 'sans-serif'`,
+    height: '55px',
     background: '#999'
   }, 
   divMenu:{
@@ -50,13 +50,14 @@ const useStyles = createUseStyles({
   },
   subDiv:{
     display: 'flex',
+    fontWeight: '10',
     textAlign: 'left'
   },
   h2:{
     fontSize: '23pt',
-    fontWeight: '300',
+    fontWeight: '100',
     color: '#333',    
-    fontFamily: `'Poiret One', 'Helvetica Neue', 'sans-serif'`,
+    fontFamily: `'Reem Kufi Fun', 'Helvetica Neue', 'sans-serif'`,
   },
   menuCol: {
 		paddingRight: '40px',
@@ -110,7 +111,7 @@ function Landing() {
 
   return (
     <div className={classes.root}>
-      <img src="./logos/logo-vistorian.png" className ={classes.logo}/>
+      <img src="./logos/logo-a.png" className ={classes.logo}/>
 
       <p className={classes.subtitle}>Interactive Visualizations for Dynamic and Multivariate Networks. <br />  Free, online, and open source.</p>
 
