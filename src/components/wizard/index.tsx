@@ -16,6 +16,7 @@ import DataPreview from './data/dataPreview'
 import { handleCopy, handleDelete, handleRename, isDataInNetwork, updateNetworkAndSessionIfDeleteData, updateNetworkIfRenameData, updateSessionIfDeleteNet, updateSessionIfRenameNet } from './utils'
 import NetworkPreview from './network/networkPreview'
 import NewSession from './session/newSession'
+import { textAlign } from 'html2canvas/dist/types/css/property-descriptors/text-align'
 
 const useStyles = createUseStyles({
   root: {
@@ -286,8 +287,8 @@ function Wizard() {
       <div className={classes.root}>
         <div className={classes.list}>
           <div className={classes.header}>
-            <a href="./" style={{ marginBottom: "20px", }}>
-              <img src="./logos/logo-a.png" style={{ width: 290 }} />
+            <a href="./" style={{ marginBottom: "20px", textAlign: 'center', marginTop: 15}}>
+              <img src="./logos/logo-a.png" style={{ width: 230}} />
             </a>
             <Button  
               type='primary' 
