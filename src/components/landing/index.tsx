@@ -42,8 +42,8 @@ const useStyles = createUseStyles({
     color: '#fff',
     textDecoration: 'none',
     fontFamily: `'Reem Kufi Fun', 'Helvetica Neue', 'sans-serif'`,
-    height: '55px',
-    background: '#999'
+    height: '53px',
+    background: '#777'
   }, 
   divMenu:{
     display: 'inline-block',
@@ -58,6 +58,7 @@ const useStyles = createUseStyles({
     fontWeight: '100',
     color: '#333',    
     fontFamily: `'Reem Kufi Fun', 'Helvetica Neue', 'sans-serif'`,
+    paddingTop: "23px"
   },
   menuCol: {
 		paddingRight: '40px',
