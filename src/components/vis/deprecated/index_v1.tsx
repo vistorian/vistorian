@@ -80,11 +80,11 @@ function Vis(props: IVisProps) {
     <div className={classes.root}>
         <div className={classes.left}>
           {/* logo */}
-          <div className={classes.header}>
+          {/* <div className={classes.header}>
             <a href="./" style={{ marginBottom: "20px", }}>
             <img src={props.type === 'xplainer' ? "./logos/logo-xplainer.png" : "./logos/logo-vistorian.png"} style={{ width: 200 }} />
             </a>
-          </div>
+          </div> */}
 
           <ModeSelection 
             type={props.type}

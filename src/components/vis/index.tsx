@@ -16,7 +16,8 @@ import { Mode } from '../../../typings/status.enum'
 const useStyles = createUseStyles({
   root: {
     height: '100%',
-    width: '100%'
+    width: '100%',
+    color: '#333'
   },
   header: {
     display: "flex",
@@ -104,16 +105,16 @@ function Vis(props: IVisProps) {
           <a href="./" style={{ marginRight: "20px"}}>
             <img src={props.type === Mode.Explainer ? "./logos/logo-xplainer.png" : "./logos/logo-a.png"} style={{ width: 150 }} />
           </a>
-          <ModeSelection
+          {/* <ModeSelection
             type={props.type}
             visTypes={visTypes as string}
             network={network as string}
-          />
-        </div>
+          /> */}
+        {/* </div> */}
         {/* network name & data name*/}
-        <div className={classes.right}>
+        {/* <div className={classes.left}> */}
           {/* show network names */}
-          <div style={{ marginRight: 8}}>
+          <div style={{ marginRight: 8, marginLeft: 50}}>
             {/* TODO: return to network preview */}
             <span style={{ fontSize: 18 }}>
               <b>Network:</b>&nbsp;{network}

@@ -112,8 +112,11 @@ function Landing() {
   return (
     <div className={classes.root}>
       <img src="./logos/logo-a.png" className ={classes.logo}/>
+      <br />
 
       <p className={classes.subtitle}>Interactive Visualizations for Dynamic and Multivariate Networks. <br />  Free, online, and open source.</p>
+      <br />
+      <br />
 
       <div id="vistiles" className={classes.visTiles}>
         {templates.map((template: Template) => (
@@ -123,9 +126,13 @@ function Landing() {
           </a>
         ))}
       </div>
+      <br />
 
       <Button className={classes.startButton} href='#/wizard'>Visualize you data</Button>
-      <br></br>
+      <br>
+      </br>
+      <br />
+
      
       <div id="divMenu" className={classes.divMenu}>
 
@@ -176,6 +183,8 @@ function Landing() {
             Clearing your browser cache will delete your data. 
           </p>
 
+          <img src="/images/datatypes.png" style={{width: '100%', paddingTop:15, paddingBottom:15}}/>
+
           <p>Main features include:
             <ul>
               <li>A wide range of different interactive network visualizations: node link diagrams</li>
@@ -183,14 +192,29 @@ function Landing() {
               <li>A geocoding service that obtains geographic locations from placenames in your dataset.</li>
             </ul>
           </p>
-          <p>The Vistorian is an active research project at the Vishub at the University of Edinburgh and Inria, France. The Vistorian is free to use by everyone. If you’re using the Vistorian for work, please cite our poster and send us feedback and examples of your work of our gallery. This helps us keeping the Vistorian funded. Similarly, if you find bugs, send us screenshots and descriptions, we’re happy to help you with your data. The Vistorian is open source.</p>
+          <br />
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/lr9Kfo-3y5g?si=cG8mFUF0ddUrUz6c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
       </div>
 
 
 			<div className={classes.divCitation}>
 
-				<h2 className={classes.h2}>Support us by citing</h2>
-				<p>
+				<h2 className={classes.h2}>Contact & Contribute</h2>
+				
+        <p>The Vistorian is an active research project at the Vishub at the University of Edinburgh and Inria, France. The Vistorian is free to use by everyone. If you’re using the Vistorian for work, please cite our poster and send us feedback and examples of your work of our gallery. This helps us keeping the Vistorian funded. Similarly, if you find bugs, send us screenshots and descriptions, we’re happy to help you with your data. The Vistorian is open source.</p>
+          Main Contact: <a href="mailto:benj.bach@gmail.com">Benjamin Bach</a>
+          <br />
+          <br />
+          
+      Vistorian and the underlying library, NetPanorama are open source. To get involved, visit
+      <ul>
+        <li><a href="https://github.com/vistorian/vistorian">https://github.com/vistorian/vistorian</a></li>
+        <li><a href="https://github.com/NetPanorama/NetPanorama">https://github.com/NetPanorama/NetPanorama</a></li>
+      </ul>
+
+        <h2 className={classes.h2}>Cite</h2> 
+        <p>
 					Benjamin Bach, Nathalie Henry Riche, Roland Fernandez, Emmanoulis Giannisakis, Bongshin
 					Lee, Jean-Daniel Fekete.
 					<a href="https://hal.inria.fr/hal-01205822/document"
@@ -201,16 +225,7 @@ function Landing() {
 
         <a href="https://hal.inria.fr/hal-01205822/document">Read the paper here</a>
 				<pre className={classes.citationBibtex}>{bibTexCitation}</pre>
-
-      <h2 className={classes.h2}>Contribute</h2> 
-      
-      Vistorian and the underlying library, NetPanorama are open source. To get involved, visit
-      <ul>
-        <li><a href="https://github.com/vistorian/vistorian">https://github.com/vistorian/vistorian</a></li>
-        <li><a href="https://github.com/NetPanorama/NetPanorama">https://github.com/NetPanorama/NetPanorama</a></li>
-      </ul>
-      <a href="mailto:benj.bach@gmail.com">e-mail us</a>.
-		</div>
+ 		</div>
  
     <div className={classes.logoDiv}>
       <br/><br/>
