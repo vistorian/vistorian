@@ -40,30 +40,44 @@ function isIncluded(x: any[], y: any[]) {
 
 //  Order of nodes is defined as 0, ..., n
 // function orderValue(node: NodeKey, G: Graph) {
+const memoOrder = new Map();
 function orderValue(node: NodeKey, orderedNodes) {
-    // let nodes = G.nodes();
-    // return nodes.indexOf(node)
-    return orderedNodes.indexOf(node)
+    let orderValue = memoOrder.get(node);
+    if (orderValue) {
+        return orderValue;
+    }
+    // if (memoOrder.has(node)) {
+    //     return memo.get(node);
+    // }
+
+    orderValue = orderedNodes.indexOf(node);
+    memoOrder.set(node, orderValue);
+
+    return orderValue
 }
 
 
 const memo = new Map();
 export function union(A: any[], B: any[]) {
+    return [...new Set(A.concat(B))]
+
     const key = `${A}|${B}`;
     if (memo.has(key)) {
         return memo.get(key);
     }
 
     // console.log(A, B)
-    let union = [...new Set(A.concat(B))]
-    memo[key] = union;
+    let unionRes = [...new Set(A.concat(B))]
+    memo.set(key, unionRes);
 
-    return union;
+    return unionRes;
 }
 
 
 const memoInter = new Map();
 export function intersect(A: any[], B: any[]) {
+    return A.filter(n => B.includes(n))
+
     const key = `${A}|${B}`;
     if (memoInter.has(key)) {
         return memoInter.get(key);
@@ -71,24 +85,9 @@ export function intersect(A: any[], B: any[]) {
 
     // console.log(A, B)
     let inter = A.filter(n => B.includes(n))
-    memoInter[key] = inter;
+    memoInter.set(key, inter);
 
     return inter;
-}
-
-
-const memoInter = new Map();
-export function inter(A: any[], B: any[]) {
-    const key = `${A}|${B}`;
-    if (memo.has(key)) {
-        return memo.get(key);
-    }
-
-    // console.log(A, B)
-    let union = [...new Set(A.concat(B))]
-    memo[key] = union;
-
-    return union;
 }
 
 export function leastBiclique(G: Graph, bipartiteSetA: NodeKey[], bipartiteSetB: NodeKey[], nodesOrdered) {
@@ -110,7 +109,8 @@ export function leastBiclique(G: Graph, bipartiteSetA: NodeKey[], bipartiteSetB:
                 let neighj = G.neighbors(j);
                 let neighjBar = G.nodes().filter(n => !neighj.concat(j).includes(n));
                 // let neighjBar = nodesOrdered.filter(n => !neighj.concat(j).includes(n));
-                if (isIncluded(bipartiteSetA, neighjBar) && allNeighbors(G, bipartiteSetA).filter(n => neighj.includes(n)).length > 0) {
+                // if (isIncluded(bipartiteSetA, neighjBar) && allNeighbors(G, bipartiteSetA).filter(n => neighj.includes(n)).length > 0) {
+                if (isIncluded(bipartiteSetA, neighjBar) && intersect(allNeighbors(G, bipartiteSetA), neighj).length > 0) {
                     if (!bipartiteSetA.includes(j)) bipartiteSetA.push(j);
                 }
 
@@ -266,14 +266,13 @@ export function* lexBicliques(G: Graph) {
     whileLoop:
     while (Q.length > 0) {
 
-        timeNow = new Date().getTime();
-        // If more than two hours
-        if (timeNow - start > 1000 * 3600 * 2) {
-        // if (timeNow - start > 100) {
-            console.log("BREAK")
-            return;
-        }
-
+        // timeNow = new Date().getTime();
+        // // If more than two hours
+        // if (timeNow - start > 1000 * 3600 * 2) {
+        // // if (timeNow - start > 100) {
+        //     console.log("BREAK")
+        //     return;
+        // }
 
         sortQ(Q, Gnodes);
 
@@ -308,6 +307,7 @@ export function* lexBicliques(G: Graph) {
             // console.log("BI ", biclique)
 
             // if (X.length > 1 && Y.length > 1) {
+            // if (X.length > 1 && Y.length > 1) {
             if (X.length > 1 && Y.length > 1) {
                 yield biclique;
             }
@@ -322,8 +322,10 @@ export function* lexBicliques(G: Graph) {
                 if (n == nodej) break;
             }
 
-            let Xj = X.filter(n => nodeToj.includes(n));
-            let Yj = Y.filter(n => nodeToj.includes(n));
+            // let Xj = X.filter(n => nodeToj.includes(n));
+            let Xj = intersect(X, nodeToj);
+            let Yj = intersect(Y, nodeToj);
+            // let Yj = Y.filter(n => nodeToj.includes(n));
             // let Bj = union(Xj, Yj)
 
             // let nodesfilter = nodeToj.filter(n => !Bj.includes(n));
@@ -333,7 +335,8 @@ export function* lexBicliques(G: Graph) {
                 let neighj = G.neighbors(nodej);
                 let neighjBar = Gnodes.filter(n => !neighj.concat(nodej).includes(n));
                 // console.log("NNN", nodej, neighj, neighjBar)
-                if (Xj.filter(n => neighj.includes(n)).length > 0 || Yj.filter(n => neighjBar.includes(n)).length > 0 || Yj.length == 0) {
+                // if (Xj.filter(n => neighj.includes(n)).length > 0 || Yj.filter(n => neighjBar.includes(n)).length > 0 || Yj.length == 0) {
+                if (intersect(Xj, neighj).length > 0 || intersect(Yj, neighjBar).length > 0 || Yj.length == 0) {
                 // if (Xj.filter(n => neighj.includes(n)).length > 0 || Yj.filter(n => neighjBar.includes(n)).length > 0) {
                     let Xj2 = union(Xj.filter(n => !neighj.includes(n)), [nodej]);
                     let Yj2 = Yj.filter(n => !neighjBar.includes(n));
@@ -387,26 +390,10 @@ export function* lexBicliques(G: Graph) {
 
                     if (!isBCAll) {
                         let leastBC = leastBiclique(G, Xj2, Yj2, Gnodes);
-                        // let leastBC = leastBiclique(G, Xj2, Yj2, G.nodes());
 
-                        // leastBC = union(leastBC[0], leastBC[1]);
                         // if (leastBC.length > 0 && isIncluded(union(leastBC[0], leastBC[1]), Q)) {
                         if (leastBC.length > 0 && !isBCinQ(leastBC, Q)) {
-
-                            // if (leastBC[0].length > 1 && leastBC[1].length > 1) {
-                                Q.push(leastBC)
-                            // }
-
-                            // let included = false;
-                            // foundBicliques.forEach(bc => {
-                            //         if (arraysContainSameValues(union(bc[0], bc[1]), union(leastBC[0], leastBC[1]))) {
-                            //             included = true;
-                            //         }
-                            //     })
-                            // if (!included) {
-                            //     Q.push(leastBC)
-                            //     foundBicliques.push([leastBC[0], leastBC[1]]);
-                            // }
+                            Q.push(leastBC)
 
                         } else if (leastBC.length == 0 && Yj2.length == 0) {
                         // } else if (false) {
@@ -417,22 +404,7 @@ export function* lexBicliques(G: Graph) {
                                 let leastBC2 = leastBiclique(G, XX, [node], Gnodes);
 
                                 if (leastBC2.length > 0 && !isBCinQ(leastBC2, Q)) {
-
-                                    // if (leastBC2[0].length > 1 && leastBC2[1].length > 1) {
-                                        Q.push(leastBC2)
-                                    // }
-
-                                    // let included = false;
-                                    // foundBicliques.forEach(bc => {
-                                    //     if (arraysContainSameValues(union(bc[0], bc[1]), union(leastBC2[0], leastBC2[1]))) {
-                                    //         included = true;
-                                    //     }
-                                    // })
-                                    //
-                                    // if (!included) {
-                                    //     Q.push(leastBC2)
-                                    //     foundBicliques.push([leastBC2[0], leastBC2[1]]);
-                                    // }
+                                    Q.push(leastBC2)
                                 }
                             }
                             // console.log("node j loop END")

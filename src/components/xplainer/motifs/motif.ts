@@ -271,6 +271,10 @@ export class BiClique extends NetworkPattern {
         return [this.setA, this.setB];
     }
 
+    isBig() {
+        return (this.setA.length > 1 && this.setB.length > 2) || (this.setA.length > 2 && this.setB.length > 1)
+    }
+
     setNodesSetA(nodes: any[]) {
         this.setA = nodes;
         super.addNodes(nodes);

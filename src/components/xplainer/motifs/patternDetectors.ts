@@ -39,12 +39,15 @@ export class PatternDetectors {
 
     cliques: Clique[] = [];
     allMotifs: AllMotifs;
+    runBicliques: boolean;
 
 
-    constructor(network: Network, visType: string) {
+    constructor(network: Network, visType: string, runBicliques=true) {
         this.network = network;
         this.isDynamic = visType === 'timearcs';
         this.isMatrix = visType === 'matrix';
+        this.runBicliques = runBicliques;
+
         this.netPanGraphToGraphology();
         this.allMotifs = this.getAll()
     }
@@ -57,7 +60,8 @@ export class PatternDetectors {
         })
         this.network.links.forEach(link => {
             // this.graph.addEdge(link.source.id, link.target.id);
-            this.graph.addEdgeWithKey(link.id ?? link.index, link.source.id, link.target.id, link);
+
+            this.graph.addEdgeWithKey((link.id ?? link.index), link.source.id, link.target.id, link);
 
             if (!this.undirectedGraph.hasUndirectedEdge(link.source.id, link.target.id)) {
                 this.undirectedGraph.addEdge(link.source.id, link.target.id);
@@ -140,10 +144,13 @@ export class PatternDetectors {
         // yield* findConnectors(this.graph);
         yield* findFans(this.graph);
 
-        let startBC = new Date().getTime();
-        yield* findBicliques(this.graph);
-        let endBC = new Date().getTime();
-        console.log("TIME ", endBC - startBC);
+        if (this.runBicliques) {
+            let startBC = new Date().getTime();
+            // yield* findBicliques(this.graph);
+            yield* findBicliques(this.undirectedGraph);
+            let endBC = new Date().getTime();
+            console.log("TIME ", endBC - startBC);
+        }
 
         yield* findSelfLinks(this.graph);
         yield* findParallelLinks(this.graph, this.isMatrix);

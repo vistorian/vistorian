@@ -19,6 +19,7 @@ export function* findStrongLinks(network: Graph): Generator<StrongLink> {
     let weightDist = []
     network.forEachEdge(edge => {
         let weight = network.getEdgeAttribute(edge, "linkWeight");
+        if (!weight) weight = network.getEdgeAttribute(edge, "value");
         weightDist.push(weight);
     })
     let mean = calculateMean(weightDist);
@@ -27,6 +28,8 @@ export function* findStrongLinks(network: Graph): Generator<StrongLink> {
     for (let edge of network.edges()) {
         // TODO: key of weight
         let weight = network.getEdgeAttribute(edge, "linkWeight");
+        if (!weight) weight = network.getEdgeAttribute(edge, "value");
+
         // if (weight > WEIGHT_THRESHOLD) {
         if (weight > mean + 2 * std)
             yield new StrongLink([edge], weight);
