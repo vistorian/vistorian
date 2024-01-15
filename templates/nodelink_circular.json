@@ -179,15 +179,7 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
-      "actions": [
-        {
-          "interaction": "select",
-          "using": "cursor",
-          "event": "mouseover",
-          "action": "replace",
-          "selection": "node_selection"
-        }
-      ],
+      "ifInSelection": "node_selection.nodes",
       "mark": {
         "type": "symbol",
         "shape": {"field": "data.type0", "scale": "nodeShape"},
@@ -203,23 +195,7 @@
           "scale": "nodeColor"
         },
         "stroke": "white",
-        "opacity": {
-          "conditions": [
-            {
-              "selectionIsEmpty": "node_selection.nodes",
-              "expression": "params.nodeOpacityParam"
-            },
-            {
-              "inSelection": "node_selection.nodes",
-              "expression": "params.nodeOpacityParam"
-            },
-            {
-              "inSelection": "neighbours.nodes",
-              "expression": "params.nodeOpacityParam"
-            }
-          ],
-          "value": 0.1
-        }
+        "opacity": 1
       }
     },
     {
