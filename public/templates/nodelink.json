@@ -141,7 +141,7 @@
           "scale": "edgeColor" 
         },
         "strokeWidth": { 
-          "expression": "1.2 + 0.1 * datum.linkWeight * params.linkWidthParam"
+          "expression": "1.2 + 0.1 * (datum.linkWeight+10) * params.linkWidthParam"
         },
         "opacity":  { 
           "conditions": [
@@ -241,11 +241,10 @@
         },
         "cursor": "none",
         "dx": 5,
-        "dy": 5,
+        "dy": 4,
         "fontSize": 13,
-        "fontWeight": "bold",
         "stroke": "white",
-        "strokeWidth": 0.3
+        "strokeWidth": 0.4
       }
     }
   ]
