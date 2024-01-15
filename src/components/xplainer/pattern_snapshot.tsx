@@ -5,6 +5,10 @@ import { Collapse, CollapseProps, Tag, message } from "antd"
 import { AllMotifs } from "../../../typings"
 import { chunk, find, findIndex } from "lodash-es"
 import { timeFormat, timeParse } from "d3-time-format"
+import { Typography } from 'antd';
+import { ReactNode, useState } from "react"
+
+const { Paragraph } = Typography;
 
 const useStyles = createUseStyles({
   hl: {
@@ -40,14 +44,14 @@ const useStyles = createUseStyles({
     // }
   },
   icon: {
-    width: 130,
-    height: 130,
+    // width: 130,
+    // height: 130,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-around',
     '& img': {
-      width: 115,
+      width: 90,
       // height: 115,
     } 
   },
@@ -69,10 +73,10 @@ const useStyles = createUseStyles({
   },
   dataExp : {
     position: 'relative',
-    marginTop: 8,
+    marginLeft: 12,
     paddingLeft: 18,
+    paddingRight: 8,
     paddingTop: 5,
-    paddingBottom: 5,
     backgroundColor: '#F9F9F9',
     zIndex: 0,
     '&:before': {
@@ -82,7 +86,7 @@ const useStyles = createUseStyles({
       position: 'absolute',
       top: 0,
       left: 0,
-      width: '1%',
+      width: '2%',
       zIndex: 2,
     }
   },
@@ -109,6 +113,7 @@ interface IPatternProps {
   setHoverRelatedMotif: (d: NetworkPattern) => void
   setClickRelatedMotif: (d: NetworkPattern) => void
   setSelectedMotifNo: (d: [number, number]) => void
+  // snapshots: any
 }
 
 function Pattern (props: IPatternProps) {
@@ -118,7 +123,59 @@ function Pattern (props: IPatternProps) {
   const motifType = motif ? motif.type() : ''
   // const motifType: string = 'Bipartite'
   let pattern, dataExp, visualExp, description
+  // let pattern, dataExp, description
+  // const [visualExp, setVisualExp] = useState<ReactNode>(<></>)
   // console.log('Pattern', motif) 
+
+  const getVisualTitle = () => {
+    let visualTitle = ''
+    if (visType === 'nodelink') {
+      visualTitle = pattern.title
+    }
+    else {
+      switch (motifType) {
+        case 'StrongLink':
+          visualTitle = visType === 'matrix' ? 'Solid Cell' : 'Thick Arc'
+          break
+        case 'WeakLink':
+          visualTitle = visType === 'matrix' ? 'Transparent Cell' : 'Thin Arc'
+          break
+        case 'SelfLink':
+          visualTitle = visType === 'matrix' ? 'Cell on Diagonal' : 'Self Arc'
+          break
+        case 'ParallelLinks':
+          visualTitle = visType === 'matrix' ? 'Split Cell' : 'Parallel Arcs'
+          break
+        case 'RepeatedLinks':
+          visualTitle = 'Repeated Arcs'
+          break
+        case 'BackAndForth':
+          visualTitle = 'Leaf Shape'
+          break
+        case 'Hub':
+          visualTitle = visType === 'matrix' ? 'Dense Row&Column' : 'Large Dot'
+          break
+        case 'Bridge':
+          visualTitle = visType === 'matrix' ? 'Bridge Blocks' : 'Opposite Arcs'
+          break
+        case 'Fan':
+          visualTitle = visType === 'matrix' ? 'Free Bar' : 'S-shape'
+          break
+        case 'Clique':
+          visualTitle = visType === 'matrix' ? 'Block' : 'Full Arcs'
+          break
+        case 'Cluster':
+          visualTitle = visType === 'matrix' ? 'Fragmented Block' : 'Partial Arcs'
+          break
+        case 'Bipartite':
+          visualTitle = visType === 'matrix' ? 'Off-diagnoal Blocks' : 'Rainbow Arcs'
+          break
+        default:
+          visualTitle = ''
+      }
+    }
+    return visualTitle
+  }
 
   const toOrdinal = (n: number) => {
     return `${n}` + (['st', 'nd', 'rd'][n < 20 ? (n-1) : (n % 10 -1)] || 'th')
@@ -126,6 +183,7 @@ function Pattern (props: IPatternProps) {
 
   const genExp = () => {
     let dataExp, description, link, node, density, rank
+    let visualExp
     switch (motifType) {
       case 'StrongLink':
         dataExp = <span>A <b>Strong Link</b> is a <span className={classes.category}>link pattern</span>, whose weight is in the top percentile of the weights distribution.</span>
@@ -139,7 +197,7 @@ function Pattern (props: IPatternProps) {
         else if (visType === 'matrix') {
           visualExp = <span> This pattern shows a solid cell in the matrix that is more dark or more opaque than most other cells in the matrix. The darker the cell, the stronger (more weight) the connection.</span> 
 
-          description = <span>Your selected link connects node <span className={classes.hl}>{link.source.id}</span> and node <span className={classes.hl}>{link.target.id}</span>, and is ranked the <span className={classes.hl}>{toOrdinal(rank)}</span> strongest in the network with a link weight of <span className={classes.hl}>{link.linkWeight}</span>.</span>
+          description = <span>Your selected link connects node <span className={classes.hl}>{link.source.data._label}</span> and node <span className={classes.hl}>{link.target.data._label}</span>, and is ranked the <span className={classes.hl}>{toOrdinal(rank)}</span> strongest in the network with a link weight of <span className={classes.hl}>{link.linkWeight}</span>.</span>
         }
         else {
           visualExp = <span>This pattern is a line between two circles that is thicker than most other lines. The ticker the line, the stronger (or more weight) the connection has. Length of the line does not have any meeing per se. Longer lines usually mean that the respective nodes are connected to very different parts of the network, i.e., have different neighborhoods. </span>
@@ -159,7 +217,7 @@ function Pattern (props: IPatternProps) {
         else if (visType === 'matrix') {
           visualExp = <span>This pattern shows a transparent cell in the matrix that is less dark or more opaque than most other cells in the matrix. The lighter the cell, the weaker (less weight) the connection.</span>
 
-          description = <span>Your selected link connects node <span className={classes.hl}>{link.source.id}</span> and node <span className={classes.hl}>{link.target.id}</span>, and is ranked the <span className={classes.hl}>{toOrdinal(rank)}</span> weakest in the network with a link weight of <span className={classes.hl}>{link.linkWeight}</span>.</span>
+          description = <span>Your selected link connects node <span className={classes.hl}>{link.source._label}</span> and node <span className={classes.hl}>{link.target._label}</span>, and is ranked the <span className={classes.hl}>{toOrdinal(rank)}</span> weakest in the network with a link weight of <span className={classes.hl}>{link.linkWeight}</span>.</span>
         }
         else {
           visualExp = <span>This pattern is a line between two circles that is thinner than most other lines. The ticker the line, the weaker (or less weight) the connection has. Longer lines usually mean that the respective nodes are connected to very different parts of the network, i.e., have different neighborhoods.</span>
@@ -178,7 +236,7 @@ function Pattern (props: IPatternProps) {
         else if (visType === 'matrix') {
           visualExp = <span>This pattern shows a single filled cell located along the diagonal of the matrix.</span>
 
-          description = <span>Your selected link belongs to node <span className={classes.hl}>{link.source.id}</span>.</span>
+          description = <span>Your selected link belongs to node <span className={classes.hl}>{link.source._label}</span>.</span>
         }
         else {
           visualExp = <span>This pattern is a small loop that goes back to the same node it originates.</span>
@@ -198,7 +256,7 @@ function Pattern (props: IPatternProps) {
         else if (visType === 'matrix') {
           visualExp = <span> This pattern shows a cell that is splitted into multiple cells.Each sub-cell represents one link. The more subdivisions there are, the more links connect the two nodes.</span>
 
-          description = <span>Your selection has <span className={classes.hl}>{motif.links.length}</span> diifferent connections between node <span className={classes.hl}>{link.source.id}</span> and node <span className={classes.hl}>{link.target.id}</span>.</span>
+          description = <span>Your selection has <span className={classes.hl}>{motif.links.length}</span> diifferent connections between node <span className={classes.hl}>{link.source._label}</span> and node <span className={classes.hl}>{link.target._label}</span>.</span>
         }
         else {
           visualExp = <span>This pattern shows several arcs connecting the same two nodes. For better readability, arcs have different heights so they appear as a bundle. The more arcs there are, the more links these two nodes share. </span>
@@ -229,14 +287,14 @@ function Pattern (props: IPatternProps) {
         if (visType === 'timearcs') {
           visualExp = <span>This pattern shows several arcs that connect the same two nodes in the respective opposite direction, forming a back and forth connection. The vertical length of an arc has no per-se meaning; it merely reflects the distance of nodes on the vertical ordering.</span>
 
-          description = <span> Your selection has <span className={classes.hl}>{motif.links.length}</span> <span className={classes.tag}>back and forth links</span> that happened between node <span className={classes.hl}>{link.source.data.name}</span> and node <span className={classes.hl}>{link.target.data.name}</span>.</span>
+          description = <span> Your selection has <span className={classes.hl}>{motif.links.length}</span> <span className={classes.tag}>back and forth links</span> that happened between node <span className={classes.hl}>{link.source.data._label}</span> and node <span className={classes.hl}>{link.target.data._label}</span>.</span>
         }
         else if (visType === 'matrix') {
           visualExp = <span>n/a</span>
           description = <span>n/a</span>
         }
         else {
-          visualExp = <span>n/a</span>
+          visualExp = <span>This pattern shows several arcs that connect the same two nodes in the respective opposite direction, forming a back and forth connection. For better readability, arcs have different heights so they appear as a bundle.</span>
           description = <span>n/a</span>
         }
         break
@@ -253,7 +311,7 @@ function Pattern (props: IPatternProps) {
         else if (visType === 'matrix') {
           visualExp = <span>This pattern shows a row (or column) in the matrix with many cells. Cells can be close together or spread across the entire length of the row (or column). The more cells there are in this row (or column), the more connection this node has. If the entire row (or column) is filled with cells. This node represented by the row (or column) is connected to all nodes in the networks. Rows and columns are symmetric, so any dense row or column will appear as a cross in the matrix.</span>
 
-          description = <span>Your selected node <span className={classes.hl}>{node.id}</span> has <span className={classes.hl}>{motif.neighbors}</span> neighbors with a sum weight of <span className={classes.hl}>{motif.degree}</span>. This makes it the <span className={classes.hl}>{toOrdinal(rank)}</span> most connected node in the network.</span>
+          description = <span>Your selected node <span className={classes.hl}>{node.data._label}</span> has <span className={classes.hl}>{motif.neighbors}</span> neighbors with a sum weight of <span className={classes.hl}>{motif.degree}</span>. This makes it the <span className={classes.hl}>{toOrdinal(rank)}</span> most connected node in the network.</span>
         }
         else {
           visualExp = <span>This pattern is show as s single circle with many lines. This pattern is usually found in dense or central areas of the node-link diagram. The more lines the circle has, the more connections it has.</span>
@@ -273,7 +331,7 @@ function Pattern (props: IPatternProps) {
         else if (visType === 'matrix') {
           visualExp = <span>This pattern is shown as a dense row (or column) that is connected to at least two different blocks. Blocks can be fragmented. The more cells there are in the respective row, the more nodes the bridge node connects. The more blocks this row touches on, the more parts of the network the node connects.</span>
 
-          description = <span>Your selected node <span className={classes.hl}>{node.id}</span> connects to <span className={classes.hl}>{motif.neighbors}</span> neighbors that are in two (or more) distinct sets.</span>
+          description = <span>Your selected node <span className={classes.hl}>{node.data._label}</span> connects to <span className={classes.hl}>{motif.neighbors}</span> neighbors that are in two (or more) distinct sets.</span>
         }
         else {
           visualExp = <span>This pattern is shown as a circle with lines to circles in diffrent, usually more dense, parts of the network visualization. The number of lines can show how strong the birdge node is connecting the respecive parts of the network.</span>
@@ -291,7 +349,7 @@ function Pattern (props: IPatternProps) {
         else if (visType === 'matrix') {
           visualExp = <span>This pattern is shown as a set of cells in the same row (or column) with the matching column (or rows) entirely empty. Cells can appear very close to each other, i.e., a continuous block of cells. Or, cells can be spread across the entire row (or column). The more cells with otherwise empty rows (or columns), the larger this fan is. </span>
 
-          description = <span>Your selection has a node <span className={classes.hl}>{node.data.name}</span> connecting to <span className={classes.hl}>{motif.nodes.length - 1}</span> other nodes which only connects to this node.</span>
+          description = <span>Your selection has a node <span className={classes.hl}>{node.data._label}</span> connecting to <span className={classes.hl}>{motif.nodes.length - 1}</span> other nodes which only connects to this node.</span>
         }
         else {
           visualExp = <span>This patterns shows a circle connected to many other individual circles that does not have any other connection. This pattern is often found at the perihpery of a node-link diagram, looking like a hand with fingers. </span>
@@ -409,7 +467,8 @@ function Pattern (props: IPatternProps) {
       post = 'ParallelLinks'
     }
     if (motifType && motifType === 'BackAndForth') {
-      prefix = 'timearcs_t'
+      prefix = 'timearcs_s'
+      // prefix = "nodelink"
       post = 'BackAndForth'
     }
     return <img src={`./pattern-icons/${prefix}_${post}.png`} />
@@ -424,11 +483,12 @@ function Pattern (props: IPatternProps) {
         post = 'ParallelLinks'
       }
       if (motifType && motifType === 'BackAndForth') {
-        prefix = 'timearcs_t'
+        prefix = 'timearcs_s'
+        // prefix = "nodelink"
         post = 'BackAndForth'
       }
       return (
-      <div style={{ marginTop: 25 }}>
+      <div style={{ marginLeft: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center'}}>
           <div className={classes.diamond}></div>
           <span>The selected pattern may visually vary, like: </span>
@@ -436,21 +496,49 @@ function Pattern (props: IPatternProps) {
         <div style={{ display: 'flex', marginTop: 5 }}>
           {new Array(pattern[visType]).fill(true).map((v: string, i: number) => {
               return (
-                <div
-                  key={i}
-                  style={{ marginRight: 5 }}>
-                  <img style={{ width: 115, height: 115 }} src={`./pattern-icons/${prefix}_${post}_${i+1}.png`} />
+                <div key={i} style={{ marginRight: 5 }}>
+                  <img style={{ width: 80, height: 80 }} src={`./pattern-icons/${prefix}_${post}_${i+1}.png`} />
                 </div>)
           })}
         </div>
       </div>)
     }
   }
+
+  // const getSnapshot =  (listId: string, motif: NetworkPattern) => {
+  // const getSnapshot = (index: number) => {
+  //   if (visType === 'matrix' && motifType === 'Clique') {
+  //     document.querySelector(`#instances${index} img`)?.remove()
+  //     const img = document.createElement("img")
+  //     img.setAttribute('src', `./tmp/clique${index}.png`)
+  //     const naturalWidth = img.naturalWidth
+  //     img.setAttribute('width', `${naturalWidth * 0.6}px`)
+  //     document.querySelector(`#instances${index}`)?.appendChild(img)
+  //   }
+  //   else {
+  //     const ele = document.querySelector("#visSvg0Copy svg")
+  //     if (ele) {
+  //       document.querySelector(`#instances${index} svg`)?.remove()
+  //       document.querySelector(`#instances${index}`)?.appendChild(props.snapshots[index])
+  //       //   const eleClone = ele.cloneNode(true) as SVGElement
+  //       //   const bounds = getRelatedMotifBound(motif)
+  //       //   if (bounds) {
+  //       //     eleClone.setAttribute("width", `${bounds.x2-bounds.x1}`)
+  //       //     eleClone.setAttribute("height", `${bounds.y2-bounds.y1}`)
+  //       //     eleClone.setAttribute("viewBox", `${bounds.x1+visOffset[0]} ${bounds.y1+visOffset[1]} ${bounds.x2-bounds.x1} ${bounds.y2-bounds.y1}`)
+  //       //     document.querySelector(`#${listId} svg`)?.remove()
+  //       //     document.querySelector(`#${listId}`)?.appendChild(eleClone)
+  //       //   }
+  //     }
+  //   }
+  //   return <></>
+  // }
+
   const getList = () => {
     return <ul>
       {allMotifs[motifType].map((other, index) => {
-        if (JSON.stringify(other) !== JSON.stringify(motif))
-          return <li key={index}>
+        // if (JSON.stringify(other) !== JSON.stringify(motif))
+          return <li key={index} id={`instances${index}`}>
             <span
               className={classes.instance}
               onMouseOver={() => {
@@ -466,21 +554,28 @@ function Pattern (props: IPatternProps) {
               }}>
               {`${patternList[motifType].title} #${index}`}
             </span>
+            {/* {getSnapshot(index)} */}
           </li>
       })}
     </ul> 
   }
 
+
+  /**
+   * @description get the similar instances
+   * @return {*} 
+   */
   const getItems = () => {
-    const chunks = chunk(allMotifs[motifType], 10)
+    const chunkGap = 5
+    const chunks = chunk(allMotifs[motifType], chunkGap)
     const items = chunks.map((chunk, index) => {
       return ({
         key: index,
-        label: <span> {`${patternList[motifType].title} [${index * 10}, ${index * 10 + 9}]`}</span>,
+        label: <span> {`${patternList[motifType].title} [${index * chunkGap}, ${index * chunkGap + (chunkGap-1)}]`}</span>,
         children: <ul>
           {chunk.map((other, idx) => {
             // if (JSON.stringify(other) !== JSON.stringify(motif))
-              return <li key={idx}>
+            return <li key={idx} id={`instances${index * chunkGap + idx}`}>
                 <span
                   className={classes.instance}
                   onMouseOver={() => {
@@ -494,8 +589,9 @@ function Pattern (props: IPatternProps) {
                     setSelectedMotifNo([0, 0])
                     // setHoverRelatedMotif({} as NetworkPattern)
                   }}>
-                  {`${patternList[motifType].title} #${index * 10 + idx}`}
+                  {`${patternList[motifType].title} #${index * chunkGap + idx}`}
                 </span>
+                {/* {getSnapshot(index * chunkGap + idx)} */}
               </li>
           })}
         </ul>
@@ -504,11 +600,15 @@ function Pattern (props: IPatternProps) {
     return items
   }
 
+  /**
+   * @description initialize explanations based on the input motif
+   */
   if (motif) {
     if (motifType in patternList) {
       pattern = patternList[motifType]
       const exp = genExp()
       visualExp = exp.visualExp
+      // setVisualExp(exp.visualExp)
       dataExp = exp.dataExp
       description = exp.description
     }
@@ -517,46 +617,61 @@ function Pattern (props: IPatternProps) {
     }
   }
 
-
   return (
     <>
       {pattern ? 
-        <div style={{ padding: 12}}>
-          {/* icons */}
-          <div style={{ display: 'flex', width: '100%', justifyContent: 'space-around', margin: '10px 0px', padding: '10px 0px', backgroundColor: '#F9F9F9'}}>
-          {/* visual pattern icon */}
-            <div className={classes.icon}>
-              {getVisIcon()}
-            </div>
-          {/* data pattern icon */}
+        <div id="pattern" style={{ padding: 12}}>
+
+          <span style={{ fontSize: 18 }}>The selected pattern <span><b>{getVisualTitle()}</b></span> represents a <span><b>{pattern.title}</b></span>.</span>
+
+          <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', marginTop: 10, padding: '10px 0px' }}>
+            {/* data pattern icon */}
             <div className={classes.icon}>
               <img src={`./pattern-icons/${motifType}.png`} />
             </div>
-         </div>
-
-          <span style={{fontSize: 18}}>This is a <span className={classes.tag}>{pattern.title}</span> pattern. </span>
-
-          {/* define data pattern */}
-          <div className={classes.dataExp}>
-            {dataExp}
-          </div>
-
-          {/* explain why these visuals are considered as the above data patterns */}
-          <div style={{ marginTop: 25}}>
-            {visualExp}
+            {/* define data pattern */}
+            <div className={classes.dataExp}>
+              {dataExp}
+            </div>
           </div>
 
           {/* explain the selection statistics */}
-          <div style={{ marginTop: 25 }}>
+          <div style={{ marginTop: 5 }}>
             {description}
           </div>
 
-          {/* provide visual variations */}
-          {getVisualVariations()}
+          <div style={{marginTop: 15}}>
+            <span style={{ fontSize: 18, fontWeight: 700 }}>{getVisualTitle()} pattern</span>
+            <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0px' }}>
+              {/* visual pattern icon */}
+              <div className={classes.icon}>
+                {getVisIcon()}
+              </div>
+              {/* provide visual variations */}
+              {getVisualVariations()}
+            </div>
+
+          </div>
+          {/* explain why these visuals are considered as the above data patterns */}
+          <div style={{ marginTop: 0, backgroundColor: '#F9F9F9'}}>
+            {/* <Paragraph
+              ellipsis={{
+                rows: 2,
+                expandable: true
+              }}
+              title={`${visualExp}`}
+            >
+              {visualExp}
+            </Paragraph> */}
+            {visualExp}
+          </div>
+
+          
 
           {/* relate to variants when have more than one instances in this network */}
           {motifType in allMotifs && allMotifs[motifType].length > 1 ? 
-          <div style={{ marginTop: 25 }}>
+          <div style={{ marginTop: 15 }}>
+              <span style={{ fontSize: 18, fontWeight: 700 }}>Browse related <span style={{ textDecoration: 'underline' }}>{getVisualTitle()}</span> and <span style={{ textDecoration: 'underline' }}>{pattern.title}</span></span>
             <div style={{display: 'flex', alignItems: 'center'}}>
                 <div className={classes.diamond}></div>
                 <span>Similar instances in your network (ranked by the size):</span>

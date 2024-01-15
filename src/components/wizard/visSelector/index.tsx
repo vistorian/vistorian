@@ -113,6 +113,7 @@ function VisSelector(props: IVisSelectorProps) {
       </div>
       <Link
         onClick={() => saveSession(getVis())}
+        // to={`/vis/${getVis().join('+')}/network/${network}`}
         to={`/vis/${getVis().join('+')}/network/${network}`}
         target='_blank'
       >

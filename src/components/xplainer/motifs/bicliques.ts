@@ -90,6 +90,21 @@ export function intersect(A: any[], B: any[]) {
     return inter;
 }
 
+
+// const memoInter = new Map();
+export function inter(A: any[], B: any[]) {
+    const key = `${A}|${B}`;
+    if (memo.has(key)) {
+        return memo.get(key);
+    }
+
+    // console.log(A, B)
+    const inter = [...new Set(A.concat(B))]
+    memo[key] = inter;
+
+    return inter;
+}
+
 export function leastBiclique(G: Graph, bipartiteSetA: NodeKey[], bipartiteSetB: NodeKey[], nodesOrdered) {
     if (bipartiteSetB.length == 0) {
         let NA = allNeighbors(G, bipartiteSetA);

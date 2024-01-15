@@ -13,7 +13,7 @@ interface Props {
 
 function Overview(props: Props) {
   const [tags, setTags] = useState<boolean[]>([])
-  const [display, setDisplay] = useState<boolean>(false)
+  const [display, setDisplay] = useState<boolean>(true)
 
   const getText = (name: string) => {
     if (name in patternList) {
@@ -99,16 +99,18 @@ function Overview(props: Props) {
   }
 
   return (
-    <div>
+    <div style={{ width: 310, borderRight: '1px solid rgba(0, 0, 0, 0.08)'}}>
       <p style={{ fontSize: 18, display: 'flex', justifyContent: 'space-between' }}>
         <b>Pattern Overview:</b>
         {/* <Switch size='small' 
           checked={tags.filter(t=>!t).length === 0} 
           onChange={onChange} 
         /> */}
-        <Switch size='small'
+        <Switch 
+          size='small'
           checked={display}
           onChange={() => setDisplay(!display)}
+          style={{marginRight: 10}}
         />
       </p>
       <div style={{ marginBottom: 10, display: display ? 'inherit' : 'none' }}>

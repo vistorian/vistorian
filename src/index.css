@@ -20,6 +20,7 @@ body {
   place-items: stretch;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #fff;
 }
 
 ::-webkit-scrollbar {

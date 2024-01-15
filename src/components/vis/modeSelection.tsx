@@ -1,16 +1,16 @@
 import { Button } from "antd"
 import { Link } from "react-router-dom"
 import { FileSearchOutlined, BulbOutlined, FormOutlined } from '@ant-design/icons'
+import { Mode } from "../../../typings/status.enum"
 
 interface IModeSelectionProps {
-  type: string
+  type: Mode,
   visTypes: string
   network: string
 }
 
 function ModeSelection(props: IModeSelectionProps) {
-  const modes: string[] = ['explore', 'xplainer']
-  const modesNames: string[] = ['Explorer', 'Explainer']
+  const modes: Mode[] = Object.values(Mode)
 
   const icons = [<FileSearchOutlined />, <BulbOutlined />, <FormOutlined />]
   
@@ -25,13 +25,13 @@ function ModeSelection(props: IModeSelectionProps) {
               size="large"
               key={index}
             >
-              {modesNames[index]}
+              {modes[index]}
             </Button>
           )}
         else {
           return (
             <Link
-              to={`/vis/${props.visTypes}/network/${props.network}/${mode === 'explore' ? '' : mode}`}
+              to={`/vis/${props.visTypes}/network/${props.network}/${mode === Mode.Explorer ? '' : mode}`}
               target='_blank'
               key={index}
             >
@@ -40,7 +40,7 @@ function ModeSelection(props: IModeSelectionProps) {
                 icon={icons[index]}
                 size="large"
               >
-                {modesNames[index]}
+                {modes[index]}
               </Button>
             </Link> 
         )}

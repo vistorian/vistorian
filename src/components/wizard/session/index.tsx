@@ -31,7 +31,7 @@ const useStyles = createUseStyles({
   },
   content: {
     background: '#fff',
-    boxShadow: '0px 0px 20px 0px #0000000D',
+    boxShadow: '0px 0px 3px 0px #0000000D',
     borderRadius: 6,
     width: 240,
     height: 240,
@@ -39,17 +39,25 @@ const useStyles = createUseStyles({
   thumbnail: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    padding: '5px',
+    border: '1px solid #f6f6f6',
+    borderRadius: '6px 6px 0px 0px',
+  },
+  visTitle: {
+    fontWeight: 'bold',
   },
   footer: {
     height: 40,
     width: 230,
     paddingLeft: 10,
-    background: '#D9D9D9',
+    background: '#f6f6f6',
     borderRadius: '0px 0px 6px 6px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
+    // paddingTop: 'px',
+    paddingBottom: '5px',
   },
   func: {
     display: 'none',
@@ -160,6 +168,7 @@ function Sessions(props: ISessionsProps) {
             <div className={classes.card} key={session.id}>
               {/* content */}
               <Link
+                // to={`/vis/${session.vis}/network/${session.network}`}
                 to={`/vis/${session.vis}/network/${session.network}`}
                 target='_blank'
                 style={{ textDecoration: 'none', color: 'black' }}
@@ -169,8 +178,8 @@ function Sessions(props: ISessionsProps) {
                     <img src={`./thumbnails/${img?.image}`} style={{ width: 200, height: 200 }} />
                   </div>
                   <div className={classes.footer}>
-                    <span>{session.network}</span>
-                    <span style={{ fontSize: 12 }}>Created at: {session.created}</span>
+                    <span className={classes.visTitle}>{session.network}</span>
+                    <span style={{ fontSize: 10, marginTop: '-3px'}}>{session.created}</span>
                   </div>
                 </div>  
               </Link>      
@@ -196,7 +205,7 @@ function Sessions(props: ISessionsProps) {
         )
       })}
         <div className={classes.addSession} onClick={() => moveToNewSession('newSession')}>
-          + Create Visualization
+          + New Visualization
         </div>
     </div>
     </>
