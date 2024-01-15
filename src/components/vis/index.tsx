@@ -16,14 +16,24 @@ import Explainer from '../xplainer'
 const useStyles = createUseStyles({
   root: {
     height: '100%',
-    width: '100%'
+    width: '100%',
+    color: '#333'
   },
   header: {
     display: "flex",
     justifyContent: "space-between",
     boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.08)',
+    width: '100%',
     marginBottom: 20,
     paddingBottom: 10
+  },
+  networkTitle: {
+    fontSize: '20pt',
+    fontWeight: 'bold'
+  },
+  visTitle: {
+    fontSize: '16pt',
+    fontWeight: '200'
   },
   left: {
     display: "flex",
@@ -31,7 +41,8 @@ const useStyles = createUseStyles({
   },
   right: {
     display: "flex",
-    alignItems: "end"
+    alignItems: "end",
+    right: '0px'
   }
 })
 
@@ -100,9 +111,9 @@ function Vis(props: IVisProps) {
       <div className={classes.header}>
         <div className={classes.left}>
           <a href="./" style={{ marginRight: "20px"}}>
-            <img src={props.type === Mode.Explainer ? "./logos/logo-xplainer.png" : "./logos/logo-vistorian.png"} style={{ width: 150 }} />
+            <img src={props.type === Mode.Explainer ? "./logos/logo-xplainer.png" : "./logos/logo-a.png"} style={{ width: 150 }} />
           </a>
-          <ModeSelection
+          {/* <ModeSelection
             type={props.type}
             visTypes={visTypes as string}
             network={network as string}
@@ -110,31 +121,18 @@ function Vis(props: IVisProps) {
         </div>
 
         {/* network name & data name*/}
-        <div className={classes.right}>
+        {/* <div className={classes.left}> */}
           {/* show network names */}
-          <div style={{ marginRight: 8}}>
-            {/* TODO: return to network preview */}
-            <span style={{ fontSize: 18 }}>
-              <b>Network:</b>&nbsp;{network}
-            </span>
-            <Tooltip title="Return to Network View">
-              <Link
-                to={`/wizard`}
-                target='_blank'
-              >
-                <Button
-                  type="text"
-                  icon={<ExportOutlined />}
-                />
-              </Link>
-            </Tooltip>
-          </div>
 
-          {/* show visualization names */}
-          <div>
+          <div style={{ marginRight: 8, marginLeft: 100}}>
             {/* TODO: return to network preview */}
-            <span style={{ fontSize: 18 }}>
-              <b>Visualization:</b>&nbsp;
+            <span className={classes.networkTitle}>
+              {network}
+            </span>
+            <span className={classes.visTitle}>
+            &nbsp;
+              {/* |  */}
+            &nbsp;
               {visTypeList.map((visType: string, index: number) => {
                 const item = templates.filter(t => t.key === visType)[0]
                 return <span key={index}>
@@ -154,6 +152,20 @@ function Vis(props: IVisProps) {
               })}
             </span>
           </div>
+
+          <span style={{paddingLeft: 100}}>
+              <Tooltip title="Return to Network View">
+                <Link
+                  to={`/wizard`}
+                  target='_blank'
+                >
+                  <Button
+                    type="text"
+                    icon={<ExportOutlined />}
+                  >Return to data view</Button>
+                </Link>
+              </Tooltip>
+            </span>
         </div>
       </div>
 

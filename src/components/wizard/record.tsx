@@ -17,17 +17,19 @@ const useStyles = createUseStyles({
     textOverflow: "ellipsis", 
     '&:hover': {
       cursor: 'pointer'
-    }
+    },
+    paddingLeft: '10px',
   },
   tabNameFocused: {
     width: 170,
     overflow: "hidden",
     textOverflow: "ellipsis",
-    fontWeight: 700,
     backgroundColor: '#FFDF70',
     '&:hover': {
       cursor: 'pointer'
-    }
+    },
+    paddingLeft: '10px',
+    borderRadius: '5px'
   },
   tabFunc: {
     display: "flex",

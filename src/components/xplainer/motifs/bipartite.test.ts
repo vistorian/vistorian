@@ -23,6 +23,13 @@ function graphBicliques() {
     graphData.addNode(7)
     graphData.addNode(8)
     graphData.addNode(9)
+    graphData.addNode(10)
+    graphData.addNode(11)
+    graphData.addNode(12)
+    graphData.addNode(13)
+    graphData.addNode(14)
+    graphData.addNode(15)
+    graphData.addNode(16)
 
     // Biclique 1
     graphData.addEdge(5, 3)
@@ -39,6 +46,17 @@ function graphBicliques() {
     graphData.addEdge(8, 7)
     graphData.addEdge(9, 1)
     graphData.addEdge(9, 7)
+
+    //
+    graphData.addEdge(8, 10);
+    graphData.addEdge(11, 10);
+    graphData.addEdge(12, 10);
+    graphData.addEdge(13, 10);
+    graphData.addEdge(14, 10);
+    graphData.addEdge(15, 10);
+    graphData.addEdge(16, 10);
+    graphData.addEdge(15, 16);
+
 
     return graphData
 }
@@ -107,8 +125,6 @@ test("leastBiClique", () => {
 test("findBiCliqueSimple", () => {
         let graph = graphBicliques();
 
-        let nodeOrder = graph.nodes();
-
         let B = findBicliques(graph)
         for (let bc of B) {
             console.log(bc)
@@ -118,10 +134,10 @@ test("findBiCliqueSimple", () => {
 
 test("findBiCliqueMiserable", () => {
         let graph = miserables();
-        let B = findBicliques(graph)
-        for (let bc of B) {
-            console.log(bc)
-        }
+        // let B = findBicliques(graph)
+        // for (let bc of B) {
+        //     console.log(bc)
+        // }
     }
 )
 
