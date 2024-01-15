@@ -1,18 +1,8 @@
 import { Spin } from "antd"
-import { useCallback, useEffect, useState } from "react"
-import { AllMotifs, NetworkConfig } from "../../../typings"
+import { useEffect, useState } from "react"
+import { NetworkConfig } from "../../../typings"
 import templates from "../templates/templates"
 import { genSpecFromLinkTable } from "../templates/genSpec"
-import useMotifDetect, { getBounds, getMotifBound } from '../xplainer/useMotifDetect'
-import PatternSelection from "../xplainer/patternSelection"
-// import { XYCoord, useDrop } from "react-dnd"
-import { PatternDetectors } from "../xplainer/motifs/patternDetectors"
-import Overlay from "../xplainer/overlay"
-import { NetworkPattern } from "../xplainer/motifs/motif"
-import PatternCard from "../xplainer/patternCard"
-import { flatMap, groupBy, uniq } from "lodash-es"
-import { Mode } from "../../../typings/status.enum"
-// import * as d3 from 'd3'
 
 interface IVisContentProps {
   viewerId: number

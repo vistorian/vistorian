@@ -14,3 +14,7 @@ yarn run dev
 ```
 
 You can build a production version of the app with `yarn run build`.
+
+
+### Deploying
+You can update the online version of the app with `yarn run deploy`.
