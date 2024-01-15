@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import { AllMotifs, NetworkConfig } from '../../../typings'
 import { defaultColorScheme, defaultNodeTypeShapeScheme } from '../../../typings/constant'
-import { timeParse } from 'd3-time-format'
 import { Button, Tooltip } from 'antd'
 import { ExportOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import Legend from './legend'
@@ -12,6 +11,7 @@ import Overview from '../xplainer/overview'
 import ModeSelection from './modeSelection'
 import templates from '../templates/templates'
 import { Mode } from '../../../typings/status.enum'
+import Explainer from '../xplainer'
 
 const useStyles = createUseStyles({
   root: {
@@ -47,19 +47,12 @@ function Vis(props: IVisProps) {
   const [viewer2, setViewer2] = useState<any>({})
 
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
-  // const data = JSON.parse(window.localStorage.getItem('UPLOADED_FILE_' + networkCfg.linkTableConfig?.file) as string)
-  
-  // for PatternOverview Component
-  const [allMotifs, setAllMotifs] = useState<AllMotifs>({})
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
 
   const colorScheme = defaultColorScheme
   const nodeTypeShapeScheme = defaultNodeTypeShapeScheme
   const nodeTypeInShape: boolean = networkCfg.linkTableConfig?.linkType?.length as number > 0
   const nodeLabel: string = networkCfg.extraNodeConfig?.nodeLabel ? `"datum.data.${networkCfg.extraNodeConfig?.nodeLabel}"` : `"datum.id"`
   const timeFormat = networkCfg.linkTableConfig?.withTime ? `"${networkCfg.linkTableConfig.timeFormat}"` : null
-  // TODO: temporal solution for user study
-  // const parallelLinksType = networkCfg.linkTableConfig?.file === 'marieboucher.csv' ? `"line"` : `"null"`
 
   let options: any = {
     colorScheme: colorScheme,
@@ -70,11 +63,14 @@ function Vis(props: IVisProps) {
     // parallelLinksType: parallelLinksType
   }
 
+  // for Pattern Explainer
+  const [allMotifs, setAllMotifs] = useState<AllMotifs>({})
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
 
   const onPropogate = (viewerId, newVal) => {
     if (visTypeList.length > 1) {
       console.log({ newVal });
-      console.log(viewer1, viewer2);
+      // console.log(viewer1, viewer2);
       propogateSelection(viewerId === 0 ? viewer2 : viewer1, "node_selection", newVal)
     }
   }
@@ -89,9 +85,11 @@ function Vis(props: IVisProps) {
     const linkIds = newVal.links.map(l => l.id);
 
     const networkName = "network"; // the name of the network in which the selection is made - set in specification
-    console.log(viewer)
+    console.log("propogateSelection:", viewer, selectionName, newVal)
     const nodes = viewer.state[networkName].nodes.filter(n => nodeIds.includes(n.id));
     const links = viewer.state[networkName].links.filter(l => linkIds.includes(l.id));
+
+    console.log("after:", nodes)
 
     viewer.setParam(selectionName, { nodes, links })
   }
@@ -110,6 +108,7 @@ function Vis(props: IVisProps) {
             network={network as string}
           />
         </div>
+
         {/* network name & data name*/}
         <div className={classes.right}>
           {/* show network names */}
@@ -165,31 +164,29 @@ function Vis(props: IVisProps) {
             return (
               <VisContent
                 key={idx}
-                type={props.type} // 'explore' || 'xplainer'
                 viewerId={idx}
                 viewer={idx === 0 ? viewer1 : viewer2}
                 setViewer={idx === 0 ? setViewer1 : setViewer2}
                 width={`${100 / visTypeList.length}%`}
                 visType={visType}
                 network={network as string}
-                options={options}
+                options={options} // vis encoding 
                 onPropogate={onPropogate}
-                setAllMotifs={setAllMotifs}
-                selectedTypes={selectedTypes}
               />
             )
           })}
         </div> 
       : null}
 
+      {/* Pattern Explainer */}
       {props.type === Mode.Explainer ?
         <div style={{width: '100%', display: 'flex'}}>
           <Overview 
             allMotifs={allMotifs}
             setSelectedTypes={setSelectedTypes}
           />
-          <VisContent
-            type={props.type} // 'explore' || 'xplainer'
+          <Explainer
+            type={props.type}
             viewerId={0}
             viewer={viewer1}
             setViewer={setViewer1}
