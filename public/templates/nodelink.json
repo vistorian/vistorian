@@ -32,7 +32,7 @@
         "event": "onChange",
         "label": "Node Size",
         "min": "1",
-        "max": "3",
+        "max": "10",
         "step": "0.1"
       },
       "value": 1
@@ -44,7 +44,7 @@
         "label": "Node Opacity",
         "min": "0.0",
         "max": "1",
-        "step": "0.1"
+        "step": "0.05"
       },
       "value": 1
     },
@@ -66,7 +66,7 @@
         "label": "Link Opacity",
         "min": "0",
         "max": "1",
-        "step": "0.1"
+        "step": "0.05"
       },
       "value": 0.6
     }
@@ -85,7 +85,7 @@
     {
       "name": "radius",
       "type": "linear",
-      "range": [ 15, 150 ],
+      "range": [ 1, 150 ],
       "rangeMapFunction": "datum * params.nodeSizeParam",
       "domain": { "data": "network.nodes",  "field": "degree" }
     },
@@ -110,14 +110,14 @@
     {
       "name": "edgeWidth",
       "type": "linear",
-      "range": [ 1.2, 3],
+      "range": [ 1, 10],
       "rangeMapFunction": "datum * params.linkWidthParam",
       "domain": { "data": "network.links", "field": "linkWeight" }
     },
     {
       "name": "edgeOpacity",
       "type": "linear",
-      "range": [0.2, 0.8],
+      "range": [0, 0.8],
       "rangeMapFunction": "datum * params.linkOpacityParam",
       "domain": { "data": "network.links", "field": "linkWeight" }
     }
@@ -141,7 +141,7 @@
           "scale": "edgeColor" 
         },
         "strokeWidth": { 
-          "expression": "1.2 + 0.1 * (datum.linkWeight+10) * params.linkWidthParam"
+          "expression": "0.1 * datum.linkWeight * params.linkWidthParam"
         },
         "opacity":  { 
           "conditions": [
