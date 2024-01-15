@@ -96,11 +96,11 @@ function Vis(props: IVisProps) {
     const linkIds = newVal.links.map(l => l.id);
 
     const networkName = "network"; // the name of the network in which the selection is made - set in specification
-    console.log("propogateSelection:", viewer, selectionName, newVal)
+    // console.log("propogateSelection:", viewer, selectionName, newVal)
     const nodes = viewer.state[networkName].nodes.filter(n => nodeIds.includes(n.id));
     const links = viewer.state[networkName].links.filter(l => linkIds.includes(l.id));
 
-    console.log("after:", nodes)
+    // console.log("after:", nodes)
 
     viewer.setParam(selectionName, { nodes, links })
   }

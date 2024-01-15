@@ -184,7 +184,7 @@ function Landing() {
             Clearing your browser cache will delete your data. 
           </p>
 
-          <img src="/images/datatypes.png" style={{width: '100%', paddingTop:15, paddingBottom:15}}/>
+          <img src="./images/datatypes.png" style={{width: '100%', paddingTop:15, paddingBottom:15}}/>
 
           <p>Main features include:
             <ul>
