@@ -40,6 +40,8 @@ function VisContent(props: IVisContentProps) {
     let tmpViewer = await NetPanoramaTemplateViewer.render(templatePath, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
+      width: document.getElementById(containerId)?.getBoundingClientRect().width,
+      height: document.getElementById(containerId)?.getBoundingClientRect().height,
       ...options
     }, containerId, {
       renderer: renderer,
@@ -59,18 +61,26 @@ function VisContent(props: IVisContentProps) {
       // d3.select(`#${containerId}`).selectAll('text').attr('pointer-events', 'none')
     }
 
-    setLoading(false)
+    if (loading) setLoading(false)
   }
 
-  useEffect(() => {
+  const resizeChange = () => {
     const container = document.getElementById(containerId)
     if (!container) {
       console.error(`No container with id ${containerId}`);
       return
     }
     update()
+  }
+
+  useEffect(() => {
+    resizeChange()
   }, [loading])
 
+  useEffect(() => {
+    window.addEventListener('resize', resizeChange)
+    return () => window.removeEventListener('resize', resizeChange)
+  })
 
   // rendering
   return (
