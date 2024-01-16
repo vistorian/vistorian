@@ -69,6 +69,18 @@
         "step": "0.05"
       },
       "value": 0.6
+    },
+    {
+      "name": "labelDensityParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Label Density",
+        "min": "0",
+        "max": "20",
+        "step": "1"
+      },
+      "value": 5
     }
   ],
 
@@ -120,7 +132,7 @@
       "range": [0, 0.8],
       "rangeMapFunction": "datum * params.linkOpacityParam",
       "domain": { "data": "network.links", "field": "linkWeight" }
-    }
+    } 
   ],
   "vis": [
     {
@@ -225,6 +237,7 @@
       "entries": "network.nodes",
       "layout": "layout",
       "occlusion": {"field": "degree"},
+      "occlusionDensity": 2,
       "mark": {
         "type": "text",
         "text": { 
@@ -244,7 +257,7 @@
         "dy": 4,
         "fontSize": 13,
         "stroke": "white",
-        "strokeWidth": 0.4
+        "strokeWidth": 0.3
       }
     }
   ]

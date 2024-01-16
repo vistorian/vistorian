@@ -32,7 +32,7 @@ const useStyles = createUseStyles({
     fontWeight: 'bold'
   },
   visTitle: {
-    fontSize: '16pt',
+    fontSize: '20pt',
     fontWeight: '200'
   },
   left: {
