@@ -1,46 +1,48 @@
 {  
   "x": 700,  
 
+  "zoom": true,
+  "pan": {
+    "modifierKeyRequired": null
+  },
+
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
 
   "parameters": [
     {
-      "name": "seriationMethod",
-      "bind": {
-        "input": "select",
-        "options": [
-          "optimal-leaf-order",
-          "barycentre",
-          "bandwidth-reduction",
-          "pca"
-        ],
-        "labels": [
-          "optimal-leaf-order",
-          "barycentre",
-          "bandwidth-reduction",
-          "pca"
-        ],
-        "label": "Node ordering"
-      },
-      "value": "optimal-leaf-order"
-    },
-    {
       "name": "node_selection",
       "network": "network",
       "type": "selection",
-      "action": "replace",
       "clearOnBackgroundClick": true
     },
     {
       "name": "neighbours",
       "source": "node_selection",
       "transform": [
-        {
-          "type": "neighbours",
-          "direction": "both"
-        }
+        { "type": "neighbours", "direction": "both" }
       ]
+    },
+    {
+      "name": "seriationMethod",
+      "bind": {
+          "input": "select",
+          "options":  [ 
+            "optimal-leaf-order", 
+            "barycentre", 
+            "bandwidth-reduction", 
+            "pca", 
+            "degree_order" ],
+          "labels":  [ 
+            "Optimal Leaf Order", 
+            "Barycentre Heuristic", 
+            "Bandwidth Reduction", 
+            "PCA", 
+            "Node Degree" ],
+          "label": "Seriation"
+      },
+      "value": "optimal-leaf-order"
+
     },
     {
       "name": "timeRange",
@@ -49,6 +51,28 @@
     {
       "name": "nodeTypeInShape",
       "value": "[nodeTypeInShape]"
+    },
+    {
+      "name": "linkWidthParam",
+      "bind": {
+        "input": "range",
+        "label": "Link Width",
+        "min": "0",
+        "max": "5",
+        "step": "1"
+      },
+      "value": 1
+    },
+    {
+      "name": "linkOpacityParam",
+      "bind": {
+        "input": "range",
+        "label": "Link Opacity",
+        "min": "0",
+        "max": "1",
+        "step": "0.05"
+      },
+      "value": 0.6
     }
   ],
 
@@ -80,22 +104,24 @@
     {
       "name": "edgeWidth",
       "type": "linear",
-      "range": [ 1.2, 3],
+      "range": [ 1, 10],
+      "rangeMapFunction": "datum * params.linkWidthParam",
       "domain": { "data": "network.links", "field": "linkWeight" }
     },
     {
       "name": "edgeOpacity",
       "type": "linear",
-      "range": [0.2, 0.8],
+      "range": [0, 0.8],
+      "rangeMapFunction": "datum * params.linkOpacityParam",
       "domain": { "data": "network.links", "field": "linkWeight" }
-    }
+    } 
   ],
 
   "orderings": [
     {
-      "name": "degree_order",
+      "name": "node_order",
       "data": "network.nodes",
-      "orderBy": {"field": "degree", "direction": "descending"}
+      "orderBy": {"parameter": "seriationMethod"}
     }
   ],
 
@@ -104,13 +130,12 @@
       "name": "layout",
       "data": "network.nodes",
       "pattern": "linear",
-      "order": "degree_order",
+      "order": "node_order",
       "orientation": "vertical"
     }
   ],
 
   "vis": [
-
     {
       "entries": "network.links",
       "layout": "layout",
@@ -118,26 +143,23 @@
         "type": "linkpath",
         "start": "source",
         "end": "target",
+        "directionForShape": { "ordering": "node_order"},
+        "strokeWidth": { 
+          "expression": "0.1 * datum.linkWeight * params.linkWidthParam"
+        },
         "shape": "arc",
-        "directionForShape": { "ordering": "degree_order"},
-        "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth" },
         "strokeOpacity": {
           "conditions": [
             {
-              "test": "datum.data._time < params.timeRange[0] || datum.data._time > params.timeRange[1]",
-              "value": 0
-            },
-            {
               "selectionIsEmpty": "node_selection.nodes",
-              "field": "linkWeight",
-              "scale": "edgeOpacity"
+              "expression": "params.linkOpacityParam"
             },
             {
               "inSelection": "neighbours.links",
-              "value": 1
+              "expression": "params.linkOpacityParam"
             }
           ],
-          "value": 0.2
+          "value": 0.05
         }
       }
     },
@@ -145,7 +167,22 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
-
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseover",
+          "action": "replace",
+          "selection": "node_selection"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseout",
+          "action": "remove",
+          "selection": "node_selection"
+        }
+      ],
       "mark": {
         "type": "symbol",
         "shape": {
@@ -196,12 +233,56 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
-
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseover",
+          "action": "replace",
+          "selection": "node_selection"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseout",
+          "action": "remove",
+          "selection": "node_selection"
+        }
+      ],
       "mark": {
         "type": "text",
-        "text": { "field": "id" },
+        "text": { 
+          "conditions": [
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "value": { "expression": "[nodeLabel]"}
+            },
+            {
+              "inSelection": "node_selection.nodes",
+              "value": { "expression": "[nodeLabel]"}
+            }
+          ]
+        },
+        "opacity": {
+          "conditions": [
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "value": 1
+            },
+            {
+              "inSelection": "node_selection.nodes",
+              "value": 1
+            },
+            {
+              "inSelection": "neighbours.nodes",
+              "value": 1
+            }
+          ],
+          "value": 0.1
+        },
         "dx": 10,
-        "dy": 4
+        "dy": 4,
+        "cursor": "none"
       }
     }
 
