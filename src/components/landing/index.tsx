@@ -31,19 +31,20 @@ const useStyles = createUseStyles({
     flexWrap: 'wrap'
   },
   visimage: {
-    height: 200,
-    border: 'solid 1px #eee',
+    height: 180,
+    border: 'solid px #eee',
     marginRight: 5,
-    marginLeft: 5
+    marginLeft: 5,
+    borderRadius: '50%',
+    boxShadow: '4px 4px 10px #ccc',
   },
   startButton:{
     fontSize: '20pt',
-    // fontWeight: '',
     color: '#fff',
     textDecoration: 'none',
     fontFamily: `'Reem Kufi Fun', 'Helvetica Neue', 'sans-serif'`,
     height: '53px',
-    background: '#777'
+    background: '#777'    
   }, 
   divMenu:{
     display: 'inline-block',
@@ -90,7 +91,7 @@ const useStyles = createUseStyles({
   logoDiv:{
     '& img':{
       height: '50px',
-      padding: '20px'
+      padding: '20px',
     }
   }
 })
