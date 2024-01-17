@@ -1,15 +1,23 @@
-{    
+{
   "zoom": true,
   "pan": {
     "modifierKeyRequired": null
   },
-
+  
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
-  "width": "[width]",
-  "height": "[height]",
 
   "parameters": [
+    {
+      "name": "seriationMethod",
+      "bind": {
+          "input": "select",
+          "options":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+          "labels":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+          "label": "Optimized ordering by"
+      },
+      "value": "optimal-leaf-order"
+    },
     {
       "name": "node_selection",
       "network": "network",
@@ -31,11 +39,10 @@
       "name": "nodeSizeParam",
       "bind": {
         "input": "range",
-        "event": "onChange",
         "label": "Node Size",
         "min": "1",
-        "max": "10",
-        "step": "0.1"
+        "max": "3",
+        "step": "0.02"
       },
       "value": 1
     },
@@ -44,9 +51,9 @@
       "bind": {
         "input": "range",
         "label": "Node Opacity",
-        "min": "0.0",
+        "min": "0.1",
         "max": "1",
-        "step": "0.05"
+        "step": "0.02"
       },
       "value": 1
     },
@@ -55,9 +62,9 @@
       "bind": {
         "input": "range",
         "label": "Link Width",
-        "min": "0",
-        "max": "5",
-        "step": "1"
+        "min": "1",
+        "max": "3",
+        "step": "0.02"
       },
       "value": 1
     },
@@ -66,42 +73,29 @@
       "bind": {
         "input": "range",
         "label": "Link Opacity",
-        "min": "0",
+        "min": "0.1",
         "max": "1",
-        "step": "0.05"
+        "step": "0.02"
       },
-      "value": 0.6
-    },
+      "value": 1
+    }
+  ],
+
+  "orderings": [
     {
-      "name": "labelDensityParam",
-      "bind": {
-        "input": "range",
-        "event": "onChange",
-        "label": "Label Density",
-        "min": "0",
-        "max": "20",
-        "step": "1"
-      },
-      "value": 5
-    }, 
-    {
-      "name": "time",
-      "bind": {
-          "input": "brush",
-          "axisType": "time",
-          "network": "network",
-          "for": "links",
-          "field": "data._time"
-      }
+      "name": "order",
+      "data": "network.nodes",
+      "method": { "parameter": "seriationMethod" },
+      "network": "network"
     }
   ],
 
   "layouts": [
     {
       "name": "layout",
-      "network": "network",
-      "type": "webcola",
-      "avoidOverlap": true
+      "data": "network.nodes",
+      "pattern": "circle",
+      "order": "order"
     }
   ],
 
@@ -109,7 +103,7 @@
     {
       "name": "radius",
       "type": "linear",
-      "range": [ 1, 150 ],
+      "range": [ 15, 150 ],
       "rangeMapFunction": "datum * params.nodeSizeParam",
       "domain": { "data": "network.nodes",  "field": "degree" }
     },
@@ -134,19 +128,18 @@
     {
       "name": "edgeWidth",
       "type": "linear",
-      "range": [ 1, 10],
+      "range": [ 1.2, 3],
       "rangeMapFunction": "datum * params.linkWidthParam",
       "domain": { "data": "network.links", "field": "linkWeight" }
     },
     {
       "name": "edgeOpacity",
       "type": "linear",
-      "range": [0, 0.8],
+      "range": [0.2, 0.8],
       "rangeMapFunction": "datum * params.linkOpacityParam",
       "domain": { "data": "network.links", "field": "linkWeight" }
-    } 
+    }
   ],
-
 
   "vis": [
     {
@@ -156,31 +149,29 @@
         "type": "linkpath",
         "start": "source",
         "end": "target",
-        "stroke": {
+        "stroke": { 
           "conditions": [
             {
               "test": "!params.nodeTypeInShape",
               "value": "grey"
             }
-          ], 
-          "field": "linkType", 
-          "scale": "edgeColor" 
+          ],
+          "field": "linkType",
+          "scale": "edgeColor"
         },
-        "strokeWidth": { 
-          "expression": "0.1 * datum.linkWeight * params.linkWidthParam"
-        },
+        "strokeWidth": { "expression": "1.2 + 0.1 * datum.linkWeight * params.linkWidthParam"},
         "opacity":  { 
           "conditions": [
             {
               "selectionIsEmpty": "node_selection.nodes",
-              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
+              "expression": "params.linkOpacityParam"
             },
             {
               "inSelection": "neighbours.links",
-              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
+              "value": 1
             }
           ],
-          "expression": " (datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) ? 0.1 : 0 "
+          "value": 0.1
         },
         "shape": "line"
       }
@@ -188,37 +179,11 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
-      "actions": [
-        {
-          "interaction": "select",
-          "using": "cursor",
-          "event": "mouseover",
-          "action": "replace",
-          "selection": "node_selection"
-        },
-        {
-          "interaction": "select",
-          "using": "cursor",
-          "event": "mouseout",
-          "action": "remove",
-          "selection": "node_selection"
-        }
-      ],
+      "ifInSelection": "node_selection.nodes",
       "mark": {
         "type": "symbol",
-        "shape": {
-          "conditions": [
-            {
-              "test": "!params.nodeTypeInShape",
-              "value": "circle"
-            }
-          ],
-          "field": "data.type0", 
-          "scale": "nodeShape"
-        },
-        "area": { 
-          "expression": "40 + datum.degree * params.nodeSizeParam"
-        },
+        "shape": {"field": "data.type0", "scale": "nodeShape"},
+        "area": { "expression": "40 + datum.degree * params.nodeSizeParam" },
         "fill": {
           "conditions": [
             {
@@ -226,58 +191,51 @@
               "value": "black"
             }
           ],
-           "field": "data.type0", 
-           "scale": "nodeColor"
+          "field": "data.type0",
+          "scale": "nodeColor"
         },
         "stroke": "white",
-        "opacity": {
-          "conditions": [
-            {
-              "selectionIsEmpty": "node_selection.nodes",
-              "expression": "params.nodeOpacityParam"
-            },
-            {
-              "inSelection": "node_selection.nodes",
-              "expression": "params.nodeOpacityParam"
-            },
-            {
-              "inSelection": "neighbours.nodes",
-              "expression": "params.nodeOpacityParam"
-            }
-          ],
-          "value": 0.1
-        }
+        "opacity": 1
       }
     },
     {
       "entries": "network.nodes",
       "layout": "layout",
-      "occlusion": {"field": "degree"},
-      "occlusionDensity":  2,
+      "ifInSelection": "node_selection.nodes",
       "mark": {
         "type": "text",
-        "text": { "expression": "[nodeLabel]"},
-        "opacity": {
+        "text": { "expression": "[nodeLabel]" },
+        "dx": 5,
+        "dy": 5,
+        "fontSize": 13,
+        "stroke": "white",
+        "fontWeight": "bold",
+        "strokeWidth": 0.5
+      }
+    },
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "occlusion": { "field": "degree" },
+      "mark": {
+        "type": "text",
+        "text": {
           "conditions": [
             {
               "selectionIsEmpty": "node_selection.nodes",
-              "value": 1
+              "value": { "expression": "[nodeLabel]" }
             },
             {
               "inSelection": "node_selection.nodes",
-              "value": 1
-            },
-            {
-              "inSelection": "neighbours.nodes",
-              "value": 1
+               "value": { "expression": "[nodeLabel]" }
             }
-          ],
-          "value": 0.1
+          ]
         },
         "cursor": "none",
         "dx": 5,
-        "dy": 4,
+        "dy": 5,
         "fontSize": 13,
+        "fontWeight": "bold",
         "stroke": "white",
         "strokeWidth": 0.3
       }
