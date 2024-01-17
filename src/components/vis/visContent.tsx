@@ -86,10 +86,10 @@ function VisContent(props: IVisContentProps) {
   return (
     loading ?
       (<Spin tip="Loading" size="small">
-        <div id={containerId} style={{ width: width }} />
+        <div id={containerId} style={{ width: width, height: '100%' }} />
       </Spin>)
       :
-      (<div id={containerId} style={{ width: width }} />)
+      (<div id={containerId} style={{ width: width, height: '100%' }} />)
   )
 }
 export default VisContent

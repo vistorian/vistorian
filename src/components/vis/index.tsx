@@ -171,7 +171,7 @@ function Vis(props: IVisProps) {
 
       {/* render vis */}
       {props.type === Mode.Explorer ? 
-        <div style={{ width: '100%', display: 'flex' }}>
+        <div style={{ width: '100%', height: '100%', display: 'flex' }}>
           {visTypeList.map((visType, idx) => {
             return (
               <VisContent
