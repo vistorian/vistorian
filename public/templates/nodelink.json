@@ -81,6 +81,16 @@
         "step": "1"
       },
       "value": 5
+    }, 
+    {
+      "name": "time",
+      "bind": {
+          "input": "brush",
+          "axisType": "time",
+          "network": "network",
+          "for": "links",
+          "field": "data._time"
+      }
     }
   ],
 
@@ -159,14 +169,14 @@
           "conditions": [
             {
               "selectionIsEmpty": "node_selection.nodes",
-              "expression": "params.linkOpacityParam"
+              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
             },
             {
               "inSelection": "neighbours.links",
-              "expression": "params.linkOpacityParam"
+              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
             }
           ],
-          "value": 0.1
+          "expression": " (datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) ? 0.1 : 0 "
         },
         "shape": "line"
       }
@@ -239,7 +249,7 @@
       "entries": "network.nodes",
       "layout": "layout",
       "occlusion": {"field": "degree"},
-      "occlusionDensity": 2,
+      "occlusionDensity":  5,
       "mark": {
         "type": "text",
         "text": { 
