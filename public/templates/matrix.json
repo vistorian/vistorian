@@ -1,9 +1,4 @@
 {
-    "zoom": true,
-    "pan": {
-        "modifierKeyRequired": null
-    },
-
     "x": 120,
     "y": 120,
     
@@ -11,21 +6,43 @@
     "networks": "[networksDefinition]",
     "parameters": [
         {
-            "name": "seriationMethod",
-            "bind": {
-                "input": "select",
-                "options": [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca"],
-                "labels": ["optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca"],
-                "label": "Sort by"
-            },
-            "value": "optimal-leaf-order"
-        },
-        {
             "name": "link_selection",
             "network": "network",
             "type": "selection",
             "action": "replace",
             "clearOnBackgroundClick": true
+        },
+        {
+            "name": "seriationMethod",
+            "bind": {
+                "input": "select",
+                "options": [
+                    "optimal-leaf-order",
+                    "barycentre",
+                    "bandwidth-reduction",
+                    "pca",
+                    "degree_order"
+                ],
+                "labels": [
+                    "Optimal Leaf Order",
+                    "Barycentre Heuristic",
+                    "Bandwidth Reduction",
+                    "PCA",
+                    "Node Degree"
+                ],
+                "label": "Seriation"
+            },
+            "value": "optimal-leaf-order"
+        },
+        {
+            "name": "time",
+            "bind": {
+                "input": "brush",
+                "axisType": "time",
+                "network": "network",
+                "for": "links",
+                "field": "data._time"
+            }
         }
     ],
     "scales": [
@@ -51,8 +68,8 @@
     "orderings": [
         {
             "name": "order",
-            "method": {"parameter": "seriationMethod"},
-            "network": "network"
+            "orderBy": {"parameter": "seriationMethod"},
+            "data": "network.nodes"
         }
     ],
     "tables": [
