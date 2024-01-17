@@ -163,7 +163,7 @@
             },
             {
               "inSelection": "neighbours.links",
-              "value": 1
+              "expression": "params.linkOpacityParam"
             }
           ],
           "value": 0.1
@@ -199,7 +199,8 @@
               "value": "circle"
             }
           ],
-          "field": "data.type0", "scale": "nodeShape"
+          "field": "data.type0", 
+          "scale": "nodeShape"
         },
         "area": { 
           "expression": "40 + datum.degree * params.nodeSizeParam"
@@ -211,7 +212,8 @@
               "value": "black"
             }
           ],
-           "field": "data.type0", "scale": "nodeColor"
+           "field": "data.type0", 
+           "scale": "nodeColor"
         },
         "stroke": "white",
         "opacity": {
@@ -251,6 +253,23 @@
               "value": { "expression": "[nodeLabel]"}
             }
           ]
+        },
+        "opacity": {
+          "conditions": [
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "value": 1
+            },
+            {
+              "inSelection": "node_selection.nodes",
+              "value": 1
+            },
+            {
+              "inSelection": "neighbours.nodes",
+              "value": 1
+            }
+          ],
+          "value": 0.1
         },
         "cursor": "none",
         "dx": 5,

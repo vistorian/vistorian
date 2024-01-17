@@ -29,49 +29,55 @@ const templates: Template[] = [
     template: "timearcs.json",
     manual: "https://vistorian.github.io/visualizations.html#time-arcs"
   },
-  // {
-  //   key: "arcDiagram",
-  //   label: "Arc diagram",
-  //   image: "arcDiagram.png",
-  //   template: "arcDiagram.json"
-  // },
-  // {
-  //   key: "adjacencyNodeList",
-  //   label: "Adjacency node list",
-  //   image: "adjacencyNodeList.png",
-  //   template: "adjacencyNodeList.json"
-  // },
-  // {
-  //   key: "adjacencyLinkList",
-  //   label: "Adjacency link list",
-  //   image: "adjacencyLinkList.png",
-  //   template: "adjacencyLinkList.json"
-  // },
-  // {
-  //   key: "jigsaw",
-  //   label: "Jigsaw",
-  //   image: "jigsaw.png",
-  //   template: "jigsaw.json"
-  // },
-  // {
-  //   key: "waffleNode",
-  //   label: "Waffle node chart",
-  //   image: "waffleNode.png",
-  //   template: "waffleNode.json"
-  // },
-  // {
-  //   key: "waffleLink",
-  //   label: "Waffle link chart",
-  //   image: "waffleLink.png",
-  //   template: "waffleLink.json"
-  // },
-  // {
-  //   key: "map",
-  //   label: "Map",
-  //   image: "map.png",
-  //   template: "map.json",
-  //   manual: "https://vistorian.github.io/visualizations.html#map"
-  // },
+  {
+    key: "arcDiagram",
+    label: "Arc diagram",
+    image: "arcDiagram.png",
+    template: "arcDiagram.json",
+    manual: "https://vistorian.github.io"
+  },
+  {
+    key: "adjacencyNodeList",
+    label: "Adjacency node list",
+    image: "adjacencyNodeList.png",
+    template: "adjacencyNodeList.json",
+    manual: "https://vistorian.github.io"
+  },
+  {
+    key: "adjacencyLinkList",
+    label: "Adjacency link list",
+    image: "adjacencyLinkList.png",
+    template: "adjacencyLinkList.json",
+    manual: "https://vistorian.github.io"
+  },
+  {
+    key: "jigsaw",
+    label: "Jigsaw",
+    image: "jigsaw.png",
+    template: "jigsaw.json",
+    manual: "https://vistorian.github.io"
+  },
+  {
+    key: "waffleNode",
+    label: "Waffle node chart",
+    image: "waffleNode.png",
+    template: "waffleNode.json",
+    manual: "https://vistorian.github.io"
+  },
+  {
+    key: "waffleLink",
+    label: "Waffle link chart",
+    image: "waffleLink.png",
+    template: "waffleLink.json",
+    manual: "https://vistorian.github.io"
+  },
+  {
+    key: "map",
+    label: "Map",
+    image: "map.png",
+    template: "map.json",
+    manual: "https://vistorian.github.io/visualizations.html#map"
+  },
 ]
 
 export default templates
