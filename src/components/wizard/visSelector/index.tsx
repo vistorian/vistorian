@@ -23,8 +23,8 @@ const useStyles = createUseStyles({
     cursor: "pointer"
   },
   visimage: {
-    height: 250,
-    width: 250,
+    height: 180,
+    width: 180  ,
     border: 'solid 1px #f0f0f0',
     borderRadius: 8,
     '&:hover': {
@@ -93,7 +93,10 @@ function VisSelector(props: IVisSelectorProps) {
         {network.length > 0 ? 
           templates.map((template: Template, idx: number) => (
             <div className={classes.visTile} key={template.key}>
-              <div style={{ position: 'relative' }} onClick={(e)=>handleSelect(e, idx)} >
+              <div style={{ 
+                position: 'relative',
+                }} 
+                onClick={(e)=>handleSelect(e, idx)} >
                 <img
                   src={`./thumbnails/${template.image}`}
                   className={classes.visimage}
@@ -102,9 +105,11 @@ function VisSelector(props: IVisSelectorProps) {
                   <CheckCircleFilled className={classes.icon} style={{ color: "#E17918"}} /> 
                   : <CheckCircleOutlined className={classes.icon} style={{ color: "#bbb" }} />}
               </div>
-              <span style={{ textAlign: 'center', fontSize: 18, width: 255 }}><b>
-                {template.label}
-              </b></span>
+              <span style={{ 
+                textAlign: 'left', 
+                fontSize: 18, 
+                width: 185, 
+                }}>{template.label}</span>
             </div>
           )) 
           : null
@@ -117,7 +122,7 @@ function VisSelector(props: IVisSelectorProps) {
         to={`/vis/${getVis().join('+')}/network/${network}`}
         target='_blank'
       >
-        <Button type="primary">{`Visualize (${selected.filter(s=>s).length})`}</Button>
+        <Button style={{float: 'right'}} type="primary">{`Visualize (${selected.filter(s=>s).length})`}</Button>
       </Link>
     </>
   )

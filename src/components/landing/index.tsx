@@ -28,7 +28,8 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    maxWidth: '1200px',
   },
   visimage: {
     height: 180,
@@ -36,7 +37,7 @@ const useStyles = createUseStyles({
     marginRight: 5,
     marginLeft: 5,
     borderRadius: '50%',
-    boxShadow: '4px 4px 10px #ccc',
+    boxShadow: '4px 4px 10px #ddd',
   },
   startButton:{
     fontSize: '20pt',
