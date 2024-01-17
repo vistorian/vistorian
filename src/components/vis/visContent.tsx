@@ -1,18 +1,8 @@
 import { Spin } from "antd"
-import { useCallback, useEffect, useState } from "react"
-import { AllMotifs, NetworkConfig } from "../../../typings"
+import { useEffect, useState } from "react"
+import { NetworkConfig } from "../../../typings"
 import templates from "../templates/templates"
 import { genSpecFromLinkTable } from "../templates/genSpec"
-import useMotifDetect, { getBounds, getMotifBound } from '../xplainer/useMotifDetect'
-import PatternSelection from "../xplainer/patternSelection"
-// import { XYCoord, useDrop } from "react-dnd"
-import { PatternDetectors } from "../xplainer/motifs/patternDetectors"
-import Overlay from "../xplainer/overlay"
-import { NetworkPattern } from "../xplainer/motifs/motif"
-import PatternCard from "../xplainer/patternCard"
-import { flatMap, groupBy, uniq } from "lodash-es"
-import { Mode } from "../../../typings/status.enum"
-// import * as d3 from 'd3'
 
 interface IVisContentProps {
   viewerId: number
@@ -50,6 +40,8 @@ function VisContent(props: IVisContentProps) {
     let tmpViewer = await NetPanoramaTemplateViewer.render(templatePath, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
+      width: document.getElementById(containerId)?.getBoundingClientRect().width,
+      height: document.getElementById(containerId)?.getBoundingClientRect().height,
       ...options
     }, containerId, {
       renderer: renderer,
@@ -69,27 +61,35 @@ function VisContent(props: IVisContentProps) {
       // d3.select(`#${containerId}`).selectAll('text').attr('pointer-events', 'none')
     }
 
-    setLoading(false)
+    if (loading) setLoading(false)
   }
 
-  useEffect(() => {
+  const resizeChange = () => {
     const container = document.getElementById(containerId)
     if (!container) {
       console.error(`No container with id ${containerId}`);
       return
     }
     update()
+  }
+
+  useEffect(() => {
+    resizeChange()
   }, [loading])
 
+  useEffect(() => {
+    window.addEventListener('resize', resizeChange)
+    return () => window.removeEventListener('resize', resizeChange)
+  })
 
   // rendering
   return (
     loading ?
       (<Spin tip="Loading" size="small">
-        <div id={containerId} style={{ width: width }} />
+        <div id={containerId} style={{ width: width, height: '100%' }} />
       </Spin>)
       :
-      (<div id={containerId} style={{ width: width }} />)
+      (<div id={containerId} style={{ width: width, height: '100%' }} />)
   )
 }
 export default VisContent
