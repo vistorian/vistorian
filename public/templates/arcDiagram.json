@@ -251,18 +251,7 @@
       ],
       "mark": {
         "type": "text",
-        "text": { 
-          "conditions": [
-            {
-              "selectionIsEmpty": "node_selection.nodes",
-              "value": { "expression": "[nodeLabel]"}
-            },
-            {
-              "inSelection": "node_selection.nodes",
-              "value": { "expression": "[nodeLabel]"}
-            }
-          ]
-        },
+        "text": { "expression": "[nodeLabel]"},
         "opacity": {
           "conditions": [
             {

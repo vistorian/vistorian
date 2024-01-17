@@ -251,21 +251,10 @@
       "entries": "network.nodes",
       "layout": "layout",
       "occlusion": {"field": "degree"},
-      "occlusionDensity":  5,
+      "occlusionDensity":  2,
       "mark": {
         "type": "text",
-        "text": { 
-          "conditions": [
-            {
-              "selectionIsEmpty": "node_selection.nodes",
-              "value": { "expression": "[nodeLabel]"}
-            },
-            {
-              "inSelection": "node_selection.nodes",
-              "value": { "expression": "[nodeLabel]"}
-            }
-          ]
-        },
+        "text": { "expression": "[nodeLabel]"},
         "opacity": {
           "conditions": [
             {
