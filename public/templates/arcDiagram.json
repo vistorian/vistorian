@@ -171,6 +171,16 @@
         "strokeWidth": { 
           "expression": "0.1 * datum.linkWeight * params.linkWidthParam"
         },
+        "stroke": {
+          "conditions": [
+            {
+              "test": "!params.nodeTypeInShape",
+              "value": "grey"
+            }
+          ], 
+          "field": "linkType", 
+          "scale": "edgeColor" 
+        },
         "shape": "arc",
         "strokeOpacity":  { 
           "conditions": [
@@ -220,7 +230,7 @@
           "scale": "nodeShape"
         },
         "area": { 
-          "expression": "40 + datum.degree * params.nodeSizeParam"
+          "expression": "10 + datum.degree * params.nodeSizeParam"
         },
         "fill": {
           "conditions": [

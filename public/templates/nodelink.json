@@ -146,6 +146,8 @@
       "domain": { "data": "network.links", "field": "linkWeight" }
     } 
   ],
+
+  
   "vis": [
     {
       "entries": "network.links",
