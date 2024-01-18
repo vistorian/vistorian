@@ -6,6 +6,19 @@
     "networks": "[networksDefinition]",
     "parameters": [
         {
+            "name": "node_selection",
+            "network": "network",
+            "type": "selection",
+            "clearOnBackgroundClick": true
+        },
+        {
+            "name": "neighbours",
+            "source": "node_selection",
+            "transform": [
+              { "type": "neighbours", "direction": "both" }
+            ]
+        },
+        {
             "name": "link_selection",
             "network": "network",
             "type": "selection",

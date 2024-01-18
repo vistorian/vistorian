@@ -23,10 +23,10 @@ const useStyles = createUseStyles({
     cursor: "pointer"
   },
   visimage: {
-    height: 180,
-    width: 180  ,
+    height: 160,
+    width: 160  ,
     border: 'solid 1px #f0f0f0',
-    borderRadius: 8,
+    borderRadius: '50%',
     '&:hover': {
       borderColor: 'transparent',
       boxShadow: '0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09)'
@@ -34,9 +34,9 @@ const useStyles = createUseStyles({
   },
   icon: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    fontSize: 25
+    top: 0,
+    right: 0,
+    fontSize: 30
   }
 })
 
@@ -103,13 +103,23 @@ function VisSelector(props: IVisSelectorProps) {
                 />
                 {selected[idx] ? 
                   <CheckCircleFilled className={classes.icon} style={{ color: "#E17918"}} /> 
-                  : <CheckCircleOutlined className={classes.icon} style={{ color: "#bbb" }} />}
+                  : <CheckCircleOutlined className={classes.icon} style={{ color: "#eee" }} />}
               </div>
               <span style={{ 
-                textAlign: 'left', 
-                fontSize: 18, 
-                width: 185, 
-                }}>{template.label}</span>
+                textAlign: 'center', 
+                fontSize: 15, 
+                width: 160,
+                marginTop: '10px', 
+                fontWeight: 'bold'
+                }}>{template.label}
+              </span>
+              <span style={{ 
+                textAlign: 'center', 
+                fontSize: 11, 
+                width: 160, 
+                // marginBottom: '10px', 
+                }}>{template.description}
+              </span>
             </div>
           )) 
           : null
@@ -122,7 +132,15 @@ function VisSelector(props: IVisSelectorProps) {
         to={`/vis/${getVis().join('+')}/network/${network}`}
         target='_blank'
       >
-        <Button style={{float: 'right'}} type="primary">{`Visualize (${selected.filter(s=>s).length})`}</Button>
+        <Button style={{
+          float: 'right',
+          height: '37px',
+          width: '150px',
+          fontSize: '14pt',
+          textDecoration: 'none',
+          fontFamily: `'Reem Kufi Fun', 'Helvetica Neue', 'sans-serif'`,
+          }} 
+          type="primary">{`Visualize (${selected.filter(s=>s).length})`}</Button>
       </Link>
     </>
   )

@@ -98,11 +98,15 @@ function Record(props: IRecordProps) {
             {type === 'network' ? 
               <Tooltip title="Visualize">
                 <Button
-                  icon={<NodeIndexOutlined />}
+                  // icon={<NodeIndexOutlined/>}
                   type='text'
                   shape='circle'
+                  // text='visualize'
+                  style={{
+                    fontWeight: 'bold',
+                  }}
                   onClick={() => showVisSelector(data)}
-                />
+                >Vis</Button>
               </Tooltip> : null}
           </div>
         </>
