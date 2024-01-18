@@ -78,31 +78,40 @@ function Vis(props: IVisProps) {
   const [allMotifs, setAllMotifs] = useState<AllMotifs>({})
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
 
+
+  let stamp = {}
   const onPropogate = (viewerId, newVal) => {
+    console.log('stamp-0:', stamp, visTypeList)
     if (visTypeList.length > 1) {
-      console.log({ newVal });
-      // console.log(viewer1, viewer2);
-      propogateSelection(viewerId === 0 ? viewer2 : viewer1, "node_selection", newVal)
+      const nodeIds = newVal.nodes.map(n => n.id);
+      const linkIds = newVal.links.map(l => l.id);
+      const values = {nodes: nodeIds, links: linkIds}
+      // propogateSelection((viewerId === 0 ? viewer2 : viewer1), "node_selection", values)
+      console.log('stamp:', stamp, values)
+      if (JSON.stringify(stamp) !== JSON.stringify(values)) {
+        stamp = values
+        console.log('onPropogate:', viewerId, { newVal });
+        console.log(viewer1, viewer2);
+        propogateSelection((viewerId === 0 ? viewer2 : viewer1), "node_selection", values)
+      }
     }
   }
 
-  const propogateSelection = (viewer, selectionName, newVal) => {
+  const propogateSelection = (viewer, selectionName, values) => {
     // Internally NetPanorma represents selections as an object containing an array of selected node objects, and an array of selected link objectes
     // This objects must be nodes/links in the correct network (not just identical copies!)
     // If the views we are linking use the same identifiers, then we can link them like this:
     // This is a bit inelegant: I might add a new method to NetPanorama in future to make it unnecessary.
-
-    const nodeIds = newVal.nodes.map(n => n.id);
-    const linkIds = newVal.links.map(l => l.id);
+    const nodeIds = values.nodes
+    const linkIds = values.links
 
     const networkName = "network"; // the name of the network in which the selection is made - set in specification
-    // console.log("propogateSelection:", viewer, selectionName, newVal)
+    console.log("propogateSelection:", viewer.spec, selectionName, values)
     const nodes = viewer.state[networkName].nodes.filter(n => nodeIds.includes(n.id));
     const links = viewer.state[networkName].links.filter(l => linkIds.includes(l.id));
-
-    // console.log("after:", nodes)
-
+    console.log('stamp-1:', stamp)
     viewer.setParam(selectionName, { nodes, links })
+    console.log('stamp-2:', stamp)
   }
 
   return (

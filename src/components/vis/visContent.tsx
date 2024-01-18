@@ -12,7 +12,9 @@ interface IVisContentProps {
   visType: string
   network: string
   options: any  // relate to the vis encoding
-  onPropogate: (id: number, newVal: any) => void
+  onPropogate: (id: number, newVal: any) => void,
+  // stamp: any,
+  // setStamp: (s: any) => void
 }
 
 function VisContent(props: IVisContentProps) {
@@ -21,7 +23,19 @@ function VisContent(props: IVisContentProps) {
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
   const containerId = `visSvg${viewerId}`
 
+  // const onChange = (newVal) => {
+  //   const nodeIds = newVal.nodes.map(n => n.id);
+  //   const linkIds = newVal.links.map(l => l.id);
+  //   const values = { nodes: nodeIds, links: linkIds }
+  //   console.log('stamp:', props.stamp)
+  //   if (JSON.stringify(props.stamp) !== JSON.stringify(values)) {
+  //     props.setStamp(values)
+  //     props.onPropogate(viewerId, newVal)
+  //   } 
+  // }
+
   const onChange = (newVal) => {
+    console.log('onChange:', viewerId)
     props.onPropogate(viewerId, newVal)
   }
 

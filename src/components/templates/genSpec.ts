@@ -85,16 +85,11 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       "calculate": `datum.${config.linkTableConfig.time}`
     })
   }
-
   let dataSpec = [linkTableImportSpec]
 
   // =========== if exists the node dataset =========== 
   if (config.extraNodeConfig?.hasExtraNode) {
     let trans: any[] = []
-    if (config.extraNodeConfig?.nodeLabel) {
-      
-      
-    }
     const calc = config.extraNodeConfig?.nodeLabel ? config.extraNodeConfig?.nodeLabel : 'id'
     trans.push({
       "type": "calculate",
