@@ -67,6 +67,12 @@ function VisContent(props: IVisContentProps) {
     setViewer(tmpViewer)
     
     const container = document.getElementById(containerId)
+    if(container){
+      container.style["border"] = "1px solid #eee";
+      container.style["margin-right"] = "5px";
+      container.style["padding"] = "10px";
+      container.style["borderRadius"] = "10px";
+    }
     if (container && container.getElementsByTagName("svg").length > 0) {
       // @ts-ignore
       container.getElementsByTagName("svg")[0].style["max-width"] = "100%";

@@ -3,78 +3,89 @@ import { Template } from '../../../typings'
 const templates: Template[] = [
   {
     key: "nodelink",
-    label: "Node-link diagram",
+    label: "Node-Link Diagram",
     image: "nodelink.png",
     template: "nodelink.json",
+    description: "Common Force-directed layout.",
     manual: "https://vistorian.github.io/visualizations.html#node-link",
   },
   {
     key: "nodelink_circular",
-    label: "Node-link diagram with circular layout",
+    label: "Circular Node-link",
     image: "nodelink_circular.png",
     template: "nodelink_circular.json",
+    description: "Nodes ordered along a circular layout.",
     manual: "https://vistorian.github.io/visualizations.html#node-link"
   },
   { 
     key: "matrix", 
-    label: "Adjacency matrix", 
+    label: "Adjacency Matrix", 
     image: "matrix.png", 
     template: "matrix.json",
+    description: "Table layout showing links as cells and nodes as rows and columns.",
     manual: "https://vistorian.github.io/visualizations.html#adjacency-matrix"
   },
   { 
     key: "timearcs", 
-    label: "Time arcs", 
+    label: "Time Arcs", 
     image: "timearcs.png", 
     template: "timearcs.json",
+    description: "Shows links as vertical arcs over time.",
     manual: "https://vistorian.github.io/visualizations.html#time-arcs"
   },
   {
     key: "arcDiagram",
-    label: "Arc diagram",
+    label: "Arc Diagram",
     image: "arcDiagram.png",
     template: "arcDiagram.json",
+    description: "Linear order of nodes with arcs depicting links.",
     manual: "https://vistorian.github.io"
   },
   {
     key: "adjacencyNodeList",
-    label: "Adjacency node list",
+    label: "Adjacent-Nodes List",
     image: "adjacencyNodeList.png",
     template: "adjacencyNodeList.json",
+    description: "Table view of nodes and their direct (adjacent) neighbors.",
     manual: "https://vistorian.github.io"
   },
   {
     key: "adjacencyLinkList",
-    label: "Adjacency link list",
+    label: "Incident-Links List",
     image: "adjacencyLinkList.png",
     template: "adjacencyLinkList.json",
+    description: "Table view of nodes and their links.",
     manual: "https://vistorian.github.io"
   },
   {
     key: "jigsaw",
-    label: "Jigsaw",
+    label: "Jigsaw Diagram",
     image: "jigsaw.png",
     template: "jigsaw.json",
+    description: "Showing different types of nodes as different lines of nodes with links connecting them.",
     manual: "https://vistorian.github.io"
   },
   {
     key: "waffleNode",
-    label: "Waffle node chart",
+    label: "Node Waffle-Chart",
     image: "waffleNode.png",
     template: "waffleNode.json",
+    description: "Highly compact visualization of all nodes shown in an ordered grid. Links can be shown overlaid.",
     manual: "https://vistorian.github.io"
   },
   {
     key: "waffleLink",
-    label: "Waffle link chart",
+    label: "Link Waffle-Chart",
     image: "waffleLink.png",
     template: "waffleLink.json",
+    description: "Highly compact visualization of all links shown in an ordered grid.",
     manual: "https://vistorian.github.io"
   },
   {
     key: "map",
-    label: "Map",
+    label: "Node-Link Map",
     image: "map.png",
+    description: "A node-link diagram where nodes have corresponding geographic positions.",
     template: "map.json",
     manual: "https://vistorian.github.io/visualizations.html#map"
   },

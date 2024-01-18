@@ -301,7 +301,7 @@ function Wizard() {
                 setNetSource(undefined)
               }}
             >
-              My Visualizations
+            My Visualizations
             </Button>
             <Button
               type='primary'

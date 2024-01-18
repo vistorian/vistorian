@@ -15,8 +15,8 @@ const useStyles = createUseStyles({
     flexWrap: 'wrap'
   },
   card: {
-    width: 275,
-    margin: 30,
+    width: 180,
+    margin: 40,
     marginLeft: 0,
     display: 'flex',
     '&:hover $content': {
@@ -33,8 +33,8 @@ const useStyles = createUseStyles({
     background: '#fff',
     boxShadow: '0px 0px 3px 0px #0000000D',
     borderRadius: 6,
-    width: 240,
-    height: 240,
+    width: 180,
+    height: 180,
   },
   thumbnail: {
     display: 'flex',
@@ -49,7 +49,7 @@ const useStyles = createUseStyles({
   },
   footer: {
     height: 40,
-    width: 230,
+    width: 170,
     paddingLeft: 10,
     background: '#f6f6f6',
     borderRadius: '0px 0px 6px 6px',
@@ -66,8 +66,8 @@ const useStyles = createUseStyles({
     background: '#fff',
     boxShadow: '0px 0px 20px 0px #0000000D',
     borderRadius: 6,
-    width: 240,
-    height: 240,
+    width: 180,
+    height: 180,
     margin: 30, 
     marginLeft: 0, 
     display: 'flex', 
@@ -131,7 +131,7 @@ function Sessions(props: ISessionsProps) {
   return (
     <>
     <div style={{ display: 'flex', alignItems: 'center' }}>
-      <h2>My Visualizations</h2>
+      <h2>My Visualized Data</h2>
       <Button
         icon={<DeleteFilled />}
         type='text'
@@ -175,7 +175,7 @@ function Sessions(props: ISessionsProps) {
               >
                 <div className={classes.content}>
                   <div className={classes.thumbnail}>
-                    <img src={`./thumbnails/${img?.image}`} style={{ width: 200, height: 200 }} />
+                    <img src={`./thumbnails/${img?.image}`} style={{ width: 170, height: 170 }} />
                   </div>
                   <div className={classes.footer}>
                     <span className={classes.visTitle}>{session.network}</span>
