@@ -6,7 +6,7 @@ import { defaultColorScheme, defaultNodeTypeShapeScheme } from '../../../typings
 import { Button, Tooltip } from 'antd'
 import { ExportOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import Legend from './legend'
-import VisContent from './visContent'
+import VisContent from './visContent_new'
 import Overview from '../xplainer/overview'
 import ModeSelection from './modeSelection'
 import templates from '../templates/templates'
@@ -78,6 +78,7 @@ function Vis(props: IVisProps) {
   const [allMotifs, setAllMotifs] = useState<AllMotifs>({})
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
 
+
   let stamp = {}
   const onPropogate = (viewerId, newVal) => {
     console.log('stamp-0:', stamp, visTypeList)
@@ -127,11 +128,8 @@ function Vis(props: IVisProps) {
             network={network as string}
           />
         </div>
-
-        {/* network name & data name*/}
         {/* <div className={classes.left}> */}
           {/* show network names */}
-
           <div style={{ marginRight: 8, marginLeft: 100}}>
             {/* TODO: return to network preview */}
             <span className={classes.networkTitle}>
@@ -179,23 +177,28 @@ function Vis(props: IVisProps) {
 
       {/* render vis */}
       {props.type === Mode.Explorer ? 
-        <div style={{ width: '100%', height: '100%', display: 'flex' }}>
-          {visTypeList.map((visType, idx) => {
-            return (
-              <VisContent
-                key={idx}
-                viewerId={idx}
-                viewer={idx === 0 ? viewer1 : viewer2}
-                setViewer={idx === 0 ? setViewer1 : setViewer2}
-                width={`${100 / visTypeList.length}%`}
-                visType={visType}
-                network={network as string}
-                options={options} // vis encoding 
-                onPropogate={onPropogate}
-              />
-            )
-          })}
-        </div> 
+        <VisContent 
+          visTypes={visTypes as string}
+          network={network as string}
+          options={options}
+        />
+        // <div style={{ width: '100%', height: '100%', display: 'flex' }}>
+        //   {visTypeList.map((visType, idx) => {
+        //     return (
+        //       <VisContent
+        //         key={idx}
+        //         viewerId={idx}
+        //         viewer={idx === 0 ? viewer1 : viewer2}
+        //         setViewer={idx === 0 ? setViewer1 : setViewer2}
+        //         width={`${100 / visTypeList.length}%`}
+        //         visType={visType}
+        //         network={network as string}
+        //         options={options} // vis encoding 
+        //         onPropogate={onPropogate}
+        //       />
+        //     )
+        //   })}
+        // </div> 
       : null}
 
       {/* Pattern Explainer */}
