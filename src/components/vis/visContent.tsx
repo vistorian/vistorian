@@ -35,7 +35,7 @@ function VisContent(props: IVisContentProps) {
   // }
 
   const onChange = (newVal) => {
-    console.log('onChange:', viewerId)
+    // console.log('onChange:', viewerId)
     props.onPropogate(viewerId, newVal)
   }
 

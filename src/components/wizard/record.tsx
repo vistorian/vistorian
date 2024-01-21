@@ -104,6 +104,7 @@ function Record(props: IRecordProps) {
                   // text='visualize'
                   style={{
                     fontWeight: 'bold',
+                    color: '#E17918'
                   }}
                   onClick={() => showVisSelector(data)}
                 >Vis</Button>

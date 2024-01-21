@@ -8,7 +8,7 @@ type DataFile = {
 type Session = {
   id: number,
   network: string,
-  vis: string[]
+  vis: string
   created: string,
 }
 

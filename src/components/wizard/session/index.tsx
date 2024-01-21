@@ -128,6 +128,10 @@ function Sessions(props: ISessionsProps) {
     message.success('The selected visualization has been successfully copied!')
   }
 
+  const sortSession = (a: Session, b: Session) => {
+    return Date.parse(b.created) - Date.parse(a.created)
+  }
+
   return (
     <>
     <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -162,8 +166,9 @@ function Sessions(props: ISessionsProps) {
         <p>Are you sure you want to delete {deleteSession===HANDLEALL ? 'all the visualizations' : 'the selected visualization'} ?</p>
     </Modal>
     <div className={classes.cards}>
-        {sessionStore.map((session: Session)=> {
-        const img = find(templates, t=>t.key===session.vis[0])
+        {sessionStore.sort(sortSession).map((session: Session)=> {
+        // const img = find(templates, t=>t.key===session.vis.split('+')[0])
+        const images = session.vis.split('+').map((v) => find(templates, t => t.key === v)?.image) as string[]
         return (
             <div className={classes.card} key={session.id}>
               {/* content */}
@@ -175,7 +180,13 @@ function Sessions(props: ISessionsProps) {
               >
                 <div className={classes.content}>
                   <div className={classes.thumbnail}>
-                    <img src={`./thumbnails/${img?.image}`} style={{ width: 170, height: 170 }} />
+                    {/* <img src={`./thumbnails/${img?.image}`} style={{ width: 170, height: 170 }} /> */}
+                    {images.map((img:string, index: number) =>(
+                      <img 
+                        src={`./thumbnails/${img}`} 
+                        key={index}
+                        style={{ width: `${170/images.length}px`, height: 170 }} />
+                    ))}
                   </div>
                   <div className={classes.footer}>
                     <span className={classes.visTitle}>{session.network}</span>

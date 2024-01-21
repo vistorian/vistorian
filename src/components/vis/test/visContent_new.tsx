@@ -1,8 +1,8 @@
 import { Spin } from "antd"
 import { useEffect, useState } from "react"
-import { NetworkConfig } from "../../../typings"
-import templates from "../templates/templates"
-import { genSpecFromLinkTable } from "../templates/genSpec"
+import { NetworkConfig } from "../../../../typings"
+import templates from "../../templates/templates"
+import { genSpecFromLinkTable } from "../../templates/genSpec"
 
 interface IVisContentProps {
   visTypes: string

@@ -80,7 +80,7 @@ function Vis(props: IVisProps) {
 
   let stamp = {}
   const onPropogate = (viewerId, newVal) => {
-    console.log('stamp-0:', stamp, visTypeList)
+    // console.log('stamp-0:', stamp, visTypeList)
     if (visTypeList.length > 1) {
       const nodeIds = newVal.nodes.map(n => n.id);
       const linkIds = newVal.links.map(l => l.id);

@@ -1,12 +1,12 @@
 import { message } from "antd"
 import { DataFile, NetworkConfig, OperationType, Session } from "../../../typings"
 import { HANDLEALL } from '../../../typings/constant' 
-import { findIndex, filter } from "lodash-es"
+import { findIndex, filter, cloneDeep } from "lodash-es"
 
 // ========== FileNameStore or NetworkStore ============
 // delete data or network
 export const handleDelete = (type: OperationType, name: string, store: Array<string | DataFile>) => {
-  let newStore = [...store]
+  let newStore = cloneDeep(store)
   if (type === 'data') {
     let fileNameStore = store as DataFile[]
     if (name !== HANDLEALL && findIndex(fileNameStore, (fn: DataFile) => fn.name === name) !== -1) {
@@ -38,7 +38,7 @@ export const handleDelete = (type: OperationType, name: string, store: Array<str
 
 // copy data or network
 export const handleCopy = (type: OperationType, name: string, store: Array<string | DataFile>) => {
-  let newStore = [...store]
+  let newStore = cloneDeep(store)
   if (type === 'data') {
     let fileNameStore = store as DataFile[]
     const data = window.localStorage.getItem("UPLOADED_FILE_" + name)
@@ -57,7 +57,6 @@ export const handleCopy = (type: OperationType, name: string, store: Array<strin
       message.error('No such data files in the cache!')
   }
   else if (type === 'network') {
-    let networkStore = store as string[]
     const data = window.localStorage.getItem("NETWORK_WIZARD_" + name)
     const newName = `${name}_copy`
     if (data) {
@@ -73,7 +72,7 @@ export const handleCopy = (type: OperationType, name: string, store: Array<strin
 
 // rename data or network
 export const handleRename = (type: OperationType, oldName: string, newName: string, store: Array<string | DataFile>) => {
-  let newStore = [...store]
+  let newStore = cloneDeep(store)
   let status: boolean = false
 
   if (type === 'data') {

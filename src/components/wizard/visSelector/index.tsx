@@ -57,7 +57,7 @@ function VisSelector(props: IVisSelectorProps) {
     const newSession = {
       id: maxId+1,
       network: network,
-      vis: vis,
+      vis: vis.join('+'),
       created: new Date().toLocaleString('en-GB', {
         year: "numeric",
         month: "short",
@@ -128,7 +128,6 @@ function VisSelector(props: IVisSelectorProps) {
       </div>
       <Link
         onClick={() => saveSession(getVis())}
-        // to={`/vis/${getVis().join('+')}/network/${network}`}
         to={`/vis/${getVis().join('+')}/network/${network}`}
         target='_blank'
       >
