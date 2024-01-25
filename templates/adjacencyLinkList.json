@@ -62,8 +62,21 @@
         "text": {
           "field": "key[0]"
         },
-        "x": 100,
+        "x": 150,
+        "dy":4,
         "align": "right"
+      }
+    },
+    {
+      "entries": "groupedBySource",
+      "layout": "layout",
+      "mark": {
+        "type": "symbol",
+        "shape": "circle",
+        "x": 165,
+        "fill": "gray",
+        "stroke": "white",
+        "area": "40"
       }
     },
     {
@@ -84,7 +97,7 @@
             },
             "area": 100,
             "x": {
-              "expression": "index * 13 + 120"
+              "expression": "index * 13 + 180"
             },
             "tooltip": {
               "expression": " datum.source.id + ' --- '+ datum.linkType +'--> ' + datum.target.id + '' "

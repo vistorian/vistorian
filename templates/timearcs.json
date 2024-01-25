@@ -4,7 +4,8 @@
     "modifierKeyRequired": null
   },
 
-  "width": 3000,
+  "width": "[width]",
+  "height": "[height]",
   "x": 120,
   
   "data": "[dataDefinition]",
@@ -14,10 +15,22 @@
     {
       "name": "seriationMethod",
       "bind": {
-          "input": "select",
-          "options":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
-          "labels":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
-          "label": "Sort by"
+        "input": "select",
+        "options": [
+          "optimal-leaf-order",
+          "barycentre",
+          "bandwidth-reduction",
+          "pca",
+          "degree_order"
+        ],
+        "labels": [
+          "Optimal Leaf Order",
+          "Barycentre Heuristic",
+          "Bandwidth Reduction",
+          "PCA",
+          "Node Degree"
+        ],
+        "label": "Seriation"
       },
       "value": "barycentre"
     },
@@ -86,14 +99,24 @@
         "step": "0.02"
       },
       "value": 0.4
+    },
+    {
+      "name": "time",
+      "bind": {
+        "input": "brush",
+        "axisType": "time",
+        "network": "network",
+        "for": "links",
+        "field": "data._time"
+      }
     }
   ],
 
   "orderings": [
     {
       "name": "staticOrder",
-      "method": {"parameter": "seriationMethod"},
-      "network": "staticNetwork"
+      "orderBy": {"parameter": "seriationMethod"},
+      "data": "staticNetwork.nodes"
     }
   ],
 
@@ -209,7 +232,19 @@
         },
         "directionForShape": {  "ordering": "staticOrder" },
         "strokeWidth": {"expression": "params.linkWidthParam"},
-        "strokeOpacity": {"expression": "params.linkOpacityParam"},
+        "strokeOpacity": {
+          "conditions": [
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
+            },
+            {
+              "inSelection": "neighbours.links",
+              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
+            }
+          ],
+          "expression": " (datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) ? 0.1 : 0 "
+        },
         "tooptip": { "expression": "datum"}
       }
     },
@@ -222,6 +257,13 @@
           "using": "cursor",
           "event": "mouseover",
           "action": "replace",
+          "selection": "node_selection"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseout",
+          "action": "remove",
           "selection": "node_selection"
         }
       ],
