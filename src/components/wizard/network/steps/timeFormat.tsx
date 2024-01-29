@@ -38,18 +38,14 @@ function TimeFormat(props: ITimeFormat) {
   const classes = useStyles()
   const { open, setOpen, formatString, setFormatString } = props
 
-  const [ inputFormat, setInputFormat ] = useState<string>(formatString)
-
-  const formatter = timeFormat(inputFormat)
+  const formatter = timeFormat(formatString)
   
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputFormat(e.target.value)
     setFormatString(e.target.value)
   }
 
   const handleAddCode = (code: string) => {
-    setInputFormat(inputFormat.concat(code))
-    setFormatString(inputFormat.concat(code))
+    setFormatString(formatString.concat(code))
   }
 
   return (
@@ -65,7 +61,7 @@ function TimeFormat(props: ITimeFormat) {
       <span style={{ display: 'flex'}}>Date format:
         <Input 
           style={{ width: 200, marginLeft: 10 }} 
-          value={inputFormat} 
+          value={formatString} 
           onChange={handleInput} 
         />
       </span>

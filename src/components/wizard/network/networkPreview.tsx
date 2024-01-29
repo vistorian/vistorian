@@ -1,13 +1,13 @@
 import { createUseStyles } from 'react-jss'
 import { useContext, useState } from 'react';
-import { Button, Input, Modal, Typography } from 'antd';
+import { Alert, Button, Input, Modal, Typography } from 'antd';
 import { DeleteFilled, CopyFilled, EditFilled, CheckOutlined, CloseOutlined, NodeIndexOutlined } from '@ant-design/icons'
 import { WizardContext } from '../context';
 import styled from '@emotion/styled';
 import { handleCopy, handleDelete, handleRename } from '../utils';
 import NetworkNodeTable from './preview/networkNodeTable';
 import NetworkLinkTable from './preview/networkLinkTable';
-import { NetworkConfig } from '../../../../typings';
+import { LinkTableConfig, NetworkConfig } from '../../../../typings';
 import LinkDataTable from './preview/linkDataTable';
 import NodeDataTable from './preview/nodeDataTable';
 
@@ -66,8 +66,38 @@ function NetworkPreview(props: INetworkPreviewProps) {
   const [linkDataConfig, setLinkDataConfig] = useState<Object>({})
   const [nodeDataConfig, setNodeDataConfig] = useState<Object>({})
 
+  // if update function succeed or failed
+  const [alert, setAlert] = useState<boolean>(false)
+  const [alertMsg, setAlertMsg] = useState<string>('')
+
+  // update the network config if there is no conflict
   const updateConfig = () => {
     console.log('linkDataConfig:', linkDataConfig)
+    const linkConfig = {...network.linkTableConfig as LinkTableConfig}
+    const required: string[] = ['sourceNodeLabel', 'targetNodeLabel']
+    const optional: string[] = ['linkId', 'locationOfSourceNode', 'locationOfTargetNode', 'linkWeight', 'linkType', 'time']
+
+    if (linkDataConfig.hasOwnProperty('_directed')) {
+      linkConfig.directed = linkDataConfig['_directed']
+      delete linkDataConfig['_directed']
+    }
+    if (linkDataConfig.hasOwnProperty('_timeFormat')) {
+      linkConfig.timeFormat = linkDataConfig['_timeFormat']
+      delete linkDataConfig['_timeFormat']
+    }
+    if (Object.values(linkDataConfig).findIndex(ele => ele === 'sourceNodeLabel') === -1 || Object.values(linkDataConfig).find(ele => ele === 'targetNodeLabel') === -1) {
+      setAlert(true)
+      setAlertMsg('Update failed. The network must have both source nodes and target nodes.')
+      return
+    }
+    if (new Set(Object.values(linkDataConfig)).size !== Object.values(linkDataConfig).length) {
+      setAlert(true)
+      setAlertMsg('Update failed. You set two data coloumns to the same configuration.')
+      return
+    }
+    setAlert(false)
+    setAlertMsg('')
+    setEdit(false)
   }
 
   return (
@@ -196,12 +226,18 @@ function NetworkPreview(props: INetworkPreviewProps) {
         <span>You are editing your network configuration. Click the update button to update the tables when you finished the configuration. </span>
         <br />
         <Button 
-          style={{ marginTop: 10 }} 
+          style={{ margin: '10px 0px' }} 
           type='primary'
           onClick={updateConfig}
           >
             Update
         </Button>
+        {alert ? <Alert
+          message={alertMsg}
+          type="error"
+          showIcon
+          closable
+        /> : null}
       </> : <>
         <span>Below, you see the link and node tables that are generated from your specified network.</span>
         <NetworkNodeTable network={network} />

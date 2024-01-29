@@ -1,6 +1,6 @@
 import { Button, Checkbox, Input, Select, Table, Typography } from 'antd'
 import { NetworkConfig } from '../../../../../typings';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TimeFormat from '../steps/timeFormat';
 
 const { Title, Text } = Typography
@@ -76,13 +76,32 @@ function LinkDataTable(props: IDataTableProps) {
 
   /**
    * @description handle edit
-   * @param {string} value: the changed option value
+   * @param {string} value: the changed config option
    * @param {string} dataColumn: dataColumn: column name in the data table
    */
   const handleChange = (value: string, dataColumn: string) => {
     if (!edit) setEdit(true)
-    setLinkDataConfig({...linkDataConfig, [dataColumn]: value})
+    const dataColSet = columns.map(col => {
+      if (col.title === dataColumn) {
+        return {[col.title]: value}
+      }
+      else 
+        return { [col.title]: getDefault(col.title)}
+    })
+    const filtered: any = {} 
+    dataColSet.filter(col => Object.values(col)[0].length > 0).forEach(col => {
+      filtered[Object.keys(col)[0]] = Object.values(col)[0]
+    })
+    // console.log('filtered', filtered)
+    setLinkDataConfig({ ...linkDataConfig, ...filtered})
   }
+
+  useEffect(() => {
+    if (formatString.length > 0 && formatString !== network.linkTableConfig?.timeFormat) {
+      if (!edit) setEdit(true)
+      setLinkDataConfig({ ...linkDataConfig, '_timeFormat': formatString })
+    }
+  }, [formatString])
 
   return (
     <>
@@ -95,13 +114,15 @@ function LinkDataTable(props: IDataTableProps) {
         </Checkbox>
         {network.linkTableConfig?.withTime ? <>
           <Text style={{ marginLeft: 10, marginRight: 5, fontWeight: 600 }}>Time format:</Text>
-          <Input 
+          {/* <Input 
             value={formatString}
             size='small' 
             style={{ width: 150, marginRight: 10} } 
             onChange={(e) => setFormatString(e.target.value)}
-          />
+          /> */}
+          <Text underline>{formatString}</Text>
           <Button size='small' 
+            style={{ marginLeft: 8}}
             onClick={()=>setOpenTimeFormat(!openTimeFormat)}>
             Edit
           </Button>
