@@ -7,8 +7,9 @@ import styled from '@emotion/styled';
 import { handleCopy, handleDelete, handleRename } from '../utils';
 import NetworkNodeTable from './preview/networkNodeTable';
 import NetworkLinkTable from './preview/networkLinkTable';
-import DataTable from './preview/dataTable';
 import { NetworkConfig } from '../../../../typings';
+import LinkDataTable from './preview/linkDataTable';
+import NodeDataTable from './preview/nodeDataTable';
 
 const { Title } = Typography
 
@@ -32,7 +33,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
 
   const [rename, setRename] = useState<boolean>(false)
   const [renameValue, setRenameValue] = useState<string>('')
-  // for delete modal
+  // for opening the delete modal
   const [open, setOpen] = useState<boolean>(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,8 +62,17 @@ function NetworkPreview(props: INetworkPreviewProps) {
     setNetworkStore(result as string[])
   }
 
+  // { [dataColumn]: configValue }
+  const [linkDataConfig, setLinkDataConfig] = useState<Object>({})
+  const [nodeDataConfig, setNodeDataConfig] = useState<Object>({})
+
+  const updateConfig = () => {
+    console.log('linkDataConfig:', linkDataConfig)
+  }
+
   return (
     <div className='root'>
+      {/* title */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         {/* name */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -158,13 +168,45 @@ function NetworkPreview(props: INetworkPreviewProps) {
       {/* data: network configruation */}
       <Title level={3}>DATA TABLE(S)</Title>
       <span>Below, you see the data tables you have used to specify. </span>
-      <DataTable network={network} edit={edit}/>
+      
+      <Title level={4}>{network.linkTableConfig?.file}</Title>
+      <LinkDataTable 
+        network={network} 
+        edit={edit} 
+        setEdit={setEdit}
+        linkDataConfig={linkDataConfig}
+        setLinkDataConfig={setLinkDataConfig}
+      />
+
+      {network.extraNodeConfig?.hasExtraNode ? 
+      <>
+        <Title level={4}>{network.extraNodeConfig?.file}</Title>
+        <NodeDataTable 
+          network={network} 
+          edit={edit} 
+          setEdit={setEdit}
+          // setNodeDataConfig={setNodeDataConfig}
+        />
+      </> : null}
+      
 
 
       <Title level={3}> PREVIEW </Title>
-      <span>{edit ? "Your link and node tables are updating." : "Below, you see the link and node tables that are generated from your specified network."}</span>
-      <NetworkNodeTable network={network} />
-      <NetworkLinkTable network={network} />
+      {edit ? <>
+        <span>You are editing your network configuration. Click the update button to update the tables when you finished the configuration. </span>
+        <br />
+        <Button 
+          style={{ marginTop: 10 }} 
+          type='primary'
+          onClick={updateConfig}
+          >
+            Update
+        </Button>
+      </> : <>
+        <span>Below, you see the link and node tables that are generated from your specified network.</span>
+        <NetworkNodeTable network={network} />
+        <NetworkLinkTable network={network} />
+      </>}
     </div>
   )
 }

@@ -15,10 +15,11 @@ const opts = [
 interface IDataTableProps {
   network: NetworkConfig
   edit: boolean
+  setEdit: (e: boolean) => void
 }
 
 function NodeDataTable(props: IDataTableProps) {
-  const { network, edit } = props 
+  const { network, edit, setEdit } = props 
 
   const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.extraNodeConfig?.file) as string)
   const columns = Object.keys(jsonData[0]).map(item => {

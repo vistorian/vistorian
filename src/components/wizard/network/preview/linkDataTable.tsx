@@ -1,17 +1,28 @@
-import { Checkbox, Select, Table, Typography } from 'antd'
+import { Button, Checkbox, Input, Select, Table, Typography } from 'antd'
 import { NetworkConfig } from '../../../../../typings';
+import { useState } from 'react';
+import TimeFormat from '../steps/timeFormat';
 
 const { Title, Text } = Typography
 
 interface IDataTableProps {
   network: NetworkConfig
   edit: boolean
+  setEdit: (e: boolean) => void
+  linkDataConfig: Object
+  setLinkDataConfig: (o: Object) => void
 }
 
 function LinkDataTable(props: IDataTableProps) {
-  const { network, edit } = props
+  const { network, edit, setEdit, linkDataConfig, setLinkDataConfig } = props
 
+  // drawing the data table 
   const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.linkTableConfig?.file) as string)
+  const data = jsonData.map((d: any, i: number) => {
+    const dd = {...d}
+    dd._rowKey = i
+    return dd
+  })
   const columns = Object.keys(jsonData[0]).map(item => {
     return {
       title: item,
@@ -19,12 +30,20 @@ function LinkDataTable(props: IDataTableProps) {
       width: `calc(100%/${Object.keys(jsonData[0]).length})`
     }
   })
-  const data = jsonData.map((d: any, i: number) => {
-    const dd = {...d}
-    dd._rowKey = i
-    return dd
-  })
 
+  // for isDirected option
+  const [checked, setChecked] = useState<boolean>(network.linkTableConfig?.directed as boolean)
+  const onCheckChange = (e) => {
+    setChecked(e.target.checked)
+    setLinkDataConfig({ ...linkDataConfig, '_directed': e.target.checked })
+    if (!edit) setEdit(true)
+  }
+
+  // for timeFormat option
+  const [openTimeFormat, setOpenTimeFormat] = useState<boolean>(false)
+  const [formatString, setFormatString] = useState<string>(network.linkTableConfig?.timeFormat as string)
+
+  // drawing the select options
   const opts = [
     { value: '', label: '-' },
     { value: 'linkId', label: 'Link id' },
@@ -55,23 +74,43 @@ function LinkDataTable(props: IDataTableProps) {
     return ''
   }
 
+  /**
+   * @description handle edit
+   * @param {string} value: the changed option value
+   * @param {string} dataColumn: dataColumn: column name in the data table
+   */
   const handleChange = (value: string, dataColumn: string) => {
-    if (value !== '') {
-      const tmp = JSON.parse(JSON.stringify(network))
-      // @ts-ignore
-      tmp.linkTableConfig[value] = dataColumn
-    }
+    if (!edit) setEdit(true)
+    setLinkDataConfig({...linkDataConfig, [dataColumn]: value})
   }
 
   return (
     <>
       <div style={{ display: 'flex', marginBottom: 5}}>
-        <Checkbox checked={network.linkTableConfig?.directed}> 
+        <Checkbox 
+          checked={checked}
+          onChange={onCheckChange}
+        > 
           Is directed?
         </Checkbox>
         {network.linkTableConfig?.withTime ? <>
           <Text style={{ marginLeft: 10, marginRight: 5, fontWeight: 600 }}>Time format:</Text>
-          <Text style={{ textDecoration: 'underline' }}>{network.linkTableConfig?.timeFormat}</Text>
+          <Input 
+            value={formatString}
+            size='small' 
+            style={{ width: 150, marginRight: 10} } 
+            onChange={(e) => setFormatString(e.target.value)}
+          />
+          <Button size='small' 
+            onClick={()=>setOpenTimeFormat(!openTimeFormat)}>
+            Edit
+          </Button>
+          <TimeFormat
+            open={openTimeFormat}
+            setOpen={setOpenTimeFormat}
+            formatString={formatString}
+            setFormatString={setFormatString}
+          />
         </> : null}
       </div>
       <div style={{ display: 'flex'}}>
