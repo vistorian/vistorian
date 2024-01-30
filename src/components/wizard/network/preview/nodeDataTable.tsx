@@ -16,10 +16,12 @@ interface IDataTableProps {
   network: NetworkConfig
   edit: boolean
   setEdit: (e: boolean) => void
+  nodeDataConfig: Object
+  setNodeDataConfig: (o: Object) => void
 }
 
 function NodeDataTable(props: IDataTableProps) {
-  const { network, edit, setEdit } = props 
+  const { network, edit, setEdit, nodeDataConfig, setNodeDataConfig } = props 
 
   const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.extraNodeConfig?.file) as string)
   const columns = Object.keys(jsonData[0]).map(item => {
@@ -58,6 +60,43 @@ function NodeDataTable(props: IDataTableProps) {
     return ''
   }
   
+
+  /**
+   * @description get the current config: if the selection has not been changed, use default from network config; else get from the nodeDataConfig
+   * @param {string} dataColumn column name in the data table
+   * @return {string} network config, e.g., sourceNodeLable, linkType 
+   */
+  // const getChanged = (dataColumn: string) => {
+  //   nodeDataConfig[columns.title] 
+  // }
+
+  /**
+   * @description handle select changes
+   * @param {string} value: the changed config option
+   * @param {string} dataColumn: dataColumn: column name in the data table
+   */
+  const handleChange = (value: string, dataColumn: string) => {
+    if (!edit) setEdit(true)
+    const dataColSet = columns.map(col => {
+      if (col.title === dataColumn) {
+        return { [col.title]: value }
+      }
+      else if (Object.keys(nodeDataConfig).length === 0) { // have not edited the node data config
+        return { [col.title]: getDefault(col.title) }
+      }
+      else if (nodeDataConfig.hasOwnProperty(col.title)) {
+        return { [col.title]: nodeDataConfig[col.title] }
+      }
+      else 
+        return { [col.title]: '' }
+    })
+    const filtered: any = {} // filter out data columns that are not used in the network
+    dataColSet.filter(col => Object.values(col)[0].length > 0).forEach(col => {
+      filtered[Object.keys(col)[0]] = Object.values(col)[0]
+    })
+    setNodeDataConfig({...filtered })
+  }
+
   return (
     <>
       <div style={{ display: 'flex' }}>
@@ -68,7 +107,7 @@ function NodeDataTable(props: IDataTableProps) {
               key={column.dataIndex}
               defaultValue={netColumn}
               style={{ width: `calc(100%/${Object.keys(jsonData[0]).length} + 8px)`, margin: 4 }}
-              // onChange={(value) => handleChange(value, column.dataIndex)}
+              onChange={(value) => handleChange(value, column.dataIndex)}
               options={opts}
             />
           )

@@ -41,7 +41,7 @@ function LinkDataTable(props: IDataTableProps) {
 
   // for timeFormat option
   const [openTimeFormat, setOpenTimeFormat] = useState<boolean>(false)
-  const [formatString, setFormatString] = useState<string>(network.linkTableConfig?.timeFormat as string)
+  const [formatString, setFormatString] = useState<string>(network.linkTableConfig?.withTime ? network.linkTableConfig?.timeFormat as string : '')
 
   // drawing the select options
   const opts = [
@@ -75,7 +75,7 @@ function LinkDataTable(props: IDataTableProps) {
   }
 
   /**
-   * @description handle edit
+   * @description handle select changes
    * @param {string} value: the changed config option
    * @param {string} dataColumn: dataColumn: column name in the data table
    */
@@ -83,17 +83,22 @@ function LinkDataTable(props: IDataTableProps) {
     if (!edit) setEdit(true)
     const dataColSet = columns.map(col => {
       if (col.title === dataColumn) {
-        return {[col.title]: value}
+        return { [col.title]: value }
       }
-      else 
-        return { [col.title]: getDefault(col.title)}
+      else if (Object.keys(linkDataConfig).length === 0) { // have not edited the node data config
+        return { [col.title]: getDefault(col.title) }
+      }
+      else if (linkDataConfig.hasOwnProperty(col.title)) {
+        return { [col.title]: linkDataConfig[col.title] }
+      }
+      else
+        return { [col.title]: '' }
     })
-    const filtered: any = {} 
+    const filtered: any = {} // filter out data columns that are not used in the network
     dataColSet.filter(col => Object.values(col)[0].length > 0).forEach(col => {
       filtered[Object.keys(col)[0]] = Object.values(col)[0]
     })
-    // console.log('filtered', filtered)
-    setLinkDataConfig({ ...linkDataConfig, ...filtered})
+    setLinkDataConfig({...filtered})
   }
 
   useEffect(() => {

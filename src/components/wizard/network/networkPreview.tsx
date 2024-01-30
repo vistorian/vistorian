@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import { handleCopy, handleDelete, handleRename } from '../utils';
 import NetworkNodeTable from './preview/networkNodeTable';
 import NetworkLinkTable from './preview/networkLinkTable';
-import { LinkTableConfig, NetworkConfig } from '../../../../typings';
+import { ExtraNodeConfig, LinkTableConfig, NetworkConfig } from '../../../../typings';
 import LinkDataTable from './preview/linkDataTable';
 import NodeDataTable from './preview/nodeDataTable';
 
@@ -72,11 +72,11 @@ function NetworkPreview(props: INetworkPreviewProps) {
 
   // update the network config if there is no conflict
   const updateConfig = () => {
-    console.log('linkDataConfig:', linkDataConfig)
+    // console.log('linkDataConfig:', linkDataConfig, 'nodeDataConfig:', nodeDataConfig)
     const linkConfig = {...network.linkTableConfig as LinkTableConfig}
-    const required: string[] = ['sourceNodeLabel', 'targetNodeLabel']
-    const optional: string[] = ['linkId', 'locationOfSourceNode', 'locationOfTargetNode', 'linkWeight', 'linkType', 'time']
+    const nodeConfig = {...network.extraNodeConfig as ExtraNodeConfig}
 
+    // for link table config
     if (linkDataConfig.hasOwnProperty('_directed')) {
       linkConfig.directed = linkDataConfig['_directed']
       delete linkDataConfig['_directed']
@@ -85,19 +85,66 @@ function NetworkPreview(props: INetworkPreviewProps) {
       linkConfig.timeFormat = linkDataConfig['_timeFormat']
       delete linkDataConfig['_timeFormat']
     }
-    if (Object.values(linkDataConfig).findIndex(ele => ele === 'sourceNodeLabel') === -1 || Object.values(linkDataConfig).find(ele => ele === 'targetNodeLabel') === -1) {
-      setAlert(true)
-      setAlertMsg('Update failed. The network must have both source nodes and target nodes.')
-      return
+    if (Object.keys(linkDataConfig).length > 0) { // linkDataConfig is not empty, i.e., sth. has been changed
+      if (Object.values(linkDataConfig).findIndex(ele => ele === 'sourceNodeLabel') === -1 || Object.values(linkDataConfig).find(ele => ele === 'targetNodeLabel') === -1) {
+        setAlert(true)
+        setAlertMsg('Update failed. You must set both source nodes and target nodes in the link table.')
+        return
+      }
+      if (new Set(Object.values(linkDataConfig)).size !== Object.values(linkDataConfig).length) {
+        setAlert(true)
+        setAlertMsg('Update failed. You set two data coloumns to the same configuration in the link table.')
+        return
+      }
     }
-    if (new Set(Object.values(linkDataConfig)).size !== Object.values(linkDataConfig).length) {
-      setAlert(true)
-      setAlertMsg('Update failed. You set two data coloumns to the same configuration.')
-      return
+    // for node table config
+    if (Object.keys(nodeDataConfig).length > 0) {
+      if (Object.values(nodeDataConfig).findIndex(ele => ele === 'nodeID') === -1) {
+        setAlert(true)
+        setAlertMsg('Update failed. You must set the node id in the node table.')
+        return
+      }
+      if (new Set(Object.values(nodeDataConfig)).size !== Object.values(nodeDataConfig).length) {
+        setAlert(true)
+        setAlertMsg('Update failed. You set two data coloumns to the same configuration in the node table.')
+        return
+      }
     }
+
+    // successfully update 
     setAlert(false)
     setAlertMsg('')
     setEdit(false)
+    const newLinkDataConfig = {}
+    Object.keys(linkDataConfig).forEach(k => newLinkDataConfig[linkDataConfig[k]] = k)
+    const linkItems = ['sourceNodeLabel', 'targetNodeLabel', 'linkId', 'locationOfSourceNode', 'locationOfTargetNode', 'linkWeight', 'linkType', 'time']
+    linkItems.map((item) => {
+      if (newLinkDataConfig.hasOwnProperty(item)) {
+        linkConfig[item] = newLinkDataConfig[item]
+        return
+      }
+      else if (linkConfig.hasOwnProperty(item)) {
+        delete linkConfig[item]
+        return
+      }
+    })
+
+    if (Object.keys(nodeDataConfig).length > 0) {
+      const newNodeDataConfig = {}
+      Object.keys(nodeDataConfig).forEach(k => newNodeDataConfig[nodeDataConfig[k]] = k)
+      console.log(newNodeDataConfig)
+      nodeConfig['nodeID'] = newNodeDataConfig['nodeID']
+      if (newNodeDataConfig.hasOwnProperty('nodeLabel')) 
+        nodeConfig['nodeLabel'] = newNodeDataConfig['nodeLabel']
+      else delete nodeConfig['nodeLabel']
+      const tmp: string[] = []
+      const items = ['type0', 'type1', 'type2']
+      items.forEach((item) => {
+        if (newNodeDataConfig.hasOwnProperty(item)) tmp.push(newNodeDataConfig[item])
+      })
+      nodeConfig['nodeTypes'] = tmp
+    }
+    window.localStorage.setItem("NETWORK_WIZARD_" + selectedNetwork, JSON.stringify({ ...network, linkTableConfig: linkConfig, extraNodeConfig: nodeConfig }))
   }
 
   return (
@@ -215,7 +262,8 @@ function NetworkPreview(props: INetworkPreviewProps) {
           network={network} 
           edit={edit} 
           setEdit={setEdit}
-          // setNodeDataConfig={setNodeDataConfig}
+          nodeDataConfig={nodeDataConfig}
+          setNodeDataConfig={setNodeDataConfig}
         />
       </> : null}
       
