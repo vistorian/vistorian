@@ -57,10 +57,11 @@ export const handleCopy = (type: OperationType, name: string, store: Array<strin
       message.error('No such data files in the cache!')
   }
   else if (type === 'network') {
-    const data = window.localStorage.getItem("NETWORK_WIZARD_" + name)
+    const data = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + name) as string)
     const newName = `${name}_copy`
     if (data) {
-      window.localStorage.setItem("NETWORK_WIZARD_" + newName, data)
+      data.name.name = newName
+      window.localStorage.setItem("NETWORK_WIZARD_" + newName, JSON.stringify(data))
       newStore.unshift(newName)
       message.success('The selected network has been successfully copied! Related visualizations are updated!')
     }
@@ -120,7 +121,9 @@ export const handleRename = (type: OperationType, oldName: string, newName: stri
         networkStore[idx] = newName
         newStore = [...networkStore]
         window.localStorage.removeItem("NETWORK_WIZARD_" + oldName)
-        window.localStorage.setItem("NETWORK_WIZARD_" + newName, result)
+        const tmp = JSON.parse(result)
+        tmp.name.name = newName
+        window.localStorage.setItem("NETWORK_WIZARD_" + newName, JSON.stringify(tmp))
         message.success('The selected network has been successfully renamed! Related networks and visualizations are updated!')
         status = true
       }

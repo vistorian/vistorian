@@ -1,18 +1,8 @@
 import { Table, Typography, message } from 'antd'
 import { NetworkConfig } from '../../../../../typings'
+import { useEffect } from 'react'
 
 const { Title } = Typography
-
-const fullCol = {
-  linkId: 'Link id',
-  sourceNodeLabel: 'Source node id',
-  targetNodeLabel: 'Target node id',
-  locationOfSourceNode: 'Location of source node',
-  locationOfTargetNode: 'Location of target node',
-  linkWeight: 'Link weight', 
-  linkType: 'Link type',
-  time: 'Time',
-}
 
 interface INetworkLinkTableProps {
   network: NetworkConfig
@@ -20,6 +10,24 @@ interface INetworkLinkTableProps {
 
 function NetworkLinkTable(props: INetworkLinkTableProps) {
   const { network } = props
+
+  const fullCol = {
+    linkId: 'Link id',
+    sourceNodeLabel: 'Source node id',
+    targetNodeLabel: 'Target node id',
+    // sourceNodeLabel: network.linkTableConfig?.directed ? 'Source node id' : 'Node 1 id',
+    // targetNodeLabel: network.linkTableConfig?.directed ? 'Target node id' : 'Node 2 id',
+    locationOfSourceNode: 'Location of source node',
+    locationOfTargetNode: 'Location of target node',
+    linkWeight: 'Link weight',
+    linkType: 'Link type',
+    time: 'Time',
+  }
+
+  // useEffect(() => {
+  //   fullCol.sourceNodeLabel = network.linkTableConfig?.directed ? 'Source node id' : 'Node 1 id'
+  //   fullCol.targetNodeLabel = network.linkTableConfig?.directed ? 'Target node id' : 'Node 2 id'
+  // }, [network])
   
   const getColumns = () => {
     let columns = [] as any[]

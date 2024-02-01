@@ -115,24 +115,26 @@ function NetworkPreview(props: INetworkPreviewProps) {
     setAlert(false)
     setAlertMsg('')
     setEdit(false)
-    const newLinkDataConfig = {}
-    Object.keys(linkDataConfig).forEach(k => newLinkDataConfig[linkDataConfig[k]] = k)
-    const linkItems = ['sourceNodeLabel', 'targetNodeLabel', 'linkId', 'locationOfSourceNode', 'locationOfTargetNode', 'linkWeight', 'linkType', 'time']
-    linkItems.map((item) => {
-      if (newLinkDataConfig.hasOwnProperty(item)) {
-        linkConfig[item] = newLinkDataConfig[item]
-        return
-      }
-      else if (linkConfig.hasOwnProperty(item)) {
-        delete linkConfig[item]
-        return
-      }
-    })
+    if (Object.keys(linkDataConfig).length > 0) {
+      const newLinkDataConfig = {}
+      Object.keys(linkDataConfig).forEach(k => newLinkDataConfig[linkDataConfig[k]] = k)
+      const linkItems = ['sourceNodeLabel', 'targetNodeLabel', 'linkId', 'locationOfSourceNode', 'locationOfTargetNode', 'linkWeight', 'linkType', 'time']
+      linkItems.map((item) => {
+        if (newLinkDataConfig.hasOwnProperty(item)) {
+          linkConfig[item] = newLinkDataConfig[item]
+          return
+        }
+        else if (linkConfig.hasOwnProperty(item)) {
+          delete linkConfig[item]
+          return
+        }
+      })
+    }
 
     if (Object.keys(nodeDataConfig).length > 0) {
       const newNodeDataConfig = {}
       Object.keys(nodeDataConfig).forEach(k => newNodeDataConfig[nodeDataConfig[k]] = k)
-      console.log(newNodeDataConfig)
+      // console.log(newNodeDataConfig)
       nodeConfig['nodeID'] = newNodeDataConfig['nodeID']
       if (newNodeDataConfig.hasOwnProperty('nodeLabel')) 
         nodeConfig['nodeLabel'] = newNodeDataConfig['nodeLabel']

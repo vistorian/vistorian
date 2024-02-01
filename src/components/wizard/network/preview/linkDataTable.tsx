@@ -15,6 +15,7 @@ interface IDataTableProps {
 
 function LinkDataTable(props: IDataTableProps) {
   const { network, edit, setEdit, linkDataConfig, setLinkDataConfig } = props
+  console.log('network:', network)
 
   // drawing the data table 
   const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.linkTableConfig?.file) as string)
@@ -47,8 +48,10 @@ function LinkDataTable(props: IDataTableProps) {
   const opts = [
     { value: '', label: '-' },
     { value: 'linkId', label: 'Link id' },
-    { value: 'sourceNodeLabel', label: network.linkTableConfig?.directed ? 'Source node id' : 'Node 1 id' },
-    { value: 'targetNodeLabel', label: network.linkTableConfig?.directed ? 'Target node id' : 'Node 2 id' },
+    { value: 'sourceNodeLabel', label: 'Source node id' },
+    { value: 'targetNodeLabel', label: 'Target node id' },
+    // { value: 'sourceNodeLabel', label: checked ? 'Source node id' : 'Node 1 id' },
+    // { value: 'targetNodeLabel', label: checked ? 'Target node id' : 'Node 2 id' },
     { value: 'locationOfSourceNode', label: 'Location of source node' },
     { value: 'locationOfTargetNode', label: 'Location of target node' },
     { value: 'linkWeight', label: 'Link weight' },
@@ -56,6 +59,11 @@ function LinkDataTable(props: IDataTableProps) {
     { value: 'time', label: 'Time' },
   ]
   const fullCol = opts.map(o => o.value).filter(i => i !== '')
+
+  // useEffect(() => {
+  //   opts[2].label = checked ? 'Source node id' : 'Node 1 id'
+  //   opts[3].label = checked ? 'Target node id' : 'Node 2 id'
+  // }, [checked])
 
 
   /**
@@ -73,14 +81,22 @@ function LinkDataTable(props: IDataTableProps) {
     }
     return ''
   }
+  const [dataColToNetwork, setDataColToNetwork] = useState<string[]>(columns.map((column) => getDefault(column.dataIndex)))
+  // console.log('dataColToNetwork', dataColToNetwork)
+
 
   /**
    * @description handle select changes
-   * @param {string} value: the changed config option
-   * @param {string} dataColumn: dataColumn: column name in the data table
+   * @param {string} value the changed config option
+   * @param {string} dataColumn dataColumn: column name in the data table
+   * @param {number} index index in networkConfig
    */
-  const handleChange = (value: string, dataColumn: string) => {
+  const handleChange = (value: string, dataColumn: string, index: number) => {
     if (!edit) setEdit(true)
+    const tmp = [...dataColToNetwork]
+    tmp[index] = value
+    setDataColToNetwork(tmp)
+
     const dataColSet = columns.map(col => {
       if (col.title === dataColumn) {
         return { [col.title]: value }
@@ -107,6 +123,13 @@ function LinkDataTable(props: IDataTableProps) {
       setLinkDataConfig({ ...linkDataConfig, '_timeFormat': formatString })
     }
   }, [formatString])
+
+  useEffect(() => {
+    setChecked(network.linkTableConfig?.directed as boolean)
+    setFormatString(network.linkTableConfig?.withTime ? network.linkTableConfig?.timeFormat as string : '')
+    setDataColToNetwork(columns.map((column) => getDefault(column.dataIndex)))
+    console.log(dataColToNetwork)
+  }, [network.name?.name])
 
   return (
     <>
@@ -140,14 +163,13 @@ function LinkDataTable(props: IDataTableProps) {
         </> : null}
       </div>
       <div style={{ display: 'flex'}}>
-        {columns.map(column => {
-          const netColumn = getDefault(column.dataIndex)
+        {columns.map((column, idx) => {
           return (
             <Select
               key={column.dataIndex}
-              defaultValue={netColumn}
-              style={{ width: `calc(100%/${Object.keys(jsonData[0]).length} + 8px)`, margin: 4 }}
-              onChange={(value) => handleChange(value, column.dataIndex)}
+              value={dataColToNetwork[idx]}
+              style={{ width: `calc(100%/${Object.keys(jsonData[0]).length} + 8px)`, margin: 2 }}
+              onChange={(value) => handleChange(value, column.dataIndex, idx)}
               options={opts}
             />
           )
