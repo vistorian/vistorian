@@ -1,74 +1,49 @@
 import { Spin } from "antd"
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { AllMotifs, NetworkConfig } from "../../../typings"
 import templates from "../templates/templates"
 import { genSpecFromLinkTable } from "../templates/genSpec"
-import useMotifDetect, { getBounds, getMotifBound } from './useMotifDetect'
+import useMotifDetect from './useMotifDetect'
 import PatternSelection from "./patternSelection"
 import { PatternDetectors } from "./motifs/patternDetectors"
 import Overlay from "./overlay"
 import { NetworkPattern } from "./motifs/motif"
 import PatternCard from "./patternCard"
 import { flatMap, groupBy, uniq } from "lodash-es"
-import { Mode } from "../../../typings/status.enum"
 
 interface IVisContentProps {
-  type: string // "explore" || "xplainer"
   viewerId: number
   viewer: any
   setViewer: (v:any) => void
-  width: string
   visType: string
   network: string
   options: any
   setAllMotifs: (m: AllMotifs) => void
   selectedTypes: string[]
-  onPropogate: (id: number, newVal: any) => void
 }
 
 function Explainer(props: IVisContentProps) {
-  const { viewerId, viewer, setViewer, width, visType, network, options, setAllMotifs } = props
+  const { viewerId, viewer, setViewer, visType, network, options, setAllMotifs } = props
   const [loading, setLoading] = useState<boolean>(true)
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
 
   const containerId = `visSvg${viewerId}`
 
-  // pattern-xplainer variables
   const [patternDetector, setPatternDetector] = useState<any>({})
   // pattern selection type: rect | lasso
   const [selectType, setSelectType] = useState<string>('rect')
   let motifs = useMotifDetect(patternDetector)
 
-  const onChange = (newVal) => {
-    props.onPropogate(viewerId, newVal)
-  }
-
   type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
-  const getParamCallbacks = () => {
-    let cb: ParamChangeCallbacks = {}
-    switch (props.type) {
-      case Mode.Explorer:
-        cb = {
-          node_selection: onChange
-        }
-        break
-      case Mode.Explainer:
-        cb = {
-          pattern_selection: motifs.detectMotifs
-        }
-        break
-      default:
-        break
-    }
-    return cb
-  }
+  const getParamCallbacks: ParamChangeCallbacks = { pattern_selection: motifs.detectMotifs }
+  
   const update = async () => {
     let renderer = visType === 'matrix' ? 'canvas' : 'svg'
     // let renderer = 'svg'
     let template = templates.filter(t => t.key === visType)[0]
-    let templatePath = props.type === Mode.Explorer ? `./templates/${template.template}` : `./templates/xplainer/${template.template}`
+    let templatePath = `./templates/xplainer/${template.template}`
     let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
-    // console.log('spec:', spec)
+    console.log('spec:', spec)
 
     // @ts-ignore
     let tmpViewer = await NetPanoramaTemplateViewer.render(templatePath, {
@@ -78,17 +53,15 @@ function Explainer(props: IVisContentProps) {
       ...options
     }, containerId, {
       renderer: renderer,
-      paramCallbacks: getParamCallbacks()
+      paramCallbacks: getParamCallbacks
     })
-    // @ts-ignore
+    // // @ts-ignore
     console.log('VIEW STATE:', viewerId, tmpViewer.state)
-    // console.log(JSON.stringify(tmpViewer.spec))
+    // // console.log(JSON.stringify(tmpViewer.spec))
     setViewer(tmpViewer)
-    if (props.type === Mode.Explainer) {
-      let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType)
-      setPatternDetector(tmpPatternDetector)
-      setAllMotifs(patternDetector.allMotifs)
-    }
+    // let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType)
+    // setPatternDetector(tmpPatternDetector)
+    // setAllMotifs(patternDetector.allMotifs)
     
     const container = document.getElementById(containerId)
     if (container && container.getElementsByTagName("svg").length > 0) {
@@ -96,7 +69,6 @@ function Explainer(props: IVisContentProps) {
       container.getElementsByTagName("svg")[0].style["max-width"] = "100%";
       // @ts-ignore
       container.getElementsByTagName("svg")[0].style["max-height"] = "100%";
-      // d3.select(`#${containerId}`).selectAll('text').attr('pointer-events', 'none')
     }
 
     setLoading(false)
@@ -207,34 +179,25 @@ function Explainer(props: IVisContentProps) {
   return (
     loading ?
       <Spin tip="Loading" size="small">
-        <div id={containerId} style={{ width: width }} />
-        {props.type === Mode.Explainer ? <PatternSelection type={selectType} setType={setSelectType} /> : null}
+        <div id={containerId} style={{ width: '100%' }} />
+        <PatternSelection type={selectType} setType={setSelectType} />
       </Spin>
       :
-      <div
-        style={{ position: 'relative', display: 'flex', width: '100%' }}
-      >
-        <div id={containerId}
-          style={{ width: width }}  // for exploration mode
-          // style={{ overflow: 'scroll', position: "relative" }} // for xplainer mode
-        >
-          {/* ======= pattern Explainer ======= */}
-          {/* show motif overlays above vis */}
-          {(props.type === Mode.Explainer && Object.keys(patternDetector).length > 0) ? 
-            <Overlay
-              motifs={motifs}
-              open={open}
-              sceneJSON={viewer.sceneJSON}
-              // TODO: 24 is the height of the parameter selection
-              visOffset={[viewer.sceneJSON.items[0].x, visType !== 'nodelink' ? viewer.sceneJSON.items[0].y + 24 : viewer.sceneJSON.items[0].y]}
-              hoverRelatedMotif={hoverRelatedMotif}
-              clickRelatedMotif={clickRelatedMotif}
-              selectedMotifNo={selectedMotifNo}
-            /> : null}
-        </div>
+      <div id={containerId}  style={{ position: 'relative', display: 'flex', width: '100%' }} >
+        {/* show motif overlays above vis */}
+        {Object.keys(patternDetector).length > 0 ? 
+          <Overlay
+            motifs={motifs}
+            open={open}
+            sceneJSON={viewer.sceneJSON}
+            // TODO: 24 is the height of the parameter selection
+            visOffset={[viewer.sceneJSON.items[0].x, visType !== 'nodelink' ? viewer.sceneJSON.items[0].y + 24 : viewer.sceneJSON.items[0].y]}
+            hoverRelatedMotif={hoverRelatedMotif}
+            clickRelatedMotif={clickRelatedMotif}
+            selectedMotifNo={selectedMotifNo}
+          /> : null}
 
-        {/* ======= pattern Explainer ======= */}
-        {(props.type === Mode.Explainer && Object.keys(patternDetector).length > 0) ?
+        {Object.keys(patternDetector).length > 0 ?
           <>
             {motifs.contextHolder}
             <PatternCard
@@ -252,7 +215,7 @@ function Explainer(props: IVisContentProps) {
             />
           </> : null}
         {/* rect selection or lasso */}
-        {props.type === Mode.Explainer ? <PatternSelection type={selectType} setType={setSelectType} /> : null}
+        <PatternSelection type={selectType} setType={setSelectType} />
         
       </div>
   )

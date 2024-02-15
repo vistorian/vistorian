@@ -86,11 +86,11 @@ function Vis(props: IVisProps) {
       const linkIds = newVal.links.map(l => l.id);
       const values = {nodes: nodeIds, links: linkIds}
       // propogateSelection((viewerId === 0 ? viewer2 : viewer1), "node_selection", values)
-      console.log('stamp:', stamp, values)
+      // console.log('stamp:', stamp, values)
       if (JSON.stringify(stamp) !== JSON.stringify(values)) {
         stamp = values
-        console.log('onPropogate:', viewerId, { newVal });
-        console.log(viewer1, viewer2);
+        // console.log('onPropogate:', viewerId, { newVal });
+        // console.log(viewer1, viewer2);
         propogateSelection((viewerId === 0 ? viewer2 : viewer1), "node_selection", values)
       }
     }
@@ -105,12 +105,12 @@ function Vis(props: IVisProps) {
     const linkIds = values.links
 
     const networkName = "network"; // the name of the network in which the selection is made - set in specification
-    console.log("propogateSelection:", viewer.spec, selectionName, values)
+    // console.log("propogateSelection:", viewer.spec, selectionName, values)
     const nodes = viewer.state[networkName].nodes.filter(n => nodeIds.includes(n.id));
     const links = viewer.state[networkName].links.filter(l => linkIds.includes(l.id));
-    console.log('stamp-1:', stamp)
+    // console.log('stamp-1:', stamp)
     viewer.setParam(selectionName, { nodes, links })
-    console.log('stamp-2:', stamp)
+    // console.log('stamp-2:', stamp)
   }
 
   return (
@@ -206,15 +206,12 @@ function Vis(props: IVisProps) {
             setSelectedTypes={setSelectedTypes}
           />
           <Explainer
-            type={props.type}
             viewerId={0}
             viewer={viewer1}
             setViewer={setViewer1}
-            width={'100%'}
             visType={visTypeList[0]}
             network={network as string}
             options={options}
-            onPropogate={onPropogate}
             setAllMotifs={setAllMotifs}
             selectedTypes={selectedTypes}
           />

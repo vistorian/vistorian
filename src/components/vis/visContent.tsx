@@ -48,21 +48,28 @@ function VisContent(props: IVisContentProps) {
     let template = templates.filter(t => t.key === visType)[0]
     let templatePath = `./templates/${template.template}`
     let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
+
+    let width = document.getElementById(containerId)?.getBoundingClientRect().width as number
+    let height = document.getElementById(containerId)?.getBoundingClientRect().height as number
+    if (visType === 'nodelink_circular') {
+      width = width < height ? width : height
+      height = width
+    }
     // console.log('spec:', spec)
 
     // @ts-ignore
     let tmpViewer = await NetPanoramaTemplateViewer.render(templatePath, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
-      width: document.getElementById(containerId)?.getBoundingClientRect().width,
-      height: document.getElementById(containerId)?.getBoundingClientRect().height,
+      width: width,
+      height: height,
       ...options
     }, containerId, {
       renderer: renderer,
       paramCallbacks: getParamCallbacks
     })
     // @ts-ignore
-    console.log('VIEW STATE:', viewerId, tmpViewer.state)
+    // console.log('VIEW STATE:', viewerId, tmpViewer.state)
     // console.log(JSON.stringify(tmpViewer.spec))
     setViewer(tmpViewer)
     
@@ -106,10 +113,10 @@ function VisContent(props: IVisContentProps) {
   return (
     loading ?
       (<Spin tip="Loading" size="small">
-        <div id={containerId} style={{ width: width, height: '100%' }} />
+        <div id={containerId} style={{ width: width, height: '100%', overflow: 'hidden' }} />
       </Spin>)
       :
-      (<div id={containerId} style={{ width: width, height: '100%' }} />)
+      (<div id={containerId} style={{ width: width, height: '100%', overflow: 'hidden' }} />)
   )
 }
 export default VisContent
