@@ -44,6 +44,7 @@ function VisContent(props: IVisContentProps) {
 
   const update = async () => {
     let renderer = visType === 'matrix' ? 'canvas' : 'svg'
+    // let renderer = "canvas"
 
     let template = templates.filter(t => t.key === visType)[0]
     let templatePath = `./templates/${template.template}`

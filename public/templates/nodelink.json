@@ -156,6 +156,8 @@
         "type": "linkpath",
         "start": "source",
         "end": "target",
+        "parallelLinksType": "curve",
+        "parallelLinksGap": 4,
         "stroke": {
           "conditions": [
             {
