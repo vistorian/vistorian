@@ -1,7 +1,7 @@
 {    
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
-  "width": "[height]",
+  "width": "[width]",
   "height": "[height]",
 
   "parameters": [

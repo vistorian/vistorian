@@ -125,7 +125,7 @@
         "name": "layout",
         "data": "network.nodes",
         "pattern": "cartesian",
-        "x": [{ "scale": "time", "field": "data.date" }],
+        "x": [{ "scale": "time", "field": "data._time" }],
         "y": [{ "order": "staticOrder", "field": "data.name" }],
         "positioning": "none"
       },
@@ -144,7 +144,7 @@
       "name": "time",
       "type": "time",
       "range": [50, 500],
-      "domain": { "data": "network.nodes",  "field": "data.date"}
+      "domain": { "data": "network.nodes",  "field": "data._time"}
     },
     {
       "name": "radius",
