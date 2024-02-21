@@ -80,7 +80,7 @@ function Vis(props: IVisProps) {
 
   let stamp = {}
   const onPropogate = (viewerId, newVal) => {
-    // console.log('stamp-0:', stamp, visTypeList)
+    // console.log('stamp-0:', viewerId, newVal)
     if (visTypeList.length > 1) {
       const nodeIds = newVal.nodes.map(n => n.id);
       const linkIds = newVal.links.map(l => l.id);
@@ -108,9 +108,9 @@ function Vis(props: IVisProps) {
     // console.log("propogateSelection:", viewer.spec, selectionName, values)
     const nodes = viewer.state[networkName].nodes.filter(n => nodeIds.includes(n.id));
     const links = viewer.state[networkName].links.filter(l => linkIds.includes(l.id));
-    // console.log('stamp-1:', stamp)
-    viewer.setParam(selectionName, { nodes, links })
-    // console.log('stamp-2:', stamp)
+    // console.log('stamp-1:', values)
+    viewer.setParam(selectionName, { nodes, links }, false)
+    // console.log('stamp-2:', values)
   }
 
   return (
@@ -126,10 +126,7 @@ function Vis(props: IVisProps) {
             visTypes={visTypes as string}
             network={network as string}
           />
-        </div>
 
-        {/* network name & data name*/}
-        {/* <div className={classes.left}> */}
           {/* show network names */}
 
           <div style={{ marginRight: 8, marginLeft: 100}}>
@@ -162,18 +159,18 @@ function Vis(props: IVisProps) {
           </div>
 
           <span style={{paddingLeft: 100}}>
-              <Tooltip title="Return to Network View">
-                <Link
-                  to={`/wizard`}
-                  target='_blank'
-                >
-                  <Button
-                    type="text"
-                    icon={<ExportOutlined />}
-                  >Return to data view</Button>
-                </Link>
-              </Tooltip>
-            </span>
+            <Tooltip title="Return to Network View">
+              <Link
+                to={`/wizard`}
+                target='_blank'
+              >
+                <Button
+                  type="text"
+                  icon={<ExportOutlined />}
+                >Return to data view</Button>
+              </Link>
+            </Tooltip>
+          </span>
         </div>
       </div>
 

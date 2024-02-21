@@ -77,7 +77,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       }
     ]
   }
-  // respond to globle time slider
+  // respond to global time slider
   if (config.linkTableConfig?.withTime) {
     linkTableImportSpec.transform.push({
       "type": "calculate",
@@ -127,7 +127,8 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     if (visType === 'timearcs') {
       return [
         { "field": f, "as": "name" },
-        { "field": timeColumn, "as": "date" }
+        { "field": timeColumn, "as": "_time" },
+        { "field": f, "as": "_label"}
       ]
     }
     else if (visType === 'map') {
@@ -139,6 +140,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     else { // 'nodelink', 'matrix'
       return [
         { "field": f, "as": "name" },
+        { "field": f, "as": "_label" }
       ]
     }
   }
