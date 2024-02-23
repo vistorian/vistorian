@@ -5,71 +5,61 @@ import templates from "../../templates/templates"
 import { genSpecFromLinkTable } from "../../templates/genSpec"
 
 interface IVisContentProps {
-  visTypes: string
+  viewerId: number
+  viewer: any
+  setViewer: (v:any) => void
+  width: string
+  visType: string
   network: string
   options: any  // relate to the vis encoding
+  onPropogate: (id: number, newVal: any) => void
 }
 
 function VisContent(props: IVisContentProps) {
-  const visTypeList = props.visTypes.split('+') as string[]
-  const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + props.network) as string) as NetworkConfig
-
-  let viewer1 = {}, viewer2 = {}
-
-  let stamp = {}
-
-  const propogateSelection = (viewer, selectionName, values) => {
-    console.log('propogateSelection', stamp)
-    const networkName = "network"; 
-    const nodes = viewer.state[networkName].nodes.filter(n => values.nodes.includes(n.id));
-    const links = viewer.state[networkName].links.filter(l => values.links.includes(l.id));
-    viewer.setParam(selectionName, { nodes, links })
-  }
-
+  const { viewerId, viewer, setViewer, width, visType, network, options } = props
+  const [loading, setLoading] = useState<boolean>(true)
+  const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
+  const containerId = `visSvg${viewerId}`
 
   const onChange = (newVal) => {
-    const nodeIds = newVal.nodes.map(n => n.id);
-    const linkIds = newVal.links.map(l => l.id);
-    const values = {nodes: nodeIds, links: linkIds}
-    console.log('stamp',stamp, viewer1, viewer2)
-    if (JSON.stringify(values) !== JSON.stringify(stamp)) {
-      stamp = values
-      propogateSelection(viewer1, "node_selection", values)
-      propogateSelection(viewer2, "node_selection", values)
-    }
+    // console.log('onChange:', viewerId)
+    props.onPropogate(viewerId, newVal)
   }
 
   type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
   const getParamCallbacks: ParamChangeCallbacks = { node_selection: onChange }
 
-  const update = async (index: number, visType: string) => {
-    const containerId = `visSvg${index}`
+  const update = async () => {
     let renderer = visType === 'matrix' ? 'canvas' : 'svg'
+    // let renderer = "canvas"
 
     let template = templates.filter(t => t.key === visType)[0]
     let templatePath = `./templates/${template.template}`
     let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
+
+    let width = document.getElementById(containerId)?.getBoundingClientRect().width as number
+    let height = document.getElementById(containerId)?.getBoundingClientRect().height as number
+    if (visType === 'nodelink_circular') {
+      width = width < height ? width : height
+      height = width
+    }
     // console.log('spec:', spec)
 
     // @ts-ignore
     let tmpViewer = await NetPanoramaTemplateViewer.render(templatePath, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
-      width: document.getElementById(containerId)?.getBoundingClientRect().width,
-      height: document.getElementById(containerId)?.getBoundingClientRect().height,
-      ...props.options
+      width: width,
+      height: height,
+      ...options
     }, containerId, {
       renderer: renderer,
       paramCallbacks: getParamCallbacks
     })
     // @ts-ignore
-    console.log('VIEW STATE:', index, tmpViewer.state)
+    // console.log('VIEW STATE:', viewerId, tmpViewer.state)
     // console.log(JSON.stringify(tmpViewer.spec))
-    if (index === 0) {
-      viewer1 = tmpViewer
-    }
-    else
-      viewer2 = tmpViewer
+    setViewer(tmpViewer)
     
     const container = document.getElementById(containerId)
     if(container){
@@ -86,20 +76,21 @@ function VisContent(props: IVisContentProps) {
       // d3.select(`#${containerId}`).selectAll('text').attr('pointer-events', 'none')
     }
 
-    // if (loading) setLoading(false)
+    if (loading) setLoading(false)
   }
 
   const resizeChange = () => {
-    for (let index in visTypeList) {
-      const containerId = `visSvg${index}`
-      const container = document.getElementById(containerId)
-      if (!container) {
-        console.error(`No container with id ${containerId}`);
-        return
-      }
-      update(Number(index), visTypeList[Number(index)])
+    const container = document.getElementById(containerId)
+    if (!container) {
+      console.error(`No container with id ${containerId}`);
+      return
     }
+    update()
   }
+
+  useEffect(() => {
+    resizeChange()
+  }, [loading])
 
   useEffect(() => {
     window.addEventListener('resize', resizeChange)
@@ -108,14 +99,12 @@ function VisContent(props: IVisContentProps) {
 
   // rendering
   return (
-    <div style={{ width: '100%', height: '100%', display: 'flex' }}>
-      {visTypeList.map((visType, idx) => {
-        return (
-          <div key={idx} id={`visSvg${idx}`} 
-            style={{ width: `${100/visTypeList.length}%`, height: '100%' }} />
-        )
-      })}
-    </div>
+    loading ?
+      (<Spin tip="Loading" size="small">
+        <div id={containerId} style={{ width: width, height: '100%', overflow: 'hidden' }} />
+      </Spin>)
+      :
+      (<div id={containerId} style={{ width: width, height: '100%', overflow: 'hidden' }} />)
   )
 }
 export default VisContent

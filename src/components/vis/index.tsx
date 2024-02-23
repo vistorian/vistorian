@@ -6,12 +6,13 @@ import { defaultColorScheme, defaultNodeTypeShapeScheme } from '../../../typings
 import { Button, Tooltip } from 'antd'
 import { ExportOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import Legend from './legend'
-import VisContent from './visContent'
+import VisContent from './test/visContent'
 import Overview from '../xplainer/overview'
 import ModeSelection from './modeSelection'
 import templates from '../templates/templates'
 import { Mode } from '../../../typings/status.enum'
 import Explainer from '../xplainer'
+import Explorer from './explorer'
 
 const useStyles = createUseStyles({
   root: {
@@ -54,8 +55,6 @@ function Vis(props: IVisProps) {
   const classes = useStyles()
   const { visTypes, network } = useParams()
   const visTypeList = visTypes?.split('+') as string[]
-  const [viewer1, setViewer1] = useState<any>({})
-  const [viewer2, setViewer2] = useState<any>({})
 
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
 
@@ -71,47 +70,11 @@ function Vis(props: IVisProps) {
     nodeTypeShapeScheme: nodeTypeShapeScheme,
     nodeLabel: nodeLabel,
     timeFormat: timeFormat,
-    // parallelLinksType: parallelLinksType
   }
 
   // for Pattern Explainer
   const [allMotifs, setAllMotifs] = useState<AllMotifs>({})
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
-
-  let stamp = {}
-  const onPropogate = (viewerId, newVal) => {
-    // console.log('stamp-0:', viewerId, newVal)
-    if (visTypeList.length > 1) {
-      const nodeIds = newVal.nodes.map(n => n.id);
-      const linkIds = newVal.links.map(l => l.id);
-      const values = {nodes: nodeIds, links: linkIds}
-      // propogateSelection((viewerId === 0 ? viewer2 : viewer1), "node_selection", values)
-      // console.log('stamp:', stamp, values)
-      if (JSON.stringify(stamp) !== JSON.stringify(values)) {
-        stamp = values
-        // console.log('onPropogate:', viewerId, { newVal });
-        // console.log(viewer1, viewer2);
-        propogateSelection((viewerId === 0 ? viewer2 : viewer1), "node_selection", values)
-      }
-    }
-  }
-
-  const propogateSelection = (viewer, selectionName, values) => {
-    // Internally NetPanorma represents selections as an object containing an array of selected node objects, and an array of selected link objectes
-    // This objects must be nodes/links in the correct network (not just identical copies!)
-    // If the views we are linking use the same identifiers, then we can link them like this:
-    // This is a bit inelegant: I might add a new method to NetPanorama in future to make it unnecessary.
-    const nodeIds = values.nodes
-    const linkIds = values.links
-
-    const networkName = "network"; // the name of the network in which the selection is made - set in specification
-    // console.log("propogateSelection:", viewer.spec, selectionName, values)
-    const nodes = viewer.state[networkName].nodes.filter(n => nodeIds.includes(n.id));
-    const links = viewer.state[networkName].links.filter(l => linkIds.includes(l.id));
-    // console.log('stamp-1:', values)
-    viewer.setParam(selectionName, { nodes, links }, false)
-    // console.log('stamp-2:', values)
-  }
 
   return (
     <div className={classes.root}>
@@ -176,23 +139,28 @@ function Vis(props: IVisProps) {
 
       {/* render vis */}
       {props.type === Mode.Explorer ? 
-        <div style={{ width: '100%', height: '100%', display: 'flex' }}>
-          {visTypeList.map((visType, idx) => {
-            return (
-              <VisContent
-                key={idx}
-                viewerId={idx}
-                viewer={idx === 0 ? viewer1 : viewer2}
-                setViewer={idx === 0 ? setViewer1 : setViewer2}
-                width={`${100 / visTypeList.length}%`}
-                visType={visType}
-                network={network as string}
-                options={options} // vis encoding 
-                onPropogate={onPropogate}
-              />
-            )
-          })}
-        </div> 
+        <Explorer 
+          visTypeList={visTypeList}
+          network={network as string}
+          options={options}
+        />
+        // <div style={{ width: '100%', height: '100%', display: 'flex' }}>
+        //   {visTypeList.map((visType, idx) => {
+        //     return (
+        //       <VisContent
+        //         key={idx}
+        //         viewerId={idx}
+        //         viewer={idx === 0 ? viewer1 : viewer2}
+        //         setViewer={idx === 0 ? setViewer1 : setViewer2}
+        //         width={`${100 / visTypeList.length}%`}
+        //         visType={visType}
+        //         network={network as string}
+        //         options={options} // vis encoding 
+        //         onPropogate={onPropogate}
+        //       />
+        //     )
+        //   })}
+        // </div> 
       : null}
 
       {/* Pattern Explainer */}
@@ -203,9 +171,6 @@ function Vis(props: IVisProps) {
             setSelectedTypes={setSelectedTypes}
           />
           <Explainer
-            viewerId={0}
-            viewer={viewer1}
-            setViewer={setViewer1}
             visType={visTypeList[0]}
             network={network as string}
             options={options}

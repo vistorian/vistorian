@@ -12,9 +12,6 @@ import PatternCard from "./patternCard"
 import { flatMap, groupBy, uniq } from "lodash-es"
 
 interface IVisContentProps {
-  viewerId: number
-  viewer: any
-  setViewer: (v:any) => void
   visType: string
   network: string
   options: any
@@ -23,11 +20,12 @@ interface IVisContentProps {
 }
 
 function Explainer(props: IVisContentProps) {
-  const { viewerId, viewer, setViewer, visType, network, options, setAllMotifs } = props
+  const { visType, network, options, setAllMotifs } = props
   const [loading, setLoading] = useState<boolean>(true)
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
 
-  const containerId = `visSvg${viewerId}`
+  const containerId = `visSvg0`
+  let viewer
 
   const [patternDetector, setPatternDetector] = useState<any>({})
   // pattern selection type: rect | lasso
@@ -46,7 +44,7 @@ function Explainer(props: IVisContentProps) {
     console.log('spec:', spec)
 
     // @ts-ignore
-    let tmpViewer = await NetPanoramaTemplateViewer.render(templatePath, {
+    viewer = await NetPanoramaTemplateViewer.render(templatePath, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
       selectType: `"${selectType}"`, // used for pattern xplainer
@@ -56,9 +54,8 @@ function Explainer(props: IVisContentProps) {
       paramCallbacks: getParamCallbacks
     })
     // // @ts-ignore
-    console.log('VIEW STATE:', viewerId, tmpViewer.state)
-    // // console.log(JSON.stringify(tmpViewer.spec))
-    setViewer(tmpViewer)
+    console.log('VIEW STATE:', viewer.state)
+    // console.log(JSON.stringify(tmpViewer.spec))
     // let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType)
     // setPatternDetector(tmpPatternDetector)
     // setAllMotifs(patternDetector.allMotifs)
