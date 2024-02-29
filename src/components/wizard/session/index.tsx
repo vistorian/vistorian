@@ -16,8 +16,7 @@ const useStyles = createUseStyles({
   },
   card: {
     width: 180,
-    margin: 40,
-    marginLeft: 0,
+    margin: "40px 20px 0px 20px",
     display: 'flex',
     '&:hover $content': {
       cursor: 'pointer',
@@ -34,7 +33,6 @@ const useStyles = createUseStyles({
     boxShadow: '0px 0px 3px 0px #0000000D',
     borderRadius: 6,
     width: 180,
-    height: 180,
   },
   thumbnail: {
     display: 'flex',
@@ -43,6 +41,8 @@ const useStyles = createUseStyles({
     padding: '5px',
     border: '1px solid #f6f6f6',
     borderRadius: '6px 6px 0px 0px',
+    width: 168,
+    height: 170
   },
   visTitle: {
     fontWeight: 'bold',
@@ -56,7 +56,6 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
-    // paddingTop: 'px',
     paddingBottom: '5px',
   },
   func: {
@@ -167,25 +166,22 @@ function Sessions(props: ISessionsProps) {
     </Modal>
     <div className={classes.cards}>
         {sessionStore.sort(sortSession).map((session: Session)=> {
-        // const img = find(templates, t=>t.key===session.vis.split('+')[0])
         const images = session.vis.split('+').map((v) => find(templates, t => t.key === v)?.image) as string[]
         return (
             <div className={classes.card} key={session.id}>
               {/* content */}
               <Link
-                // to={`/vis/${session.vis}/network/${session.network}`}
                 to={`/vis/${session.vis}/network/${session.network}`}
                 target='_blank'
                 style={{ textDecoration: 'none', color: 'black' }}
               >
                 <div className={classes.content}>
                   <div className={classes.thumbnail}>
-                    {/* <img src={`./thumbnails/${img?.image}`} style={{ width: 170, height: 170 }} /> */}
                     {images.map((img:string, index: number) =>(
                       <img 
                         src={`./thumbnails/${img}`} 
                         key={index}
-                        style={{ width: `${170/images.length}px`, height: 170 }} />
+                        style={{ width: `${170/images.length}px` }} />
                     ))}
                   </div>
                   <div className={classes.footer}>
