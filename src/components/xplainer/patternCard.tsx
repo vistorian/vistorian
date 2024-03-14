@@ -20,7 +20,7 @@ const useStyles = createUseStyles({
     minWidth: 500,
     maxWidth: 500,
     flexDirection: 'column',
-    position: "relative",
+    position: "absolute",
     top: 0,
     right: 0,
     zIndex: 10
@@ -44,7 +44,9 @@ interface IPatternCardProps {
 function PatternCard (props: IPatternCardProps) {
   const { visType, open, setOpen, motifs, allMotifs, networkData, selectedMotifNo, setSelectedMotifNo } = props
   const groupByType = groupBy(motifs, motif => motif.type())
-  // console.log('motifs:', motifs, 'selectedMotifNo', selectedMotifNo)
+  // console.log('params:', open)
+  // console.log('motifs:', motifs)
+  // console.log('selectedMotifNo', selectedMotifNo)
 
   const classes = useStyles()
   const id = "xplainer"

@@ -25,8 +25,7 @@ function Explainer(props: IVisContentProps) {
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
 
   const containerId = `visSvg0`
-  let viewer
-
+  const [viewer, setViewer] = useState<any>({})
   const [patternDetector, setPatternDetector] = useState<any>({})
   // pattern selection type: rect | lasso
   const [selectType, setSelectType] = useState<string>('rect')
@@ -44,7 +43,7 @@ function Explainer(props: IVisContentProps) {
     console.log('spec:', spec)
 
     // @ts-ignore
-    viewer = await NetPanoramaTemplateViewer.render(templatePath, {
+    let tmpViewer = await NetPanoramaTemplateViewer.render(templatePath, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
       selectType: `"${selectType}"`, // used for pattern xplainer
@@ -55,10 +54,11 @@ function Explainer(props: IVisContentProps) {
     })
     // // @ts-ignore
     console.log('VIEW STATE:', viewer.state)
+    setViewer(tmpViewer)
     // console.log(JSON.stringify(tmpViewer.spec))
-    // let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType)
-    // setPatternDetector(tmpPatternDetector)
-    // setAllMotifs(patternDetector.allMotifs)
+    let tmpPatternDetector = new PatternDetectors(tmpViewer.state.network, visType, false)
+    setPatternDetector(tmpPatternDetector)
+    setAllMotifs(patternDetector.allMotifs)
     
     const container = document.getElementById(containerId)
     if (container && container.getElementsByTagName("svg").length > 0) {
@@ -108,7 +108,7 @@ function Explainer(props: IVisContentProps) {
 
   // highlight selected nodes & links in the motif
   useEffect(() => {
-    if (Object.keys(viewer).length > 0) {
+    if (viewer && Object.keys(viewer).length > 0) {
       let nodeIds: string[] | number[] = [],
         linkIds: string[] | number[] = []
       // jump to the related motif
@@ -180,9 +180,10 @@ function Explainer(props: IVisContentProps) {
         <PatternSelection type={selectType} setType={setSelectType} />
       </Spin>
       :
-      <div id={containerId}  style={{ position: 'relative', display: 'flex', width: '100%' }} >
+      <div style={{ position: 'relative', width: '100%' }}>
+        <div id={containerId}  style={{ width: '100%' }} />
         {/* show motif overlays above vis */}
-        {Object.keys(patternDetector).length > 0 ? 
+        {Object.keys(patternDetector).length > 0 ?
           <Overlay
             motifs={motifs}
             open={open}
@@ -193,7 +194,6 @@ function Explainer(props: IVisContentProps) {
             clickRelatedMotif={clickRelatedMotif}
             selectedMotifNo={selectedMotifNo}
           /> : null}
-
         {Object.keys(patternDetector).length > 0 ?
           <>
             {motifs.contextHolder}
@@ -212,8 +212,7 @@ function Explainer(props: IVisContentProps) {
             />
           </> : null}
         {/* rect selection or lasso */}
-        <PatternSelection type={selectType} setType={setSelectType} />
-        
+        <PatternSelection type={selectType} setType={setSelectType} />        
       </div>
   )
 }

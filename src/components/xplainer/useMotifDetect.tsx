@@ -85,7 +85,7 @@ const useMotifDectect = (patternDetector: any) => {
 
   // currently only allow for one vis in Learning Mode
   const detectMotifs = (newVal: any) => {
-    // console.log('detectMotifs:', newVal)
+    console.log('detectMotifs:', newVal, patternDetector)
     if (Object.keys(patternDetector).length > 0 && newVal.nodes.length > 0) {
       let nodes = newVal.nodes
       // bug: due to netpan sceneJSON linkpath has two items
@@ -105,7 +105,7 @@ const useMotifDectect = (patternDetector: any) => {
           })
         }
       }
-      // console.log('motifs:', result)
+      console.log('motifs:', result)
     }
   }
   return { motifs, setMotifs, detectMotifs, contextHolder }

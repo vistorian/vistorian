@@ -12,6 +12,7 @@ interface Props {
 }
 
 function Overview(props: Props) {
+  // console.log('allMotifs:', props.allMotifs)
   const [tags, setTags] = useState<boolean[]>([])
   const [display, setDisplay] = useState<boolean>(true)
 

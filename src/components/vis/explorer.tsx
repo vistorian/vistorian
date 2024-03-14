@@ -88,9 +88,8 @@ function Explorer(props: IVisContentProps) {
         container.getElementsByTagName("svg")[0].style["max-width"] = "100%";
         // @ts-ignore
         container.getElementsByTagName("svg")[0].style["max-height"] = "100%";
-        // console.log(container.getElementsByTagName("text"))
-        const elements = container.getElementsByTagName("text")
-        Object.values(elements).map(c => console.log(c))
+        // const elements = container.getElementsByTagName("text")
+        // Object.values(elements).map(c => console.log(c))
       }
     }
     

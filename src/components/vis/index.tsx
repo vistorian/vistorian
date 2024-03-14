@@ -144,23 +144,6 @@ function Vis(props: IVisProps) {
           network={network as string}
           options={options}
         />
-        // <div style={{ width: '100%', height: '100%', display: 'flex' }}>
-        //   {visTypeList.map((visType, idx) => {
-        //     return (
-        //       <VisContent
-        //         key={idx}
-        //         viewerId={idx}
-        //         viewer={idx === 0 ? viewer1 : viewer2}
-        //         setViewer={idx === 0 ? setViewer1 : setViewer2}
-        //         width={`${100 / visTypeList.length}%`}
-        //         visType={visType}
-        //         network={network as string}
-        //         options={options} // vis encoding 
-        //         onPropogate={onPropogate}
-        //       />
-        //     )
-        //   })}
-        // </div> 
       : null}
 
       {/* Pattern Explainer */}
