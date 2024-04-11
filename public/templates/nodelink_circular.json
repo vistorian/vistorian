@@ -4,6 +4,9 @@
   "width": "[width]",
   "height": "[height]",
 
+  "zoom": true, 
+  "pan":true,
+
   "parameters": [
     {
       "name": "node_selection",

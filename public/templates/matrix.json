@@ -1,6 +1,8 @@
 {
     "x": 120,
     "y": 120,
+    "zoom": true,
+    "pan": true,
     
     "data": "[dataDefinition]",
     "networks": "[networksDefinition]",
@@ -106,13 +108,17 @@
             "rowLabels": {
                 "field": "source.data._label",
                 "align": "right",
-                "dx": -15,
-                "fontSize": 8
+                // "dx": -8,
+                // "dy": 3,
+                "fontSize": 11,
+                "fixedPanZoom": "x"
             },
             "colLabels": {
                 "field": "target.data._label",
-                "dx": 15,
-                "fontSize": 8
+                // "dx": 8,
+                // "dy": 3,
+                "fontSize": 11,
+                "fixedPanZoom": "y"
             },
             "rowLines": { "stroke": "lightgrey" },
             "colLines": { "stroke": "lightgrey" },
@@ -126,6 +132,7 @@
                 }
             ],
             "mark": {
+                "scaling": true,
                 "type": "square",
                 "area": {
                     "expression": "(bounds.width * bounds.height)"

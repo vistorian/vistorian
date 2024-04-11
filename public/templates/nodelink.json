@@ -1,14 +1,12 @@
-{    
+{
   "zoom": true,
   "pan": {
     "modifierKeyRequired": null
   },
-
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
   "width": "[width]",
   "height": "[height]",
-
   "parameters": [
     {
       "name": "node_selection",
@@ -20,7 +18,10 @@
       "name": "neighbours",
       "source": "node_selection",
       "transform": [
-        { "type": "neighbours", "direction": "both" }
+        {
+          "type": "neighbours",
+          "direction": "both"
+        }
       ]
     },
     {
@@ -83,19 +84,18 @@
         "step": "1"
       },
       "value": 5
-    }, 
+    },
     {
       "name": "time",
       "bind": {
-          "input": "brush",
-          "axisType": "time",
-          "network": "network",
-          "for": "links",
-          "field": "data._time"
+        "input": "brush",
+        "axisType": "time",
+        "network": "network",
+        "for": "links",
+        "field": "data._time"
       }
     }
   ],
-
   "layouts": [
     {
       "name": "layout",
@@ -104,50 +104,74 @@
       "avoidOverlap": true
     }
   ],
-
   "scales": [
     {
       "name": "radius",
       "type": "linear",
-      "range": [ 1, 150 ],
+      "range": [
+        1,
+        150
+      ],
       "rangeMapFunction": "datum * params.nodeSizeParam",
-      "domain": { "data": "network.nodes",  "field": "degree" }
+      "domain": {
+        "data": "network.nodes",
+        "field": "degree"
+      }
     },
     {
       "name": "nodeShape",
       "type": "ordinal",
       "range": "[nodeTypeShapeScheme]",
-      "domain": { "data": "network.nodes",  "field": "data.type0" }
+      "domain": {
+        "data": "network.nodes",
+        "field": "data.type0"
+      }
     },
     {
       "name": "nodeColor",
       "type": "ordinal",
       "range": "[colorScheme]",
-      "domain": { "data": "network.nodes",  "field": "data.type0" }
+      "domain": {
+        "data": "network.nodes",
+        "field": "data.type0"
+      }
     },
     {
       "name": "edgeColor",
       "type": "ordinal",
       "range": "[colorScheme]",
-      "domain": { "data": "network.links", "field": "linkType" }
+      "domain": {
+        "data": "network.links",
+        "field": "linkType"
+      }
     },
     {
       "name": "edgeWidth",
       "type": "linear",
-      "range": [ 1, 10],
+      "range": [
+        1,
+        10
+      ],
       "rangeMapFunction": "datum * params.linkWidthParam",
-      "domain": { "data": "network.links", "field": "linkWeight" }
+      "domain": {
+        "data": "network.links",
+        "field": "linkWeight"
+      }
     },
     {
       "name": "edgeOpacity",
       "type": "linear",
-      "range": [0, 0.8],
+      "range": [
+        0,
+        0.8
+      ],
       "rangeMapFunction": "datum * params.linkOpacityParam",
-      "domain": { "data": "network.links", "field": "linkWeight" }
-    } 
+      "domain": {
+        "data": "network.links",
+        "field": "linkWeight"
+      }
+    }
   ],
-
-
   "vis": [
     {
       "entries": "network.links",
@@ -164,14 +188,14 @@
               "test": "!params.nodeTypeInShape",
               "value": "grey"
             }
-          ], 
-          "field": "linkType", 
-          "scale": "edgeColor" 
+          ],
+          "field": "linkType",
+          "scale": "edgeColor"
         },
-        "strokeWidth": { 
+        "strokeWidth": {
           "expression": "0.1 * datum.linkWeight * params.linkWidthParam"
         },
-        "opacity":  { 
+        "opacity": {
           "conditions": [
             {
               "selectionIsEmpty": "node_selection.nodes",
@@ -215,10 +239,10 @@
               "value": "circle"
             }
           ],
-          "field": "data.type0", 
+          "field": "data.type0",
           "scale": "nodeShape"
         },
-        "area": { 
+        "area": {
           "expression": "40 + datum.degree * params.nodeSizeParam"
         },
         "fill": {
@@ -228,8 +252,8 @@
               "value": "black"
             }
           ],
-           "field": "data.type0", 
-           "scale": "nodeColor"
+          "field": "data.type0",
+          "scale": "nodeColor"
         },
         "stroke": "white",
         "opacity": {
@@ -254,11 +278,15 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
-      "occlusion": {"field": "degree"},
-      "occlusionDensity":  2,
+      "occlusion": {
+        "field": "degree"
+      },
+      "occlusionDensity": 1.5,
       "mark": {
         "type": "text",
-        "text": { "expression": "[nodeLabel]"},
+        "text": {
+          "expression": "[nodeLabel]"
+        },
         "opacity": {
           "conditions": [
             {
