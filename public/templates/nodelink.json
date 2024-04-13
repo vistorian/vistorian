@@ -3,6 +3,8 @@
   "pan": {
     "modifierKeyRequired": null
   },
+  "exportButton": true,
+
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
   "width": "[width]",
@@ -278,10 +280,10 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
-      "occlusion": {
-        "field": "degree"
+      "overlapRemoval": {
+        "field": "degree",
+        "overlapDistance": 1.5
       },
-      "occlusionDensity": 1.5,
       "mark": {
         "type": "text",
         "text": {

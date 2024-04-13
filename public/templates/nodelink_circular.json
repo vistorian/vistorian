@@ -279,8 +279,10 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
-      "occlusion": {"field": "degree"},
-      "occlusionDensity":  2,
+      "overlapRemoval": {
+        "field": "degree",
+        "overlapDistance": 1.5
+      },
       "mark": {
         "type": "text",
         "text": { "expression": "[nodeLabel]"},

@@ -241,6 +241,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     networkSpec.push(staticNetworkSpec)
   }
 
+  console.log(">>>> SPEC:", dataSpec, networkSpec);
   return {
     data: dataSpec,
     network: networkSpec
