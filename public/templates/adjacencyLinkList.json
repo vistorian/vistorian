@@ -1,4 +1,6 @@
 {
+  "pan": true, 
+  "zoom": true,
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
   "groupings": [
@@ -73,7 +75,7 @@
       "mark": {
         "type": "symbol",
         "shape": "circle",
-        "x": 165,
+        "x": 155,
         "fill": "gray",
         "stroke": "white",
         "area": "40"
@@ -86,6 +88,7 @@
         {
           "entries": "entry.data",
           "mark": {
+            "scaling": true,
             "type": "square",
             "fill": {
               "scale": "cellColor",
@@ -95,9 +98,9 @@
               "scale": "opacity",
               "expression": "datum.linkWeight"
             },
-            "area": 100,
+            "area": 30,
             "x": {
-              "expression": "index * 13 + 180"
+                         "expression": "index * 6 + 170"
             },
             "tooltip": {
               "expression": " datum.source.id + ' --- '+ datum.linkType +'--> ' + datum.target.id + '' "

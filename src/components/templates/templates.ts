@@ -73,14 +73,14 @@ const templates: Template[] = [
     description: "Highly compact visualization of all nodes shown in an ordered grid. Links can be shown overlaid.",
     manual: "https://vistorian.github.io"
   },
-  {
-    key: "waffleLink",
-    label: "Link Waffle-Chart",
-    image: "waffleLink.png",
-    template: "waffleLink.json",
-    description: "Highly compact visualization of all links shown in an ordered grid.",
-    manual: "https://vistorian.github.io"
-  },
+  // {
+  //   key: "waffleLink",
+  //   label: "Link Waffle-Chart",
+  //   image: "waffleLink.png",
+  //   template: "waffleLink.json",
+  //   description: "Highly compact visualization of all links shown in an ordered grid.",
+  //   manual: "https://vistorian.github.io"
+  // },
   {
     key: "map",
     label: "Node-Link Map",

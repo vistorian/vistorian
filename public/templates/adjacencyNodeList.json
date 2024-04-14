@@ -1,4 +1,7 @@
 {  
+  "pan": true, 
+  "zoom": true,
+
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
   "groupings": [
@@ -60,7 +63,7 @@
         "text": {
           "field": "key[0]"
         },
-        "x": 100,
+        "x": 120,
         "align": "right"
       }
     },
@@ -78,16 +81,18 @@
         {
           "entries": "groupedByTarget",
           "mark": {
+            "scaling": true,
             "type": "circle",
             "fill": "#F28527",
             "opacity": {
               "scale": "opacity",
               "expression": "datum.size"
             },
-            "area": 100,
+            "area": 30,
             "x": {
-              "expression": "index * 13 + 120"
+              "expression": "index * 6 + 130"
             },
+            "y": -2,
             "tooltip": {
               "expression": "datum.key + ' (' + datum.size + ')'"
             }

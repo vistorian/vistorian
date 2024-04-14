@@ -181,6 +181,7 @@
       "layout": "layout",
       "mark": {
         "type": "linkpath",
+        "shape": "curveSymmetric",
         "start": "source",
         "end": "target",
         "stroke": {
@@ -208,8 +209,7 @@
             }
           ],
           "expression": " (datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) ? 0.1 : 0 "
-        },
-        "shape": "curveSymmetric"
+        }
       }
     },
     {
@@ -232,6 +232,7 @@
         }
       ],
       "mark": {
+        "scaling": true,
         "type": "symbol",
         "shape": {
           "conditions": [
@@ -281,6 +282,10 @@
       "layout": "layout",
       "occlusion": {"field": "degree"},
       "occlusionDensity":  2,
+      "overlapRemoval": {
+        "field": "degree",
+        "overlapDistance": 1.5
+      },
       "mark": {
         "type": "text",
         "text": { "expression": "[nodeLabel]"},
