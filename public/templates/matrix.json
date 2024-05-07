@@ -2,7 +2,9 @@
     "x": 120,
     "y": 120,
     "zoom": true,
-    "pan": true,
+    "pan": {
+       "max": [0, 0]
+     },
     
     "data": "[dataDefinition]",
     "networks": "[networksDefinition]",
@@ -108,15 +110,11 @@
             "rowLabels": {
                 "field": "source.data._label",
                 "align": "right",
-                // "dx": -8,
-                // "dy": 3,
                 "fontSize": 11,
                 "fixedPanZoom": "x"
             },
             "colLabels": {
                 "field": "target.data._label",
-                // "dx": 8,
-                // "dy": 3,
                 "fontSize": 11,
                 "fixedPanZoom": "y"
             },

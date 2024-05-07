@@ -36,6 +36,8 @@ function Explainer(props: IVisContentProps) {
   const getParamCallbacks: ParamChangeCallbacks = { pattern_selection: motifs.detectMotifs }
   
   const update = async () => {
+    console.log("XP Update")
+
     let renderer = visType === 'matrix' ? 'canvas' : 'svg'
     // let renderer = 'svg'
     let template = templates.filter(t => t.key === visType)[0]

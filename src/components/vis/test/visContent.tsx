@@ -30,6 +30,7 @@ function VisContent(props: IVisContentProps) {
   const getParamCallbacks: ParamChangeCallbacks = { node_selection: onChange }
 
   const update = async () => {
+    console.log("UPDATE");
     let renderer = visType === 'matrix' ? 'canvas' : 'svg'
     // let renderer = "canvas"
 

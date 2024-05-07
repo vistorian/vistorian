@@ -43,6 +43,8 @@ function Explorer(props: IVisContentProps) {
   const getParamCallbacks: ParamChangeCallbacks = { node_selection: onChange }
 
   const update = async () => {
+    console.log("Expl Update");
+
     for (let index in visTypeList) {
       let visType = visTypeList[index]
       let renderer = visType === 'matrix' ? 'canvas' : 'svg'
@@ -98,6 +100,7 @@ function Explorer(props: IVisContentProps) {
   }
 
   const resizeChange = () => {
+    console.log("RESIZECHANGE")
     visTypeList.map((visType, idx) => {
       const container = document.getElementById(`visSvg${idx}`)
       if (!container) {
