@@ -38,7 +38,7 @@
                     "barycentre",
                     "bandwidth-reduction",
                     "pca",
-                    "degree_order"
+                    "degree"
                 ],
                 "labels": [
                     "Optimal Leaf Order",
