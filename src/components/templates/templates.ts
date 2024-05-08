@@ -8,6 +8,7 @@ const templates: Template[] = [
     template: "nodelink.json",
     description: "Common Force-directed layout.",
     manual: "https://vistorian.github.io/visualizations.html#node-link",
+    error: ''
   },
   {
     key: "nodelink_circular",
@@ -15,7 +16,8 @@ const templates: Template[] = [
     image: "nodelink_circular.png",
     template: "nodelink_circular.json",
     description: "Nodes ordered along a circular layout.",
-    manual: "https://vistorian.github.io/visualizations.html#node-link"
+    manual: "https://vistorian.github.io/visualizations.html#node-link",
+    error: ''
   },
   { 
     key: "matrix", 
@@ -23,7 +25,8 @@ const templates: Template[] = [
     image: "matrix.png", 
     template: "matrix.json",
     description: "Table layout showing links as cells and nodes as rows and columns.",
-    manual: "https://vistorian.github.io/visualizations.html#adjacency-matrix"
+    manual: "https://vistorian.github.io/visualizations.html#adjacency-matrix",
+    error: ''
   },
   { 
     key: "timearcs", 
@@ -31,7 +34,8 @@ const templates: Template[] = [
     image: "timearcs.png", 
     template: "timearcs.json",
     description: "Shows links as vertical arcs over time.",
-    manual: "https://vistorian.github.io/visualizations.html#time-arcs"
+    manual: "https://vistorian.github.io/visualizations.html#time-arcs",
+    error: 'The network lacks temporal data.'
   },
   {
     key: "arcDiagram",
@@ -39,7 +43,8 @@ const templates: Template[] = [
     image: "arcDiagram.png",
     template: "arcDiagram.json",
     description: "Linear order of nodes with arcs depicting links.",
-    manual: "https://vistorian.github.io"
+    manual: "https://vistorian.github.io",
+    error: ''
   },
   {
     key: "adjacencyNodeList",
@@ -47,7 +52,8 @@ const templates: Template[] = [
     image: "adjacencyNodeList.png",
     template: "adjacencyNodeList.json",
     description: "Table view of nodes and their direct (adjacent) neighbors.",
-    manual: "https://vistorian.github.io"
+    manual: "https://vistorian.github.io",
+    error: ''
   },
   {
     key: "adjacencyLinkList",
@@ -55,7 +61,8 @@ const templates: Template[] = [
     image: "adjacencyLinkList.png",
     template: "adjacencyLinkList.json",
     description: "Table view of nodes and their links.",
-    manual: "https://vistorian.github.io"
+    manual: "https://vistorian.github.io",
+    error: ''
   },
   // {
   //   key: "jigsaw",
@@ -87,7 +94,8 @@ const templates: Template[] = [
     image: "map.png",
     description: "A node-link diagram where nodes have corresponding geographic positions.",
     template: "map.json",
-    manual: "https://vistorian.github.io/visualizations.html#map"
+    manual: "https://vistorian.github.io/visualizations.html#map",
+    error: 'The network lacks geographic data.'
   },
 ]
 

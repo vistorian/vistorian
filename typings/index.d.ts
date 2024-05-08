@@ -29,7 +29,8 @@ type Template = {
   image: string,
   template: string,
   manual: string, 
-  description: string
+  description: string,
+  error: string
 }
 
 type OperationType = "data" | "network" | null

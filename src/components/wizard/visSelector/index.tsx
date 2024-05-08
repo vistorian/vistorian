@@ -4,7 +4,7 @@ import { Button, message, Typography } from 'antd'
 import { CheckCircleOutlined, CheckCircleFilled } from '@ant-design/icons';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import templates from '../../templates/templates'
-import { Template } from '../../../../typings'
+import { NetworkConfig, Template } from '../../../../typings'
 import { WizardContext } from '../context'
 
 const { Title } = Typography
@@ -32,6 +32,14 @@ const useStyles = createUseStyles({
       boxShadow: '0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09)'
     }
   },
+  visimageGray: {
+    height: 160,
+    width: 160,
+    border: 'solid 1px #f0f0f0',
+    borderRadius: '50%',
+    filter: 'blur(1px) grayscale(15%)',
+    opacity: 0.6
+  },
   icon: {
     position: 'absolute',
     top: 0,
@@ -47,6 +55,8 @@ interface IVisSelectorProps {
 function VisSelector(props: IVisSelectorProps) {
   const classes = useStyles()
   const { network } = props
+  const config = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
+  // console.log('VisSelector:', network, window.localStorage.getItem("NETWORK_WIZARD_" + network))
 
   const { sessionStore, setSessionStore } = useContext(WizardContext)
   const [selected, setSelected] = useState<boolean[]>(new Array(templates.length).fill(false))
@@ -86,6 +96,20 @@ function VisSelector(props: IVisSelectorProps) {
     return result
   }
 
+  const isValid = (visType: string) => {
+    if (!config) {
+      console.error('no valid specification!')
+      return false
+    }
+    if (visType === 'map' && !config.locationTableConfig) {
+      return false
+    }
+    if (visType === 'timearcs' && !config.linkTableConfig?.withTime) {
+      return false
+    }
+    return true
+  }
+
   return (
     <>
       <Title level={3}>Select a visualization and start exploring:</Title>
@@ -93,18 +117,24 @@ function VisSelector(props: IVisSelectorProps) {
         {network.length > 0 ? 
           templates.map((template: Template, idx: number) => (
             <div className={classes.visTile} key={template.key}>
-              <div style={{ 
-                position: 'relative',
-                }} 
-                onClick={(e)=>handleSelect(e, idx)} >
-                <img
-                  src={`./thumbnails/${template.image}`}
-                  className={classes.visimage}
-                />
-                {selected[idx] ? 
-                  <CheckCircleFilled className={classes.icon} style={{ color: "#E17918"}} /> 
-                  : <CheckCircleOutlined className={classes.icon} style={{ color: "#eee" }} />}
-              </div>
+              {isValid(template.key) ? 
+                <div style={{ position: 'relative' }}
+                  onClick={(e) => handleSelect(e, idx)} >
+                  <img
+                    src={`./thumbnails/${template.image}`}
+                    className={classes.visimage}
+                  />
+                  {selected[idx] ?
+                    <CheckCircleFilled className={classes.icon} style={{ color: "#E17918" }} />
+                    : <CheckCircleOutlined className={classes.icon} style={{ color: "#eee" }} />}
+                </div> : 
+                <div style={{ position: 'relative' }} >
+                  <img
+                    src={`./thumbnails/${template.image}`}
+                    className={classes.visimageGray}
+                  />
+                </div>
+                }
               <span style={{ 
                 textAlign: 'center', 
                 fontSize: 15, 
@@ -120,6 +150,13 @@ function VisSelector(props: IVisSelectorProps) {
                 // marginBottom: '10px', 
                 }}>{template.description}
               </span>
+              {isValid(template.key) ? null : <span style={{
+                textAlign: 'center',
+                fontSize: 11,
+                width: 160,
+                color: 'red', 
+              }}>{template.error}
+              </span>}
             </div>
           )) 
           : null
