@@ -18,6 +18,20 @@
       ]
     }
   ],
+  "parameters":[
+    {
+      "name": "labelSizeParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Label Size",
+        "min": "5",
+        "max": "25",
+        "step": "1"
+      },
+      "value": 13
+    }
+  ],
   "orderings": [
     {
       "name": "order",
@@ -62,6 +76,9 @@
         "type": "text",
         "text": {
           "field": "key[0]"
+        },
+        "fontSize": {
+          "expression": "params.labelSizeParam"
         },
         "x": 120,
         "align": "right"

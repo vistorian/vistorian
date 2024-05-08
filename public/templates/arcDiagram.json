@@ -88,6 +88,18 @@
       "value": 1
     },
     {
+      "name": "labelSizeParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Label Size",
+        "min": "5",
+        "max": "25",
+        "step": "1"
+      },
+      "value": 13
+    },
+    {
       "name": "time",
       "bind": {
         "input": "brush",
@@ -311,6 +323,9 @@
         "type": "text",
         "text": {
           "expression": "[nodeLabel]"
+        },
+        "fontSize": {
+          "expression": "params.labelSizeParam"
         },
         "opacity": {
           "conditions": [

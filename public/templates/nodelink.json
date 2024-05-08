@@ -88,6 +88,18 @@
       "value": 5
     },
     {
+      "name": "labelSizeParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Label Size",
+        "min": "5",
+        "max": "25",
+        "step": "1"
+      },
+      "value": 13
+    },
+    {
       "name": "time",
       "bind": {
         "input": "brush",
@@ -309,7 +321,9 @@
         "cursor": "none",
         "dx": 5,
         "dy": 4,
-        "fontSize": 13,
+        "fontSize": {
+          "expression": "params.labelSizeParam"
+        },
         "stroke": "white",
         "strokeWidth": 0.3
       }
