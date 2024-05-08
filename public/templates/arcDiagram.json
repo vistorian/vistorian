@@ -32,16 +32,14 @@
           "barycentre",
           "bandwidth-reduction",
           "pca",
-          "degree",
-          "label"
+          "degree"
         ],
         "labels": [
           "optimal-leaf-order",
           "barycentre",
           "bandwidth-reduction",
           "pca",
-          "degree",
-          "Name"
+          "degree"
         ],
         "label": "Seriation"
       },
