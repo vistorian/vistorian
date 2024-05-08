@@ -38,14 +38,16 @@
                     "barycentre",
                     "bandwidth-reduction",
                     "pca",
-                    "degree"
+                    "degree",
+                    "id"
                 ],
                 "labels": [
                     "Optimal Leaf Order",
                     "Barycentre Heuristic",
                     "Bandwidth Reduction",
                     "PCA",
-                    "Node Degree"
+                    "Node Degree",
+                    "Node Label"
                 ],
                 "label": "Seriation"
             },
