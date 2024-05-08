@@ -137,7 +137,7 @@
                 },
                 "dx": -7,
                 "dy": 5,
-                "fixedPanZoom": "x"
+                "fixedPanZoom": "x",
             },
             "colLabels": {
                 "field": "target.data._label",

@@ -269,6 +269,9 @@
           "field": "data.type0",
           "scale": "nodeShape"
         },
+        "tooltip": {
+          "expression": "[nodeLabel] + ' (' + datum.degree + (datum.degree == 1 ? ' link)' : ' links)') "
+        },
         "area": {
           "expression": "10 + datum.degree * params.nodeSizeParam"
         },

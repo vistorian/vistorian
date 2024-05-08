@@ -299,6 +299,9 @@
             }
           ],
           "value": 0.1
+        },
+        "tooltip": {
+          "expression": "[nodeLabel] + ' (' + datum.degree + (datum.degree == 1 ? ' link)' : ' links)') "
         }
       }
     },
