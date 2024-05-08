@@ -1,6 +1,7 @@
 {
+  "width": "[width]",
+  "height": "[height]",
   "x": 120,
-  "width": 3000,
 
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
@@ -9,31 +10,42 @@
     {
       "name": "seriationMethod",
       "bind": {
-          "input": "select",
-          "options":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
-          "labels":  [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
-          "label": "Seriation"
+        "input": "select",
+        "options": [
+          "optimal-leaf-order",
+          "barycentre",
+          "bandwidth-reduction",
+          "pca",
+          "degree_order"
+        ],
+        "labels": [
+          "Optimal Leaf Order",
+          "Barycentre Heuristic",
+          "Bandwidth Reduction",
+          "PCA",
+          "Node Degree"
+        ],
+        "label": "Seriation"
       },
       "value": "barycentre"
-    },
-    {
-      "name": "timeRange",
-      "value": "[timeRange]"
     },
     {
       "name": "timeFormat",
       "value": "[timeFormat]"
     },
     {
-      "name": "nodeTypeInShape",
-      "value": "[nodeTypeInShape]"
+      "name": "time",
+      "bind": {
+        "input": "brush",
+        "axisType": "time",
+        "network": "network",
+        "for": "links",
+        "field": "data._time"
+      }
     },
     {
-      "name": "pattern_selection",
-      "network": "network",
-      "action": "replace",
-      "type": "selection",
-      "clearOnBackgroundClick": true
+      "name": "nodeTypeInShape",
+      "value": "[nodeTypeInShape]"
     },
     {
       "name": "selected_marks",
@@ -46,15 +58,9 @@
 
   "orderings": [
     {
-      "name": "order",
-      "data": "network.nodes",
-      "orderBy": {"field": "data.name"},
-      "allowTies": true
-    }, 
-    {
       "name": "staticOrder",
-      "method": {"parameter": "seriationMethod"},
-      "network": "staticNetwork"
+      "orderBy": {"parameter": "seriationMethod"},
+      "data": "staticNetwork.nodes"
     }
   ],
 
@@ -63,7 +69,7 @@
         "name": "layout",
         "data": "network.nodes",
         "pattern": "cartesian",
-        "x": [{ "scale": "time", "field": "data.date" }],
+        "x": [{ "scale": "time", "field": "data._time" }],
         "y": [{ "order": "staticOrder", "field": "data.name" }],
         "positioning": "none"
       },
@@ -78,48 +84,81 @@
 
 
   "scales": [
-    {
-      "name": "time",
-      "type": "time",
-      "range": [50, 500],
-      "domain": { "data": "network.nodes",  "field": "data.date"}
-    },
-    {
-      "name": "radius",
-      "type": "linear",
-      "range": [10, 200],
-      "domain": { "data": "network.nodes", "field": "degree" }
-    },
-    {
-      "name": "nodeShape",
-      "type": "ordinal",
-      "range": "[nodeTypeShapeScheme]",
-      "domain": { "data": "network.nodes",  "field": "data.type0" }
-    },
-    {
-      "name": "nodeColor",
-      "type": "linear",
-      "scheme": "reds",
-      "domain": { "data": "network.nodes", "field": "degree" }
-    },
-    {
-      "name": "edgeColor",
-      "type": "ordinal",
-      "range": "[colorScheme]",
-      "domain": { "data": "network.links", "field": "linkType" }
-    },
-    {
-      "name": "edgeWidth",
-      "type": "linear",
-      "range": [ 1.2, 3],
-      "domain": { "data": "network.links", "field": "linkWeight" }
-    },
-    {
-      "name": "edgeOpacity",
-      "type": "linear",
-      "range": [0.2, 0.8],
-      "domain": { "data": "network.links", "field": "linkWeight" }
-    }
+        {
+          "name": "time",
+          "type": "time",
+          "range": [
+            50,
+            500
+          ],
+          "domain": {
+            "data": "network.nodes",
+            "field": "data._time"
+          }
+        },
+        {
+          "name": "radius",
+          "type": "linear",
+          "range": [
+            10,
+            200
+          ],
+          "domain": {
+            "data": "network.nodes",
+            "field": "degree"
+          }
+        },
+        {
+          "name": "nodeShape",
+          "type": "ordinal",
+          "range": "[nodeTypeShapeScheme]",
+          "domain": {
+            "data": "network.nodes",
+            "field": "data.type0"
+          }
+        },
+        {
+          "name": "nodeColor",
+          "type": "linear",
+          "scheme": "reds",
+          "domain": {
+            "data": "network.nodes",
+            "field": "degree"
+          }
+        },
+        {
+          "name": "edgeColor",
+          "type": "ordinal",
+          "range": "[colorScheme]",
+          "domain": {
+            "data": "network.links",
+            "field": "linkType"
+          }
+        },
+        {
+          "name": "edgeWidth",
+          "type": "linear",
+          "range": [
+            1.2,
+            3
+          ],
+          "domain": {
+            "data": "network.links",
+            "field": "linkWeight"
+          }
+        },
+        {
+          "name": "edgeOpacity",
+          "type": "linear",
+          "range": [
+            0.2,
+            0.8
+          ],
+          "domain": {
+            "data": "network.links",
+            "field": "linkWeight"
+          }
+        }
   ],
 
 "vis": [
@@ -131,29 +170,32 @@
         "text": { "expression": "datum.id"},
         "align": "right",
         "dx": -15,
-        "fontSize": 8
+        "fontSize": 6
       }
     },
     {
       "entries": "network.links",
       "layout": "layout",
       "drawAxes": true,
-      "actions": [
-        {
-          "interaction": "select",
-          "using": "[selectType]",
-          "action": "replace",
-          "selection": "pattern_selection"
-        }
-      ],
       "mark": {
         "type": "linkpath",
         "start": "source",
         "end": "target",
         "shape": "curveSymmetric",
-        "parallelLinksType": "[parallelLinksType]",
-        "stroke": { "field": "linkType", "scale": "edgeColor" },
-        "directionForShape": {  "ordering": "staticOrder" },
+        "parallelLinksType": "curve",
+        "stroke": {
+          "conditions": [
+            {
+              "test": "!params.nodeTypeInShape",
+              "value": "grey"
+            }
+          ],
+          "field": "linkType",
+          "scale": "edgeColor"
+        },
+        "directionForShape": {
+          "ordering": "staticOrder"
+        },
         "strokeWidth": 1,
         "strokeOpacity": {
           "conditions": [
@@ -178,7 +220,7 @@
           "interaction": "select",
           "using": "[selectType]",
           "action": "replace",
-          "selection": "pattern_selection"
+          "selection": "selected_marks"
         }
       ],
       "mark": {

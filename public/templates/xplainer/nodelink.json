@@ -94,6 +94,8 @@
         "type": "linkpath",
         "start": "source",
         "end": "target",
+        "parallelLinksType": "curve",
+        "parallelLinksGap": 4,
         "stroke": {
           "conditions": [
             {
@@ -103,20 +105,16 @@
           ], 
           "field": "linkType", "scale": "edgeColor" 
         },
-        "strokeWidth": { "field": "linkWeight", "scale": "edgeWidth"},
+        "strokeWidth": "0.1 * datum.linkWeight",
         "opacity":  { 
           "conditions": [
             {
-              "test": "datum.data._time < params.timeRange[0] || datum.data._time > params.timeRange[1]",
-              "value": 0
-            },
-            {
               "selectionIsEmpty": "selected_marks.nodes",
-              "value": 1
+              "value": 0.6
             },
             {
               "inSelection": "selected_marks.links",
-              "value": 1
+              "value": 0.6
             }
           ],
           "value": 0.1

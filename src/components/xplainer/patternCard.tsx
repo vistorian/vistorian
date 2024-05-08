@@ -45,7 +45,7 @@ function PatternCard (props: IPatternCardProps) {
   const { visType, open, setOpen, motifs, allMotifs, networkData, selectedMotifNo, setSelectedMotifNo } = props
   const groupByType = groupBy(motifs, motif => motif.type())
   // console.log('params:', open)
-  // console.log('motifs:', motifs)
+  console.log('motifs:', motifs)
   // console.log('selectedMotifNo', selectedMotifNo)
 
   const classes = useStyles()

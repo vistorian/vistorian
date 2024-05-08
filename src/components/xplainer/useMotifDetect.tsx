@@ -9,7 +9,7 @@ export const getBounds = (nodesId: any, linksId: any, sceneJSON: any) => {
   // const linksId = newVal.links.map((l: any) => l.id)
 
   const nodesToProcess: any[] = [sceneJSON]
-  // console.log('nodesId:', nodesId, 'sceneJSON:', sceneJSON )
+  // console.log('nodesId:', nodesId, linksId)
   let bounds: any = { nodes: [], links: [] }
   let boundsId = { nodes: [] as string[], links: [] as string[] }
 
@@ -33,7 +33,7 @@ export const getBounds = (nodesId: any, linksId: any, sceneJSON: any) => {
       }
     }
   }
-  // console.log('bounds:', bounds)
+  // console.log('bounds:', bounds, boundsId)
   return { bounds, boundsId }
 }
 
@@ -85,7 +85,7 @@ const useMotifDectect = (patternDetector: any) => {
 
   // currently only allow for one vis in Learning Mode
   const detectMotifs = (newVal: any) => {
-    console.log('detectMotifs:', newVal, patternDetector)
+    console.log('detectMotifs:', newVal)
     if (Object.keys(patternDetector).length > 0 && newVal.nodes.length > 0) {
       let nodes = newVal.nodes
       // bug: due to netpan sceneJSON linkpath has two items

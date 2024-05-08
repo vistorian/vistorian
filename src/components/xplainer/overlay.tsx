@@ -15,6 +15,13 @@ interface IOverlayProps {
 // components for displaying all overlays
 function Overlay(props: IOverlayProps) {
   const { motifs, open, sceneJSON, visOffset, hoverRelatedMotif, clickRelatedMotif, selectedMotifNo } = props
+  // console.log('clickRelatedMotif:', clickRelatedMotif, selectedMotifNo)
+
+  const getMotif = (arr: [number, number]) => {
+    const groupByType = groupBy(motifs.motifs, (motif) => motif.type())
+    const selectedMotif: NetworkPattern = groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]
+    return selectedMotif
+  }
 
   // calc motif bounds
   const getRelatedMotifBound = (motif: NetworkPattern) => {
@@ -24,12 +31,13 @@ function Overlay(props: IOverlayProps) {
     return relatedMotifBound
   }
 
-  // render component
+  // get a motif bound 
   const getRelatedMotifDiv = (motif: NetworkPattern) => {
-    const relatedMotifBound = getRelatedMotifBound(motif)
+    const bound = getRelatedMotifBound(motif)
+    // console.log('getRelatedMotifDiv', motif, bound)
     return (
-      relatedMotifBound ? <OverlayItem 
-        bounds={relatedMotifBound}
+      bound ? <OverlayItem 
+        bounds={bound}
         status={2}
         visOffset={visOffset}
       /> : null
@@ -38,27 +46,42 @@ function Overlay(props: IOverlayProps) {
   
   // show all motif bounds in user selection area / overview mode
   const getUserMotifsDiv = (motifs: NetworkPattern[]) => {
-    const groupByType = groupBy(motifs, (motif) => motif.type())
     return motifs.map((motif: NetworkPattern, index: number) => {
       const bound = getRelatedMotifBound(motif)
-      let status: number = 0
-      if (selectedMotifNo[0] === -1) {
-        status = 1 // overview mode
-      }
-      else {
-        const selectedMotif = groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]
-        status = JSON.stringify(selectedMotif) === JSON.stringify(motif) ? 2: 0
-      }
       if (!bound) return
       // @ts-ignore
       return <OverlayItem
         key={index}
         bounds={bound}
-        status={status}
+        status={1}
         visOffset={visOffset}
       />
     })
   }
+  // const getUserMotifsDiv = (motifs: NetworkPattern[]) => {
+  //   const groupByType = groupBy(motifs, (motif) => motif.type())
+  //   return motifs.map((motif: NetworkPattern, index: number) => {
+  //     const bound = getRelatedMotifBound(motif)
+  //     let status: number = 0
+  //     if (selectedMotifNo[0] === -1) {
+  //       status = 1 // overview mode
+  //     }
+  //     else {
+  //       const selectedMotif = groupByType[Object.keys(groupByType)[selectedMotifNo[0]]][selectedMotifNo[1]]
+  //       // console.log('selectedMotif:', selectedMotif, 'motif:', motif, "bound:", bound )
+  //       status = JSON.stringify(selectedMotif) === JSON.stringify(motif) ? 2: 0
+  //       // console.log('status:', status)
+  //     }
+  //     if (!bound) return
+  //     // @ts-ignore
+  //     return <OverlayItem
+  //       key={index}
+  //       bounds={bound}
+  //       status={status}
+  //       visOffset={visOffset}
+  //     />
+  //   })
+  // }
 
   return (
     // <div 
@@ -70,10 +93,12 @@ function Overlay(props: IOverlayProps) {
     // >
     open ? <>
       {/* show selected related motif bound */}
-      {clickRelatedMotif && Object.keys(clickRelatedMotif).length > 0 ? 
+      {selectedMotifNo[0] === -1 ? getUserMotifsDiv(motifs.motifs) : null}
+      {selectedMotifNo[0] !== -1 ? getRelatedMotifDiv(getMotif(selectedMotifNo)): null}
+      {/* {clickRelatedMotif && Object.keys(clickRelatedMotif).length > 0 ? 
         getRelatedMotifDiv(clickRelatedMotif) : 
-        getUserMotifsDiv(motifs.motifs)
-      }
+        null
+      } */}
       {/* show hovered related motif bound */}
       {hoverRelatedMotif && Object.keys(hoverRelatedMotif).length > 0 ? getRelatedMotifDiv(hoverRelatedMotif) : null}
     </> : null

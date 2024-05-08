@@ -40,13 +40,22 @@ function Explainer(props: IVisContentProps) {
     let template = templates.filter(t => t.key === visType)[0]
     let templatePath = `./templates/xplainer/${template.template}`
     let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
-    console.log('spec:', spec)
+    // console.log('spec:', spec)
+
+    let width = document.getElementById(containerId)?.getBoundingClientRect().width as number
+    let height = document.getElementById(containerId)?.getBoundingClientRect().height as number
+    if (visType === 'nodelink_circular') {
+      width = width < height ? width : height
+      height = width
+    }
 
     // @ts-ignore
     let tmpViewer = await NetPanoramaTemplateViewer.render(templatePath, {
       dataDefinition: JSON.stringify(spec.data),
       networksDefinition: JSON.stringify(spec.network),
       selectType: `"${selectType}"`, // used for pattern xplainer
+      width: width,
+      height: height,
       ...options
     }, containerId, {
       renderer: renderer,
@@ -188,7 +197,7 @@ function Explainer(props: IVisContentProps) {
             motifs={motifs}
             open={open}
             sceneJSON={viewer.sceneJSON}
-            // TODO: 24 is the height of the parameter selection
+            // TODO: 24 for parameter height
             visOffset={[viewer.sceneJSON.items[0].x, visType !== 'nodelink' ? viewer.sceneJSON.items[0].y + 24 : viewer.sceneJSON.items[0].y]}
             hoverRelatedMotif={hoverRelatedMotif}
             clickRelatedMotif={clickRelatedMotif}

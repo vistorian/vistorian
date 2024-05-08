@@ -220,7 +220,7 @@
         "start": "source",
         "end": "target",
         "shape": "curveSymmetric",
-        "parallelLinksType": "null",
+        "parallelLinksType": "curve",
         "stroke": { 
           "conditions": [
             {

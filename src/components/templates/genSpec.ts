@@ -228,7 +228,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     baseNetworkSpec.transform.push({ "type": "calculate", "as": "linkWeight", "calculate": `datum.data.${config.linkTableConfig?.linkWeight}`, "for": "links" })
 
 
-  // =========== if vis is timearcs, generate staic network without time =========== 
+  // =========== if vis is timearcs, generate static network without time =========== 
   if (visType === 'timearcs') {
     const staticNetworkSpec: any = {
       "name": "staticNetwork",

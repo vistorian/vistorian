@@ -250,39 +250,6 @@
           "value": 0.1
         }
       }
-    },
-    {
-      "entries": "network.nodes",
-      "layout": "layout",
-      "occlusion": {"field": "degree"},
-      "occlusionDensity":  2,
-      "mark": {
-        "type": "text",
-        "text": { "expression": "[nodeLabel]"},
-        "opacity": {
-          "conditions": [
-            {
-              "selectionIsEmpty": "node_selection.nodes",
-              "value": 1
-            },
-            {
-              "inSelection": "node_selection.nodes",
-              "value": 1
-            },
-            {
-              "inSelection": "neighbours.nodes",
-              "value": 1
-            }
-          ],
-          "value": 0.1
-        },
-        "cursor": "none",
-        "dx": 5,
-        "dy": 4,
-        "fontSize": 13,
-        "stroke": "white",
-        "strokeWidth": 0.3
-      }
     }
   ]
 }

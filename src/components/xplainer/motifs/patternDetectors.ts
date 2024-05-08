@@ -166,7 +166,7 @@ export class PatternDetectors {
 
         let end = new Date().getTime();
 
-        console.log("TIMEEND ", end - start);
+        // console.log("TIMEEND ", end - start);
     }
 
     getAll() {

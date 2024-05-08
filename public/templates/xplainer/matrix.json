@@ -8,15 +8,23 @@
             "name": "seriationMethod",
             "bind": {
                 "input": "select",
-                "options": [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
-                "labels": [ "optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca" ],
+                "options": [
+                    "optimal-leaf-order",
+                    "barycentre",
+                    "bandwidth-reduction",
+                    "pca",
+                    "degree_order"
+                ],
+                "labels": [
+                    "Optimal Leaf Order",
+                    "Barycentre Heuristic",
+                    "Bandwidth Reduction",
+                    "PCA",
+                    "Node Degree"
+                ],
                 "label": "Seriation"
             },
-            "value": "barycentre"
-        },
-        {
-            "name": "timeRange",
-            "value": "[timeRange]"
+            "value": "optimal-leaf-order"
         },
         {
             "name": "pattern_selection",
@@ -37,8 +45,11 @@
         {
             "name": "opacity",
             "type": "linear",
-            "range": [ 0.4, 1 ],
-            "domain": { "data": "network.links", "field": "linkWeight" }
+            "range": [ 0.2, 1 ],
+            "domain": {
+                "data": "network.links",
+                "field": "linkWeight"
+            }
         },
         {
             "name": "cellColor",
@@ -50,16 +61,22 @@
     "orderings": [
         {
             "name": "order",
-            "method": { "parameter": "seriationMethod" },
-            "network": "network"
+            "orderBy": {"parameter": "seriationMethod"},
+            "data": "network.nodes"
         }
     ],
     "tables": [
         {
             "name": "adjacencyMatrix",
             "data": "network.links",
-            "rowOrder": { "order": "order", "field": "source" },
-            "colOrder": { "order": "order", "field": "target" },
+            "rowOrder": {
+                "order": "order",
+                "field": "source"
+            },
+            "colOrder": {
+                "order": "order",
+                "field": "target"
+            },
             "symmetric": true
         }
     ],
@@ -70,12 +87,12 @@
                 "field": "source.data._label",
                 "align": "right",
                 "dx": -15,
-                "fontSize": 9
+                "fontSize": 8
             },
             "colLabels": {
                 "field": "target.data._label",
                 "dx": 15,
-                "fontSize": 9
+                "fontSize": 8
             },
             "rowLines": { "stroke": "lightgrey" },
             "colLines": { "stroke": "lightgrey" },
