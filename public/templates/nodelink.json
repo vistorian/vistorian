@@ -4,7 +4,6 @@
     "modifierKeyRequired": null
   },
   "exportButton": true,
-
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
   "width": "[width]",
@@ -221,7 +220,7 @@
           "scale": "edgeColor"
         },
         "strokeWidth": {
-          "expression": "0.1 * datum.linkWeight * params.linkWidthParam"
+          "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
         },
         "opacity": {
           "conditions": [

@@ -32,14 +32,16 @@
           "barycentre",
           "bandwidth-reduction",
           "pca",
-          "degree"
+          "degree",
+          "label"
         ],
         "labels": [
           "optimal-leaf-order",
           "barycentre",
           "bandwidth-reduction",
           "pca",
-          "degree"
+          "degree",
+          "Name"
         ],
         "label": "Seriation"
       },
@@ -208,7 +210,7 @@
           "ordering": "node_order"
         },
         "strokeWidth": {
-          "expression": "0.1 * datum.linkWeight * params.linkWidthParam"
+          "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
         },
         "stroke": {
           "conditions": [
@@ -303,6 +305,10 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
+      "overlapRemoval": {
+        "field": "degree",
+        "overlapDistance": 1.5
+      },
       "actions": [
         {
           "interaction": "select",
