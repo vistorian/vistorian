@@ -1,6 +1,10 @@
 {
     "x": 120,
     "y": 120,
+    "zoom": true,
+    "pan": {
+       "max": [0, 0]
+     },
     
     "data": "[dataDefinition]",
     "networks": "[networksDefinition]",
@@ -106,13 +110,13 @@
             "rowLabels": {
                 "field": "source.data._label",
                 "align": "right",
-                "dx": -15,
-                "fontSize": 8
+                "fontSize": 11,
+                "fixedPanZoom": "x"
             },
             "colLabels": {
                 "field": "target.data._label",
-                "dx": 15,
-                "fontSize": 8
+                "fontSize": 11,
+                "fixedPanZoom": "y"
             },
             "rowLines": { "stroke": "lightgrey" },
             "colLines": { "stroke": "lightgrey" },
@@ -126,6 +130,7 @@
                 }
             ],
             "mark": {
+                "scaling": true,
                 "type": "square",
                 "area": {
                     "expression": "(bounds.width * bounds.height)"

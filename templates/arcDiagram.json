@@ -1,16 +1,11 @@
-{  
-  "x": 700,  
-
+{
+  "x": 700,
   "zoom": true,
-  "pan": {
-    "modifierKeyRequired": null
-  },
-
+  "pan": true,
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
   "width": "[width]",
   "height": "[height]",
-
   "parameters": [
     {
       "name": "node_selection",
@@ -22,26 +17,31 @@
       "name": "neighbours",
       "source": "node_selection",
       "transform": [
-        { "type": "neighbours", "direction": "both" }
+        {
+          "type": "neighbours",
+          "direction": "both"
+        }
       ]
     },
     {
       "name": "seriationMethod",
       "bind": {
-          "input": "select",
-          "options":  [ 
-            "optimal-leaf-order", 
-            "barycentre", 
-            "bandwidth-reduction", 
-            "pca", 
-            "degree_order" ],
-          "labels":  [ 
-            "Optimal Leaf Order", 
-            "Barycentre Heuristic", 
-            "Bandwidth Reduction", 
-            "PCA", 
-            "Node Degree" ],
-          "label": "Seriation"
+        "input": "select",
+        "options": [
+          "optimal-leaf-order",
+          "barycentre",
+          "bandwidth-reduction",
+          "pca",
+          "degree"
+        ],
+        "labels": [
+          "optimal-leaf-order",
+          "barycentre",
+          "bandwidth-reduction",
+          "pca",
+          "degree"
+        ],
+        "label": "Seriation"
       },
       "value": "optimal-leaf-order"
     },
@@ -87,69 +87,94 @@
       },
       "value": 1
     },
-
     {
       "name": "time",
       "bind": {
-          "input": "brush",
-          "axisType": "time",
-          "network": "network",
-          "for": "links",
-          "field": "data._time"
+        "input": "brush",
+        "axisType": "time",
+        "network": "network",
+        "for": "links",
+        "field": "data._time"
       }
     }
   ],
-
   "scales": [
     {
       "name": "radius",
       "type": "linear",
-      "range": [ 2, 150 ],
+      "range": [
+        2,
+        150
+      ],
       "rangeMapFunction": "datum * params.nodeSizeParam",
-      "domain": { "data": "network.nodes",  "field": "degree" }
+      "domain": {
+        "data": "network.nodes",
+        "field": "degree"
+      }
     },
     {
       "name": "nodeShape",
       "type": "ordinal",
       "range": "[nodeTypeShapeScheme]",
-      "domain": { "data": "network.nodes",  "field": "data.type0" }
+      "domain": {
+        "data": "network.nodes",
+        "field": "data.type0"
+      }
     },
     {
       "name": "nodeColor",
       "type": "ordinal",
       "range": "[colorScheme]",
-      "domain": { "data": "network.nodes",  "field": "data.type0" }
+      "domain": {
+        "data": "network.nodes",
+        "field": "data.type0"
+      }
     },
     {
       "name": "edgeColor",
       "type": "ordinal",
       "range": "[colorScheme]",
-      "domain": { "data": "network.links", "field": "linkType" }
+      "domain": {
+        "data": "network.links",
+        "field": "linkType"
+      }
     },
     {
       "name": "edgeWidth",
       "type": "linear",
-      "range": [ 1, 10],
+      "range": [
+        1,
+        10
+      ],
       "rangeMapFunction": "datum * params.linkWidthParam",
-      "domain": { "data": "network.links", "field": "linkWeight" }
+      "domain": {
+        "data": "network.links",
+        "field": "linkWeight"
+      }
     },
     {
       "name": "edgeOpacity",
       "type": "linear",
-      "range": [0, 0.8],
+      "range": [
+        0,
+        0.8
+      ],
       "rangeMapFunction": "datum * params.linkOpacityParam",
-      "domain": { "data": "network.links", "field": "linkWeight" }
-    } 
+      "domain": {
+        "data": "network.links",
+        "field": "linkWeight"
+      }
+    }
   ],
-
   "orderings": [
     {
       "name": "node_order",
       "data": "network.nodes",
-      "orderBy": {"parameter": "seriationMethod"}
+      "orderBy": {
+        "parameter": "seriationMethod"
+      }
     }
   ],
-
   "layouts": [
     {
       "name": "layout",
@@ -159,7 +184,6 @@
       "orientation": "vertical"
     }
   ],
-
   "vis": [
     {
       "entries": "network.links",
@@ -168,8 +192,10 @@
         "type": "linkpath",
         "start": "source",
         "end": "target",
-        "directionForShape": { "ordering": "node_order"},
-        "strokeWidth": { 
+        "directionForShape": {
+          "ordering": "node_order"
+        },
+        "strokeWidth": {
           "expression": "0.1 * datum.linkWeight * params.linkWidthParam"
         },
         "stroke": {
@@ -178,12 +204,12 @@
               "test": "!params.nodeTypeInShape",
               "value": "grey"
             }
-          ], 
-          "field": "linkType", 
-          "scale": "edgeColor" 
+          ],
+          "field": "linkType",
+          "scale": "edgeColor"
         },
         "shape": "arc",
-        "strokeOpacity":  { 
+        "strokeOpacity": {
           "conditions": [
             {
               "selectionIsEmpty": "node_selection.nodes",
@@ -198,7 +224,6 @@
         }
       }
     },
-
     {
       "entries": "network.nodes",
       "layout": "layout",
@@ -230,7 +255,7 @@
           "field": "data.type0",
           "scale": "nodeShape"
         },
-        "area": { 
+        "area": {
           "expression": "10 + datum.degree * params.nodeSizeParam"
         },
         "fill": {
@@ -263,7 +288,6 @@
         }
       }
     },
-
     {
       "entries": "network.nodes",
       "layout": "layout",
@@ -285,7 +309,9 @@
       ],
       "mark": {
         "type": "text",
-        "text": { "expression": "[nodeLabel]"},
+        "text": {
+          "expression": "[nodeLabel]"
+        },
         "opacity": {
           "conditions": [
             {
@@ -308,6 +334,5 @@
         "cursor": "none"
       }
     }
-
   ]
 }
