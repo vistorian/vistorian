@@ -4,7 +4,6 @@
     "modifierKeyRequired": null
   },
   "exportButton": true,
-
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
   "width": "[width]",
@@ -86,6 +85,30 @@
         "step": "1"
       },
       "value": 5
+    },
+    {
+      "name": "labelSizeParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Label Size",
+        "min": "5",
+        "max": "25",
+        "step": "1"
+      },
+      "value": 13
+    },
+    {
+      "name": "linkGapParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Link Gap",
+        "min": "0",
+        "max": "6",
+        "step": "1"
+      },
+      "value": 3
     },
     {
       "name": "time",
@@ -183,7 +206,9 @@
         "start": "source",
         "end": "target",
         "parallelLinksType": "curve",
-        "parallelLinksGap": 4,
+        "parallelLinksGap": {
+          "expression": "params.linkGapParam"
+        },
         "stroke": {
           "conditions": [
             {
@@ -195,7 +220,7 @@
           "scale": "edgeColor"
         },
         "strokeWidth": {
-          "expression": "0.1 * datum.linkWeight * params.linkWidthParam"
+          "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
         },
         "opacity": {
           "conditions": [
@@ -274,6 +299,9 @@
             }
           ],
           "value": 0.1
+        },
+        "tooltip": {
+          "expression": "[nodeLabel] + ' (' + datum.degree + (datum.degree == 1 ? ' link)' : ' links)') "
         }
       }
     },
@@ -309,7 +337,9 @@
         "cursor": "none",
         "dx": 5,
         "dy": 4,
-        "fontSize": 13,
+        "fontSize": {
+          "expression": "params.labelSizeParam"
+        },
         "stroke": "white",
         "strokeWidth": 0.3
       }
