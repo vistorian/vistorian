@@ -100,6 +100,18 @@
       "value": 13
     },
     {
+      "name": "linkGapParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Link Gap",
+        "min": "0",
+        "max": "6",
+        "step": "1"
+      },
+      "value": 3
+    },
+    {
       "name": "time",
       "bind": {
         "input": "brush",
@@ -195,7 +207,9 @@
         "start": "source",
         "end": "target",
         "parallelLinksType": "curve",
-        "parallelLinksGap": 4,
+        "parallelLinksGap": {
+          "expression": "params.linkGapParam"
+        },
         "stroke": {
           "conditions": [
             {
