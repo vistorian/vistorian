@@ -10,6 +10,7 @@ import NetworkLinkTable from './preview/networkLinkTable';
 import { ExtraNodeConfig, LinkTableConfig, NetworkConfig } from '../../../../typings';
 import LinkDataTable from './preview/linkDataTable';
 import NodeDataTable from './preview/nodeDataTable';
+import { defaultNetworks } from '../../../../typings/constant';
 
 const { Title } = Typography
 
@@ -27,6 +28,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
   const classes = useStyles()
   const { selectedNetwork, setPreview, setMain, setSelectedNetwork } = props
   const { networkStore, setNetworkStore } = useContext(WizardContext)
+  const isValid = defaultNetworks.has(selectedNetwork)
 
   const network = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + selectedNetwork) as string) as NetworkConfig
   const [edit, setEdit] = useState<boolean>(false)
@@ -159,6 +161,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
             <>
               <h2>{selectedNetwork}</h2>
               <Button
+                disabled={isValid}
                 icon={<EditFilled />}
                 type='text'
                 shape='circle'

@@ -3,6 +3,7 @@ import { DeleteFilled, CopyFilled, EditFilled, CheckOutlined, CloseOutlined, Nod
 import { createUseStyles } from 'react-jss'
 import { OperationType } from '../../../typings'
 import { useState } from 'react'
+import { defaultDatasets, defaultNetworks } from '../../../typings/constant'
 
 const useStyles = createUseStyles({
   tabContent: {
@@ -58,6 +59,8 @@ function Record(props: IRecordProps) {
     setValue(e.target.value)
   }
 
+  const isValid = type === 'network' ? defaultNetworks.has(data) : defaultDatasets.has(data)
+
   return (
     <div className={classes.tabContent} key={data}>
       {!editOpen ? (
@@ -71,8 +74,9 @@ function Record(props: IRecordProps) {
             </span>
           </Tooltip>
           <div className={classes.tabFunc}>
-            <Tooltip title="Rename">
+            <Tooltip title={isValid ? `Default ${type} does not allow renaming. Duplicate a new one first.`: 'Rename'}>
               <Button
+                disabled={isValid}
                 icon={<EditFilled />}
                 type='text'
                 shape='circle'
@@ -87,8 +91,9 @@ function Record(props: IRecordProps) {
                 onClick={() => toCopy(type, data)}
               />
             </Tooltip>
-            <Tooltip title="Delete">
+            <Tooltip title={isValid ? `You cannot delete the default ${type}.` : 'Delete'}>
               <Button
+                disabled={isValid}
                 icon={<DeleteFilled />}
                 type='text'
                 shape='circle'
@@ -98,10 +103,8 @@ function Record(props: IRecordProps) {
             {type === 'network' ? 
               <Tooltip title="Visualize">
                 <Button
-                  // icon={<NodeIndexOutlined/>}
                   type='text'
                   shape='circle'
-                  // text='visualize'
                   style={{
                     fontWeight: 'bold',
                     color: '#E17918'
@@ -120,7 +123,7 @@ function Record(props: IRecordProps) {
           />
           <div style={{display: 'flex', justifyContent: 'flex-end'}}>
             <Button 
-                icon={<CheckOutlined />}
+              icon={<CheckOutlined />}
               type='text'
               shape='circle'
               onClick={()=>{
