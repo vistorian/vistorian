@@ -59,7 +59,7 @@ function Record(props: IRecordProps) {
     setValue(e.target.value)
   }
 
-  const isValid = type === 'network' ? defaultNetworks.has(data) : defaultDatasets.has(data)
+  const isDefault = type === 'network' ? defaultNetworks.has(data) : defaultDatasets.has(data)
 
   return (
     <div className={classes.tabContent} key={data}>
@@ -74,9 +74,9 @@ function Record(props: IRecordProps) {
             </span>
           </Tooltip>
           <div className={classes.tabFunc}>
-            <Tooltip title={isValid ? `Default ${type} does not allow renaming. Duplicate a new one first.`: 'Rename'}>
+            <Tooltip title={isDefault ? `You cannot rename the default ${type}. Duplicate a new one first.`: 'Rename'}>
               <Button
-                disabled={isValid}
+                disabled={isDefault}
                 icon={<EditFilled />}
                 type='text'
                 shape='circle'
@@ -91,9 +91,9 @@ function Record(props: IRecordProps) {
                 onClick={() => toCopy(type, data)}
               />
             </Tooltip>
-            <Tooltip title={isValid ? `You cannot delete the default ${type}.` : 'Delete'}>
+            <Tooltip title={isDefault ? `You cannot delete the default ${type}.` : 'Delete'}>
               <Button
-                disabled={isValid}
+                disabled={isDefault}
                 icon={<DeleteFilled />}
                 type='text'
                 shape='circle'

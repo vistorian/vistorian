@@ -1,6 +1,6 @@
 import { createUseStyles } from 'react-jss'
 import { useContext, useState } from 'react';
-import { Alert, Button, Input, Modal, Typography } from 'antd';
+import { Alert, Button, Input, Modal, Tooltip, Typography } from 'antd';
 import { DeleteFilled, CopyFilled, EditFilled, CheckOutlined, CloseOutlined, NodeIndexOutlined } from '@ant-design/icons'
 import { WizardContext } from '../context';
 import styled from '@emotion/styled';
@@ -28,7 +28,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
   const classes = useStyles()
   const { selectedNetwork, setPreview, setMain, setSelectedNetwork } = props
   const { networkStore, setNetworkStore } = useContext(WizardContext)
-  const isValid = defaultNetworks.has(selectedNetwork)
+  const isDefault = defaultNetworks.has(selectedNetwork)
 
   const network = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + selectedNetwork) as string) as NetworkConfig
   const [edit, setEdit] = useState<boolean>(false)
@@ -160,13 +160,15 @@ function NetworkPreview(props: INetworkPreviewProps) {
           {!rename ?
             <>
               <h2>{selectedNetwork}</h2>
-              <Button
-                disabled={isValid}
-                icon={<EditFilled />}
-                type='text'
-                shape='circle'
-                onClick={() => setRename(true)}
-              />
+              <Tooltip title={isDefault ? `You cannot rename the default network. Duplicate a new one first.` : 'Delete'}>
+                <Button
+                  disabled={isDefault}
+                  icon={<EditFilled />}
+                  type='text'
+                  shape='circle'
+                  onClick={() => setRename(true)}
+                />
+              </Tooltip>
             </> : <>
               <Input
                 style={{ width: 300, fontSize: '22px', margin: '16px 5px', marginLeft: 0 }}
@@ -191,14 +193,6 @@ function NetworkPreview(props: INetworkPreviewProps) {
         </div>
         {/* func */}
         <div style={{ display: 'flex' }}>
-          {/* <MyButton
-            style={{ width: 135 }}
-            icon={edit ? <CheckOutlined />: <EditFilled />}
-            type='primary'
-            onClick={() => setEdit(!edit)}
-          >
-            {edit? 'Update' : 'Edit Network'}
-          </MyButton> */}
           <MyButton
             icon={<CopyFilled />}
             type='primary'
@@ -206,13 +200,38 @@ function NetworkPreview(props: INetworkPreviewProps) {
           >
             Duplicate
           </MyButton>
-          <MyButton
-            icon={<DeleteFilled />}
-            type='primary'
-            onClick={() => setOpen(true)}
+
+          <Tooltip title={isDefault ? `You cannot delete the default network.` : 'Delete'}>
+            <MyButton
+              disabled={isDefault}
+              icon={<DeleteFilled />}
+              type='primary'
+              onClick={() => setOpen(true)}
+            >
+              Delete
+            </MyButton>
+          </Tooltip>
+          {/* modal for delete data/network */}
+          <Modal
+            title={`Delete network`}
+            open={open}
+            onCancel={() => setOpen(false)}
+            footer={[
+              <Button key="cancel" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>,
+              <Button
+                key="ok"
+                type="primary"
+                onClick={() => toDelete(selectedNetwork)}
+              >
+                OK
+              </Button>
+            ]}
           >
-            Delete
-          </MyButton>
+            <p>Are you sure you want to delete {selectedNetwork} ?</p>
+          </Modal>
+
           <MyButtonPrimary
             icon={<NodeIndexOutlined />}
             type='primary'
@@ -224,32 +243,13 @@ function NetworkPreview(props: INetworkPreviewProps) {
             Visualize
           </MyButtonPrimary>
         </div>
-        {/* modal for delete data/network */}
-        <Modal
-          title={`Delete network`}
-          open={open}
-          onCancel={() => setOpen(false)}
-          footer={[
-            <Button key="cancel" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>,
-            <Button
-              key="ok"
-              type="primary"
-              onClick={() => toDelete(selectedNetwork)}
-            >
-              OK
-            </Button>
-          ]}
-        >
-          <p>Are you sure you want to delete {selectedNetwork} ?</p>
-        </Modal>
       </div>
 
       {/* <pre>{JSON.stringify(JSON.parse(data as string), null, 2)}</pre> */}
       {/* data: network configruation */}
       <Title level={3}>DATA TABLE(S)</Title>
-      <span>Below, you see the data tables you have used to specify. </span>
+      <span>Below, you see the data tables you have used to specify. </span> <br/>
+      {isDefault ? <span style={{color: "#E17918"}}>Default networks do not allow editing. Duplicate a new one first.</span> : null}
       
       <Title level={4}>{network.linkTableConfig?.file}</Title>
       <LinkDataTable 
@@ -258,6 +258,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
         setEdit={setEdit}
         linkDataConfig={linkDataConfig}
         setLinkDataConfig={setLinkDataConfig}
+        isDefault={isDefault}
       />
 
       {network.extraNodeConfig?.hasExtraNode ? 
@@ -269,6 +270,7 @@ function NetworkPreview(props: INetworkPreviewProps) {
           setEdit={setEdit}
           nodeDataConfig={nodeDataConfig}
           setNodeDataConfig={setNodeDataConfig}
+          isDefault={isDefault}
         />
       </> : null}
       
