@@ -35,11 +35,11 @@
         "input": "range",
         "event": "onChange",
         "label": "Node Size",
-        "min": "1",
-        "max": "10",
-        "step": "0.1"
+        "min": "0",
+        "max": "100",
+        "step": ".1"
       },
-      "value": 1
+      "value": 2
     },
     {
       "name": "nodeOpacityParam",
@@ -270,7 +270,7 @@
           "scale": "nodeShape"
         },
         "area": {
-          "expression": "40 + datum.degree * params.nodeSizeParam"
+          "expression": "10 + datum.degree * params.nodeSizeParam"
         },
         "fill": {
           "conditions": [
@@ -317,6 +317,7 @@
         "text": {
           "expression": "[nodeLabel]"
         },
+        "fontWeight": 700,
         "opacity": {
           "conditions": [
             {
@@ -341,7 +342,7 @@
           "expression": "params.labelSizeParam"
         },
         "stroke": "white",
-        "strokeWidth": 0.3
+        "strokeWidth": 0.5
       }
     }
   ]
