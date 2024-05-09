@@ -61,7 +61,7 @@ function Explorer(props: IVisContentProps) {
       }
       // console.log('spec:', spec)
 
-      console.log("options ", options)
+      // console.log("net ", spec.network);
       // @ts-ignore
       viewers[index] = await NetPanoramaTemplateViewer.render(templatePath, {
         dataDefinition: JSON.stringify(spec.data),
@@ -74,7 +74,7 @@ function Explorer(props: IVisContentProps) {
         paramCallbacks: getParamCallbacks
       })
       // @ts-ignore
-      // console.log('VIEW STATE:', tmpViewer.state)
+      console.log('VIEW STATE:', viewers)
       // console.log(JSON.stringify(tmpViewer.spec))
 
       const container = document.getElementById(containerId)
@@ -100,6 +100,7 @@ function Explorer(props: IVisContentProps) {
 
   const resizeChange = () => {
     console.log("RESIZECHANGE")
+
     visTypeList.map((visType, idx) => {
       const container = document.getElementById(`visSvg${idx}`)
       if (!container) {
