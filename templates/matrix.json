@@ -3,9 +3,11 @@
     "y": 120,
     "zoom": true,
     "pan": {
-       "max": [0, 0]
-     },
-    
+        "max": [
+            0,
+            0
+        ]
+    },
     "data": "[dataDefinition]",
     "networks": "[networksDefinition]",
     "parameters": [
@@ -19,7 +21,10 @@
             "name": "neighbours",
             "source": "node_selection",
             "transform": [
-              { "type": "neighbours", "direction": "both" }
+                {
+                    "type": "neighbours",
+                    "direction": "both"
+                }
             ]
         },
         {
@@ -38,18 +43,32 @@
                     "barycentre",
                     "bandwidth-reduction",
                     "pca",
-                    "degree_order"
+                    "degree",
+                    "id"
                 ],
                 "labels": [
                     "Optimal Leaf Order",
                     "Barycentre Heuristic",
                     "Bandwidth Reduction",
                     "PCA",
-                    "Node Degree"
+                    "Node Degree",
+                    "Node Label"
                 ],
                 "label": "Seriation"
             },
             "value": "optimal-leaf-order"
+        },
+        {
+            "name": "labelSizeParam",
+            "bind": {
+                "input": "range",
+                "event": "onChange",
+                "label": "Label Size",
+                "min": "5",
+                "max": "25",
+                "step": "1"
+            },
+            "value": 13
         },
         {
             "name": "time",
@@ -66,7 +85,10 @@
         {
             "name": "opacity",
             "type": "linear",
-            "range": [ 0.2, 1 ],
+            "range": [
+                0.2,
+                1
+            ],
             "domain": {
                 "data": "network.links",
                 "field": "linkWeight"
@@ -85,7 +107,9 @@
     "orderings": [
         {
             "name": "order",
-            "orderBy": {"parameter": "seriationMethod"},
+            "orderBy": {
+                "parameter": "seriationMethod"
+            },
             "data": "network.nodes"
         }
     ],
@@ -110,16 +134,28 @@
             "rowLabels": {
                 "field": "source.data._label",
                 "align": "right",
-                "fontSize": 11,
+                "fontSize": {
+                    "expression": "params.labelSizeParam"
+                },
+                "dx": -7,
+                "dy": 5,
                 "fixedPanZoom": "x"
             },
             "colLabels": {
                 "field": "target.data._label",
-                "fontSize": 11,
+                "fontSize": {
+                    "expression": "params.labelSizeParam"
+                },
+                "dx": 7,
+                "dy": 5,
                 "fixedPanZoom": "y"
             },
-            "rowLines": { "stroke": "lightgrey" },
-            "colLines": { "stroke": "lightgrey" },
+            "rowLines": {
+                "stroke": "lightgrey"
+            },
+            "colLines": {
+                "stroke": "lightgrey"
+            },
             "actions": [
                 {
                     "interaction": "select",

@@ -88,6 +88,30 @@
       "value": 1
     },
     {
+      "name": "labelSizeParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Label Size",
+        "min": "5",
+        "max": "25",
+        "step": "1"
+      },
+      "value": 13
+    },
+    {
+      "name": "labelDensityParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Label Density",
+        "min": "0",
+        "max": "20",
+        "step": "1"
+      },
+      "value": 5
+    },
+    {
       "name": "time",
       "bind": {
         "input": "brush",
@@ -181,7 +205,8 @@
       "data": "network.nodes",
       "pattern": "linear",
       "order": "node_order",
-      "orientation": "vertical"
+      "orientation": "vertical",
+      "fixedPanZoom": "x"
     }
   ],
   "vis": [
@@ -196,7 +221,7 @@
           "ordering": "node_order"
         },
         "strokeWidth": {
-          "expression": "0.1 * datum.linkWeight * params.linkWidthParam"
+          "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
         },
         "stroke": {
           "conditions": [
@@ -255,6 +280,9 @@
           "field": "data.type0",
           "scale": "nodeShape"
         },
+        "tooltip": {
+          "expression": "[nodeLabel] + ' (' + datum.degree + (datum.degree == 1 ? ' link)' : ' links)') "
+        },
         "area": {
           "expression": "10 + datum.degree * params.nodeSizeParam"
         },
@@ -291,6 +319,10 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
+      "overlapRemoval": {
+        "field": "degree",
+        "overlapDistance": {"parameter": "labelDensityParam"}
+      },
       "actions": [
         {
           "interaction": "select",
@@ -311,6 +343,9 @@
         "type": "text",
         "text": {
           "expression": "[nodeLabel]"
+        },
+        "fontSize": {
+          "expression": "params.labelSizeParam"
         },
         "opacity": {
           "conditions": [

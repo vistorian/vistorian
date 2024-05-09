@@ -4,7 +4,6 @@
     "modifierKeyRequired": null
   },
   "exportButton": true,
-
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
   "width": "[width]",
@@ -36,11 +35,11 @@
         "input": "range",
         "event": "onChange",
         "label": "Node Size",
-        "min": "1",
-        "max": "10",
-        "step": "0.1"
+        "min": "0",
+        "max": "100",
+        "step": ".1"
       },
-      "value": 1
+      "value": 2
     },
     {
       "name": "nodeOpacityParam",
@@ -86,6 +85,30 @@
         "step": "1"
       },
       "value": 5
+    },
+    {
+      "name": "labelSizeParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Label Size",
+        "min": "5",
+        "max": "25",
+        "step": "1"
+      },
+      "value": 13
+    },
+    {
+      "name": "linkGapParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Link Gap",
+        "min": "0",
+        "max": "6",
+        "step": "1"
+      },
+      "value": 3
     },
     {
       "name": "time",
@@ -183,7 +206,9 @@
         "start": "source",
         "end": "target",
         "parallelLinksType": "curve",
-        "parallelLinksGap": 4,
+        "parallelLinksGap": {
+          "expression": "params.linkGapParam"
+        },
         "stroke": {
           "conditions": [
             {
@@ -195,7 +220,7 @@
           "scale": "edgeColor"
         },
         "strokeWidth": {
-          "expression": "0.1 * datum.linkWeight * params.linkWidthParam"
+          "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
         },
         "opacity": {
           "conditions": [
@@ -245,7 +270,7 @@
           "scale": "nodeShape"
         },
         "area": {
-          "expression": "40 + datum.degree * params.nodeSizeParam"
+          "expression": "10 + datum.degree * params.nodeSizeParam"
         },
         "fill": {
           "conditions": [
@@ -274,6 +299,9 @@
             }
           ],
           "value": 0.1
+        },
+        "tooltip": {
+          "expression": "[nodeLabel] + ' (' + datum.degree + (datum.degree == 1 ? ' link)' : ' links)') "
         }
       }
     },
@@ -282,13 +310,14 @@
       "layout": "layout",
       "overlapRemoval": {
         "field": "degree",
-        "overlapDistance": 1.5
+        "overlapDistance": {"parameter": "labelDensityParam"}
       },
       "mark": {
         "type": "text",
         "text": {
           "expression": "[nodeLabel]"
         },
+        "fontWeight": 700,
         "opacity": {
           "conditions": [
             {
@@ -309,9 +338,11 @@
         "cursor": "none",
         "dx": 5,
         "dy": 4,
-        "fontSize": 13,
+        "fontSize": {
+          "expression": "params.labelSizeParam"
+        },
         "stroke": "white",
-        "strokeWidth": 0.3
+        "strokeWidth": 0.5
       }
     }
   ]

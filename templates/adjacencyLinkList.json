@@ -10,6 +10,30 @@
       "common": ["source.id"]
     }
   ],
+  "parameters":[
+    {
+      "name": "labelSizeParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Label Size",
+        "min": "5",
+        "max": "25",
+        "step": "1"
+      },
+      "value": 13
+    },
+    {
+      "name": "time",
+      "bind": {
+        "input": "brush",
+        "axisType": "time",
+        "network": "network",
+        "for": "links",
+        "field": "data._time"
+      }
+    }
+  ],
   "orderings": [
     {
       "name": "order",
@@ -62,11 +86,15 @@
       "mark": {
         "type": "text",
         "text": {
-          "field": "key[0]"
+          "//field": "key[0]",
+          "field": "data[0].source.data.name"
         },
         "x": 150,
         "dy":4,
-        "align": "right"
+        "align": "right",
+        "fontSize": {
+          "expression": "params.labelSizeParam"
+        }
       }
     },
     {
@@ -95,8 +123,7 @@
               "expression": "datum.linkType"
             },
             "opacity": {
-              "scale": "opacity",
-              "expression": "datum.linkWeight"
+              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? 1 : '0' "
             },
             "area": 30,
             "x": {
