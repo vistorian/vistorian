@@ -14,7 +14,7 @@ export interface DirectiveItem {
   code: string,
   definition: string,
   example: string,
-  obscure?: boolean,
+  display: string
 }
 
 export interface Directives {
@@ -26,24 +26,115 @@ export const directives: Directives = {
     {
       code: '%Y',
       definition: 'year with century as a decimal number',
-      example: '1999'
+      example: '1999',
+      display:'YYYY'
     },
     {
       code: '%y',
       definition: 'year without century as a decimal number',
-      example: '99'
-    },
-    {
-      code: '%G',
-      definition: 'ISO 8601 week-based year with century as a decimal number',
-      example: '1999',
-      obscure: true
-    },
-    {
-      code: '%g',
-      definition: 'ISO 8601 week-based year without century as a decimal number',
       example: '99',
-      obscure: true
+       display: 'YY'
+    },
+    // {
+    //   code: '%G',
+    //   definition: 'ISO 8601 week-based year with century as a decimal number',
+    //   example: '1999',
+    // },
+    // {
+    //   code: '%g',
+    //   definition: 'ISO 8601 week-based year without century as a decimal number',
+    //   example: '99',
+    // }
+  ],
+
+  Month: [
+    {
+      code: '%m',
+      definition: 'month as a decimal number [01,12]',
+      example: '11',
+      display: 'MM'
+    },
+    {
+      code: '%b',
+      definition: 'abbreviated month name',
+      example: 'Nov',
+      display: 'MMM'
+    },
+    {
+      code: '%B',
+      definition: 'full month name',
+      example: 'November',
+      display: 'MMMM'
+    },
+  ],
+
+  'Day of month': [
+    {
+      code: '%d',
+      definition: 'zero-padded day of the month as a decimal number [01,31]',
+      example: '04',
+      display: 'DD'
+    },
+    // {
+    //   code: '%e',
+    //   definition: 'space-padded day of the month as a decimal number [ 1,31]; equivalent to %_d',
+    //   example: ' 4',
+    // }
+  ],
+
+  Time: [
+    {
+      code: '%H',
+      definition: 'hour (24-hour clock) as a decimal number [00,23]',
+      example: '22',
+      display: 'HH'
+    },
+    {
+      code: '%I',
+      definition: 'hour (12-hour clock) as a decimal number [01,12]',
+      example: '10',
+      display: 'hh'
+    },
+    // {
+    //   code: '%P',
+    //   definition: 'either A (for AM) or P (for PM).',
+    //   example: 'AM',
+    //   display: 'A'
+    // },
+    {
+      code: '%p',
+      definition: 'either AM or PM.',
+      example: 'AM',
+      display: 'A'
+    },
+    {
+      code: '%M',
+      definition: 'minute as a decimal number [00,59]',
+      example: '45',
+      display: 'mm'
+    },
+    {
+      code: '%S',
+      definition: 'second as a decimal number [00,59]',
+      example: '15',
+      display: 'ss'
+    },
+    // {
+    //   code: '%L',
+    //   definition: 'milliseconds as a decimal number [000, 999]',
+    //   example: '400',
+    //   display: 
+    // },
+    // {
+    //   code: '%f',
+    //   definition: 'microseconds as a decimal number [000000, 999999]',
+    //   example: '400000'
+    // },
+    {
+      code: '%Z',
+      definition: 'time zone offset',
+      example: '',
+      display: 'ZZ'
     }
   ],
 
@@ -51,44 +142,28 @@ export const directives: Directives = {
     {
       code: '%q',
       definition: 'quarter of the year as a decimal number [1,4]',
-      example: '2'
-    }
-  ],
-
-  Month: [
-    {
-      code: '%B',
-      definition: 'full month name',
-      example: 'November'
-    },
-    {
-      code: '%b',
-      definition: 'abbreviated month name',
-      example: 'Nov'
-    },
-    {
-      code: '%m',
-      definition: 'month as a decimal number [01,12]',
-      example: '11'
+      example: '2',
+      display: 'Q'
     }
   ],
 
   'Week of year': [
-    {
-      code: '%U',
-      definition: 'Sunday-based week of the year as a decimal number [00,53]',
-      example: '42'
-    },
-    {
-      code: '%W',
-      definition: 'Monday-based week of the year as a decimal number [00,53]',
-      example: '42'
-    },
+    // {
+    //   code: '%U',
+    //   definition: 'Sunday-based week of the year as a decimal number [00,53]',
+    //   example: '42'
+    // },
+    // {
+    //   code: '%W',
+    //   definition: 'Monday-based week of the year as a decimal number [00,53]',
+    //   example: '42',
+    //   display: ''
+    // },
     {
       code: '%V',
       definition: 'ISO 8601 week of the year as a decimal number [01, 53]',
       example: '41',
-      obscure: true
+      display: 'WW'
     }
   ],
 
@@ -96,104 +171,49 @@ export const directives: Directives = {
     {
       code: '%a',
       definition: 'abbreviated weekday name',
-      example: 'Tue'
+      example: 'Tue',
+      display: 'ddd'
     },
     {
       code: '%A',
       definition: 'full weekday name',
-      example: 'Tuesday'
+      example: 'Tuesday',
+      display: 'dddd'
     },
     {
       code: '%u',
       definition: 'Monday-based (ISO 8601) weekday as a decimal number [1,7]',
-      example: '2'
+      example: '2',
+      display: 'E'
     },
-    {
-      code: '%w',
-      definition: 'Sunday-based weekday as a decimal number [0,6]',
-      example: '1'
-    }
-  ],
-
-  'Day of month': [
-    {
-      code: '%d',
-      definition: 'zero-padded day of the month as a decimal number [01,31]',
-      example: '04'
-    },
-    {
-      code: '%e',
-      definition: 'space-padded day of the month as a decimal number [ 1,31]; equivalent to %_d',
-      example: ' 4'
-    }
+    // {
+    //   code: '%w',
+    //   definition: 'Sunday-based weekday as a decimal number [0,6]',
+    //   example: '1'
+    // }
   ],
 
   'Day of year': [
     {
       code: '%j',
       definition: 'day of the year as a decimal number [001,366]',
-      example: '125'
+      example: '125',
+      display: 'DDDD',
     }
   ],
 
   'Unix time': [
     {
-      code: '%Q',
-      definition: 'milliseconds since UNIX epoch',
-      example: '1634050951000'
-    },
-    {
       code: '%s',
       definition: 'seconds since UNIX epoch',
-      example: '1634050951'
-    }
-  ],
-
-  Time: [
-    {
-      code: '%H',
-      definition: 'hour (24-hour clock) as a decimal number [00,23]',
-      example: '22'
+      example: '1634050951',
+      display: 'X'
     },
     {
-      code: '%I',
-      definition: 'hour (12-hour clock) as a decimal number [01,12]',
-      example: '10'
-    },
-    {
-      code: '%P',
-      definition: 'either A (for AM) or P (for PM).',
-      example: 'AM'
-    },
-    {
-      code: '%p',
-      definition: 'either AM or PM.',
-      example: 'AM'
-    },
-    {
-      code: '%M',
-      definition: 'minute as a decimal number [00,59]',
-      example: '45'
-    },
-    {
-      code: '%S',
-      definition: 'second as a decimal number [00,61]',
-      example: '15'
-    },
-    {
-      code: '%L',
-      definition: 'milliseconds as a decimal number [000, 999]',
-      example: '400'
-    },
-    {
-      code: '%f',
-      definition: 'microseconds as a decimal number [000000, 999999]',
-      example: '400000'
-    },
-    {
-      code: '%Z',
-      definition: 'time zone offset',
-      example: ''
+      code: '%Q',
+      definition: 'milliseconds since UNIX epoch',
+      example: '1634050951000',
+      display: 'x',
     }
   ]
 };

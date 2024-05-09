@@ -56,12 +56,12 @@ function NetFormat(props: IStepProps) {
             <Text>&nbsp;
                 or you can create <Text type="danger">CSV</Text> by hand in any text editor.
             </Text>
-            <Radio value={"other"}>
+            {/* <Radio value={"other"}>
               <MyTitle level={4} style={{ marginBottom: 20 }}>Other Format</MyTitle>
-            </Radio>
-            <MyParagraph>
+            </Radio> */}
+            {/* <MyParagraph>
               I have a file in a specific&nbsp;<b>network format</b>&nbsp;(e.g., GEDCOM, PAJEK or GraphML (XML))
-            </MyParagraph>
+            </MyParagraph> */}
           </MySpace>
         </Radio.Group>
       </Form.Item>

@@ -1,4 +1,4 @@
-import { Button, Checkbox, Input, Select, Table, Typography } from 'antd'
+import { Button, Checkbox, ConfigProvider, Input, Select, Table, Typography } from 'antd'
 import { NetworkConfig } from '../../../../../typings';
 import { useEffect, useState } from 'react';
 import TimeFormat from '../steps/timeFormat';
@@ -11,11 +11,12 @@ interface IDataTableProps {
   setEdit: (e: boolean) => void
   linkDataConfig: Object
   setLinkDataConfig: (o: Object) => void
+  isDefault: boolean
 }
 
 function LinkDataTable(props: IDataTableProps) {
-  const { network, edit, setEdit, linkDataConfig, setLinkDataConfig } = props
-  console.log('network:', network)
+  const { network, edit, setEdit, linkDataConfig, setLinkDataConfig, isDefault } = props
+  // console.log('network:', network)
 
   // drawing the data table 
   const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.linkTableConfig?.file) as string)
@@ -132,9 +133,10 @@ function LinkDataTable(props: IDataTableProps) {
   }, [network.name?.name])
 
   return (
-    <>
+    <ConfigProvider theme={{ token: { colorTextDisabled: 'rgba(0, 0, 0, 0.75)' } }}>
       <div style={{ display: 'flex', marginBottom: 5}}>
         <Checkbox 
+          disabled={isDefault}
           checked={checked}
           onChange={onCheckChange}
         > 
@@ -142,18 +144,14 @@ function LinkDataTable(props: IDataTableProps) {
         </Checkbox>
         {network.linkTableConfig?.withTime ? <>
           <Text style={{ marginLeft: 10, marginRight: 5, fontWeight: 600 }}>Time format:</Text>
-          {/* <Input 
-            value={formatString}
-            size='small' 
-            style={{ width: 150, marginRight: 10} } 
-            onChange={(e) => setFormatString(e.target.value)}
-          /> */}
           <Text underline>{formatString}</Text>
-          <Button size='small' 
-            style={{ marginLeft: 8}}
-            onClick={()=>setOpenTimeFormat(!openTimeFormat)}>
-            Edit
-          </Button>
+          {isDefault ? null : 
+            <Button size='small'
+              style={{ marginLeft: 8 }}
+              onClick={() => setOpenTimeFormat(!openTimeFormat)}>
+              Edit
+            </Button>
+          }
           <TimeFormat
             open={openTimeFormat}
             setOpen={setOpenTimeFormat}
@@ -166,6 +164,7 @@ function LinkDataTable(props: IDataTableProps) {
         {columns.map((column, idx) => {
           return (
             <Select
+              disabled={isDefault}
               key={column.dataIndex}
               value={dataColToNetwork[idx]}
               style={{ width: `calc(100%/${Object.keys(jsonData[0]).length} + 8px)`, margin: 2 }}
@@ -183,7 +182,7 @@ function LinkDataTable(props: IDataTableProps) {
         pagination={{ defaultPageSize: 5 }}
         size='small'
       />
-    </>
+    </ConfigProvider>
   )
 }
 

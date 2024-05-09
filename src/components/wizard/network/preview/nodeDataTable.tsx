@@ -1,4 +1,4 @@
-import { Select, Table, Typography } from 'antd'
+import { ConfigProvider, Select, Table, Typography } from 'antd'
 import { NetworkConfig } from '../../../../../typings';
 
 const { Title } = Typography
@@ -18,10 +18,11 @@ interface IDataTableProps {
   setEdit: (e: boolean) => void
   nodeDataConfig: Object
   setNodeDataConfig: (o: Object) => void
+  isDefault: boolean
 }
 
 function NodeDataTable(props: IDataTableProps) {
-  const { network, edit, setEdit, nodeDataConfig, setNodeDataConfig } = props 
+  const { network, edit, setEdit, nodeDataConfig, setNodeDataConfig, isDefault } = props 
 
   const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.extraNodeConfig?.file) as string)
   const columns = Object.keys(jsonData[0]).map(item => {
@@ -98,12 +99,13 @@ function NodeDataTable(props: IDataTableProps) {
   }
 
   return (
-    <>
+    <ConfigProvider theme={{ token: { colorTextDisabled: 'rgba(0, 0, 0, 0.75)' } }}>
       <div style={{ display: 'flex' }}>
         {columns.map(column => {
           const netColumn = getDefault(column.dataIndex)
           return (
             <Select
+              disabled={isDefault}
               key={column.dataIndex}
               defaultValue={netColumn}
               style={{ width: `calc(100%/${Object.keys(jsonData[0]).length} + 8px)`, margin: 4 }}
@@ -121,7 +123,7 @@ function NodeDataTable(props: IDataTableProps) {
         pagination={{ defaultPageSize: 5 }}
         size='small'
       />
-    </>
+    </ConfigProvider>
   )
 }
 
