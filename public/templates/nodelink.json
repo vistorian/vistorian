@@ -310,7 +310,7 @@
       "layout": "layout",
       "overlapRemoval": {
         "field": "degree",
-        "overlapDistance": 1.5
+        "overlapDistance": {"parameter": "labelDensityParam"}
       },
       "mark": {
         "type": "text",

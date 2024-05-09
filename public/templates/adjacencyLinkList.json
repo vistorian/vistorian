@@ -86,7 +86,8 @@
       "mark": {
         "type": "text",
         "text": {
-          "field": "key[0]"
+          "//field": "key[0]",
+          "field": "data[0].source.data.name"
         },
         "x": 150,
         "dy":4,
