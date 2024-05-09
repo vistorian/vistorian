@@ -75,7 +75,8 @@
       "mark": {
         "type": "text",
         "text": {
-          "field": "key[0]"
+          "field": "key[0]",
+          "//field": "data[0].source.Label"
         },
         "fontSize": {
           "expression": "params.labelSizeParam"
@@ -100,7 +101,8 @@
           "mark": {
             "scaling": true,
             "type": "circle",
-            "fill": "#F28527",
+            "// fill": "#F28527",
+            "fill": {"expression": "datum.source.id == entry.source.id ? 'blue' : 'red'"},
             "opacity": {
               "scale": "opacity",
               "expression": "datum.size"
