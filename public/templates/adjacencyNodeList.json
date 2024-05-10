@@ -69,13 +69,15 @@
     }
   ],
   "vis": [
+
     {
       "entries": "groupedBySource",
       "layout": "layout",
       "mark": {
         "type": "text",
         "text": {
-          "field": "key[0]"
+          "//field": "key[0]",
+          "field": "data[0].source.data.name"
         },
         "fontSize": {
           "expression": "params.labelSizeParam"
@@ -84,6 +86,7 @@
         "align": "right"
       }
     },
+
     {
       "entries": "groupedBySource",
       "layout": "layout",

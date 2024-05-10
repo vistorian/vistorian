@@ -338,7 +338,7 @@
       "layout": "layout",
       "overlapRemoval": {
         "field": "degree",
-        "overlapDistance": 1.5
+        "overlapDistance": {"parameter": "labelDensityParam"}
       },
       "mark": {
         "type": "text",
@@ -363,13 +363,16 @@
           "value": 0.1
         },
         "cursor": "none",
-        "dx": 5,
+        "//dx": 5,
         "dy": 4,
         "fontSize": {
           "expression": "params.labelSizeParam"
         },
         "stroke": "white",
-        "strokeWidth": 0.3
+        "strokeWidth": 0.3,
+        "dx": {"expression": "index > state.network.nodes.length / 2 ? -5 : 5"},
+        "align": {"expression": "index > state.network.nodes.length / 2 ? 'right' : 'left'"},
+        "//angle": {"expression": "(index > state.network.nodes.length / 2 ? 1 : -1) * 90 + (index * 360) / state.network.nodes.length "}
       }
     }
   ]

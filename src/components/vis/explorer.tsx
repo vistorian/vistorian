@@ -14,12 +14,21 @@ function Explorer(props: IVisContentProps) {
   const { visTypeList, network, options } = props
   const [loading, setLoading] = useState<boolean>(true)
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
-  const viewers = visTypeList.map(v => {return {}})
+  const viewers: any[] = visTypeList.map(v => {return {}})
 
-  const onChange = (newVal) => {
-    // console.log('onChange:', newVal)
+  const onChange = (newVal: any, type: string) => {
+    // console.log('onChange:', newVal, type)
     viewers.map(viewer => {
-      propogateSelection(viewer, "node_selection", newVal)
+      // @ts-ignore
+      // console.log('viewer:', viewer.state)
+      if (viewer.state !== undefined) {
+        if (type === 'time') {
+          viewer.setParam('time', newVal, false)
+        }
+        else {
+          propogateSelection(viewer, type, newVal)
+        }
+      }
     })
   }
 
@@ -40,11 +49,12 @@ function Explorer(props: IVisContentProps) {
   }
 
   type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
-  const getParamCallbacks: ParamChangeCallbacks = { node_selection: onChange }
+  const getParamCallbacks: ParamChangeCallbacks = { 
+    node_selection: (newVal) => onChange(newVal, 'node_selection'), 
+    time: (newVal) => onChange(newVal, 'time'), 
+  }
 
   const update = async () => {
-    console.log("Expl Update");
-
     for (let index in visTypeList) {
       let visType = visTypeList[index]
       let renderer = visType === 'matrix' ? 'canvas' : 'svg'
@@ -63,6 +73,7 @@ function Explorer(props: IVisContentProps) {
       }
       // console.log('spec:', spec)
 
+      // console.log("net ", spec.network);
       // @ts-ignore
       viewers[index] = await NetPanoramaTemplateViewer.render(templatePath, {
         dataDefinition: JSON.stringify(spec.data),
@@ -75,7 +86,7 @@ function Explorer(props: IVisContentProps) {
         paramCallbacks: getParamCallbacks
       })
       // @ts-ignore
-      // console.log('VIEW STATE:', tmpViewer.state)
+      console.log('VIEW STATE:', viewers)
       // console.log(JSON.stringify(tmpViewer.spec))
 
       const container = document.getElementById(containerId)
@@ -92,7 +103,7 @@ function Explorer(props: IVisContentProps) {
         container.getElementsByTagName("svg")[0].style["max-height"] = "100%";
         // console.log(container.getElementsByTagName("text"))
         const elements = container.getElementsByTagName("text")
-        Object.values(elements).map(c => console.log(c))
+        // Object.values(elements).map(c => console.log(c))
       }
     }
     
@@ -101,6 +112,7 @@ function Explorer(props: IVisContentProps) {
 
   const resizeChange = () => {
     console.log("RESIZECHANGE")
+
     visTypeList.map((visType, idx) => {
       const container = document.getElementById(`visSvg${idx}`)
       if (!container) {

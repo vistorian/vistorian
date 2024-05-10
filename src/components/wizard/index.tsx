@@ -7,7 +7,7 @@ import Network from './network/index'
 import VisSelector from './visSelector'
 import { WizardContext } from './context'
 import { DataFile, Template, OperationType, NetworkConfig } from '../../../typings'
-import { HANDLEALL } from '../../../typings/constant'
+import { HANDLEALL, defaultDatasets, defaultNetworks } from '../../../typings/constant'
 import templates from '../templates/templates'
 import Sessions from './session'
 import { find } from 'lodash-es'
@@ -108,14 +108,9 @@ function Wizard() {
     }
   }
 
+  // load the default file
   useEffect(() => {
-    const filesToStore = [
-      'UPLOADED_FILE_marieboucher.csv', 
-      'UPLOADED_FILE_les-mis-links.csv', 
-      'UPLOADED_FILE_les-mis-nodes.csv', 
-      'NETWORK_WIZARD_marieboucher', 
-      'NETWORK_WIZARD_les-mis',
-    ]
+    const filesToStore = Array.from(defaultDatasets).map(d =>`UPLOADED_FILE_${d}`).concat(Array.from(defaultNetworks).map(n =>`NETWORK_WIZARD_${n}`))
     loadAndStoreFiles(filesToStore)
   }, []);
 

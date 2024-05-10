@@ -17,9 +17,10 @@ const useStyles = createUseStyles({
     marginBottom: 10,
   },
   button: {
-    width: 55,
-    height: 55,
-    fontSize: 16
+    width: 60,
+    height: 60,
+    fontSize: 16,
+    padding: 0
   },
   exp: {
     fontSize: '1rem',
@@ -44,8 +45,8 @@ function TimeFormat(props: ITimeFormat) {
     setFormatString(e.target.value)
   }
 
-  const handleAddCode = (code: string) => {
-    setFormatString(formatString.concat(code))
+  const handleAddCode = (directive: DirectiveItem) => {
+    setFormatString(formatString.concat(directive.code))
   }
 
   return (
@@ -76,7 +77,7 @@ function TimeFormat(props: ITimeFormat) {
             {directives[type].map((directive: DirectiveItem, i: number) => {
               return (
                 <div className={classes.row} key={i}>
-                  <Button className={classes.button} onClick={()=>handleAddCode(directive.code)}>+<br />{directive.code}</Button>
+                  <Button className={classes.button} onClick={()=>handleAddCode(directive)}>+<br />{directive.code}</Button>
                   <span className={classes.exp}>{directive.definition} (currently <b>{timeFormat(directive.code)(new Date())}</b>)</span>
                 </div>
               )
