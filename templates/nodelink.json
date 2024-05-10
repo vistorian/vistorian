@@ -10,14 +10,20 @@
   "height": "[height]",
   "parameters": [
     {
-      "name": "node_selection",
+      "name": "hoveredNode",
       "network": "network",
       "type": "selection",
       "clearOnBackgroundClick": true
     },
     {
+      "name": "selectedNodes",
+      "network": "network",
+      "type": "selection",
+      "clearOnBackgroundClick": false
+    },
+    {
       "name": "neighbours",
-      "source": "node_selection",
+      "source": "hoveredNode",
       "transform": [
         {
           "type": "neighbours",
@@ -105,8 +111,8 @@
         "event": "onChange",
         "label": "Link Gap",
         "min": "0",
-        "max": "6",
-        "step": "1"
+        "max": "5",
+        "step": ".5"
       },
       "value": 3
     },
@@ -199,6 +205,16 @@
   ],
   "vis": [
     {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "ifInSelection": "selectedNodes.nodes",
+      "mark": {
+        "type": "circle",
+        "area": 400,
+        "fill": "gold"
+      }
+    },
+    {
       "entries": "network.links",
       "layout": "layout",
       "mark": {
@@ -225,7 +241,7 @@
         "opacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "node_selection.nodes",
+              "selectionIsEmpty": "hoveredNode.nodes",
               "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
             },
             {
@@ -247,14 +263,21 @@
           "using": "cursor",
           "event": "mouseover",
           "action": "replace",
-          "selection": "node_selection"
+          "selection": "hoveredNode"
         },
         {
           "interaction": "select",
           "using": "cursor",
           "event": "mouseout",
           "action": "remove",
-          "selection": "node_selection"
+          "selection": "hoveredNode"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "click",
+          "action": "toggle",
+          "selection": "selectedNodes"
         }
       ],
       "mark": {
@@ -286,11 +309,11 @@
         "opacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "node_selection.nodes",
+              "selectionIsEmpty": "hoveredNode.nodes",
               "expression": "params.nodeOpacityParam"
             },
             {
-              "inSelection": "node_selection.nodes",
+              "inSelection": "hoveredNode.nodes",
               "expression": "params.nodeOpacityParam"
             },
             {
@@ -310,7 +333,9 @@
       "layout": "layout",
       "overlapRemoval": {
         "field": "degree",
-        "overlapDistance": {"parameter": "labelDensityParam"}
+        "overlapDistance": {
+          "parameter": "labelDensityParam"
+        }
       },
       "mark": {
         "type": "text",
@@ -321,15 +346,19 @@
         "opacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "node_selection.nodes",
+              "selectionIsEmpty": "hoveredNode.nodes",
               "value": 1
             },
             {
-              "inSelection": "node_selection.nodes",
+              "inSelection": "hoveredNode.nodes",
               "value": 1
             },
             {
               "inSelection": "neighbours.nodes",
+              "value": 1
+            },
+            {
+              "inSelection": "selectedNodes.nodes",
               "value": 1
             }
           ],
