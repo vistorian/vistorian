@@ -10,6 +10,28 @@
   "networks": "[networksDefinition]",
   "parameters": [
     {
+      "name": "seriationMethod",
+      "bind": {
+        "input": "select",
+        "options": [
+          "optimal-leaf-order",
+          "barycentre",
+          "bandwidth-reduction",
+          "pca",
+          "degree_order"
+        ],
+        "labels": [
+          "Optimal Leaf Order",
+          "Barycentre Heuristic",
+          "Bandwidth Reduction",
+          "PCA",
+          "Node Degree"
+        ],
+        "label": "Seriation"
+      },
+      "value": "barycentre"
+    },
+    {
       "name": "node_selection",
       "network": "network",
       "action": "replace",
@@ -104,7 +126,9 @@
   "orderings": [
     {
       "name": "staticOrder",
-      "orderBy": "barycentre",
+      "orderBy": {
+        "parameter": "seriationMethod"
+      },
       "data": "staticNetwork.nodes"
     }
   ],
