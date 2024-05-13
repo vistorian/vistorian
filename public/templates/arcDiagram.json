@@ -8,14 +8,20 @@
   "height": "[height]",
   "parameters": [
     {
-      "name": "node_selection",
+      "name": "hoveredNode",
       "network": "network",
       "type": "selection",
       "clearOnBackgroundClick": true
     },
     {
+      "name": "selectedNodes",
+      "network": "network",
+      "type": "selection",
+      "clearOnBackgroundClick": false
+    },
+    {
       "name": "neighbours",
-      "source": "node_selection",
+      "source": "hoveredNode",
       "transform": [
         {
           "type": "neighbours",
@@ -81,9 +87,9 @@
         "input": "range",
         "event": "onChange",
         "label": "Node Size",
-        "min": "1",
-        "max": "10",
-        "step": "0.1"
+        "min": "0",
+        "max": "20",
+        "step": "0.5"
       },
       "value": 1
     },
@@ -211,6 +217,16 @@
   ],
   "vis": [
     {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "ifInSelection": "selectedNodes.nodes",
+      "mark": {
+        "type": "circle",
+        "area": 400,
+        "fill": "gold"
+      }
+    },
+    {
       "entries": "network.links",
       "layout": "layout",
       "mark": {
@@ -237,7 +253,7 @@
         "strokeOpacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "node_selection.nodes",
+              "selectionIsEmpty": "hoveredNode.nodes",
               "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
             },
             {
@@ -258,14 +274,21 @@
           "using": "cursor",
           "event": "mouseover",
           "action": "replace",
-          "selection": "node_selection"
+          "selection": "hoveredNode"
         },
         {
           "interaction": "select",
           "using": "cursor",
           "event": "mouseout",
           "action": "remove",
-          "selection": "node_selection"
+          "selection": "hoveredNode"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "click",
+          "action": "toggle",
+          "selection": "selectedNodes"
         }
       ],
       "mark": {
@@ -300,11 +323,11 @@
         "opacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "node_selection.nodes",
+              "selectionIsEmpty": "hoveredNode.nodes",
               "value": 1
             },
             {
-              "inSelection": "node_selection.nodes",
+              "inSelection": "hoveredNode.nodes",
               "value": 1
             },
             {
@@ -321,7 +344,9 @@
       "layout": "layout",
       "overlapRemoval": {
         "field": "degree",
-        "overlapDistance": {"parameter": "labelDensityParam"}
+        "overlapDistance": {
+          "parameter": "labelDensityParam"
+        }
       },
       "actions": [
         {
@@ -329,14 +354,14 @@
           "using": "cursor",
           "event": "mouseover",
           "action": "replace",
-          "selection": "node_selection"
+          "selection": "hoveredNode"
         },
         {
           "interaction": "select",
           "using": "cursor",
           "event": "mouseout",
           "action": "remove",
-          "selection": "node_selection"
+          "selection": "hoveredNode"
         }
       ],
       "mark": {
@@ -350,11 +375,11 @@
         "opacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "node_selection.nodes",
+              "selectionIsEmpty": "hoveredNode.nodes",
               "value": 1
             },
             {
-              "inSelection": "node_selection.nodes",
+              "inSelection": "hoveredNode.nodes",
               "value": 1
             },
             {

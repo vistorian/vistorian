@@ -165,6 +165,11 @@ function Sessions(props: ISessionsProps) {
     </Modal>
     <div className={classes.cards}>
         {sessionStore.sort(sortSession).map((session: Session)=> {
+
+        if (Array.isArray(session.vis)) {
+          session.vis = session.vis[0];
+        }
+
         const images = session.vis.split('+').map((v) => find(templates, t => t.key === v)?.image) as string[]
         return (
             <div className={classes.card} key={session.id}>

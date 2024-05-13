@@ -1,0 +1,382 @@
+{
+  "zoom": true,
+  "pan": {
+    "modifierKeyRequired": null
+  },
+  "width": "[width]",
+  "height": "[height]",
+  "x": 120,
+  "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
+  "parameters": [
+    {
+      "name": "seriationMethod",
+      "bind": {
+        "input": "select",
+        "options": [
+          "optimal-leaf-order",
+          "barycentre",
+          "bandwidth-reduction",
+          "pca",
+          "degree_order"
+        ],
+        "labels": [
+          "Optimal Leaf Order",
+          "Barycentre Heuristic",
+          "Bandwidth Reduction",
+          "PCA",
+          "Node Degree"
+        ],
+        "label": "Seriation"
+      },
+      "value": "barycentre"
+    },
+    {
+      "name": "node_selection",
+      "network": "network",
+      "action": "replace",
+      "type": "selection",
+      "clearOnBackgroundClick": true
+    },
+    {
+      "name": "neighbours",
+      "source": "node_selection",
+      "transform": [
+        {
+          "type": "neighbours",
+          "direction": "both"
+        }
+      ]
+    },
+    {
+      "name": "nodeTypeInShape",
+      "value": "[nodeTypeInShape]"
+    },
+    {
+      "name": "timeFormat",
+      "value": "[timeFormat]"
+    },
+    {
+      "name": "nodeSizeParam",
+      "bind": {
+        "input": "range",
+        "label": "Node Size",
+        "min": "2",
+        "max": "8",
+        "step": "0.02"
+      },
+      "value": 3
+    },
+    {
+      "name": "nodeOpacityParam",
+      "bind": {
+        "input": "range",
+        "label": "Node Opacity",
+        "min": "0",
+        "max": "1",
+        "step": "0.02"
+      },
+      "value": 1
+    },
+    {
+      "name": "linkWidthParam",
+      "bind": {
+        "input": "range",
+        "label": "Link Width",
+        "min": "0.5",
+        "max": "3",
+        "step": "0.02"
+      },
+      "value": 1
+    },
+    {
+      "name": "linkOpacityParam",
+      "bind": {
+        "input": "range",
+        "label": "Link Opacity",
+        "min": "0",
+        "max": "1",
+        "step": "0.02"
+      },
+      "value": 0.4
+    },
+    {
+      "name": "labelSizeParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Label Size",
+        "min": "5",
+        "max": "25",
+        "step": "1"
+      },
+      "value": 6
+    },
+    {
+      "name": "time",
+      "bind": {
+        "input": "brush",
+        "axisType": "time",
+        "network": "network",
+        "for": "links",
+        "field": "data._time"
+      }
+    }
+  ],
+  "orderings": [
+    {
+      "name": "staticOrder",
+      "orderBy": {
+        "parameter": "seriationMethod"
+      },
+      "data": "staticNetwork.nodes"
+    }
+  ],
+  "layouts": [
+    {
+      "name": "layout",
+      "data": "network.nodes",
+      "pattern": "cartesian",
+      "x": [
+        {
+          "scale": "time",
+          "field": "data._time"
+        }
+      ],
+      "y": [
+        {
+          "order": "staticOrder",
+          "field": "data.name"
+        }
+      ],
+      "positioning": "none"
+    },
+    {
+      "name": "staticLayout",
+      "data": "staticNetwork.nodes",
+      "order": "staticOrder",
+      "pattern": "linear",
+      "orientation": "vertical"
+    }
+  ],
+  "scales": [
+    {
+      "name": "time",
+      "type": "time",
+      "range": [
+        50,
+        500
+      ],
+      "domain": {
+        "data": "network.nodes",
+        "field": "data._time"
+      }
+    },
+    {
+      "name": "radius",
+      "type": "linear",
+      "range": [
+        10,
+        200
+      ],
+      "rangeMapFunction": "datum * params.nodeSizeParam",
+      "domain": {
+        "data": "network.nodes",
+        "field": "degree"
+      }
+    },
+    {
+      "name": "nodeShape",
+      "type": "ordinal",
+      "range": "[nodeTypeShapeScheme]",
+      "domain": {
+        "data": "network.nodes",
+        "field": "data.type0"
+      }
+    },
+    {
+      "name": "nodeColor",
+      "type": "linear",
+      "scheme": "reds",
+      "domain": {
+        "data": "network.nodes",
+        "field": "degree"
+      }
+    },
+    {
+      "name": "edgeColor",
+      "type": "ordinal",
+      "range": "[colorScheme]",
+      "domain": {
+        "data": "network.links",
+        "field": "linkType"
+      }
+    },
+    {
+      "name": "edgeWidth",
+      "type": "linear",
+      "range": [
+        1.2,
+        3
+      ],
+      "rangeMapFunction": "datum * params.linkWidthParam",
+      "domain": {
+        "data": "network.links",
+        "field": "linkWeight"
+      }
+    },
+    {
+      "name": "edgeOpacity",
+      "type": "linear",
+      "range": [
+        0.2,
+        0.8
+      ],
+      "rangeMapFunction": "datum * params.linkOpacityParam",
+      "domain": {
+        "data": "network.links",
+        "field": "linkWeight"
+      }
+    }
+  ],
+  "vis": [
+    {
+      "entries": "staticNetwork.nodes",
+      "layout": "staticLayout",
+      "mark": {
+        "type": "rule",
+        "stroke": "#f0f0f0",
+        "strokeWidth": 2,
+        "x": 0,
+        "x2": {
+          "expression": "bounds.width"
+        },
+        "tooptip": {
+          "expression": "datum"
+        }
+      }
+    },
+    {
+      "entries": "staticNetwork.nodes",
+      "layout": "staticLayout",
+      "mark": {
+        "type": "text",
+        "text": {
+          "expression": "datum.id"
+        },
+        "fontSize": {
+          "expression": "params.labelSizeParam"
+        },
+        "align": "right",
+        "dx": -15
+      }
+    },
+    {
+      "entries": "network.links",
+      "layout": "layout",
+      "drawAxes": true,
+      "mark": {
+        "type": "linkpath",
+        "start": "source",
+        "end": "target",
+        "shape": "curveSymmetric",
+        "parallelLinksType": "null",
+        "stroke": {
+          "conditions": [
+            {
+              "test": "!params.nodeTypeInShape",
+              "value": "grey"
+            }
+          ],
+          "field": "linkType",
+          "scale": "edgeColor"
+        },
+        "directionForShape": {
+          "ordering": "staticOrder"
+        },
+        "strokeWidth": {
+          "expression": "params.linkWidthParam"
+        },
+        "strokeOpacity": {
+          "conditions": [
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
+            },
+            {
+              "inSelection": "neighbours.links",
+              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
+            }
+          ],
+          "expression": " (datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) ? 0.1 : 0 "
+        },
+        "tooptip": {
+          "expression": "datum"
+        }
+      }
+    },
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "action": [
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseover",
+          "action": "replace",
+          "selection": "node_selection"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseout",
+          "action": "remove",
+          "selection": "node_selection"
+        }
+      ],
+      "mark": {
+        "type": "circle",
+        "area": {
+          "expression": "10 + datum.degree * params.nodeSizeParam"
+        },
+        "fill": {
+          "conditions": [
+            {
+              "test": "params.nodeTypeInShape",
+              "value": "black"
+            }
+          ],
+          "field": "data.type0",
+          "scale": "nodeColor"
+        },
+        "stroke": "white",
+        "opacity": {
+          "conditions": [
+            {
+              "selectionIsEmpty": "node_selection.nodes",
+              "value": {
+                "expression": "params.nodeOpacityParam"
+              }
+            },
+            {
+              "inSelection": "node_selection.nodes",
+              "value": {
+                "expression": "params.nodeOpacityParam"
+              }
+            },
+            {
+              "inSelection": "neighbours.nodes",
+              "value": {
+                "expression": "params.nodeOpacityParam"
+              }
+            }
+          ],
+          "value": 0.1
+        },
+        "tooptip": {
+          "expression": "datum"
+        }
+      }
+    }
+  ]
+}
