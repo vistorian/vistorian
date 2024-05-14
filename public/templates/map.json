@@ -1,6 +1,8 @@
 {
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
+  "zoom": true,
+  "pan": true,
 
   "maps": [
     {

@@ -3,6 +3,8 @@ import { createUseStyles } from 'react-jss'
 import { Button, message, Typography } from 'antd'
 import { CheckCircleOutlined, CheckCircleFilled } from '@ant-design/icons';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import "leaflet/dist/leaflet.css";
+
 import templates from '../../templates/templates'
 import { NetworkConfig, Template } from '../../../../typings'
 import { WizardContext } from '../context'
@@ -101,9 +103,9 @@ function VisSelector(props: IVisSelectorProps) {
       console.error('no valid specification!')
       return false
     }
-    if (visType === 'map' && !config.locationTableConfig) {
-      return false
-    }
+    // if (visType === 'map' && !config.locationTableConfig) {
+    //   return false
+    // }
     if (visType === 'timearcs' && !config.linkTableConfig?.withTime) {
       return false
     }
