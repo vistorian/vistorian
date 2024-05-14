@@ -15,7 +15,7 @@
             "name": "node_selection",
             "network": "network",
             "type": "selection",
-            "clearOnBackgroundClick": true
+            "//clearOnBackgroundClick": true
         },
         {
             "name": "neighbours",
@@ -32,7 +32,7 @@
             "network": "network",
             "type": "selection",
             "action": "replace",
-            "clearOnBackgroundClick": true
+            "//clearOnBackgroundClick": true
         },
         {
             "name": "seriationMethod",
