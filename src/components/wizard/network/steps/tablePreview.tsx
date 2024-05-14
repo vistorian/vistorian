@@ -1,4 +1,6 @@
-import { Checkbox, Form, Table } from 'antd'
+import styled from '@emotion/styled';
+import { Checkbox, Form, Table, Typography } from 'antd'
+const { Title, Text } = Typography;
 
 
 interface ITablePreviewProps {
@@ -11,15 +13,17 @@ interface ITablePreviewProps {
 function TablePreview(props: ITablePreviewProps) {
   const { hasHeaderRow, setHasHeaderRow, columnInTable, dataInTable } = props
 
+
   return (
     <>
       <Form.Item name="hasHeaderRow" valuePropName="checked">
         <Checkbox
           checked
+          style={{fontWeight: 700, fontSize: 20}}
           onChange={() => setHasHeaderRow(!hasHeaderRow)}
         >
-          Has header row?
         </Checkbox>
+        <span style={{fontSize: 20, fontWeight: 600, marginLeft: 10}}>Does the first row contains column header names?</span>
       </Form.Item>
       <Table
         columns={columnInTable}
@@ -32,5 +36,10 @@ function TablePreview(props: ITablePreviewProps) {
     </>
   )
 }
+
+const MyTitle = styled(Title)({
+  marginTop: 20,
+  marginBottom: 20
+})
 
 export default TablePreview

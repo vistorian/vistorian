@@ -17,7 +17,7 @@ const useStyles = createUseStyles({
     marginBottom: 10,
   },
   button: {
-    width: 60,
+    minWidth: 60,
     height: 60,
     fontSize: 16,
     padding: 0
@@ -78,7 +78,7 @@ function TimeFormat(props: ITimeFormat) {
               return (
                 <div className={classes.row} key={i}>
                   <Button className={classes.button} onClick={()=>handleAddCode(directive)}>+<br />{directive.code}</Button>
-                  <span className={classes.exp}>{directive.definition} (currently <b>{timeFormat(directive.code)(new Date())}</b>)</span>
+                  <span className={classes.exp}>Similar to <em>{directive.display}</em>, {directive.definition} (now is <b>{timeFormat(directive.code)(new Date())}</b>)</span>
                 </div>
               )
             })}

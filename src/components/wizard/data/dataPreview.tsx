@@ -121,10 +121,10 @@ function DataPreview(props: IDataPreviewProps) {
         <>
           <Checkbox 
             checked={checked}
-            style={{marginBottom: 10}}
+            style={{marginBottom: 10, fontWeight: 700}}
             // onChange={() => setHasHeader()}
           >
-            Has header row?
+            Does the first row contains column header names?
           </Checkbox>
           <Table
             columns={columnInTable}
