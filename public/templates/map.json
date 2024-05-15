@@ -4,12 +4,10 @@
   "networks": "[networksDefinition]",
   "zoom": true,
   "pan": true,
-  "width": "[width]",
-  "height": "[height]",
   "maps": [
     {
       "name": "my_map",
-      "tiles": "Stamen_TerrainBackground",
+      "tiles": "Stadia.AlidadeSmooth",
       "zoomLevel": 4,
       "center": [
         51.5062,
