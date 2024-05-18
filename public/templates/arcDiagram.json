@@ -30,6 +30,26 @@
       ]
     },
     {
+      "name": "selectedNeighbours",
+      "source": "selectedNodes",
+      "transform": [
+        {
+          "type": "neighbours",
+          "direction": "both"
+        }
+      ]
+    },
+    {
+      "name": "selectedCommonNeighbours",
+      "source": "selectedNodes",
+      "transform": [
+        {
+          "type": "commonNeighbours",
+          "direction": "both"
+        }
+      ]
+    },
+    {
       "name": "seriationMethod",
       "bind": {
         "input": "select",
@@ -88,10 +108,32 @@
         "event": "onChange",
         "label": "Node Size",
         "min": "0",
-        "max": "20",
-        "step": "0.5"
+        "max": "100",
+        "step": ".1"
+      },
+      "value": 2
+    },
+    {
+      "name": "nodeOpacityParam",
+      "bind": {
+        "input": "range",
+        "label": "Node Opacity",
+        "min": "0.0",
+        "max": "1",
+        "step": "0.05"
       },
       "value": 1
+    },
+    {
+      "name": "unselectedOpacity",
+      "bind": {
+        "input": "range",
+        "label": "Opacity Unselected Nodes & Links",
+        "min": "0.0",
+        "max": "1",
+        "step": "0.05"
+      },
+      "value": 0.3
     },
     {
       "name": "labelSizeParam",
@@ -103,7 +145,7 @@
         "max": "25",
         "step": "1"
       },
-      "value": 13
+      "value": 20
     },
     {
       "name": "labelDensityParam",
@@ -115,7 +157,7 @@
         "max": "20",
         "step": "1"
       },
-      "value": 5
+      "value": 1
     },
     {
       "name": "time",
@@ -219,11 +261,33 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
-      "ifInSelection": "selectedNodes.nodes",
       "mark": {
         "type": "circle",
-        "area": 400,
-        "fill": "gold"
+        "area": {
+          "conditions": [
+            {
+              "test": "params.selectedNodes.nodes.length > 0 && (indexof(params.selectedNodes.nodes, datum) > -1)",
+              "value": 700
+            },
+            {
+              "test": "params.selectedNodes.nodes.length > 1 && params.selectedCommonNeighbours.nodes.length > 0 && (indexof(params.selectedCommonNeighbours.nodes, datum) > -1)",
+              "value": 400
+            }
+          ]
+        },
+        "opacity": 0.5,
+        "fill": {
+          "conditions": [
+            {
+              "test": "params.selectedNodes.nodes.length > 0 && (indexof(params.selectedNodes.nodes, datum) > -1)",
+              "value": "gold"
+            },
+            {
+              "test": "params.selectedNodes.nodes.length > 1 && params.selectedCommonNeighbours.nodes.length > 0 && (indexof(params.selectedCommonNeighbours.nodes, datum) > -1)",
+              "value": "lightgray"
+            }
+          ]
+        }
       }
     },
     {
@@ -253,15 +317,47 @@
         "strokeOpacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "hoveredNode.nodes",
-              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
+              "//": "default",
+              "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
+              "expression": "params.linkOpacityParam"
             },
             {
-              "inSelection": "neighbours.links",
-              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
+              "//": "node hovered",
+              "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "expression": "params.linkOpacityParam * 2"
+            },
+            {
+              "//": "neihgbor hovered",
+              "test": "params.neighbours.nodes.length > 0 && indexof(params.neighbours.links, datum) > -1",
+              "expression": "params.linkOpacityParam * 2"
+            },
+            {
+              "//": "node selected",
+              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.links, datum) > -1",
+              "expression": "params.linkOpacityParam"
+            },
+            {
+              "//": "selected common neighor",
+              "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.links, datum) > -1",
+              "expression": "params.linkOpacityParam"
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.links, datum) > -1",
+              "expression": ".5 + params.unselectedOpacity"
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.hoveredNode.nodes.length > 0",
+              "value": 0.1
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.selectedNeighbours.nodes.length > 0",
+              "expression": "params.unselectedOpacity"
             }
           ],
-          "expression": " (datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) ? 0.1 : 0 "
+          "expression": ".1"
         }
       }
     },
@@ -323,19 +419,37 @@
         "opacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "hoveredNode.nodes",
-              "value": 1
+              "//": "default",
+              "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
+              "expression": "params.nodeOpacityParam"
             },
             {
-              "inSelection": "hoveredNode.nodes",
-              "value": 1
+              "//": "hovered",
+              "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "expression": "params.nodeOpacityParam * 2"
             },
             {
-              "inSelection": "neighbours.nodes",
-              "value": 1
+              "//": "hovered neighbour",
+              "test": "params.neighbours.nodes.length > 0 && indexof(params.neighbours.nodes, datum) > -1",
+              "expression": "params.nodeOpacityParam * 2"
+            },
+            {
+              "//": "selected node",
+              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.nodes, datum) > -1",
+              "expression": "params.nodeOpacityParam"
+            },
+            {
+              "//": "selected common neighor",
+              "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.nodes, datum) > -1",
+              "expression": "params.nodeOpacityParam"
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.nodes, datum) > -1",
+              "expression": ".5 + params.unselectedOpacity"
             }
           ],
-          "value": 0.1
+          "expression": "params.unselectedOpacity"
         }
       }
     },
@@ -375,21 +489,39 @@
         "opacity": {
           "conditions": [
             {
-              "selectionIsEmpty": "hoveredNode.nodes",
-              "value": 1
+              "//": "default",
+              "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
+              "expression": "params.nodeOpacityParam"
             },
             {
-              "inSelection": "hoveredNode.nodes",
-              "value": 1
+              "//": "hovered",
+              "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "expression": "params.nodeOpacityParam * 2"
             },
             {
-              "inSelection": "neighbours.nodes",
-              "value": 1
+              "//": "hovered neighbour",
+              "test": "params.neighbours.nodes.length > 0 && indexof(params.neighbours.nodes, datum) > -1",
+              "expression": "params.nodeOpacityParam * 2"
+            },
+            {
+              "//": "selected node",
+              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.nodes, datum) > -1",
+              "expression": "params.nodeOpacityParam"
+            },
+            {
+              "//": "selected common neighor",
+              "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.nodes, datum) > -1",
+              "expression": "params.nodeOpacityParam"
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.nodes, datum) > -1",
+              "expression": ".5 + params.unselectedOpacity"
             }
           ],
-          "value": 0.1
+          "expression": "params.unselectedOpacity"
         },
-        "dx": 10,
+        "dx": 13,
         "dy": 4,
         "cursor": "none"
       }
