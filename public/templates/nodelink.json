@@ -238,12 +238,22 @@
     {
       "entries": "network.nodes",
       "layout": "layout",
-      "ifInSelection": "selectedNodes.nodes",
       "mark": {
         "type": "circle",
         "area": 700,
-        "opacity": 0.8,
-        "fill": "gold"
+        "opacity": 0.5,
+        "fill": {
+          "conditions": [
+            {
+              "test": "params.selectedNodes.nodes.length > 0 && (indexof(params.selectedNodes.nodes, datum) > -1)",
+              "value": "gold"
+            },
+            {
+              "test": "params.selectedNodes.nodes.length > 1 && params.selectedCommonNeighbours.nodes.length > 0 && (indexof(params.selectedCommonNeighbours.nodes, datum) > -1)",
+              "value": "lightgray"
+            }
+          ]
+        }
       }
     },
     {
@@ -270,27 +280,71 @@
         "strokeWidth": {
           "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
         },
-
         "opacity": {
           "conditions": [
             {
+              "//": "default",
+              "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
+              "expression": "params.linkOpacityParam"
+            },
+            {
+              "//": "node hovered",
+              "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "expression": "params.linkOpacityParam * 2"
+            },
+            {
+              "//": "neihgbor hovered",
+              "test": "params.neighbours.nodes.length > 0 && indexof(params.neighbours.links, datum) > -1",
+              "expression": "params.linkOpacityParam * 2"
+            },
+            {
+              "//": "node selected",
+              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.links, datum) > -1",
+              "expression": "params.linkOpacityParam"
+            },
+            {
+              "//": "selected common neighor",
+              "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.links, datum) > -1",
+              "expression": "params.linkOpacityParam"
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.links, datum) > -1",
+              "expression": ".5 + params.unselectedOpacity"
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.hoveredNode.nodes.length > 0",
+              "value": 0.1
+            }, 
+            {
+              "//": "selected neighbour",
+              "test": "params.selectedNeighbours.nodes.length > 0",
+              "expression": "params.unselectedOpacity"
+            } 
+          ],
+          "expression": ".1"
+        },
+        "//opacity": {
+          "conditions": [
+            {
+              "//": "default",
               "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
               "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
             },
-
             {
-              "test": "params.hoveredNode.nodes.length > 0 && params.selectedNodes.nodes.length == 0 && (indexof(params.neighbours.links, datum) > -1)",
+              "//": "hovering when there are other nodes selected",
+              "test": "params.hoveredNode.nodes.length > 0 && (indexof(params.neighbours.links, datum) > -1)",
               "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
             },
-
             {
+              "//": "common neighbors",
               "test": "params.selectedNodes.nodes.length > 0 && (indexof(params.selectedNeighbours.links, datum) > -1)",
               "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
             }
           ],
           "expression": " (datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) ? 0.1 : 0 "
         },
-
         "//opacity": {
           "conditions": [
             {
@@ -359,28 +413,41 @@
           "scale": "nodeColor"
         },
         "stroke": "white",
-
         "opacity": {
           "conditions": [
             {
+              "//": "default",
               "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
               "expression": "params.nodeOpacityParam"
             },
-
             {
-              "test": "params.hoveredNode.nodes.length > 0 && params.selectedNodes.nodes.length == 0 && (indexof(params.neighbours.nodes, datum) > -1 || params.hoveredNode.nodes[0] == datum)",
+              "//": "hovered",
+              "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "expression": "params.nodeOpacityParam * 2"
+            },
+            {
+              "//": "hovered neighbour",
+              "test": "params.neighbours.nodes.length > 0 && indexof(params.neighbours.nodes, datum) > -1",
+              "expression": "params.nodeOpacityParam * 2"
+            },
+            {
+              "//": "selected node",
+              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.nodes, datum) > -1",
               "expression": "params.nodeOpacityParam"
             },
-
             {
-              "test": "params.selectedNodes.nodes.length > 0 && (indexof(params.selectedCommonNeighbours.nodes, datum) > -1 || indexof(params.selectedNodes.nodes, datum) > -1)",
+              "//": "selected common neighor",
+              "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.nodes, datum) > -1",
               "expression": "params.nodeOpacityParam"
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.nodes, datum) > -1",
+              "expression": ".5 + params.unselectedOpacity"
             }
           ],
-          "expression": "params.unselectedOpacity",
-          "//value": 0.3
+          "expression": "params.unselectedOpacity"
         },
-
         "//opacity": {
           "conditions": [
             {
@@ -422,19 +489,16 @@
           "expression": "[nodeLabel]"
         },
         "fontWeight": 700,
-
         "opacity": {
           "conditions": [
             {
               "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
               "value": 1
             },
-
             {
               "test": "params.hoveredNode.nodes.length > 0 && params.selectedNodes.nodes.length == 0 && (indexof(params.neighbours.nodes, datum) > -1 || params.hoveredNode.nodes[0] == datum)",
               "value": 1
             },
-
             {
               "test": "params.selectedNodes.nodes.length > 0 && (indexof(params.selectedCommonNeighbours.nodes, datum) > -1 || indexof(params.selectedNodes.nodes, datum) > -1)",
               "value": 1
@@ -442,7 +506,6 @@
           ],
           "value": 0.1
         },
-
         "//opacity": {
           "conditions": [
             {
