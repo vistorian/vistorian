@@ -13,7 +13,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 
   const defaultNodeType = "_default_node_type"
 
-  const parse = timeColumn ? { 'parse': { [timeColumn]: `date:'${timeFormat}'`}} : null
+  const parse = timeColumn ? { 'parse': { [timeColumn]: `date:'${timeFormat}'` } } : null
 
   // =========== FOR DATA SPEC =========== 
   const linkTableImportSpec = {
@@ -36,7 +36,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       }
     ] as any[]
   }
-  
+
   if (visType === 'timearcs') {
     linkTableImportSpec.transform = [
       {
@@ -85,6 +85,15 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       "calculate": `datum.${config.linkTableConfig.time}`
     })
   }
+  if(visType == 'map'){
+    linkTableImportSpec.transform.push(
+      {
+        "type": "filter",
+        "expr": "!!datum.Lon1 && !!datum.Lon2 && !!datum.Lat1 && !!datum.Lat2"
+      }
+    )
+  }
+
   let dataSpec = [linkTableImportSpec]
 
   // =========== if exists the node dataset =========== 
@@ -127,14 +136,16 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     if (visType === 'timearcs') {
       return [
         { "field": f, "as": "name" },
-        { "field": timeColumn, "as": "_time" },
-        { "field": f, "as": "_label"}
+        { "field": timeColumn,  "as": "_time" },
+        { "field": f, "as": "_label" }
       ]
     }
     else if (visType === 'map') {
       return [
         { "field": "Lon1", "as": "lon" },
-        { "field": "Lat1", "as": "lat" }
+        { "field": "Lat1", "as": "lat" },
+        { "field": "Lon2", "as": "lon" },
+        { "field": "Lat2", "as": "lat" }
       ]
     }
     else { // 'nodelink', 'matrix'
@@ -154,7 +165,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     "parts": [
       {
         "data": "links",
-        "yieldsNodes" : [
+        "yieldsNodes": [
           {
             "id_field": "source",
             "type": defaultNodeType,
@@ -175,7 +186,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
             "target_id": { "field": "target" },
             "target_node_type": defaultNodeType,
             "target_id_field": idField,
-            
+
             "addReverseLinks": visType === 'matrix' ? true : false,
             "data": ["*"]
           }
@@ -219,7 +230,20 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       }
     ]
   }
+
   networkSpec.push(baseNetworkSpec)
+
+  if (visType == 'map') {
+    networkSpec.push(
+      {
+        "name": "aggregatedNet",
+        "source": "network",
+        "transform": [
+          { "type": "aggregateNodes", "fields": ["data.lat", "data.lon"] },
+          { "type": "aggregateEdges" }
+        ]
+      });
+  }
 
   // TODO: deal with geo config, linkID
   if (config.linkTableConfig?.linkType)
