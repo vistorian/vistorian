@@ -316,47 +316,14 @@
               "//": "selected neighbour",
               "test": "params.hoveredNode.nodes.length > 0",
               "value": 0.1
-            }, 
+            },
             {
               "//": "selected neighbour",
               "test": "params.selectedNeighbours.nodes.length > 0",
               "expression": "params.unselectedOpacity"
-            } 
+            }
           ],
           "expression": ".1"
-        },
-        "//opacity": {
-          "conditions": [
-            {
-              "//": "default",
-              "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
-              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
-            },
-            {
-              "//": "hovering when there are other nodes selected",
-              "test": "params.hoveredNode.nodes.length > 0 && (indexof(params.neighbours.links, datum) > -1)",
-              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
-            },
-            {
-              "//": "common neighbors",
-              "test": "params.selectedNodes.nodes.length > 0 && (indexof(params.selectedNeighbours.links, datum) > -1)",
-              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
-            }
-          ],
-          "expression": " (datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) ? 0.1 : 0 "
-        },
-        "//opacity": {
-          "conditions": [
-            {
-              "selectionIsEmpty": "hoveredNode.nodes",
-              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
-            },
-            {
-              "inSelection": "neighbours.links",
-              "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
-            }
-          ],
-          "expression": " (datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) ? 0.1 : 0 "
         },
         "shape": "line"
       }
