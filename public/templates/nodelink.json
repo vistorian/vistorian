@@ -288,11 +288,13 @@
           "field": "linkType",
           "scale": "edgeColor"
         },
-        "strokeWidth": {
-          "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
-        },
         "opacity": {
           "conditions": [
+            {
+              "//": "not in time",
+              "test": "datum.data._time != null && datum.data._time < params.time[0] || datum.data._time > params.time[1]",
+              "value": 0
+            },
             {
               "//": "default",
               "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
