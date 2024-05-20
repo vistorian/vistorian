@@ -15,6 +15,31 @@
       ]
     }
   ],
+  "layouts": [
+    {
+      "name": "mapLayout",
+      "network": "aggregatedNet",
+      "map": "my_map",
+      "lat": {
+        "expression": "datum.key['data.lat']"
+      },
+      "lng": {
+        "expression": "datum.key['data.lon']"
+      },
+      "transform": [
+        {
+          "type": "set",
+          "field": "width",
+          "value": 100
+        },
+        {
+          "type": "set",
+          "field": "height",
+          "value": 100
+        }
+      ]
+    }
+  ],
   "parameters": [
     {
       "name": "hoveredNode",
@@ -34,6 +59,26 @@
       "transform": [
         {
           "type": "neighbours",
+          "direction": "both"
+        }
+      ]
+    },
+    {
+      "name": "selectedNeighbours",
+      "source": "selectedNodes",
+      "transform": [
+        {
+          "type": "neighbours",
+          "direction": "both"
+        }
+      ]
+    },
+    {
+      "name": "selectedCommonNeighbours",
+      "source": "selectedNodes",
+      "transform": [
+        {
+          "type": "commonNeighbours",
           "direction": "both"
         }
       ]
@@ -83,7 +128,7 @@
         "label": "Link Width",
         "min": "0",
         "max": "5",
-        "step": "1"
+        "step": ".5"
       },
       "value": 1
     },
@@ -121,17 +166,14 @@
       }
     }
   ],
-  "layouts": [
+  "groupings": [
     {
-      "name": "layout",
-      "network": "network",
-      "map": "my_map",
-      "lat": {
-        "field": "data.lat"
-      },
-      "lng": {
-        "field": "data.lon"
-      }
+      "name": "positions",
+      "common": [
+        "data.lat",
+        "data.lon"
+      ],
+      "network": "network"
     }
   ],
   "scales": [
@@ -204,8 +246,197 @@
   ],
   "vis": [
     {
-      "entries": "network.links",
-      "layout": "layout",
+      "mark": {
+        "type": "map",
+        "map": "my_map"
+      }
+    },
+    {
+      "entries": "positions",
+      "layout": "mapLayout",
+      "layouts": [
+        {
+          "name": "inner",
+          "network": "entry",
+          "type": "cytoscape",
+          "algorithm": "circle"
+        }
+      ],
+      "vis": [
+        {
+          "entries": "entry.links",
+          "layout": "inner",
+          "mark": {
+            "type": "linkpath",
+            "start": "source",
+            "end": "target",
+            "stroke": {
+              "conditions": [
+                {
+                  "test": "!params.nodeTypeInShape",
+                  "value": "grey"
+                }
+              ],
+              "field": "linkType",
+              "scale": "edgeColor"
+            },
+            "strokeWidth": {
+              "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
+            },
+            "opacity": {
+              "conditions": [
+                {
+                  "//": "not in time",
+                  "test": "datum.data._time != null && datum.data._time < params.time[0] || datum.data._time > params.time[1]",
+                  "value": 0
+                },    
+                {
+                  "//": "default",
+                  "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
+                  "expression": "params.linkOpacityParam"
+                },
+                {
+                  "//": "node hovered",
+                  "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+                  "expression": "params.linkOpacityParam * 2"
+                },
+                {
+                  "//": "neihgbor hovered",
+                  "test": "params.neighbours.nodes.length > 0 && indexof(params.neighbours.links, datum) > -1",
+                  "expression": "params.linkOpacityParam * 2"
+                },
+                {
+                  "//": "node selected",
+                  "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.links, datum) > -1",
+                  "expression": "params.linkOpacityParam"
+                },
+                {
+                  "//": "selected common neighor",
+                  "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.links, datum) > -1",
+                  "expression": "params.linkOpacityParam"
+                },
+                {
+                  "//": "selected neighbour",
+                  "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.links, datum) > -1",
+                  "expression": ".5 + params.unselectedOpacity"
+                },
+                {
+                  "//": "selected neighbour",
+                  "test": "params.hoveredNode.nodes.length > 0",
+                  "value": 0.1
+                },
+                {
+                  "//": "selected neighbour",
+                  "test": "params.selectedNeighbours.nodes.length > 0",
+                  "expression": "params.unselectedOpacity"
+                }
+              ],
+              "expression": ".1"
+            },
+            "shape": "line"
+          }
+        },
+        {
+          "entries": "entry.nodes",
+          "layout": "inner",
+          "actions": [
+            {
+              "interaction": "select",
+              "using": "cursor",
+              "event": "mouseover",
+              "action": "replace",
+              "selection": "hoveredNode"
+            },
+            {
+              "interaction": "select",
+              "using": "cursor",
+              "event": "mouseout",
+              "action": "remove",
+              "selection": "hoveredNode"
+            },
+            {
+              "interaction": "select",
+              "using": "cursor",
+              "event": "click",
+              "action": "toggle",
+              "selection": "selectedNodes"
+            }
+          ],
+          "mark": {
+            "type": "symbol",
+            "shape": {
+              "conditions": [
+                {
+                  "test": "!params.nodeTypeInShape",
+                  "value": "circle"
+                }
+              ],
+              "field": "data.type0",
+              "scale": "nodeShape"
+            },
+            "area": {
+              "expression": "10 + datum.degree * params.nodeSizeParam"
+            },
+            "opacity": {
+              "conditions": [
+                {
+                  "//": "default",
+                  "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
+                  "expression": "params.nodeOpacityParam"
+                },
+                {
+                  "//": "hovered",
+                  "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+                  "expression": "params.nodeOpacityParam * 2"
+                },
+                {
+                  "//": "hovered neighbour",
+                  "test": "params.neighbours.nodes.length > 0 && indexof(params.neighbours.nodes, datum) > -1",
+                  "expression": "params.nodeOpacityParam * 2"
+                },
+                {
+                  "//": "selected node",
+                  "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.nodes, datum) > -1",
+                  "expression": "params.nodeOpacityParam"
+                },
+                {
+                  "//": "selected common neighor",
+                  "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.nodes, datum) > -1",
+                  "expression": "params.nodeOpacityParam"
+                },
+                {
+                  "//": "selected neighbour",
+                  "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.nodes, datum) > -1",
+                  "expression": ".5 + params.unselectedOpacity"
+                }
+              ],
+              "expression": "params.unselectedOpacity"
+            },
+            "fill": {
+              "conditions": [
+                {
+                  "test": "params.nodeTypeInShape",
+                  "value": "black"
+                }
+              ],
+              "field": "data.type0",
+              "scale": "nodeColor"
+            },
+            "stroke": "white",
+            "strokeWidth": 0.5,
+            "tooltip": {
+              "expression": "[nodeLabel] + ' (' + datum.degree + (datum.degree == 1 ? ' link)' : ' links)') "
+            }
+          },
+          "inducedLayout": {
+            "name": "nodeLayout"
+          }
+        }
+      ]
+    },
+    {
+      "entries": "positions_INTER_GROUP_LINKS",
+      "layout": "nodeLayout",
       "mark": {
         "type": "linkpath",
         "start": "source",
@@ -237,91 +468,6 @@
           "expression": " (datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) ? 0.1 : 0 "
         },
         "shape": "line"
-      }
-    },
-    {
-      "entries": "network.nodes",
-      "layout": "layout",
-      "actions": [
-        {
-          "interaction": "select",
-          "using": "cursor",
-          "event": "mouseover",
-          "action": "replace",
-          "selection": "hoveredNode"
-        },
-        {
-          "interaction": "select",
-          "using": "cursor",
-          "event": "mouseout",
-          "action": "remove",
-          "selection": "hoveredNode"
-        },
-        {
-          "interaction": "select",
-          "using": "cursor",
-          "event": "click",
-          "action": "toggle",
-          "selection": "selectedNodes"
-        }
-      ],
-      "mark": {
-        "type": "symbol",
-        "shape": {
-          "conditions": [
-            {
-              "test": "!params.nodeTypeInShape",
-              "value": "circle"
-            }
-          ],
-          "field": "data.type0",
-          "scale": "nodeShape"
-        },
-        "area": {
-          "expression": "10 + datum.degree * params.nodeSizeParam"
-        },
-        "opacity": {
-          "conditions": [
-            {
-              "inSelection": "selectedNodes.nodes",
-              "expression": "params.nodeOpacityParam"
-            },
-            {
-              "inSelection": "hoveredNode.nodes",
-              "expression": "params.nodeOpacityParam"
-            },
-            {
-              "inSelection": "neighbours.nodes",
-              "expression": "params.nodeOpacityParam"
-            },
-            {
-              "selectionIsEmpty": "hoveredNode.nodes",
-              "expression": "params.nodeOpacityParam"
-            }
-          ],
-          "value": 0.1
-        },
-        "fill": {
-          "conditions": [
-            {
-              "test": "params.nodeTypeInShape",
-              "value": "black"
-            }
-          ],
-          "field": "data.type0",
-          "scale": "nodeColor"
-        },
-        "stroke": "white",
-        "strokeWidth": 0.5,
-        "tooltip": {
-          "expression": "[nodeLabel] + ' (' + datum.degree + (datum.degree == 1 ? ' link)' : ' links)') "
-        }
-      }
-    },
-    {
-      "mark": {
-        "type": "map",
-        "map": "my_map"
       }
     }
   ]
