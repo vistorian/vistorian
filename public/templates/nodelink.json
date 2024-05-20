@@ -187,7 +187,8 @@
       "domain": {
         "data": "network.nodes",
         "field": "data.type0"
-      }
+      },
+      "legend": false
     },
     {
       "name": "nodeColor",
