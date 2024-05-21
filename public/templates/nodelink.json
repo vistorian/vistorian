@@ -96,7 +96,7 @@
         "label": "Link Width",
         "min": "0",
         "max": "5",
-        "step": "1"
+        "step": ".2"
       },
       "value": 1
     },
@@ -288,6 +288,9 @@
           ],
           "field": "linkType",
           "scale": "edgeColor"
+        },
+        "strokeWidth": {
+          "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
         },
         "opacity": {
           "conditions": [

@@ -93,7 +93,7 @@
         "label": "Link Width",
         "min": "0",
         "max": "5",
-        "step": "1"
+        "step": ".2"
       },
       "value": 1
     },
