@@ -1,22 +1,22 @@
 import { message } from "antd"
-import { DataFile, NetworkConfig, OperationType, Session } from "../../../typings"
+import { NetworkConfig, OperationType, Session } from "../../../typings"
 import { HANDLEALL } from '../../../typings/constant' 
 import { findIndex, filter, cloneDeep } from "lodash-es"
 
 // ========== FileNameStore or NetworkStore ============
 // delete data or network
-export const handleDelete = (type: OperationType, name: string, store: Array<string | DataFile>) => {
+export const handleDelete = (type: OperationType, name: string, store: Array<string>) => {
   let newStore = cloneDeep(store)
   if (type === 'data') {
-    let fileNameStore = store as DataFile[]
-    if (name !== HANDLEALL && findIndex(fileNameStore, (fn: DataFile) => fn.name === name) !== -1) {
+    let fileNameStore = store as string[]
+    if (name !== HANDLEALL && fileNameStore.indexOf(name) !== -1) {
       window.localStorage.removeItem("UPLOADED_FILE_" + name)
-      newStore = filter(fileNameStore, (fn) => fn.name !== name)
+      newStore = filter(fileNameStore, (fn) => fn !== name)
       message.success('The selected data has been successfully deleted!')
     }
     else if (name === HANDLEALL) {
-      fileNameStore.map((fn: DataFile) => window.localStorage.removeItem("UPLOADED_FILE_" + fn.name))
-      newStore = [] as DataFile[]
+      fileNameStore.map((fn) => window.localStorage.removeItem("UPLOADED_FILE_" + fn))
+      newStore = [] as string[]
       message.success('All data have been successfully deleted!')
     }
   }
@@ -37,19 +37,18 @@ export const handleDelete = (type: OperationType, name: string, store: Array<str
 }
 
 // copy data or network
-export const handleCopy = (type: OperationType, name: string, store: Array<string | DataFile>) => {
+export const handleCopy = (type: OperationType, name: string, store: Array<string>) => {
   let newStore = cloneDeep(store)
   if (type === 'data') {
-    let fileNameStore = store as DataFile[]
+    let fileNameStore = store as string[]
     const data = window.localStorage.getItem("UPLOADED_FILE_" + name)
-    const idx = findIndex(fileNameStore, (fn) => fn.name === name)
+    const idx = fileNameStore.indexOf(name)
     if (idx > -1 && data) {
-      const newData = { ...fileNameStore[idx] }
       // get only the name without file postfix
       const reg = /\.(.*)$/
       const split = name.split('').reverse().join('').split(reg)
-      newData.name = `${split[1].split('').reverse().join('')}_copy.${split[0].split('').reverse().join('')}`
-      window.localStorage.setItem("UPLOADED_FILE_" + newData.name, data)
+      const newData = `${split[1].split('').reverse().join('')}_copy.${split[0].split('').reverse().join('')}`
+      window.localStorage.setItem("UPLOADED_FILE_" + newData, data)
       newStore.unshift(newData)
       message.success('The selected data has been successfully copied! Related networks and visualizations are updated!')
     }
@@ -72,26 +71,26 @@ export const handleCopy = (type: OperationType, name: string, store: Array<strin
 }
 
 // rename data or network
-export const handleRename = (type: OperationType, oldName: string, newName: string, store: Array<string | DataFile>) => {
+export const handleRename = (type: OperationType, oldName: string, newName: string, store: Array<string>) => {
   let newStore = cloneDeep(store)
   let status: boolean = false
 
   if (type === 'data') {
-    let fileNameStore = store as DataFile[]
+    let fileNameStore = store as string[]
     // TODO: examine the postfix to be .csv/.tsv/...
     if (newName.length < 1) {
       message.error("The data must have a name!")
       status = false
     }
-    else if (findIndex(fileNameStore, (fn: DataFile) => fn.name === newName) !== -1) {
+    else if (fileNameStore.indexOf(newName) !== -1) {
       message.error("The new data name has existed!")
       status = false
     }
     else {
-      const idx = findIndex(fileNameStore, (fn: DataFile) => fn.name === oldName)
+      const idx = fileNameStore.indexOf(oldName)
       const result = window.localStorage.getItem("UPLOADED_FILE_" + oldName)
       if (idx !== -1 && result) {
-        fileNameStore[idx].name = newName
+        fileNameStore[idx] = newName
         newStore = [...fileNameStore]
         window.localStorage.removeItem("UPLOADED_FILE_" + oldName)
         window.localStorage.setItem("UPLOADED_FILE_" + newName, result)

@@ -1,9 +1,9 @@
 import { NetworkPattern } from "../src/components/xplainer/motifs/motif"
 
-type DataFile = {
-  name: string,
-  hasHeader: boolean,
-}
+// type DataFile = {
+//   name: string,
+//   hasHeader: boolean,
+// }
 
 type Session = {
   id: number,
@@ -13,8 +13,8 @@ type Session = {
 }
 
 type WizardCtx = {
-  fileNameStore: DataFile[]
-  setFileNameStore: (fileNameStore: DataFile[]) => void;
+  fileNameStore: string[]
+  setFileNameStore: (fileNameStore: string[]) => void;
   networkStore: string[]
   setNetworkStore: (networkStore: string[]) => void;
   sessionStore: Session[]
@@ -131,7 +131,7 @@ type AllMotifs = { [name: string]: NetworkPattern[] }
 
 
 export {
-  DataFile,
+  // DataFile,
   WizardCtx,
   Session,
   OperationType,

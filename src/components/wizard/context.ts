@@ -1,8 +1,8 @@
 import { createContext } from 'react'
-import { WizardCtx, DataFile, Session } from '../../../typings'
+import { WizardCtx, Session } from '../../../typings'
 
 export let WizardContext = createContext<WizardCtx>({
-  fileNameStore: [] as DataFile[],
+  fileNameStore: [] as string[],
   setFileNameStore: () => {},
   networkStore: [] as string[],
   setNetworkStore: () => {},

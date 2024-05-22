@@ -1,8 +1,7 @@
 import { createUseStyles } from 'react-jss'
 import { useEffect, useContext, useState } from 'react'
-import { Form, Upload, message, Select, Typography, FormInstance } from 'antd'
+import { Form, Upload, message, Select, Typography, FormInstance, Checkbox } from 'antd'
 import { RcFile, UploadChangeParam, UploadFile } from 'antd/es/upload'
-import { DataFile } from '../../../../../typings'
 import { findIndex } from 'lodash-es'
 import csvtojson from 'csvtojson'
 
@@ -28,6 +27,7 @@ interface IFileSelectorProps {
   setDataInTable: (data: any[]) => void
   setColumnInTable: (data: any[]) => void
   hasHeaderRow: boolean
+  setHasHeaderRow: (data: boolean) => void
   setSelectionOptions: (data: OptionType[]) => void
   selectedFileName: string
   setSelectedFileName: (data: string) => void
@@ -37,7 +37,7 @@ interface IFileSelectorProps {
 
 function FileSelector(props: IFileSelectorProps) {
   const classes = useStyles()
-  const { setDataInTable, setColumnInTable, hasHeaderRow, selectedFileName, setSelectedFileName, setSelectionOptions, form } = props
+  const { setDataInTable, setColumnInTable, hasHeaderRow, setHasHeaderRow, selectedFileName, setSelectedFileName, setSelectionOptions, form } = props
   const { fileNameStore, setFileNameStore } = useContext(WizardContext);
 
   const normFile = (e: any) => {
@@ -68,13 +68,13 @@ function FileSelector(props: IFileSelectorProps) {
       message.error(`${file.name} file upload failed.`)
     }
     reader.onload = async () => {
-      if (findIndex(fileNameStore, (fn: DataFile) => fn.name === file.name) > -1) {
+      if (fileNameStore.indexOf(selectedFileName) > -1) {
         message.error(`${file.name} file upload failed, as the system does not allow data files uploaded with the same name. Please select a previously uploaded file.`)
         return false
       }
       message.success(`${file.name} file uploaded successfully.`)
       const csvdata = reader.result as string
-      await csvtojson().fromString(csvdata).then((jsonData) => {
+      await csvtojson({ noheader: true}).fromString(csvdata).then((jsonData) => {
         window.localStorage.setItem("UPLOADED_FILE_" + file.name, JSON.stringify(jsonData))
       })
       onSuccess(null, file)
@@ -83,10 +83,10 @@ function FileSelector(props: IFileSelectorProps) {
   }
 
   const getSelectionFileList = () => {
-    return fileNameStore.map((fn: DataFile) => {
+    return fileNameStore.map((fn) => {
       return {
-        label: fn.name,
-        value: fn.name
+        label: fn,
+        value: fn
       }
     })
   }
@@ -94,8 +94,24 @@ function FileSelector(props: IFileSelectorProps) {
   const formatJsonForTable = (fileName: string) => {
     const data = window.localStorage.getItem("UPLOADED_FILE_" + fileName)
     if (data) {
-      const jsonData = JSON.parse(data as string)
-      const headers = Object.keys(jsonData[0])
+      let jsonData: any[] = JSON.parse(data as string)
+      let headers: string[] = []
+      if (hasHeaderRow) {
+        let tmpData: any[] = []
+        for (let i = 1; i < jsonData.length; i++){
+          let item: any = {}
+          Object.entries(jsonData[0]).forEach((entry) => {
+            // @ts-ignore
+            item[entry[1]] = jsonData[i][entry[0]]
+          })
+          tmpData.push(item)
+        }
+        jsonData = tmpData
+        headers = Object.keys(jsonData[0])
+      }
+      else {
+        headers = Object.keys(jsonData[0])
+      }
       const columns = headers.map(header => {
         return {
           title: header,
@@ -134,7 +150,6 @@ function FileSelector(props: IFileSelectorProps) {
   return (
     <>
       <div className={classes.upload}>
-        {/* Dragger needs two form.item! */}
         <Form.Item 
           name="file"
           style={{ marginBottom: 0 }}>
@@ -171,8 +186,17 @@ function FileSelector(props: IFileSelectorProps) {
             </p>
           </Upload.Dragger>
         </Form.Item>
-        </div>
-      
+      </div>
+      {selectedFileName.length > 0 && fileNameStore.indexOf(selectedFileName) === -1 ? 
+        <Form.Item name="hasHeaderRow" valuePropName="checked">
+          <Checkbox
+            checked={hasHeaderRow}
+            style={{ fontWeight: 700, fontSize: 20 }}
+            onChange={() => setHasHeaderRow(!hasHeaderRow)}
+          >
+          </Checkbox>
+          <span style={{ fontSize: 20, fontWeight: 600, marginLeft: 10 }}>Does the first row contains column header names?</span>
+        </Form.Item> : null}
     </>
   )
 

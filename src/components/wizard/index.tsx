@@ -2,13 +2,11 @@ import { createUseStyles } from 'react-jss'
 import { useState, useMemo, useEffect } from 'react'
 import { Divider, Button, Modal, Tooltip } from 'antd'
 import { DeleteFilled, FileAddFilled } from '@ant-design/icons'
-import Data from './data'
 import Network from './network/index'
 import VisSelector from './visSelector'
 import { WizardContext } from './context'
-import { DataFile, Template, OperationType, NetworkConfig } from '../../../typings'
+import { OperationType } from '../../../typings'
 import { HANDLEALL, defaultDatasets, defaultNetworks } from '../../../typings/constant'
-import templates from '../templates/templates'
 import Sessions from './session'
 import { find } from 'lodash-es'
 import Record from './record'
@@ -16,7 +14,6 @@ import DataPreview from './data/dataPreview'
 import { handleCopy, handleDelete, handleRename, isDataInNetwork, updateNetworkAndSessionIfDeleteData, updateNetworkIfRenameData, updateSessionIfDeleteNet, updateSessionIfRenameNet } from './utils'
 import NetworkPreview from './network/networkPreview'
 import NewSession from './session/newSession'
-import { textAlign } from 'html2canvas/dist/types/css/property-descriptors/text-align'
 
 const useStyles = createUseStyles({
   root: {
@@ -100,6 +97,11 @@ function Wizard() {
   // whenever clicking create a visualization, trigger re-mounting the component
   const [triggerReMount, setTriggerReMount] = useState<number>(123)
 
+  
+  /**
+   * @description
+   * @param {string[]} files: an array of file names
+   */
   async function loadAndStoreFiles(files: string[]) {
     for (const filename of files) {
       const response = await fetch(`./data/${filename}`)
@@ -108,21 +110,21 @@ function Wizard() {
     }
   }
 
-  // load the default file
+  /**
+   * @description: load the default files to cache at the first time using the Vistorian
+   */
   useEffect(() => {
-    const filesToStore = Array.from(defaultDatasets).map(d =>`UPLOADED_FILE_${d}`).concat(Array.from(defaultNetworks).map(n =>`NETWORK_WIZARD_${n}`))
+    let filesToStore = Array.from(defaultDatasets).map(d =>`UPLOADED_FILE_${d}`)
+    // filesToStore.push(...Array.from(defaultDatasets).map(d => `UPLOADED_FILEINFO_${d}`))
+    filesToStore.push(...Array.from(defaultNetworks).map(n =>`NETWORK_WIZARD_${n}`))
+    // console.log('filesToStore', filesToStore)
     loadAndStoreFiles(filesToStore)
   }, []);
 
-  // handle the initialization using local storage
   const loadedFiles = Object.keys(window.localStorage)
     .filter(k => k.startsWith("UPLOADED_FILE_"))
-    .map((n) => {
-      return {
-        name: n.slice(14),
-        hasHeader: true
-      } as DataFile
-    })
+    .map(n => n.slice(14))
+
   const loadedNetworks = Object.keys(window.localStorage)
     .filter(k => k.startsWith("NETWORK_WIZARD_"))
     .map(n => n.slice(15))
@@ -137,6 +139,35 @@ function Wizard() {
       return null
     })
 
+  // const loadFiles = () => {
+  //   let arr: DataFile[] = []
+  //   let arrName = new Set<string>()
+  //   loadedNetworks.forEach(network => {
+  //     const net = JSON.parse(window.localStorage.getItem(`NETWORK_WIZARD_${network}`) as string) as NetworkConfig
+  //     if (net.linkTableConfig) {
+  //       if (!arrName.has(net.linkTableConfig.file)) {
+  //         arrName.add(net.linkTableConfig.file)
+  //         arr.push({
+  //           name: net.linkTableConfig.file,
+  //           hasHeader: net.linkTableConfig.hasHeaderRow
+  //         })
+  //       }
+  //     }
+  //     if (net.extraNodeConfig?.hasExtraNode) {
+  //       if (!arrName.has(net.extraNodeConfig.file as string)) {
+  //         arrName.add(net.extraNodeConfig.file as string)
+  //         arr.push({
+  //           name: net.extraNodeConfig.file as string,
+  //           hasHeader: net.extraNodeConfig.hasHeaderRow as boolean
+  //         })
+  //       }       
+  //     }
+  //   })
+  //   return arr
+  // }
+  // const loadedFiles = loadFiles()
+
+  // handle the initialization based on the cache
   const [fileNameStore, setFileNameStore] = useState(loadedFiles)
   const [networkStore, setNetworkStore] = useState(loadedNetworks)
   const [sessionStore, setSessionStore] = useState(loadedSessions)
@@ -168,7 +199,7 @@ function Wizard() {
       }
     }
     else if (clearType === 'data') {
-      setFileNameStore(newStore as DataFile[])
+      setFileNameStore(newStore as string[])
       const result = updateNetworkAndSessionIfDeleteData(selectedToDelete, networkStore, sessionStore)
       setNetworkStore(result.networkStore)
       setSessionStore(result.sessionStore)
@@ -186,7 +217,7 @@ function Wizard() {
     if (type === 'network')
       setNetworkStore(newStore as string[])
     else if (type === 'data')
-      setFileNameStore(newStore as DataFile[])
+      setFileNameStore(newStore as string[])
   }
 
   const toRename = (type: OperationType, oldName: string, newName: string) => {
@@ -203,7 +234,7 @@ function Wizard() {
     }
     else if (type === 'data') {
       if (result.status) {
-        setFileNameStore(result.newStore as DataFile[])
+        setFileNameStore(result.newStore as string[])
         updateNetworkIfRenameData(oldName, newName, networkStore)
         if (main === 'dataPreview' && preview === oldName) {
           setPreview(newName)
@@ -237,7 +268,8 @@ function Wizard() {
       // case 'data': 
       //   return <Data />
       case 'dataPreview': 
-        const fileName = find(fileNameStore, (fn: DataFile) => fn.name === preview) as DataFile
+        // const fileName = find(fileNameStore, (fn) => fn === preview) as DataFile
+        const fileName = preview
         return <DataPreview 
           selectedData={fileName} 
           setPreview={setPreview}
@@ -328,7 +360,7 @@ function Wizard() {
               </Tooltip>
               
             </div>
-            {networkStore.map((network: string) => {
+            {networkStore.sort().map((network: string) => {
               const selectedPreview = main === 'visSelector' ? `networkPreview-${selectedNetwork}` : `${main}-${preview}`
               return (<Record 
                 key={network}
@@ -363,10 +395,10 @@ function Wizard() {
                 />
               </Tooltip>
             </div>
-            {fileNameStore.map((fileName: DataFile) => (
+            {fileNameStore.sort().map((fileName: string) => (
               <Record
-                key={fileName.name}
-                data={fileName.name}
+                key={fileName}
+                data={fileName}
                 type="data"
                 handleSelectToDelete={handleSelectToDelete}
                 showPreview={showPreview}
