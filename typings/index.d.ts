@@ -1,10 +1,5 @@
 import { NetworkPattern } from "../src/components/xplainer/motifs/motif"
 
-// type DataFile = {
-//   name: string,
-//   hasHeader: boolean,
-// }
-
 type Session = {
   id: number,
   network: string,
