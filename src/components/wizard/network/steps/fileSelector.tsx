@@ -51,10 +51,9 @@ function FileSelector(props: IFileSelectorProps) {
 
   const handleOnChange = (info: UploadChangeParam<UploadFile<any>>) => {
     const { file } = info
-    // console.log('before:', info.file)
     if (file.status === 'done') {
-      // console.log('done:', info.file)
       setSelectedFileName(file.name)
+      // console.log('handleOnChange', file.name, selectedFileName)
       form.setFieldsValue({ 'file': file.name })
     }
   }
@@ -68,10 +67,11 @@ function FileSelector(props: IFileSelectorProps) {
       message.error(`${file.name} file upload failed.`)
     }
     reader.onload = async () => {
-      if (fileNameStore.indexOf(selectedFileName) > -1) {
-        message.error(`${file.name} file upload failed, as the system does not allow data files uploaded with the same name. Please select a previously uploaded file.`)
+      if (fileNameStore.indexOf(file.name) > -1) {
+        message.error(`An item named ''${file.name}'' already exists in this location. To avoid overwritten, please rename the file before uploading, or choose from previously uploaded files.`)
         return false
       }
+      // console.log('customRequest', file.name, selectedFileName)
       message.success(`${file.name} file uploaded successfully.`)
       const csvdata = reader.result as string
       await csvtojson({ noheader: true}).fromString(csvdata).then((jsonData) => {
