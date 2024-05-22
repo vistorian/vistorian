@@ -122,13 +122,6 @@ function DataPreview(props: IDataPreviewProps) {
     else if (data && selectedData.endsWith('.csv')) {
       return (
         <>
-          {/* <Checkbox 
-            checked={checked}
-            style={{marginBottom: 10, fontWeight: 700}}
-            // onChange={() => setHasHeader()}
-          >
-            Does the first row contains column header names?
-          </Checkbox> */}
           <Table
             columns={columnInTable}
             dataSource={dataInTable}

@@ -195,7 +195,7 @@ function FileSelector(props: IFileSelectorProps) {
             onChange={() => setHasHeaderRow(!hasHeaderRow)}
           >
           </Checkbox>
-          <span style={{ fontSize: 20, fontWeight: 600, marginLeft: 10 }}>Does the first row contains column header names?</span>
+          <span style={{ fontSize: 20, fontWeight: 600, marginLeft: 10 }}>Does the first row contains column header name?</span>
         </Form.Item> : null}
     </>
   )
