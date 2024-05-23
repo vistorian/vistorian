@@ -40,7 +40,7 @@ function Paste(props: IPaste) {
     if (fileName.length > 0) {
       if (!checkDuplicate(fileName)) {
         if (fileName.endsWith('.json') && checkIsJSON(data)) {
-          message.success(`${fileName} file saved successfully.`)
+          message.success(`${fileName} file saved successfully!`)
           // console.log('reader.onload:', reader.result)
           window.localStorage.setItem("UPLOADED_FILE_" + fileName, data)
           const tmp: DataFile = {
