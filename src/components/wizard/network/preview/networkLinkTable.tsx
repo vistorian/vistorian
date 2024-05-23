@@ -10,6 +10,7 @@ interface INetworkLinkTableProps {
 
 function NetworkLinkTable(props: INetworkLinkTableProps) {
   const { network } = props
+  console.log('network link table:', network)
 
   const fullCol = {
     linkId: 'Link id',
@@ -51,6 +52,7 @@ function NetworkLinkTable(props: INetworkLinkTableProps) {
   const getData = () => {
     let data: any[] = []
     const jsonData = JSON.parse(window.localStorage.getItem("UPLOADED_FILE_" + network.linkTableConfig?.file) as string)
+    console.log('getData:', jsonData)
     if (jsonData) {
       const columns = getColumns()
       data = jsonData.map((record: any, index: number) => {

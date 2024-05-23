@@ -106,6 +106,7 @@ function FileSelector(props: IFileSelectorProps) {
           tmpData.push(item)
         }
         jsonData = tmpData
+        window.localStorage.setItem("UPLOADED_FILE_" + fileName, JSON.stringify(jsonData))
         headers = Object.keys(jsonData[0])
       }
       else {
@@ -187,7 +188,7 @@ function FileSelector(props: IFileSelectorProps) {
         </Form.Item>
       </div>
       {selectedFileName.length > 0 && fileNameStore.indexOf(selectedFileName) === -1 ? 
-        <>
+        <Form.Item name="hasHeaderRow" valuePropName="checked" >
           <Checkbox
             checked={hasHeaderRow}
             style={{ fontWeight: 700, fontSize: 20 }}
@@ -195,20 +196,9 @@ function FileSelector(props: IFileSelectorProps) {
           >
           </Checkbox>
           <span style={{ fontSize: 20, fontWeight: 600, marginLeft: 10 }}>Does the first row contains column header name?</span>
-        </> : null}
+        </Form.Item> : null}
     </>
   )
 
 }
 export default FileSelector
-
-
-  // < Form.Item name = "hasHeaderRow" valuePropName = "checked" >
-  //         <Checkbox
-  //           checked={hasHeaderRow}
-  //           style={{ fontWeight: 700, fontSize: 20 }}
-  //           onChange={() => setHasHeaderRow(!hasHeaderRow)}
-  //         >
-  //         </Checkbox>
-  //         <span style={{ fontSize: 20, fontWeight: 600, marginLeft: 10 }}>Does the first row contains column header name?</span>
-  //       </Form.Item > : null}
