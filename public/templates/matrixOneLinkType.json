@@ -165,31 +165,7 @@
                     "selection": "link_selection"
                 }
             ],
-
-            "vis": [
-                {
-                    "entries": "entry.data",
-                    "mark": {
-                        "scaling": true,
-                        "type": "rect",
-                        "width":  {"expression": "bounds.width/ length(state.entry.data)"},
-                        "height": {"expression": "bounds.height"},
-                        "y": 0,
-                        "x": {"expression": "index * bounds.width / length(state.entry.data)"},
-
-                        "fill": {
-                            "condition": {
-                                "test": "datum.size < 1",
-                                "value": "white"
-                            },
-                            "scale": "cellColor",
-                            "expression": "datum.linkType"
-                        }
-                    }
-                }
-            ],
-
-            "//mark": {
+            "mark": {
                 "scaling": true,
                 "type": "square",
                 "area": {
