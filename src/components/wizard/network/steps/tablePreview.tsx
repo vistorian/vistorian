@@ -13,7 +13,6 @@ interface ITablePreviewProps {
 
 function TablePreview(props: ITablePreviewProps) {
   const { columnInTable, dataInTable } = props
-  const [checked, setChecked] = useState<boolean>(true)
 
   return (
     <>

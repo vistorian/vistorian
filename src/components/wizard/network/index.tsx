@@ -9,10 +9,8 @@ import NetFormat from './steps/netFormat'
 import NetLinkConfig from './steps/netLinkConfig'
 import NetLocationConfig from './steps/netLocationConfig'
 import NetExtraNodeConfig from './steps/netExtraNodeConfig'
-import { NetworkConfig, StepType, StepData, NetworkName, NetworkFormat, LinkTableConfig, LocationTableConfig, ExtraNodeConfig, DataFile } from '../../../../typings'
+import { NetworkConfig, StepType, StepData, NetworkName, NetworkFormat, LinkTableConfig, LocationTableConfig, ExtraNodeConfig } from '../../../../typings'
 import { WizardContext } from '../context'
-import { findIndex } from 'lodash-es'
-import { genSpecFromLinkTable } from '../../templates/genSpec'
 
 
 const useStyles = createUseStyles({
@@ -89,13 +87,10 @@ function Network(props: INetworkProps) {
 
     // update fileNameStore after this step to avoid components updating meanwhile
     if (stepData && 'dragger' in stepData) {
-      const index = findIndex(fileNameStore, (fn: DataFile) => fn.name === stepData.file)
+      const index = fileNameStore.indexOf(stepData.file as string)
       // if the file doesn't in flie store, record it. 
       if (index === -1) {
-        const tmp = {
-          name: stepData.file,
-          hasHeader: stepData.hasHeaderRow
-        } as DataFile
+        const tmp = stepData.file as string
         setFileNameStore([...fileNameStore, tmp])
       }
       // else {

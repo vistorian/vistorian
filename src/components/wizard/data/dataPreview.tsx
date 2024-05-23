@@ -1,6 +1,6 @@
 import { createUseStyles } from 'react-jss'
 import { useContext, useEffect, useState } from 'react';
-import { Table, Checkbox, message, Button, Tooltip, Input, Modal, theme } from 'antd';
+import { Table, message, Button, Input, Modal } from 'antd';
 import { DeleteFilled, CopyFilled, EditFilled, CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { WizardContext } from '../context';
 import styled from '@emotion/styled';
@@ -63,20 +63,6 @@ function DataPreview(props: IDataPreviewProps) {
     const result = handleCopy('data', name, fileNameStore)
     setFileNameStore(result as string[])
   }
-
-  // const setHasHeader = () => {
-  //   setChecked(!checked)
-    // const idx = findIndex(fileNameStore, (fn: DataFile) => fn.name === preview.name)
-    // if (idx > -1) {
-    //   const tmp = cloneDeep(fileNameStore)
-    //   tmp[idx].hasHeader = !checked
-    //   setFileNameStore(tmp)
-    //   setChecked(!checked)
-    // }
-    // else {
-    //   message.error('Can not find the file in the store.')
-    // }
-  // }
 
   const MyButton = styled(Button)({
     marginLeft: 10,

@@ -9,7 +9,6 @@ import UploadFiles from './upload'
 import Paste from './paste'
 import Download from './download'
 import { WizardContext } from '../context'
-import { DataFile } from '../../../../typings'
 import { findIndex } from 'lodash-es'
 
 const useStyles = createUseStyles({

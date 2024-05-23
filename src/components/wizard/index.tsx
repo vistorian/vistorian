@@ -268,7 +268,6 @@ function Wizard() {
       // case 'data': 
       //   return <Data />
       case 'dataPreview': 
-        // const fileName = find(fileNameStore, (fn) => fn === preview) as DataFile
         const fileName = preview
         return <DataPreview 
           selectedData={fileName} 
