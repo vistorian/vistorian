@@ -41,7 +41,7 @@ function NetLinkConfig(props: IStepProps) {
   const [selectedFileName, setSelectedFileName] = useState<string>('')
   const [dataInTable, setDataInTable] = useState<any[]>([]);
   const [columnInTable, setColumnInTable] = useState<any[]>([]);
-  const [hasHeaderRow, setHasHeaderRow] = useState<boolean>(true)
+  const [hasHeaderRow, setHasHeaderRow] = useState<boolean>(false)
   const [selectionOptions, setSelectionOptions] = useState<SelectOptionType[]>([])
 
   // for time format model 
@@ -83,6 +83,7 @@ function NetLinkConfig(props: IStepProps) {
           setDataInTable={setDataInTable}
           setColumnInTable={setColumnInTable}
           hasHeaderRow={hasHeaderRow}
+          setHasHeaderRow={setHasHeaderRow}
           setSelectionOptions={setSelectionOptions}
           selectedFileName={selectedFileName}
           setSelectedFileName={setSelectedFileName}
@@ -94,8 +95,6 @@ function NetLinkConfig(props: IStepProps) {
             ?
             <>
               <TablePreview
-                hasHeaderRow={hasHeaderRow}
-                setHasHeaderRow={setHasHeaderRow}
                 columnInTable={columnInTable}
                 dataInTable={dataInTable}
               />

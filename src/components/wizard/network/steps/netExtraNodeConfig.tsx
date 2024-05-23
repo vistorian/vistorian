@@ -31,7 +31,7 @@ function NetExtraNodeConfig(props: IStepProps) {
   const [selectedFileName, setSelectedFileName] = useState<string>('')
   const [dataInTable, setDataInTable] = useState<any[]>([]);
   const [columnInTable, setColumnInTable] = useState<any[]>([]);
-  const [hasHeaderRow, setHasHeaderRow] = useState<boolean>(true)
+  const [hasHeaderRow, setHasHeaderRow] = useState<boolean>(false)
   const [selectionOptions, setSelectionOptions] = useState<SelectOptionType[]>([])
   const [nodeTypes, setNodTypes] = useState<Array<string|null>>(['', null, null])
 
@@ -104,6 +104,7 @@ function NetExtraNodeConfig(props: IStepProps) {
           setDataInTable={setDataInTable}
           setColumnInTable={setColumnInTable}
           hasHeaderRow={hasHeaderRow}
+          setHasHeaderRow={setHasHeaderRow}
           setSelectionOptions={setSelectionOptions}
           selectedFileName={selectedFileName}
           setSelectedFileName={setSelectedFileName}
@@ -112,8 +113,6 @@ function NetExtraNodeConfig(props: IStepProps) {
 
         {selectedFileName.length > 0 ? <>
           <TablePreview
-            hasHeaderRow={hasHeaderRow}
-            setHasHeaderRow={setHasHeaderRow}
             columnInTable={columnInTable}
             dataInTable={dataInTable}
           />

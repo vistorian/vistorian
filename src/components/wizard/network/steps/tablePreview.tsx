@@ -1,30 +1,31 @@
 import styled from '@emotion/styled';
 import { Checkbox, Form, Table, Typography } from 'antd'
+import { useState } from 'react';
 const { Title, Text } = Typography;
 
 
 interface ITablePreviewProps {
-  hasHeaderRow: boolean
-  setHasHeaderRow: (data: boolean) => void
+  // hasHeaderRow: boolean
+  // setHasHeaderRow: (data: boolean) => void
   columnInTable: any[]
   dataInTable: any[]
 }
 
 function TablePreview(props: ITablePreviewProps) {
-  const { hasHeaderRow, setHasHeaderRow, columnInTable, dataInTable } = props
-
+  const { columnInTable, dataInTable } = props
+  const [checked, setChecked] = useState<boolean>(true)
 
   return (
     <>
-      <Form.Item name="hasHeaderRow" valuePropName="checked">
+      {/* <Form.Item name="hasHeaderRow" valuePropName="checked">
         <Checkbox
-          checked
+          checked={checked}
           style={{fontWeight: 700, fontSize: 20}}
           onChange={() => setHasHeaderRow(!hasHeaderRow)}
         >
         </Checkbox>
         <span style={{fontSize: 20, fontWeight: 600, marginLeft: 10}}>Does the first row contains column header names?</span>
-      </Form.Item>
+      </Form.Item> */}
       <Table
         columns={columnInTable}
         dataSource={dataInTable}

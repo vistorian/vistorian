@@ -82,8 +82,8 @@ function NetLocationConfig(props: IStepProps) {
 
         {selectedFileName.length > 0 ? <>
           <TablePreview
-            hasHeaderRow={hasHeaderRow} 
-            setHasHeaderRow={setHasHeaderRow} 
+            // hasHeaderRow={hasHeaderRow} 
+            // setHasHeaderRow={setHasHeaderRow} 
             columnInTable={columnInTable}
             dataInTable={dataInTable}
           />
