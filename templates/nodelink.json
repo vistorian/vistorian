@@ -253,7 +253,7 @@
             }
           ]
         },
-        "opacity": 0.9,
+        "opacity": 0.6,
         "fill": {
           "conditions": [
             {
@@ -295,39 +295,24 @@
         "opacity": {
           "conditions": [
             {
-              "//": "not in time",
+              "//": "if link is not in time, don't show it whatsoever",
               "test": "datum.data._time != null && datum.data._time < params.time[0] || datum.data._time > params.time[1]",
               "value": 0
             },
             {
-              "//": "default",
+              "//": "by default",
               "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
               "expression": "params.linkOpacityParam"
             },
             {
-              "//": "node hovered",
-              "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
-              "expression": "params.linkOpacityParam * 2"
+              "//": "if the link is linked to a hovered node, show strong",
+              "test": "params.hoveredNode.nodes.length > 0 && indexof(params.neighbours.links, datum) > -1",
+              "value": 1
             },
             {
-              "//": "neihgbor hovered",
-              "test": "params.neighbours.nodes.length > 0 && indexof(params.neighbours.links, datum) > -1",
-              "expression": "params.linkOpacityParam * 2"
-            },
-            {
-              "//": "node selected",
+              "//": "if the link is linked to a selected node",
               "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.links, datum) > -1",
               "expression": "params.linkOpacityParam"
-            },
-            {
-              "//": "selected common neighor",
-              "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.links, datum) > -1",
-              "expression": "params.linkOpacityParam"
-            },
-            {
-              "//": "selected neighbour",
-              "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.links, datum) > -1",
-              "expression": ".5 + params.unselectedOpacity"
             },
             {
               "//": "selected neighbour",
