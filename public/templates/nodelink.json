@@ -171,7 +171,7 @@
       "name": "radius",
       "type": "linear",
       "range": [
-        1,
+        10,
         150
       ],
       "rangeMapFunction": "datum * params.nodeSizeParam",
@@ -369,7 +369,9 @@
           "scale": "nodeShape"
         },
         "area": {
-          "expression": "10 + datum.degree * params.nodeSizeParam"
+          "field": "degree",
+          "scale": "radius",
+          "//expression": "10 + datum.degree * params.nodeSizeParam"
         },
         "fill": {
           "conditions": [
