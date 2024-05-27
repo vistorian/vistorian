@@ -139,34 +139,6 @@ function Wizard() {
       return null
     })
 
-  // const loadFiles = () => {
-  //   let arr: DataFile[] = []
-  //   let arrName = new Set<string>()
-  //   loadedNetworks.forEach(network => {
-  //     const net = JSON.parse(window.localStorage.getItem(`NETWORK_WIZARD_${network}`) as string) as NetworkConfig
-  //     if (net.linkTableConfig) {
-  //       if (!arrName.has(net.linkTableConfig.file)) {
-  //         arrName.add(net.linkTableConfig.file)
-  //         arr.push({
-  //           name: net.linkTableConfig.file,
-  //           hasHeader: net.linkTableConfig.hasHeaderRow
-  //         })
-  //       }
-  //     }
-  //     if (net.extraNodeConfig?.hasExtraNode) {
-  //       if (!arrName.has(net.extraNodeConfig.file as string)) {
-  //         arrName.add(net.extraNodeConfig.file as string)
-  //         arr.push({
-  //           name: net.extraNodeConfig.file as string,
-  //           hasHeader: net.extraNodeConfig.hasHeaderRow as boolean
-  //         })
-  //       }       
-  //     }
-  //   })
-  //   return arr
-  // }
-  // const loadedFiles = loadFiles()
-
   // handle the initialization based on the cache
   const [fileNameStore, setFileNameStore] = useState(loadedFiles)
   const [networkStore, setNetworkStore] = useState(loadedNetworks)

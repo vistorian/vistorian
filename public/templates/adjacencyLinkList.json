@@ -127,10 +127,10 @@
             },
             "area": 30,
             "x": {
-                         "expression": "index * 6 + 170"
+              "expression": "index * 6 + 170"
             },
             "tooltip": {
-              "expression": " datum.source.id + ' --- '+ datum.linkType +'--> ' + datum.target.id + '' "
+              "expression": " datum.source.data._label+ ' --- '+ datum.linkType +'--> ' + datum.target.data._label + '' "
             }
           }
         }
