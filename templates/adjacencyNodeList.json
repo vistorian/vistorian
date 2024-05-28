@@ -114,7 +114,7 @@
             },
             "y": -2,
             "tooltip": {
-              "expression": "datum.key + ' (' + datum.size + ')'"
+              "expression": "datum.data[0].target.data._label + ' (' + datum.size + ')'"
             }
           }
         }
