@@ -311,7 +311,7 @@
             },
             {
               "//": "if the link is linked to a selected node",
-              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.links, datum) > -1",
+              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNeighbours.links, datum) > -1",
               "expression": "params.linkOpacityParam"
             },
             {
