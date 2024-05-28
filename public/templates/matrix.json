@@ -187,7 +187,7 @@
                         },
                         "opacity": {
                             "condition": {
-                                "test": "datum.size < 1",
+                                "test": "(datum.size < 1) || (datum.data._time != null && datum.data._time < params.time[0] || datum.data._time > params.time[1]) ",
                                 "value": 0
                             },
                             "scale": "opacity",
