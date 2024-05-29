@@ -148,11 +148,15 @@ function Landing() {
 						<br />
 						<a href="https://vistorian.github.io/formattingdata.html">Formatting Data</a>
 						<br />
-						<a href="https://vistorian.github.io/formattingdata.html">Formatting Data</a>
-						<br />
+						{/* <a href="https://vistorian.github.io/formattingdata.html">Formatting Data</a>
+						<br /> */}
           </div>
 					<div className={classes.menuCol}>
 						<h2 className={classes.h2}>Resources</h2>
+            <a href="https://discord.gg/CyHzTqne">Discord Channel</a>
+            <br />
+            <a href="https://groups.google.com/g/vistorian">Google Group</a>
+            <br />
 						{/* <a href="https://vistorian.github.io/gettingstarted.html">Getting Started</a>
 						<br /> */}
 						<a href="https://vistorian.github.io/data.html">Demo Data</a>
