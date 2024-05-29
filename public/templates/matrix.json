@@ -1,6 +1,6 @@
 {
-  "x": 25,
-  "y": 25,
+  "x": 130,
+  "y": 130,
   "//x": 120,
   "//y": 120,
   "zoom": true,
@@ -62,6 +62,7 @@
       "action": "replace",
       "//clearOnBackgroundClick": true
     },
+
     {
       "name": "seriationMethod",
       "bind": {
@@ -107,6 +108,18 @@
         "for": "links",
         "field": "data._time"
       }
+    },
+    {
+      "name": "labelDensityParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Label Density",
+        "min": "0",
+        "max": "20",
+        "step": ".2"
+      },
+      "value": 1
     }
   ],
   "scales": [
@@ -205,16 +218,35 @@
         }
       ],
       "layout": "labelLayoutY",
-      "overlapRemoval": false,
+      "overlapRemoval": {
+        "field": "degree",
+        "overlapDistance": {
+          "parameter": "labelDensityParam"
+        }
+      },
+      "//row labels":"",
       "mark": {
         "type": "text",
+        "fontWeight": {
+          "conditions":[
+            {
+              "//": "hovered",
+              "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "value": 1000
+            }
+          ],
+          "value" : 100 
+        },
         "text": {
           "expression": "[nodeLabel]"
         },
-        "x": 10,
+        "dx": -10,
+        "dy": 10,
+        "fontSize":{
+          "expression": "params.labelSizeParam"
+        },
         "align": "right",
         "fixedPanZoom": "x",
-
         "opacity": {
           "conditions": [
             {
@@ -248,12 +280,12 @@
               "value": 1
             }
           ],
-          "value": 0.5
+          "value": 0.2
         }
-
       }
     },
     {
+      "//col labels":"",
       "entries": "network.nodes",
       "layout": "labelLayoutX",
       "mark": {
@@ -261,10 +293,59 @@
         "text": {
           "expression": "[nodeLabel]"
         },
+        "fontSize":{
+          "expression": "params.labelSizeParam"
+        },
         "y": 10,
         "angle": -90,
-        "//align": "right",
-        "fixedPanZoom": "y"
+        "dx": 20,
+        "dy": 10,
+        "fixedPanZoom": "y",
+        "fontWeight": {
+          "conditions":[
+            {
+              "//": "hovered",
+              "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "value": 1000
+            }
+          ],
+          "value" : 100 
+        },
+        "opacity": {
+          "conditions": [
+            {
+              "//": "default",
+              "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
+              "value": 1
+            },
+            {
+              "//": "hovered",
+              "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "value": 1
+            },
+            {
+              "//": "hovered neighbour",
+              "test": "params.neighbours.nodes.length > 0 && indexof(params.neighbours.nodes, datum) > -1",
+              "value": 1
+            },
+            {
+              "//": "selected node",
+              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.nodes, datum) > -1",
+              "value": 1
+            },
+            {
+              "//": "selected common neighor",
+              "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.nodes, datum) > -1",
+              "value": 1
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.nodes, datum) > -1",
+              "value": 1
+            }
+          ],
+          "value": 0.2
+        }
       }
     },
     {
@@ -352,7 +433,6 @@
               ],
               "value": 0.1
             },
-
             "strokeWidth": {
               "conditions": [
                 {
