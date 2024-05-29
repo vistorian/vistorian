@@ -131,7 +131,7 @@
     },
     {
       "name": "linkGapParam",
-      "bind": {
+      "//bind": {
         "input": "range",
         "event": "onChange",
         "label": "Link Gap",
@@ -330,6 +330,39 @@
         },
         "tooltip": {
           "expression": "[nodeLabel] + ' (' + datum.degree + (datum.degree == 1 ? ' link)' : ' links)') "
+        }
+      }
+    },
+
+    {
+      "entries": "network.nodes",
+      "layout": "layout",
+      "mark": {
+        "type": "circle",
+        "area": {
+          "conditions": [
+            {
+              "test": "params.selectedNodes.nodes.length > 0 && (indexof(params.selectedNodes.nodes, datum) > -1)",
+              "value": 1400
+            },
+            {
+              "test": "params.selectedNodes.nodes.length > 1 && params.selectedCommonNeighbours.nodes.length > 0 && (indexof(params.selectedCommonNeighbours.nodes, datum) > -1)",
+              "value": 1100
+            }
+          ]
+        },
+        "opacity": 0.6,
+        "fill": {
+          "conditions": [
+            {
+              "test": "params.selectedNodes.nodes.length > 0 && (indexof(params.selectedNodes.nodes, datum) > -1)",
+              "value": "#777"
+            },
+            {
+              "test": "params.selectedNodes.nodes.length > 1 && params.selectedCommonNeighbours.nodes.length > 0 && (indexof(params.selectedCommonNeighbours.nodes, datum) > -1)",
+              "value": "lightgray"
+            }
+          ]
         }
       }
     },
