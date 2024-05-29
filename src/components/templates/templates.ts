@@ -93,7 +93,8 @@ const templates: Template[] = [
     label: "Node-Link Map",
     image: "map.png",
     description: "A node-link diagram where nodes have corresponding geographic positions.",
-    template: "map.json",
+    // template: "map.json",
+    template: "mapSimple.json",
     manual: "https://vistorian.github.io/visualizations.html#map",
     error: 'The network lacks geographic data.'
   },
