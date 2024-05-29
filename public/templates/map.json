@@ -4,6 +4,8 @@
   "networks": "[networksDefinition]",
   "zoom": true,
   "pan": true,
+  "width": 500,
+  "height": 500,
   "maps": [
     {
       "name": "my_map",
