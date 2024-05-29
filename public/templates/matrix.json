@@ -20,6 +20,12 @@
       "clearOnBackgroundClick": true
     },
     {
+      "name": "hoveredLink",
+      "network": "network",
+      "type": "selection",
+      "clearOnBackgroundClick": true
+    },
+    {
       "name": "selectedNodes",
       "network": "network",
       "type": "selection",
@@ -108,18 +114,6 @@
         "for": "links",
         "field": "data._time"
       }
-    },
-    {
-      "name": "labelDensityParam",
-      "bind": {
-        "input": "range",
-        "event": "onChange",
-        "label": "Label Density",
-        "min": "0",
-        "max": "20",
-        "step": ".2"
-      },
-      "value": 1
     }
   ],
   "scales": [
@@ -218,12 +212,6 @@
         }
       ],
       "layout": "labelLayoutY",
-      "overlapRemoval": {
-        "field": "degree",
-        "overlapDistance": {
-          "parameter": "labelDensityParam"
-        }
-      },
       "//row labels":"",
       "mark": {
         "type": "text",
@@ -232,6 +220,11 @@
             {
               "//": "hovered",
               "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "value": 1000
+            },
+            {
+              "//": "selected node",
+              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.nodes, datum) > -1",
               "value": 1000
             }
           ],
@@ -306,6 +299,11 @@
             {
               "//": "hovered",
               "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "value": 1000
+            },
+            {
+              "//": "selected node",
+              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.nodes, datum) > -1",
               "value": 1000
             }
           ],
@@ -445,7 +443,23 @@
             "stroke": "black",
             "tooltip": {
               "expression": "datum.source._label + ' -> ' + datum.target._label + (datum.linkWeight > 0 ? ' (weight:' + datum.linkWeight + ')': 0)"
-            }
+            },
+            "actions": [
+              {
+                "interaction": "select",
+                "using": "cursor",
+                "event": "mouseover",
+                "action": "replace",
+                "selection": "hoveredLink"
+              },
+              {
+                "interaction": "select",
+                "using": "cursor",
+                "event": "mouseout",
+                "action": "remove",
+                "selection": "hoveredLink"
+              }
+            ]
           }
         }
       ],
