@@ -1,257 +1,416 @@
 {
-    "x": 120,
-    "y": 120,
-    "zoom": true,
-    "pan": {
-        "max": [
-            0,
-            0
-        ]
-    },
-    "data": "[dataDefinition]",
-    "networks": "[networksDefinition]",
-    "parameters": [
-        {
-            "name": "node_selection",
-            "network": "network",
-            "type": "selection",
-            "//clearOnBackgroundClick": true
-        },
-        {
-            "name": "neighbours",
-            "source": "node_selection",
-            "transform": [
-                {
-                    "type": "neighbours",
-                    "direction": "both"
-                }
-            ]
-        },
-        {
-            "name": "link_selection",
-            "network": "network",
-            "type": "selection",
-            "action": "replace",
-            "//clearOnBackgroundClick": true
-        },
-        {
-            "name": "seriationMethod",
-            "bind": {
-                "input": "select",
-                "options": [
-                    "optimal-leaf-order",
-                    "barycentre",
-                    "bandwidth-reduction",
-                    "pca",
-                    "degree",
-                    "id"
-                ],
-                "labels": [
-                    "Optimal Leaf Order",
-                    "Barycentre Heuristic",
-                    "Bandwidth Reduction",
-                    "PCA",
-                    "Node Degree",
-                    "Node Label"
-                ],
-                "label": "Seriation"
-            },
-            "value": "optimal-leaf-order"
-        },
-        {
-            "name": "labelSizeParam",
-            "bind": {
-                "input": "range",
-                "event": "onChange",
-                "label": "Label Size",
-                "min": "5",
-                "max": "25",
-                "step": "1"
-            },
-            "value": 13
-        },
-        {
-            "name": "time",
-            "bind": {
-                "input": "brush",
-                "axisType": "time",
-                "network": "network",
-                "for": "links",
-                "field": "data._time"
-            }
-        }
-    ],
-    "scales": [
-        {
-            "name": "opacity",
-            "type": "linear",
-            "range": [
-                0.2,
-                1
-            ],
-            "domain": {
-                "data": "network.links",
-                "field": "linkWeight"
-            }
-        },
-        {
-            "name": "cellColor",
-            "type": "ordinal",
-            "range": "[colorScheme]",
-            "domain": {
-                "data": "network.links",
-                "field": "linkType"
-            }
-        }
-    ],
-    "orderings": [
-        {
-            "name": "order",
-            "orderBy": {
-                "parameter": "seriationMethod"
-            },
-            "data": "network.nodes"
-        }
-    ],
-    "tables": [
-        {
-            "name": "adjacencyMatrix",
-            "data": "network.links",
-            "rowOrder": {
-                "order": "order",
-                "field": "source"
-            },
-            "colOrder": {
-                "order": "order",
-                "field": "target"
-            },
-            "symmetric": true
-        }
-    ],
-    "vis": [
-        {
-            "table": "adjacencyMatrix",
-            "rowLabels": {
-                "field": "source.data._label",
-                "align": "right",
-                "fontSize": {
-                    "expression": "params.labelSizeParam"
-                },
-                "dx": -7,
-                "dy": 5,
-                "fixedPanZoom": "x"
-            },
-            "colLabels": {
-                "field": "target.data._label",
-                "fontSize": {
-                    "expression": "params.labelSizeParam"
-                },
-                "dx": 7,
-                "dy": 5,
-                "fixedPanZoom": "y"
-            },
-            "rowLines": {
-                "stroke": "lightgrey"
-            },
-            "colLines": {
-                "stroke": "lightgrey"
-            },
-            "actions": [
-                {
-                    "interaction": "select",
-                    "using": "cursor",
-                    "event": "mouseover",
-                    "action": "replace",
-                    "selection": "link_selection"
-                }
-            ],
-
-            "vis": [
-                {
-                    "entries": "entry.data",
-                    "mark": {
-                        "scaling": true,
-                        "type": "rect",
-                        "width":  {"expression": "bounds.width/ length(state.entry.data)"},
-                        "height": {"expression": "bounds.height"},
-                        "y": 0,
-                        "x": {"expression": "index * bounds.width / length(state.entry.data)"},
-
-                        "fill": {
-                            "condition": {
-                                "test": "datum.size < 1",
-                                "value": "white"
-                            },
-                            "scale": "cellColor",
-                            "expression": "datum.linkType"
-                        },
-                        "opacity": {
-                            "condition": {
-                                "test": "(datum.size < 1) || (datum.data._time != null && datum.data._time < params.time[0] || datum.data._time > params.time[1]) ",
-                                "value": 0
-                            },
-                            "scale": "opacity",
-                            "expression": "datum.linkWeight"
-                        },
-                        "strokeWidth": {
-                            "conditions": [
-                                {
-                                    "inSelection": "link_selection.links",
-                                    "value": 1
-                                }
-                            ],
-                            "value": 0
-                        },
-                        "stroke": "black",
-                        "tooltip": {
-                            "expression": "datum.source._label + ' -> ' + datum.target._label + (datum.linkWeight > 0 ? ' (weight:' + datum.linkWeight + ')': 0)"
-                        }
-                    }
-                }
-            ],
-
-            "//mark": {
-                "scaling": true,
-                "type": "square",
-                "area": {
-                    "expression": "(bounds.width * bounds.height)"
-                },
-                "x": {
-                    "expression": "bounds.x + bounds.width/2"
-                },
-                "y": {
-                    "expression": "bounds.y + bounds.height/2"
-                },
-                "fill": {
-                    "condition": {
-                        "test": "datum.size < 1",
-                        "value": "white"
-                    },
-                    "scale": "cellColor",
-                    "expression": "datum.data[0].linkType"
-                },
-                "opacity": {
-                    "condition": {
-                        "test": "datum.size < 1",
-                        "value": 0
-                    },
-                    "scale": "opacity",
-                    "expression": "datum.data[0].linkWeight"
-                },
-                "stroke": "black",
-                "strokeWidth": {
-                    "conditions": [
-                        {
-                            "inSelection": "link_selection.links",
-                            "value": 1
-                        }
-                    ],
-                    "value": 0
-                },
-                "tooltip": {
-                    "expression": "datum.key[0].data._label + ' -> ' + datum.key[1].data._label + (datum.data.length > 0 ? ' (weight:' + datum.data[0].linkWeight + ')': 0)"
-                }
-            }
-        }
+  "x": 25,
+  "y": 25,
+  "//x": 120,
+  "//y": 120,
+  "zoom": true,
+  "pan": {
+    "max": [
+      0,
+      0
     ]
+  },
+  "data": "[dataDefinition]",
+  "networks": "[networksDefinition]",
+  "parameters": [
+    {
+      "name": "hoveredNode",
+      "network": "network",
+      "type": "selection",
+      "clearOnBackgroundClick": true
+    },
+    {
+      "name": "selectedNodes",
+      "network": "network",
+      "type": "selection",
+      "clearOnBackgroundClick": false
+    },
+    {
+      "name": "neighbours",
+      "source": "hoveredNode",
+      "transform": [
+        {
+          "type": "neighbours",
+          "direction": "both"
+        }
+      ]
+    },
+    {
+      "name": "selectedNeighbours",
+      "source": "selectedNodes",
+      "transform": [
+        {
+          "type": "neighbours",
+          "direction": "both"
+        }
+      ]
+    },
+    {
+      "name": "selectedCommonNeighbours",
+      "source": "selectedNodes",
+      "transform": [
+        {
+          "type": "commonNeighbours",
+          "direction": "both"
+        }
+      ]
+    },
+    {
+      "name": "link_selection",
+      "network": "network",
+      "type": "selection",
+      "action": "replace",
+      "//clearOnBackgroundClick": true
+    },
+    {
+      "name": "seriationMethod",
+      "bind": {
+        "input": "select",
+        "options": [
+          "optimal-leaf-order",
+          "barycentre",
+          "bandwidth-reduction",
+          "pca",
+          "degree",
+          "id"
+        ],
+        "labels": [
+          "Optimal Leaf Order",
+          "Barycentre Heuristic",
+          "Bandwidth Reduction",
+          "PCA",
+          "Node Degree",
+          "Node Label"
+        ],
+        "label": "Seriation"
+      },
+      "value": "optimal-leaf-order"
+    },
+    {
+      "name": "labelSizeParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Label Size",
+        "min": "5",
+        "max": "25",
+        "step": "1"
+      },
+      "value": 13
+    },
+    {
+      "name": "time",
+      "bind": {
+        "input": "brush",
+        "axisType": "time",
+        "network": "network",
+        "for": "links",
+        "field": "data._time"
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "opacity",
+      "type": "linear",
+      "range": [
+        0.2,
+        1
+      ],
+      "domain": {
+        "data": "network.links",
+        "field": "linkWeight"
+      }
+    },
+    {
+      "name": "cellColor",
+      "type": "ordinal",
+      "range": "[colorScheme]",
+      "domain": {
+        "data": "network.links",
+        "field": "linkType"
+      }
+    }
+  ],
+  "orderings": [
+    {
+      "name": "order",
+      "orderBy": {
+        "parameter": "seriationMethod"
+      },
+      "data": "network.nodes"
+    }
+  ],
+  "layouts": [
+    {
+      "name": "labelLayoutY",
+      "data": "network.nodes",
+      "pattern": "cartesian",
+      "y": [
+        {
+          "order": "order"
+        }
+      ]
+    },
+    {
+      "name": "labelLayoutX",
+      "data": "network.nodes",
+      "pattern": "cartesian",
+      "x": [
+        {
+          "order": "order"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "adjacencyMatrix",
+      "data": "network.links",
+      "rowOrder": {
+        "order": "order",
+        "field": "source"
+      },
+      "colOrder": {
+        "order": "order",
+        "field": "target"
+      },
+      "symmetric": true
+    }
+  ],
+  "vis": [
+    {
+      "entries": "network.nodes",
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseover",
+          "action": "replace",
+          "selection": "hoveredNode"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseout",
+          "action": "remove",
+          "selection": "hoveredNode"
+        },
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "click",
+          "action": "toggle",
+          "selection": "selectedNodes"
+        }
+      ],
+      "layout": "labelLayoutY",
+      "overlapRemoval": false,
+      "mark": {
+        "type": "text",
+        "text": {
+          "expression": "[nodeLabel]"
+        },
+        "x": 10,
+        "align": "right",
+        "fixedPanZoom": "x",
+
+        "opacity": {
+          "conditions": [
+            {
+              "//": "default",
+              "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
+              "value": 1
+            },
+            {
+              "//": "hovered",
+              "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "value": 1
+            },
+            {
+              "//": "hovered neighbour",
+              "test": "params.neighbours.nodes.length > 0 && indexof(params.neighbours.nodes, datum) > -1",
+              "value": 1
+            },
+            {
+              "//": "selected node",
+              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.nodes, datum) > -1",
+              "value": 1
+            },
+            {
+              "//": "selected common neighor",
+              "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.nodes, datum) > -1",
+              "value": 1
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.nodes, datum) > -1",
+              "value": 1
+            }
+          ],
+          "value": 0.5
+        }
+
+      }
+    },
+    {
+      "entries": "network.nodes",
+      "layout": "labelLayoutX",
+      "mark": {
+        "type": "text",
+        "text": {
+          "expression": "[nodeLabel]"
+        },
+        "y": 10,
+        "angle": -90,
+        "//align": "right",
+        "fixedPanZoom": "y"
+      }
+    },
+    {
+      "table": "adjacencyMatrix",
+      "//rowLabels": {
+        "field": "source.data._label",
+        "align": "right",
+        "fontSize": {
+          "expression": "params.labelSizeParam"
+        },
+        "dx": -7,
+        "dy": 5,
+        "fixedPanZoom": "x"
+      },
+      "//colLabels": {
+        "field": "target.data._label",
+        "fontSize": {
+          "expression": "params.labelSizeParam"
+        },
+        "dx": 7,
+        "dy": 5,
+        "fixedPanZoom": "y"
+      },
+      "rowLines": {
+        "stroke": "lightgrey"
+      },
+      "colLines": {
+        "stroke": "lightgrey"
+      },
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseover",
+          "action": "replace",
+          "selection": "link_selection"
+        }
+      ],
+      "vis": [
+        {
+          "entries": "entry.data",
+          "mark": {
+            "scaling": true,
+            "type": "rect",
+            "width": {
+              "expression": "bounds.width/ length(state.entry.data)"
+            },
+            "height": {
+              "expression": "bounds.height"
+            },
+            "y": 0,
+            "x": {
+              "expression": "index * bounds.width / length(state.entry.data)"
+            },
+            "fill": {
+              "condition": {
+                "test": "datum.size < 1",
+                "value": "white"
+              },
+              "scale": "cellColor",
+              "expression": "datum.linkType"
+            },
+            "//opacity": {
+              "condition": {
+                "test": "(datum.size < 1) || (datum.data._time != null && datum.data._time < params.time[0] || datum.data._time > params.time[1]) ",
+                "value": 0
+              },
+              "scale": "opacity",
+              "expression": "datum.linkWeight"
+            },
+            "opacity": {
+              "conditions": [
+                {
+                  "//": "default",
+                  "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
+                  "scale": "opacity",
+                  "expression": "datum.linkWeight"
+                },
+                {
+                  "//": "hovered",
+                  "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum.source",
+                  "scale": "opacity",
+                  "expression": "datum.linkWeight"
+                }
+              ],
+              "value": 0.1
+            },
+
+            "strokeWidth": {
+              "conditions": [
+                {
+                  "inSelection": "link_selection.links",
+                  "value": 1
+                }
+              ],
+              "value": 0
+            },
+            "stroke": "black",
+            "tooltip": {
+              "expression": "datum.source._label + ' -> ' + datum.target._label + (datum.linkWeight > 0 ? ' (weight:' + datum.linkWeight + ')': 0)"
+            }
+          }
+        }
+      ],
+      "//mark": {
+        "scaling": true,
+        "type": "square",
+        "area": {
+          "expression": "(bounds.width * bounds.height)"
+        },
+        "x": {
+          "expression": "bounds.x + bounds.width/2"
+        },
+        "y": {
+          "expression": "bounds.y + bounds.height/2"
+        },
+        "fill": {
+          "condition": {
+            "test": "datum.size < 1",
+            "value": "white"
+          },
+          "scale": "cellColor",
+          "expression": "datum.data[0].linkType"
+        },
+        "opacity": {
+          "condition": {
+            "test": "datum.size < 1",
+            "value": 0
+          },
+          "scale": "opacity",
+          "expression": "datum.data[0].linkWeight"
+        },
+        "stroke": "black",
+        "strokeWidth": {
+          "conditions": [
+            {
+              "inSelection": "link_selection.links",
+              "value": 1
+            }
+          ],
+          "value": 0
+        },
+        "tooltip": {
+          "expression": "datum.key[0].data._label + ' -> ' + datum.key[1].data._label + (datum.data.length > 0 ? ' (weight:' + datum.data[0].linkWeight + ')': 0)"
+        }
+      }
+    }
+  ]
 }
