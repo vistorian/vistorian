@@ -469,7 +469,7 @@
             },
             "stroke": "black",
             "tooltip": {
-              "expression": "datum.source._label + ' -> ' + datum.target._label + (datum.linkWeight > 0 ? ' (weight:' + datum.linkWeight + ')': 0)"
+              "expression": "datum.source.data._label + ' -> ' + datum.target.data._label + (datum.linkWeight > 0 ? ' (weight:' + datum.linkWeight + ')': 0)"
             },
             "actions": [
               {

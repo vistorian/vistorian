@@ -483,7 +483,7 @@
               "value": 1
             },
             {
-              "//": "selected common neighor",
+              "//": "selected common neighbor",
               "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.nodes, datum) > -1",
               "value": 1
             },
@@ -552,7 +552,7 @@
               "value": 1
             },
             {
-              "//": "selected common neighor",
+              "//": "selected common neighbor",
               "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.nodes, datum) > -1",
               "value": 1
             },
@@ -654,7 +654,7 @@
             },
             "stroke": "black",
             "tooltip": {
-              "expression": "datum.source._label + ' -> ' + datum.target._label + (datum.linkWeight > 0 ? ' (weight:' + datum.linkWeight + ')': 0)"
+              "expression": "datum.source.data._label + ' -> ' + datum.target.data._label + (datum.linkWeight > 0 ? ' (weight:' + datum.linkWeight + ')': 0)"
             },
             "actions": [
               {
