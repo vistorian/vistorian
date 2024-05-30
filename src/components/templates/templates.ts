@@ -31,7 +31,7 @@ const templates: Template[] = [
   { 
     key: "arcMatrix", 
     label: "Adjacency Matrix with Arcs", 
-    image: "matrix.png", 
+    image: "arcMatrix.png", 
     template: "arcMatrix.json",
     description: "Table layout showing links as cells and nodes as rows and columns. Links are also shown as arcs.",
     manual: "https://vistorian.github.io/visualizations.html#adjacency-matrix",
