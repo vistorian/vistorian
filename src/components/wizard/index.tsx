@@ -313,7 +313,7 @@ function Wizard() {
                 setNetSource(undefined)
               }}
             >
-              Create New Visualization
+              New Network
             </Button>
           </div>
           
