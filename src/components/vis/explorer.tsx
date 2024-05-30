@@ -17,10 +17,10 @@ function Explorer(props: IVisContentProps) {
   const viewers: any[] = visTypeList.map(v => {return {}})
 
   const onChange = (newVal: any, type: string) => {
-    // console.log('onChange:', newVal, type)
+    console.log('onChange before:', newVal, type)
     viewers.map(viewer => {
       // @ts-ignore
-      // console.log('viewer:', viewer.state)
+      console.log('on Change:', viewer.state)
       if (viewer.state !== undefined) {
         if (type === 'time') {
           viewer.setParam('time', newVal, false)
@@ -50,7 +50,7 @@ function Explorer(props: IVisContentProps) {
 
   type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
   const getParamCallbacks: ParamChangeCallbacks = { 
-    node_selection: (newVal) => onChange(newVal, 'node_selection'), 
+    hoveredNode: (newVal) => onChange(newVal, 'hoveredNode'), 
     time: (newVal) => onChange(newVal, 'time'), 
   }
 
