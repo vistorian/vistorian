@@ -1,8 +1,6 @@
 {
-  "x": 200,
+  "x": 500,
   "y": 130,
-  "//x": 120,
-  "//y": 120,
   "zoom": true,
   "pan": {
     "max": [
@@ -18,6 +16,19 @@
       "network": "network",
       "type": "selection",
       "clearOnBackgroundClick": true
+    },
+    {
+      "name": "nodeTypeInShape",
+      "value": "[nodeTypeInShape]"
+    },
+    {
+      "name": "nodeColor",
+      "type": "ordinal",
+      "range": "[colorScheme]",
+      "domain": {
+        "data": "network.nodes",
+        "field": "data.type0"
+      }
     },
     {
       "name": "hoveredLink",
@@ -105,6 +116,18 @@
       "value": 13
     },
     {
+      "name": "nodeOpacityParam",
+      "bind": {
+        "input": "range",
+        "label": "Node Opacity",
+        "min": "0.0",
+        "max": "1",
+        "step": "0.05"
+      },
+      "value": 0.8
+    },
+
+    {
       "name": "time",
       "bind": {
         "input": "brush",
@@ -113,6 +136,29 @@
         "for": "links",
         "field": "data._time"
       }
+    },
+    {
+      "name": "nodeSizeParam",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Node Size",
+        "min": "0",
+        "max": "100",
+        "step": ".5"
+      },
+      "value": 5
+    },
+    {
+      "name": "linkOpacityParam",
+      "bind": {
+        "input": "range",
+        "label": "Link Opacity",
+        "min": "0",
+        "max": "1",
+        "step": "0.05"
+      },
+      "value": 0.1
     }
   ],
   "scales": [
@@ -213,6 +259,154 @@
   ],
   "vis": [
     {
+      "entries": "network.links",
+      "layout": "labelLayoutY",
+      "mark": {
+        "type": "linkpath",
+        "start": "source",
+        "end": "target",
+        "directionForShape": {
+          "ordering": "order"
+        },
+        "strokeWidth": {
+          "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
+        },
+        "stroke": {
+          "conditions": [
+            {
+              "test": "!params.nodeTypeInShape",
+              "value": "grey"
+            }
+          ],
+          "field": "linkType",
+          "scale": "edgeColor"
+        },
+        "shape": "arc",
+        "fixedPanZoom": "y",
+        "dx":-150,
+        "dy": 7,
+        "strokeOpacity": {
+          "conditions": [
+            {
+              "//": "not in time",
+              "test": "datum.data._time != null && datum.data._time < params.time[0] || datum.data._time > params.time[1]",
+              "value": 0
+            },
+            {
+              "//": "default",
+              "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
+              "expression": "params.linkOpacityParam"
+            },
+            {
+              "//": "node hovered",
+              "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "expression": "params.linkOpacityParam * 2"
+            },
+            {
+              "//": "neihgbor hovered",
+              "test": "params.neighbours.nodes.length > 0 && indexof(params.neighbours.links, datum) > -1",
+              "expression": "params.linkOpacityParam * 2"
+            },
+            {
+              "//": "node selected",
+              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.links, datum) > -1",
+              "expression": "params.linkOpacityParam"
+            },
+            {
+              "//": "selected common neighor",
+              "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.links, datum) > -1",
+              "expression": "params.linkOpacityParam"
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.links, datum) > -1",
+              "expression": ".5 + params.unselectedOpacity"
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.hoveredNode.nodes.length > 0",
+              "value": 0
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.selectedNeighbours.nodes.length > 0",
+              "expression": "params.unselectedOpacity"
+            }
+          ],
+          "value": 0
+        }
+      }
+    },
+    {
+      "entries": "network.nodes",
+      "layout": "labelLayoutY",
+      "mark": {
+        "type": "symbol",
+        "fixedPanZoom": "x",
+        "shape": {
+          "conditions": [
+            {
+              "test": "!params.nodeTypeInShape",
+              "value": "circle"
+            }
+          ],
+          "field": "data.type0",
+          "scale": "nodeShape"
+        },
+        "x": -150,
+        "dy": -7,
+        "area": {
+          "expression": "10 + datum.degree * params.nodeSizeParam"
+        },
+        "stroke": "white",
+        "opacity": {
+          "conditions": [
+            {
+              "//": "default",
+              "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
+              "expression": "params.nodeOpacityParam"
+            },
+            {
+              "//": "hovered",
+              "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
+              "expression": "params.nodeOpacityParam"
+            },
+            {
+              "//": "hovered neighbour",
+              "test": "params.neighbours.nodes.length > 0 && indexof(params.neighbours.nodes, datum) > -1",
+              "expression": "params.nodeOpacityParam"
+            },
+            {
+              "//": "selected node",
+              "test": "params.selectedNodes.nodes.length > 0 && indexof(params.selectedNodes.nodes, datum) > -1",
+              "expression": "params.nodeOpacityParam"
+            },
+            {
+              "//": "selected common neighor",
+              "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.nodes, datum) > -1",
+              "expression": "params.nodeOpacityParam"
+            },
+            {
+              "//": "selected neighbour",
+              "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.nodes, datum) > -1",
+              "expression": "params.nodeOpacityParam"
+            }
+          ],
+          "value": 0
+        },
+        "fill": {
+          "conditions": [
+            {
+              "test": "params.nodeTypeInShape",
+              "value": "#777"
+            }
+          ],
+          "field": "data.type0",
+          "scale": "nodeColor"
+        }
+      }
+    },
+    {
       "entries": "network.nodes",
       "actions": [
         {
@@ -289,7 +483,7 @@
               "value": 1
             },
             {
-              "//": "selected common neighor",
+              "//": "selected common neighbor",
               "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.nodes, datum) > -1",
               "value": 1
             },
@@ -358,7 +552,7 @@
               "value": 1
             },
             {
-              "//": "selected common neighor",
+              "//": "selected common neighbor",
               "test": "params.selectedCommonNeighbours.nodes.length > 0 && indexof(params.selectedCommonNeighbours.nodes, datum) > -1",
               "value": 1
             },
