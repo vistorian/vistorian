@@ -3,6 +3,8 @@
   "zoom": true,
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
+  "width": "[width]",
+  "height": "[height]",
   "groupings": [
     {
       "name": "groupedBySource",

@@ -17,10 +17,10 @@ function Explorer(props: IVisContentProps) {
   const viewers: any[] = visTypeList.map(v => {return {}})
 
   const onChange = (newVal: any, type: string) => {
-    console.log('onChange before:', newVal, type)
+    // console.log('onChange before:', newVal, type)
     viewers.map(viewer => {
       // @ts-ignore
-      console.log('on Change:', viewer.state)
+      // console.log('on Change:', viewer.state)
       if (viewer.state !== undefined) {
         if (type === 'time') {
           viewer.setParam('time', newVal, false)
@@ -60,7 +60,7 @@ function Explorer(props: IVisContentProps) {
       // let renderer = visType === 'matrix' ? 'canvas' : 'svg'
       let renderer = "svg"
       // TODO: hard code, to be refined with canvas interaction
-      if (network === 'marieboucher' && (visType === 'matrix' || 'arcMatrix')) {
+      if (network === 'marieboucher' && (visType === 'matrix' || visType === 'arcMatrix')) {
         renderer = "canvas"
       }
 
@@ -70,8 +70,8 @@ function Explorer(props: IVisContentProps) {
       let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
 
       let width = document.getElementById(containerId)?.getBoundingClientRect().width as number
-      let height = document.getElementById(containerId)?.getBoundingClientRect().height as number
-      if (visType === 'nodelink_circular') {
+      let height = (document.getElementById(containerId)?.getBoundingClientRect().height as number) - 120
+      if (visType === 'nodelink_circular' || visType === 'matrix' || visType === 'arcMatrix') {
         width = width < height ? width : height
         height = width
       }

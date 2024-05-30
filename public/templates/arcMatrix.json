@@ -10,6 +10,8 @@
   },
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
+  "width": "[width]",
+  "height": "[height]",
   "parameters": [
     {
       "name": "hoveredNode",
