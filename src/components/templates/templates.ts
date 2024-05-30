@@ -29,6 +29,15 @@ const templates: Template[] = [
     error: ''
   },
   { 
+    key: "arcMatrix", 
+    label: "Adjacency Matrix with Arcs", 
+    image: "matrix.png", 
+    template: "arcMatrix.json",
+    description: "Table layout showing links as cells and nodes as rows and columns. Links are also shown as arcs.",
+    manual: "https://vistorian.github.io/visualizations.html#adjacency-matrix",
+    error: ''
+  },
+  { 
     key: "timearcs", 
     label: "Timeline", 
     image: "timearcs.png", 
