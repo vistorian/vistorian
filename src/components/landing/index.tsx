@@ -94,6 +94,9 @@ const useStyles = createUseStyles({
       height: '50px',
       padding: '20px',
     }
+  }, 
+  boldLink: {
+    fontWeight: 500
   }
 })
 
@@ -142,43 +145,33 @@ function Landing() {
 				<div className={classes.subDiv}>
 					<div className={classes.menuCol}>
 						<h2 className={classes.h2}>Use</h2>
-						<a href="#whatis">What is the Vistorian</a>
+						<a className={classes.boldLink} href="https://vistorian.github.io/visualizations.html">Visualizations</a>
 						<br />
-						<a href="https://vistorian.github.io/visualizations.html">Visualizations</a>
+						<a className={classes.boldLink} href="https://vistorian.github.io/formattingdata.html">Formatting Data</a>
 						<br />
-						<a href="https://vistorian.github.io/formattingdata.html">Formatting Data</a>
-						<br />
-						{/* <a href="https://vistorian.github.io/formattingdata.html">Formatting Data</a>
-						<br /> */}
           </div>
 					<div className={classes.menuCol}>
 						<h2 className={classes.h2}>Resources</h2>
-            <a href="https://discord.gg/CyHzTqne">Discord Channel</a>
+            <a className={classes.boldLink} href="https://discord.gg/CyHzTqne">Chat (Discord)</a>
             <br />
-            <a href="https://groups.google.com/g/vistorian">Google Group</a>
+            <a className={classes.boldLink} href="https://groups.google.com/g/vistorian">Mailing List</a>
             <br />
-						{/* <a href="https://vistorian.github.io/gettingstarted.html">Getting Started</a>
-						<br /> */}
-						<a href="https://vistorian.github.io/data.html">Demo Data</a>
+						<a className={classes.boldLink} href="https://vistorian.github.io/data.html">Demo Data</a>
 						<br />
-						{/* <a href="https://vistorian.github.io/courses.html">Courses</a>
-						<br />
-						<a href="https://vistorian.github.io/tutorials.html">Workshops</a>
-						<br /> */}
-						<a href="https://vistorian.github.io/Resources.html">Network Resources</a>
+						<a className={classes.boldLink} href="https://vistorian.github.io/Resources.html">Network Resources</a>
 					</div>
 
 					<div className={classes.menuCol}>
 						<h2 className={classes.h2}>Context</h2>
-						<a href="https://vistorian.github.io/publications.html">Publications</a>
+						<a className={classes.boldLink} href="https://vistorian.github.io/publications.html">Publications</a>
 						<br />
 						{/* <a href="https://vistorian.github.io/vistorianLab.html">Research &amp; VistorianLab</a> */}
 						{/* <br /> */}
-						<a href="index.html#contribute">Contribute</a>
+						<a className={classes.boldLink} href="index.html#contribute">Contribute</a>
 						<br />
-						<a href="https://vistorian.github.io/team.html">Team</a>
+						<a className={classes.boldLink} href="https://vistorian.github.io/team.html">Team</a>
 						<br />
-						<a href="mailto: vistorian@inria.fr">Contact</a>
+						<a className={classes.boldLink} href="mailto: vistorian@inria.fr">Contact</a>
 					</div>
 				</div>
 			</div>
