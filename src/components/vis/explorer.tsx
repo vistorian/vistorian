@@ -57,8 +57,12 @@ function Explorer(props: IVisContentProps) {
   const update = async () => {
     for (let index in visTypeList) {
       let visType = visTypeList[index]
-      let renderer = visType === 'matrix' ? 'canvas' : 'svg'
-      // let renderer = "canvas"
+      // let renderer = visType === 'matrix' ? 'canvas' : 'svg'
+      let renderer = "svg"
+      // TODO: hard code, to be refined with canvas interaction
+      if (network === 'marieboucher' && (visType === 'matrix' || 'arcMatrix')) {
+        renderer = "canvas"
+      }
 
       let containerId = `visSvg${index}`
       let template = templates.filter(t => t.key === visType)[0]
