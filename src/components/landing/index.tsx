@@ -2,6 +2,7 @@ import { createUseStyles } from 'react-jss'
 import { Button } from 'antd'
 import templates from '../templates/templates'
 import { Template } from '../../../typings'
+import { Link } from 'react-router-dom'
 
 const useStyles = createUseStyles({
   root: {
@@ -154,7 +155,7 @@ function Landing() {
 						<h2 className={classes.h2}>Resources</h2>
             <a className={classes.boldLink} href="https://discord.gg/CyHzTqne">Chat (Discord)</a>
             <br />
-            <a className={classes.boldLink} href="https://groups.google.com/g/vistorian">Mailing List</a>
+            <a className={classes.boldLink} href="https://groups.google.com/g/vistorian-community">Mailing List</a>
             <br />
 						<a className={classes.boldLink} href="https://vistorian.github.io/data.html">Demo Data</a>
 						<br />
@@ -167,11 +168,11 @@ function Landing() {
 						<br />
 						{/* <a href="https://vistorian.github.io/vistorianLab.html">Research &amp; VistorianLab</a> */}
 						{/* <br /> */}
-						<a className={classes.boldLink} href="index.html#contribute">Contribute</a>
+            <Link className={classes.boldLink} to="/#contribute">Contribute</Link>
 						<br />
 						<a className={classes.boldLink} href="https://vistorian.github.io/team.html">Team</a>
 						<br />
-						<a className={classes.boldLink} href="mailto: vistorian@inria.fr">Contact</a>
+            <a className={classes.boldLink} href="mailto: vistorian@googlegroups.com">Contact</a>
 					</div>
 				</div>
 			</div>

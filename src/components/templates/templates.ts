@@ -39,7 +39,7 @@ const templates: Template[] = [
   },
   { 
     key: "timearcs", 
-    label: "Timeline", 
+    label: "Time-arcs", 
     image: "timearcs.png", 
     template: "timearcs.json",
     description: "Shows links as vertical arcs over time.",
