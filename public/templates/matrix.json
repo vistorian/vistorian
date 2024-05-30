@@ -1,6 +1,8 @@
 {
   "x": 200,
   "y": 130,
+  "//x": 120,
+  "//y": 120,
   "zoom": true,
   "pan": {
     "max": [
@@ -101,17 +103,6 @@
         "step": "1"
       },
       "value": 13
-    },
-    {
-      "name": "linkOpacityParam",
-      "bind": {
-        "input": "range",
-        "label": "Link Opacity",
-        "min": "0",
-        "max": "1",
-        "step": "0.05"
-      },
-      "value": 0.1
     },
     {
       "name": "time",
@@ -441,7 +432,7 @@
               "scale": "cellColor",
               "expression": "datum.linkType"
             },
-            "opacity": {
+            "//opacity": {
               "condition": {
                 "test": "(datum.size < 1) || (datum.data._time != null && datum.data._time < params.time[0] || datum.data._time > params.time[1]) ",
                 "value": 0
@@ -449,7 +440,7 @@
               "scale": "opacity",
               "expression": "datum.linkWeight"
             },
-            "//opacity": {
+            "opacity": {
               "scale": "opacity",
               "expression": "datum.linkWeight"
             },
