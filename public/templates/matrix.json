@@ -3,6 +3,8 @@
   "y": 130,
   "//x": 120,
   "//y": 120,
+  "width": "[width]",
+  "height": "[height]",
   "zoom": true,
   "pan": {
     "max": [

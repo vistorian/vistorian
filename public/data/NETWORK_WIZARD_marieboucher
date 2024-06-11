@@ -11,6 +11,8 @@
     "directed": true,
     "sourceNodeLabel": "Name1",
     "targetNodeLabel": "Name2",
+    "locationOfSourceNode": "Place1",
+    "locationOfTargetNode": "Place2",
     "linkType": "Content",
     "withTime": true,
     "time": "Date",

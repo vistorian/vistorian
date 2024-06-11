@@ -46,7 +46,7 @@ function NetLinkConfig(props: IStepProps) {
 
   // for time format model 
   const [openTimeFormat, setOpenTimeFormat] = useState<boolean>(false)
-  const [formatString, setFormatString] = useState<string>('%d/%m/%Y')
+  const [formatString, setFormatString] = useState<string>('')
 
   const onFinish = (values: any) => {
     // console.log('link table config:', values)

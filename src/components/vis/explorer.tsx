@@ -17,10 +17,10 @@ function Explorer(props: IVisContentProps) {
   const viewers: any[] = visTypeList.map(v => {return {}})
 
   const onChange = (newVal: any, type: string) => {
-    // console.log('onChange:', newVal, type)
+    // console.log('onChange before:', newVal, type)
     viewers.map(viewer => {
       // @ts-ignore
-      // console.log('viewer:', viewer.state)
+      // console.log('on Change:', viewer.state)
       if (viewer.state !== undefined) {
         if (type === 'time') {
           viewer.setParam('time', newVal, false)
@@ -50,15 +50,19 @@ function Explorer(props: IVisContentProps) {
 
   type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
   const getParamCallbacks: ParamChangeCallbacks = { 
-    node_selection: (newVal) => onChange(newVal, 'node_selection'), 
+    hoveredNode: (newVal) => onChange(newVal, 'hoveredNode'), 
     time: (newVal) => onChange(newVal, 'time'), 
   }
 
   const update = async () => {
     for (let index in visTypeList) {
       let visType = visTypeList[index]
-      let renderer = visType === 'matrix' ? 'canvas' : 'svg'
-      // let renderer = "canvas"
+      // let renderer = visType === 'matrix' ? 'canvas' : 'svg'
+      let renderer = "svg"
+      // TODO: hard code, to be refined with canvas interaction
+      if (network === 'marieboucher' && (visType === 'matrix' || visType === 'arcMatrix')) {
+        renderer = "canvas"
+      }
 
       let containerId = `visSvg${index}`
       let template = templates.filter(t => t.key === visType)[0]
@@ -66,8 +70,8 @@ function Explorer(props: IVisContentProps) {
       let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
 
       let width = document.getElementById(containerId)?.getBoundingClientRect().width as number
-      let height = document.getElementById(containerId)?.getBoundingClientRect().height as number
-      if (visType === 'nodelink_circular') {
+      let height = (document.getElementById(containerId)?.getBoundingClientRect().height as number) - 120
+      if (visType === 'nodelink_circular' || visType === 'matrix' || visType === 'arcMatrix') {
         width = width < height ? width : height
         height = width
       }
