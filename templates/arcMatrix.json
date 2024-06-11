@@ -227,6 +227,7 @@
       "name": "labelLayoutY",
       "data": "network.nodes",
       "pattern": "cartesian",
+      "fixedPanZoom": "x",
       "y": [
         {
           "order": "order"
@@ -237,6 +238,7 @@
       "name": "labelLayoutX",
       "data": "network.nodes",
       "pattern": "cartesian",
+      "fixedPanZoom": "y",
       "x": [
         {
           "order": "order"
@@ -284,7 +286,6 @@
           "scale": "edgeColor"
         },
         "shape": "arc",
-        "fixedPanZoom": "y",
         "dx":-150,
         "dy": 7,
         "strokeOpacity": {
@@ -344,7 +345,6 @@
       "layout": "labelLayoutY",
       "mark": {
         "type": "symbol",
-        "fixedPanZoom": "x",
         "shape": {
           "conditions": [
             {
@@ -461,7 +461,6 @@
           "expression": "params.labelSizeParam"
         },
         "align": "right",
-        "fixedPanZoom": "x",
         "opacity": {
           "conditions": [
             {
@@ -515,7 +514,6 @@
         "angle": -90,
         "dx": 20,
         "dy": 10,
-        "fixedPanZoom": "y",
         "fontWeight": {
           "conditions": [
             {

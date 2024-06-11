@@ -253,7 +253,8 @@
       "data": "network.nodes",
       "pattern": "linear",
       "order": "node_order",
-      "orientation": "vertical"
+      "orientation": "vertical",
+      "fixedPanZoom": "x"
    }
   ],
   "vis": [
