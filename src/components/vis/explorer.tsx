@@ -77,7 +77,6 @@ function Explorer(props: IVisContentProps) {
       }
       // console.log('spec:', spec)
 
-      // console.log("net ", spec.network);
       // @ts-ignore
       viewers[index] = await NetPanoramaTemplateViewer.render(templatePath, {
         dataDefinition: JSON.stringify(spec.data),

@@ -27,12 +27,14 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       {
         "type": "calculate",
         "as": "source",
-        "calculate": `datum.${sourceLabel}`
+        // "calculate": `datum.${sourceLabel}`,
+        "calculate": `datum['${sourceLabel}']`
       },
       {
         "type": "calculate",
         "as": "target",
-        "calculate": `datum.${targetLabel}`
+        // "calculate": `datum.${targetLabel}`,
+        "calculate": `datum['${targetLabel}']`
       }
     ] as any[]
   }
@@ -100,17 +102,20 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
   if (config.extraNodeConfig?.hasExtraNode) {
     let trans: any[] = []
     const calc = config.extraNodeConfig?.nodeLabel ? config.extraNodeConfig?.nodeLabel : 'id'
+
     trans.push({
       "type": "calculate",
       "as": `_label`,
-      "calculate": `datum.${calc}`
+      // "calculate": `datum.${calc}`
+      "calculate": `datum['${calc}']`
     })
     config.extraNodeConfig?.nodeTypes?.forEach((type, index) => {
       if (type) {
         trans.push({
           "type": "calculate",
           "as": `type${index}`,
-          "calculate": `datum.${type}`
+          // "calculate": `datum.${type}`
+          "calculate": `datum['${type}']`
         })
       }
     })

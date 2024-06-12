@@ -39,7 +39,7 @@ function Explainer(props: IVisContentProps) {
     console.log("XP Update")
 
     let renderer = visType === 'matrix' ? 'canvas' : 'svg'
-    // let renderer = 'svg'
+
     let template = templates.filter(t => t.key === visType)[0]
     let templatePath = `./templates/xplainer/${template.template}`
     let spec: any = genSpecFromLinkTable(networkCfg, visType as string)
