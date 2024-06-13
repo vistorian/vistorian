@@ -254,7 +254,6 @@
       "pattern": "linear",
       "order": "node_order",
       "orientation": "vertical",
-      "fixedPanZoom": "x"
    }
   ],
   "vis": [
