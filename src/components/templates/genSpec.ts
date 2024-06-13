@@ -199,8 +199,10 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       }
     ] as any[],
     "transform": [
-      { "type": "metric", "metric": "degree" }
-    ] as any[]
+      { "type": "metric", "metric": "degree" },
+      // { "type": "metric", "metric": "undirected-betweenes" }
+    ] as any[],
+
   }
 
   // =========== if exists the node dataset =========== 
