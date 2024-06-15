@@ -192,7 +192,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
             "target_node_type": defaultNodeType,
             "target_id_field": idField,
 
-            "addReverseLinks": visType === 'matrix' || 'arcMatrix' ? true : false,
+            "addReverseLinks": (visType === 'matrix' || visType === 'arcMatrix') ? true : false,
             "data": ["*"]
           }
         ]
@@ -228,7 +228,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
             "target_node_type": defaultNodeType,
             "target_id_field": idField,
 
-            "addReverseLinks": visType === 'matrix' || 'arcMatrix' ? true : false,
+            "addReverseLinks": (visType === 'matrix' || visType === 'arcMatrix') ? true : false,
             "data": ["*"]
           }
         ]
