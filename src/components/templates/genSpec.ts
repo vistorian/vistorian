@@ -44,12 +44,14 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       {
         "type": "calculate",
         "as": "source",
-        "calculate": `datum.${sourceLabel} + ' (' + datum.${timeColumn} + ')'`
+        // "calculate": `datum.${sourceLabel} + ' (' + datum.${timeColumn} + ')'`
+        "calculate": `datum['${sourceLabel}'] + ' (' + datum['${timeColumn}'] + ')'`
       },
       {
         "type": "calculate",
         "as": "target",
-        "calculate": `datum.${targetLabel} + ' (' + datum.${timeColumn} + ')'`
+        // "calculate": `datum.${targetLabel} + ' (' + datum.${timeColumn} + ')'`
+        "calculate": `datum['${targetLabel}'] + ' (' + datum['${timeColumn}'] + ')'`
       }
     ]
   }
@@ -108,6 +110,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       "as": `_label`,
       // "calculate": `datum.${calc}`
       "calculate": `datum['${calc}']`
+      // "calculate": `datum['Person_1']`
     })
     config.extraNodeConfig?.nodeTypes?.forEach((type, index) => {
       if (type) {
@@ -163,7 +166,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 
   let networkSpec: any[] = []
   // is "id" correct default for case when only link-table used?
-  const idField = config.extraNodeConfig?.hasExtraNode ? config.extraNodeConfig.nodeID : "id"
+  // const idField = config.extraNodeConfig?.hasExtraNode ? config.extraNodeConfig.nodeID : "id"
 
   const baseNetworkSpec: any = {
     "name": "network",
@@ -186,11 +189,11 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
           {
             "source_id": { "field": "source" },
             "source_node_type": defaultNodeType,
-            "source_id_field": idField,
+            // "source_id_field": idField,
 
             "target_id": { "field": "target" },
             "target_node_type": defaultNodeType,
-            "target_id_field": idField,
+            // "target_id_field": idField,
 
             "addReverseLinks": (visType === 'matrix' || visType === 'arcMatrix') ? true : false,
             "data": ["*"]
@@ -212,7 +215,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
         "data": "nodes",
         "yieldsNodes": [
           {
-            "id_field": idField,
+            // "id_field": idField,
             "type": defaultNodeType,
             "data": ['*']
           },
@@ -224,11 +227,11 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
           {
             "source_id": { "field": "source" },
             "source_node_type": defaultNodeType,
-            "source_id_field": idField,
+            // "source_id_field": idField,
 
             "target_id": { "field": "target" },
             "target_node_type": defaultNodeType,
-            "target_id_field": idField,
+            // "target_id_field": idField,
 
             "addReverseLinks": (visType === 'matrix' || visType === 'arcMatrix') ? true : false,
             "data": ["*"]
@@ -259,20 +262,24 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     baseNetworkSpec.transform.push({ "type": "calculate", "as": "linkWeight", "calculate": `datum.data.${config.linkTableConfig?.linkWeight}`, "for": "links" })
 
 
-  // =========== if vis is timearcs, generate staic network without time =========== 
+  // =========== if vis is timearcs, generate static network without time ===========
   if (visType === 'timearcs') {
     const staticNetworkSpec: any = {
       "name": "staticNetwork",
       "nodes": config.extraNodeConfig?.hasExtraNode ? "nodes" : undefined,
       "links": "links",
       "directed": true,
-      "source_node": [idField, sourceLabel],
-      "target_node": [idField, targetLabel]
+      // "source_node": [idField, sourceLabel],
+      // "target_node": [idField, targetLabel]
+      "source_node": ["id", sourceLabel],
+      "target_node": ["id", targetLabel]
     }
     networkSpec.push(staticNetworkSpec)
   }
 
-  console.log(">>>> SPEC:", dataSpec, networkSpec);
+  // console.log(">>>> SPEC:", dataSpec, networkSpec);
+  console.log(">>>> DATA SPEC:", dataSpec);
+  console.log(">>>> NETWORK SPEC:", networkSpec);
   return {
     data: dataSpec,
     network: networkSpec
