@@ -246,6 +246,7 @@
       },
       "mark": {
         "type": "text",
+        "//clip": true,
         "fontWeight": {
           "conditions": [
             {
@@ -325,6 +326,7 @@
         "fontSize": {
           "expression": "params.labelSizeParam"
         },
+        "//clip": true,
         "y": 10,
         "angle": -90,
         "dx": 20,
