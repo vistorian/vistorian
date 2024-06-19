@@ -271,10 +271,12 @@
     {
       "entries": "network.links",
       "layout": "layout",
+
       "mark": {
         "type": "linkpath",
         "start": "source",
         "end": "target",
+        "colorGradient": true,
         "parallelLinksType": "curve",
         "parallelLinksGap": {
           "expression": "params.linkGapParam"
