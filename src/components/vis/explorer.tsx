@@ -61,7 +61,6 @@ function Explorer(props: IVisContentProps) {
       let renderer = "svg"
       // TODO: hard code, to be refined with canvas interaction
       if (visType === 'matrix' || visType === 'arcMatrix') {
-      // if (network === 'marieboucher' && (visType === 'matrix' || visType === 'arcMatrix')) {
         renderer = "canvas"
       }
 
