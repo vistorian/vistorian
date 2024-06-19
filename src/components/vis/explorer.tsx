@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { NetworkConfig } from "../../../typings"
 import templates from "../templates/templates"
 import { genSpecFromLinkTable } from "../templates/genSpec"
+import networkNodeTable from "../wizard/network/preview/networkNodeTable";
 
 interface IVisContentProps {
   visTypeList: string[]
@@ -76,6 +77,14 @@ function Explorer(props: IVisContentProps) {
         height = width
       }
       // console.log('spec:', spec)
+      // console.log('options:', options)
+      console.log('config:', networkCfg.extraNodeConfig?.nodeTypes)
+
+      // Setup ordering variables
+      const orderingMethods = ["optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca", "degree"]
+          // .concat(networkCfg.extraNodeConfig?.nodeTypes.filter(att => att).map(v => `data.${v}`))
+          .concat(networkCfg.extraNodeConfig?.nodeTypes.filter(att => att))
+
 
       // @ts-ignore
       viewers[index] = await NetPanoramaTemplateViewer.render(templatePath, {
@@ -83,6 +92,7 @@ function Explorer(props: IVisContentProps) {
         networksDefinition: JSON.stringify(spec.network),
         width: width,
         height: height,
+        nodeTypesAttrs: orderingMethods,
         ...options
       }, containerId, {
         renderer: renderer,

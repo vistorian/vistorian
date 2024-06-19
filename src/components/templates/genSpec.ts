@@ -27,13 +27,11 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       {
         "type": "calculate",
         "as": "source",
-        // "calculate": `datum.${sourceLabel}`,
         "calculate": `datum['${sourceLabel}']`
       },
       {
         "type": "calculate",
         "as": "target",
-        // "calculate": `datum.${targetLabel}`,
         "calculate": `datum['${targetLabel}']`
       }
     ] as any[]
