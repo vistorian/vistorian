@@ -276,7 +276,7 @@
         "type": "linkpath",
         "start": "source",
         "end": "target",
-        "colorGradient": true,
+        "colorGradient": "[isDirected]",
         "parallelLinksType": "curve",
         "parallelLinksGap": {
           "expression": "params.linkGapParam"

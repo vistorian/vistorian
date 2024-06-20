@@ -87,6 +87,9 @@ function Explorer(props: IVisContentProps) {
       }
 
 
+      // console.log("options ", options)
+      // console.log("config ", networkCfg)
+
       // @ts-ignore
       viewers[index] = await NetPanoramaTemplateViewer.render(templatePath, {
         dataDefinition: JSON.stringify(spec.data),
@@ -94,6 +97,7 @@ function Explorer(props: IVisContentProps) {
         width: width,
         height: height,
         nodeTypesAttrs: orderingMethods,
+        isDirected: networkCfg.linkTableConfig?.directed ? true : "false",
         ...options
       }, containerId, {
         renderer: renderer,
