@@ -76,14 +76,15 @@ function Explorer(props: IVisContentProps) {
         width = width < height ? width : height
         height = width
       }
-      // console.log('spec:', spec)
-      // console.log('options:', options)
-      console.log('config:', networkCfg.extraNodeConfig?.nodeTypes)
 
       // Setup ordering variables
-      const orderingMethods = ["optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca", "degree"]
+      let orderingMethods = ["optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca", "degree"]
           // .concat(networkCfg.extraNodeConfig?.nodeTypes.filter(att => att).map(v => `data.${v}`))
-          .concat(networkCfg.extraNodeConfig?.nodeTypes.filter(att => att))
+          // .concat(networkCfg.extraNodeConfig?.nodeTypes.filter(att => att))
+
+      if (networkCfg.extraNodeConfig?.nodeTypes) {
+        orderingMethods = orderingMethods.concat(networkCfg.extraNodeConfig.nodeTypes.filter(att => att))
+      }
 
 
       // @ts-ignore
