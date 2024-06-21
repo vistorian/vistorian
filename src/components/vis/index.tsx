@@ -59,7 +59,14 @@ function Vis(props: IVisProps) {
   const colorScheme = defaultColorScheme
   const nodeTypeShapeScheme = defaultNodeTypeShapeScheme
   const nodeTypeInShape: boolean = networkCfg.linkTableConfig?.linkType?.length as number > 0
-  const nodeLabel: string = networkCfg.extraNodeConfig?.nodeLabel ? `"datum.data.${networkCfg.extraNodeConfig?.nodeLabel}"` : `"datum.id"`
+
+
+
+  // TODO: labels currently not working if all nodes from the link table are not defined in the link table
+  // const nodeLabel: string = networkCfg.extraNodeConfig?.nodeLabel ? `"datum.data.${networkCfg.extraNodeConfig?.nodeLabel}"` : `"datum.id"`
+  const nodeLabel: string = `"datum.id"`;
+
+
   const timeFormat = networkCfg.linkTableConfig?.withTime ? `"${networkCfg.linkTableConfig.timeFormat}"` : null
 
   let options: any = {

@@ -1,8 +1,6 @@
 import { NetworkConfig } from "../../../typings"
 
 export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => {
-  console.log('config', config)
-
   const linkFileName = config.linkTableConfig?.file
 
   const sourceLabel = config.linkTableConfig?.sourceNodeLabel
@@ -103,12 +101,12 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     let trans: any[] = []
     const calc = config.extraNodeConfig?.nodeLabel ? config.extraNodeConfig?.nodeLabel : 'id'
 
+    // console.log("label ", calc)
+
     trans.push({
       "type": "calculate",
       "as": `_label`,
-      // "calculate": `datum.${calc}`
       "calculate": `datum['${calc}']`
-      // "calculate": `datum['Person_1']`
     })
     config.extraNodeConfig?.nodeTypes?.forEach((type, index) => {
       if (type) {
@@ -165,7 +163,6 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
   let networkSpec: any[] = []
   // is "id" correct default for case when only link-table used?
   const idField = config.extraNodeConfig?.hasExtraNode ? config.extraNodeConfig.nodeID : "id"
-  console.log("id ", idField);
 
   const baseNetworkSpec: any = {
     "name": "network",
@@ -207,9 +204,9 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 
   }
 
-  // =========== if exists the node dataset =========== 
+  // =========== if exists the node dataset ===========
+  // "source_id_field": idField creates an issue if all nodes are not present in the node table
   if (config.extraNodeConfig?.hasExtraNode) {
-    console.log("extra node table config")
     baseNetworkSpec.parts = [
       {
         "data": "nodes",
