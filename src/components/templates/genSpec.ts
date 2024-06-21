@@ -164,7 +164,8 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 
   let networkSpec: any[] = []
   // is "id" correct default for case when only link-table used?
-  // const idField = config.extraNodeConfig?.hasExtraNode ? config.extraNodeConfig.nodeID : "id"
+  const idField = config.extraNodeConfig?.hasExtraNode ? config.extraNodeConfig.nodeID : "id"
+  console.log("id ", idField);
 
   const baseNetworkSpec: any = {
     "name": "network",
@@ -208,12 +209,13 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 
   // =========== if exists the node dataset =========== 
   if (config.extraNodeConfig?.hasExtraNode) {
+    console.log("extra node table config")
     baseNetworkSpec.parts = [
       {
         "data": "nodes",
         "yieldsNodes": [
           {
-            // "id_field": idField,
+            "id_field": idField,
             "type": defaultNodeType,
             "data": ['*']
           },
