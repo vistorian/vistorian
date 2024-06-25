@@ -1,8 +1,6 @@
 import { NetworkConfig } from "../../../typings"
 
 export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => {
-  // console.log('config', config)
-
   const linkFileName = config.linkTableConfig?.file
 
   const sourceLabel = config.linkTableConfig?.sourceNodeLabel
@@ -27,13 +25,11 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       {
         "type": "calculate",
         "as": "source",
-        // "calculate": `datum.${sourceLabel}`,
         "calculate": `datum['${sourceLabel}']`
       },
       {
         "type": "calculate",
         "as": "target",
-        // "calculate": `datum.${targetLabel}`,
         "calculate": `datum['${targetLabel}']`
       }
     ] as any[]
@@ -44,12 +40,14 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       {
         "type": "calculate",
         "as": "source",
-        "calculate": `datum.${sourceLabel} + ' (' + datum.${timeColumn} + ')'`
+        // "calculate": `datum.${sourceLabel} + ' (' + datum.${timeColumn} + ')'`
+        "calculate": `datum['${sourceLabel}'] + ' (' + datum['${timeColumn}'] + ')'`
       },
       {
         "type": "calculate",
         "as": "target",
-        "calculate": `datum.${targetLabel} + ' (' + datum.${timeColumn} + ')'`
+        // "calculate": `datum.${targetLabel} + ' (' + datum.${timeColumn} + ')'`
+        "calculate": `datum['${targetLabel}'] + ' (' + datum['${timeColumn}'] + ')'`
       }
     ]
   }
@@ -103,10 +101,11 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     let trans: any[] = []
     const calc = config.extraNodeConfig?.nodeLabel ? config.extraNodeConfig?.nodeLabel : 'id'
 
+    // console.log("label ", calc)
+
     trans.push({
       "type": "calculate",
       "as": `_label`,
-      // "calculate": `datum.${calc}`
       "calculate": `datum['${calc}']`
     })
     config.extraNodeConfig?.nodeTypes?.forEach((type, index) => {
@@ -186,13 +185,13 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
           {
             "source_id": { "field": "source" },
             "source_node_type": defaultNodeType,
-            "source_id_field": idField,
+            // "source_id_field": idField,
 
             "target_id": { "field": "target" },
             "target_node_type": defaultNodeType,
-            "target_id_field": idField,
+            // "target_id_field": idField,
 
-            "addReverseLinks": visType === 'matrix' || 'arcMatrix' ? true : false,
+            "addReverseLinks": (visType === 'matrix' || visType === 'arcMatrix') ? true : false,
             "data": ["*"]
           }
         ]
@@ -205,7 +204,8 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 
   }
 
-  // =========== if exists the node dataset =========== 
+  // =========== if exists the node dataset ===========
+  // "source_id_field": idField creates an issue if all nodes are not present in the node table
   if (config.extraNodeConfig?.hasExtraNode) {
     baseNetworkSpec.parts = [
       {
@@ -224,13 +224,13 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
           {
             "source_id": { "field": "source" },
             "source_node_type": defaultNodeType,
-            "source_id_field": idField,
+            // "source_id_field": idField,
 
             "target_id": { "field": "target" },
             "target_node_type": defaultNodeType,
-            "target_id_field": idField,
+            // "target_id_field": idField,
 
-            "addReverseLinks": visType === 'matrix' || 'arcMatrix' ? true : false,
+            "addReverseLinks": (visType === 'matrix' || visType === 'arcMatrix') ? true : false,
             "data": ["*"]
           }
         ]
@@ -259,20 +259,24 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     baseNetworkSpec.transform.push({ "type": "calculate", "as": "linkWeight", "calculate": `datum.data.${config.linkTableConfig?.linkWeight}`, "for": "links" })
 
 
-  // =========== if vis is timearcs, generate staic network without time =========== 
+  // =========== if vis is timearcs, generate static network without time ===========
   if (visType === 'timearcs') {
     const staticNetworkSpec: any = {
       "name": "staticNetwork",
       "nodes": config.extraNodeConfig?.hasExtraNode ? "nodes" : undefined,
       "links": "links",
       "directed": true,
-      "source_node": [idField, sourceLabel],
-      "target_node": [idField, targetLabel]
+      // "source_node": [idField, sourceLabel],
+      // "target_node": [idField, targetLabel]
+      "source_node": ["id", sourceLabel],
+      "target_node": ["id", targetLabel]
     }
     networkSpec.push(staticNetworkSpec)
   }
 
-  console.log(">>>> SPEC:", dataSpec, networkSpec);
+  // console.log(">>>> SPEC:", dataSpec, networkSpec);
+  console.log(">>>> DATA SPEC:", dataSpec);
+  console.log(">>>> NETWORK SPEC:", networkSpec);
   return {
     data: dataSpec,
     network: networkSpec

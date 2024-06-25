@@ -11,6 +11,7 @@ import templates from '../templates/templates'
 import { Mode } from '../../../typings/status.enum'
 import Explainer from '../xplainer'
 import Explorer from './explorer'
+import {node} from "graphology-metrics";
 
 const useStyles = createUseStyles({
   root: {
@@ -59,7 +60,17 @@ function Vis(props: IVisProps) {
   const colorScheme = defaultColorScheme
   const nodeTypeShapeScheme = defaultNodeTypeShapeScheme
   const nodeTypeInShape: boolean = networkCfg.linkTableConfig?.linkType?.length as number > 0
-  const nodeLabel: string = networkCfg.extraNodeConfig?.nodeLabel ? `"datum.data.${networkCfg.extraNodeConfig?.nodeLabel}"` : `"datum.id"`
+
+
+
+
+
+  // Check label field, if don't exist use id.
+  // Labels were not working otherwise if all nodes from the link table are not defined in the link table
+  const nodeLabel = `"(datum.data && datum.data.${networkCfg.extraNodeConfig?.nodeLabel}) ? datum.data.${networkCfg.extraNodeConfig?.nodeLabel} : datum.id"`;
+  // let nodeLabel: string = networkCfg.extraNodeConfig?.nodeLabel ? `"datum.data.${networkCfg.extraNodeConfig?.nodeLabel}"` : `"datum.id"`
+  // let nodeLabel = `"datum.id"`;
+
   const timeFormat = networkCfg.linkTableConfig?.withTime ? `"${networkCfg.linkTableConfig.timeFormat}"` : null
 
   let options: any = {

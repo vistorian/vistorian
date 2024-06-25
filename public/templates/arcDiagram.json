@@ -53,14 +53,17 @@
       "name": "seriationMethod",
       "bind": {
         "input": "select",
-        "options": [
+        "//options": [
           "optimal-leaf-order",
           "barycentre",
           "bandwidth-reduction",
           "pca",
           "degree"
         ],
-        "labels": [
+        "//options": "[nodeTypeAttrs]",
+        "labels": "[nodeTypesAttrs]",
+        "options": "[nodeTypesAttrs]",
+        "//labels": [
           "optimal-leaf-order",
           "barycentre",
           "bandwidth-reduction",
@@ -253,7 +256,8 @@
       "data": "network.nodes",
       "pattern": "linear",
       "order": "node_order",
-      "orientation": "vertical"
+      "orientation": "vertical",
+      "fixedPanZoom": "x"
    }
   ],
   "vis": [

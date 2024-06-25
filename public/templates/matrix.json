@@ -240,8 +240,13 @@
         }
       ],
       "layout": "labelLayoutY",
+      "//overlapRemoval": {
+        "field": "degree",
+        "overlapDistance": 1
+      },
       "mark": {
         "type": "text",
+        "//clip": true,
         "fontWeight": {
           "conditions": [
             {
@@ -314,6 +319,10 @@
       "//col labels": "",
       "entries": "network.nodes",
       "layout": "labelLayoutX",
+      "//overlapRemoval": {
+        "field": "degree",
+        "overlapDistance": 1
+      },
       "mark": {
         "type": "text",
         "text": {
@@ -322,6 +331,7 @@
         "fontSize": {
           "expression": "params.labelSizeParam"
         },
+        "//clip": true,
         "y": 10,
         "angle": -90,
         "dx": 20,

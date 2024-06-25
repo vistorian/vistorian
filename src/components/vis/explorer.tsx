@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { NetworkConfig } from "../../../typings"
 import templates from "../templates/templates"
 import { genSpecFromLinkTable } from "../templates/genSpec"
+import networkNodeTable from "../wizard/network/preview/networkNodeTable";
 
 interface IVisContentProps {
   visTypeList: string[]
@@ -60,7 +61,7 @@ function Explorer(props: IVisContentProps) {
       // let renderer = visType === 'matrix' ? 'canvas' : 'svg'
       let renderer = "svg"
       // TODO: hard code, to be refined with canvas interaction
-      if (network === 'marieboucher' && (visType === 'matrix' || visType === 'arcMatrix')) {
+      if (visType === 'matrix' || visType === 'arcMatrix') {
         renderer = "canvas"
       }
 
@@ -75,7 +76,21 @@ function Explorer(props: IVisContentProps) {
         width = width < height ? width : height
         height = width
       }
-      // console.log('spec:', spec)
+
+      // Setup ordering variables
+      let orderingMethods = ["optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca", "degree"]
+          // .concat(networkCfg.extraNodeConfig?.nodeTypes.filter(att => att).map(v => `data.${v}`))
+          // .concat(networkCfg.extraNodeConfig?.nodeTypes.filter(att => att))
+
+      if (networkCfg.extraNodeConfig?.nodeTypes) {
+        // orderingMethods = orderingMethods.concat(networkCfg.extraNodeConfig.nodeTypes.filter(att => att))
+        orderingMethods = orderingMethods.concat(networkCfg.extraNodeConfig.nodeTypes.filter(att => att).map(v => `data.${v}`))
+      }
+
+      console.log("orderings ", orderingMethods)
+      console.log("options ", options)
+      console.log("config ", networkCfg)
+      // console.log("config ", spec.network)
 
       // @ts-ignore
       viewers[index] = await NetPanoramaTemplateViewer.render(templatePath, {
@@ -83,6 +98,8 @@ function Explorer(props: IVisContentProps) {
         networksDefinition: JSON.stringify(spec.network),
         width: width,
         height: height,
+        nodeTypesAttrs: orderingMethods,
+        isDirected: networkCfg.linkTableConfig?.directed ? true : "false",
         ...options
       }, containerId, {
         renderer: renderer,
