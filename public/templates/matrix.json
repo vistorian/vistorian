@@ -343,6 +343,16 @@
         "opacity": {
           "conditions": [
             {
+              "//": "if link is not in time, don't show it whatsoever",
+              "test": "datum.data._time != null && datum.data._time < params.time[0] || datum.data._time > params.time[1]",
+              "value": 0
+            },
+          {
+              "//": "default",
+              "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
+              "value": 1
+            },
+            {
               "//": "hovered",
               "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
               "value": 1
