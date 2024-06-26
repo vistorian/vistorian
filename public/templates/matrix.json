@@ -264,6 +264,11 @@
         "opacity": {
           "conditions": [
             {
+              "//": "if link is not in time, don't show it whatsoever",
+              "test": "datum.data._time != null && datum.data._time < params.time[0] || datum.data._time > params.time[1]",
+              "value": 0
+            },
+          {
               "//": "default",
               "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
               "value": 1
@@ -337,11 +342,6 @@
         },
         "opacity": {
           "conditions": [
-            {
-              "//": "default",
-              "test": "params.selectedNodes.nodes.length == 0 && params.hoveredNode.nodes.length == 0",
-              "value": 1
-            },
             {
               "//": "hovered",
               "test": "params.hoveredNode.nodes.length > 0 && params.hoveredNode.nodes[0] == datum",
@@ -437,10 +437,6 @@
                 "test": "(datum.size < 1) || (datum.data._time != null && datum.data._time < params.time[0] || datum.data._time > params.time[1]) ",
                 "value": 0.3
               },
-              "scale": "opacity",
-              "expression": "datum.linkWeight"
-            },
-            "//opacity": {
               "scale": "opacity",
               "expression": "datum.linkWeight"
             },
