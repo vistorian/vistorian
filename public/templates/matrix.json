@@ -74,7 +74,7 @@
       "name": "seriationMethod",
       "bind": {
         "input": "select",
-        "options": [
+        "//options": [
           "optimal-leaf-order",
           "barycentre",
           "bandwidth-reduction",
@@ -82,14 +82,8 @@
           "degree",
           "id"
         ],
-        "labels": [
-          "Optimal Leaf Order",
-          "Barycentre Heuristic",
-          "Bandwidth Reduction",
-          "PCA",
-          "Node Degree",
-          "Node Label"
-        ],
+        "options": "[orderingMethods]",
+        "labels": "[orderingMethodsLabels]",
         "label": "Seriation"
       },
       "value": "optimal-leaf-order"
@@ -180,22 +174,16 @@
     {
       "name": "labelLayoutY",
       "data": "network.nodes",
-      "pattern": "cartesian",
-      "y": [
-        {
-          "order": "order"
-        }
-      ]
+      "pattern": "linear",
+      "order": "order",
+      "orientation": "vertical"
     },
     {
       "name": "labelLayoutX",
       "data": "network.nodes",
-      "pattern": "cartesian",
-      "x": [
-        {
-          "order": "order"
-        }
-      ]
+      "pattern": "linear",
+      "order": "order",
+      "orientation": "horizontal"
     }
   ],
   "tables": [
@@ -444,15 +432,15 @@
               "scale": "cellColor",
               "expression": "datum.linkType"
             },
-            "//opacity": {
+            "opacity": {
               "condition": {
                 "test": "(datum.size < 1) || (datum.data._time != null && datum.data._time < params.time[0] || datum.data._time > params.time[1]) ",
-                "value": 0
+                "value": 0.3
               },
               "scale": "opacity",
               "expression": "datum.linkWeight"
             },
-            "opacity": {
+            "//opacity": {
               "scale": "opacity",
               "expression": "datum.linkWeight"
             },

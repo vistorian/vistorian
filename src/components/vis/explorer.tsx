@@ -79,12 +79,16 @@ function Explorer(props: IVisContentProps) {
 
       // Setup ordering variables
       let orderingMethods = ["optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca", "degree"]
-          // .concat(networkCfg.extraNodeConfig?.nodeTypes.filter(att => att).map(v => `data.${v}`))
-          // .concat(networkCfg.extraNodeConfig?.nodeTypes.filter(att => att))
+      let orderingMethodsLabels = ["Optimal-leaf-order", "Barycentre", "Bandwidth-reduction", "PCA", "Degree"]
+
+      // orderingMethods.push("data." + networkCfg.extraNodeConfig?.nodeLabel ?? "id");
+      orderingMethods.push(networkCfg.extraNodeConfig?.nodeLabel ? "data." + networkCfg.extraNodeConfig?.nodeLabel : "id");
+      orderingMethodsLabels.push(networkCfg.extraNodeConfig?.nodeLabel ?? "Label");
 
       if (networkCfg.extraNodeConfig?.nodeTypes) {
         // orderingMethods = orderingMethods.concat(networkCfg.extraNodeConfig.nodeTypes.filter(att => att))
         orderingMethods = orderingMethods.concat(networkCfg.extraNodeConfig.nodeTypes.filter(att => att).map(v => `data.${v}`))
+        orderingMethodsLabels = orderingMethodsLabels.concat(networkCfg.extraNodeConfig.nodeTypes.filter(att => att))
       }
 
       console.log("orderings ", orderingMethods)
@@ -98,8 +102,10 @@ function Explorer(props: IVisContentProps) {
         networksDefinition: JSON.stringify(spec.network),
         width: width,
         height: height,
-        nodeTypesAttrs: orderingMethods,
+        // nodeTypesAttrs: orderingMethods,
         isDirected: networkCfg.linkTableConfig?.directed ? true : "false",
+        orderingMethods: orderingMethods,
+        orderingMethodsLabels: orderingMethodsLabels,
         ...options
       }, containerId, {
         renderer: renderer,

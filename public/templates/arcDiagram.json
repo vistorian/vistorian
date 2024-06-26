@@ -60,9 +60,9 @@
           "pca",
           "degree"
         ],
-        "//options": "[nodeTypeAttrs]",
-        "labels": "[nodeTypesAttrs]",
-        "options": "[nodeTypesAttrs]",
+        "//options": "[orderingMethods]",
+        "labels": "[orderingMethods]",
+        "options": "[orderingMethods]",
         "//labels": [
           "optimal-leaf-order",
           "barycentre",
