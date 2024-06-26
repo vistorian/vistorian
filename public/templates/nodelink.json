@@ -56,6 +56,14 @@
       "value": "[nodeTypeInShape]"
     },
     {
+      "name": "showLabels",
+      "bind": {
+        "input": "checkbox",
+        "label": "Show Labels"
+      },
+      "value": true
+    },
+    {
       "name": "nodeSizeParam",
       "bind": {
         "input": "range",
@@ -435,6 +443,7 @@
           "parameter": "labelDensityParam"
         }
       },
+      "if": "params.showLabels",
       "mark": {
         "type": "text",
         "text": {

@@ -60,7 +60,9 @@ function FileSelector(props: IFileSelectorProps) {
   // @ts-ignore
   const customRequest = (options: UploadRequestOption<any>) => {
     const { onSuccess, onError, file } = options
+
     const reader = new FileReader()
+
     reader.readAsText(file)
     reader.onerror = () => {
       message.error(`${file.name} file upload failed.`)
@@ -73,9 +75,11 @@ function FileSelector(props: IFileSelectorProps) {
       // console.log('customRequest', file.name, selectedFileName)
       message.success(`${file.name} file uploaded successfully.`)
       const csvdata = reader.result as string
+
       await csvtojson({ noheader: true}).fromString(csvdata).then((jsonData) => {
         window.localStorage.setItem("UPLOADED_FILE_" + file.name, JSON.stringify(jsonData))
       })
+
       onSuccess(null, file)
     }
     return true
