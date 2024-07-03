@@ -9,6 +9,18 @@
     "width": "[width]",
     "height": "[height]",
     "parameters": [
+
+      {
+      "name": "AxisOne",
+      "bind": {
+        "input": "select",
+        "options": "[orderingMethods]",
+        "labels": "[orderingMethodsLabels]",
+        "label": "Axis 1"
+      },
+      "value": "degree"
+    },
+
       {
         "name": "hoveredNode",
         "network": "network",
