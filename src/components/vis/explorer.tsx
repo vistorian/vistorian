@@ -86,15 +86,23 @@ function Explorer(props: IVisContentProps) {
       orderingMethodsLabels.push(networkCfg.extraNodeConfig?.nodeLabel ?? "Label");
 
       if (networkCfg.extraNodeConfig?.nodeTypes) {
-        // orderingMethods = orderingMethods.concat(networkCfg.extraNodeConfig.nodeTypes.filter(att => att))
         orderingMethods = orderingMethods.concat(networkCfg.extraNodeConfig.nodeTypes.filter(att => att).map(v => `data.${v}`))
         orderingMethodsLabels = orderingMethodsLabels.concat(networkCfg.extraNodeConfig.nodeTypes.filter(att => att))
       }
 
-      console.log("orderings ", orderingMethods)
+
+      let nodeAttributes: string[] = [];
+      if (networkCfg.extraNodeConfig?.nodeAttributes) {
+        nodeAttributes = nodeAttributes.concat(networkCfg.extraNodeConfig.nodeAttributes.filter(att => att).map(v => `data.${v}`))
+      }
+
+      console.log("attrs ", nodeAttributes)
+      console.log("attrs ", networkCfg.extraNodeConfig?.nodeAttributes)
+
+
+
       console.log("options ", options)
       console.log("config ", networkCfg)
-      // console.log("config ", spec.network)
 
       // @ts-ignore
       viewers[index] = await NetPanoramaTemplateViewer.render(templatePath, {

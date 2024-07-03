@@ -6,6 +6,8 @@ import { LeftOutlined, RightOutlined, PlusOutlined, InfoCircleOutlined } from '@
 import styled from '@emotion/styled';
 import FileSelector from './fileSelector';
 import TablePreview from './tablePreview';
+import {node} from "graphology-metrics";
+import {Node} from "@babel/core";
 
 const useStyles = createUseStyles({
   selection: {
@@ -16,6 +18,15 @@ const useStyles = createUseStyles({
     fontSize: 16,
   }
 })
+
+enum NodeAttrType {
+  nodetype,
+  numericalAttribute,
+  categoricalAttribute,
+  temporalAttribute,
+  spatialAttribute
+}
+
 
 const { Title, Paragraph, Text, Link } = Typography;
 
@@ -34,29 +45,69 @@ function NetExtraNodeConfig(props: IStepProps) {
   const [hasHeaderRow, setHasHeaderRow] = useState<boolean>(false)
   const [selectionOptions, setSelectionOptions] = useState<SelectOptionType[]>([])
   const [nodeTypes, setNodTypes] = useState<Array<string|null>>(['', null, null])
+  const [numericalNodeAttriutes, setNumAttributes] = useState<Array<string|null>>([null, null, null])
 
 
   const onFinish = (values: StepData) => {
     if (hasExtraNode && !file) {
       message.error('You shoud upload your link table first!')
       return
-    } 
-    // console.log('extraNodeConfig', values)
+    }
+
+    // TODO: save here node attributes? Currently not saved
+    console.log('extraNodeConfig', values)
     onSuccess(values, 'extraNodeConfig');
   };
 
-  const add = () => {
-    const tmp = [...nodeTypes]
+  // const add = () => {
+  //   const tmp = [...nodeTypes]
+  //   const idx = tmp.findIndex((t) => t===null)
+  //   if (idx > -1) {
+  //     tmp[idx] = ''
+  //     setNodTypes(tmp)
+  //   }
+  //
+  //   form.setFieldsValue({ 'nodeTypes': tmp })
+  // }
+
+  const add = (type: NodeAttrType) => {
+
+    let types;
+    if (type == NodeAttrType.nodetype) {
+      types = nodeTypes;
+    } else if (type == NodeAttrType.numericalAttribute) {
+      types = numericalNodeAttriutes;
+    }
+
+    const tmp = [...types]
     const idx = tmp.findIndex((t) => t===null)
     if (idx > -1) {
       tmp[idx] = ''
-      setNodTypes(tmp)
+      if (type == NodeAttrType.nodetype) {
+        setNodTypes(tmp);
+      } else if (type == NodeAttrType.numericalAttribute) {
+        setNumAttributes(tmp);
+      }
     }
-    form.setFieldsValue({ 'nodeTypes': tmp })
+
+    if (type == NodeAttrType.nodetype) {
+      form.setFieldsValue({ 'nodeTypes': tmp })
+    } else if (type == NodeAttrType.numericalAttribute) {
+      form.setFieldsValue({ 'numericalNodeAttributes': tmp })
+    }
   }
-  
-  const remove = (idx: number) => {
-    let tmp = [...nodeTypes]
+
+  const remove = (idx: number, type: NodeAttrType) => {
+
+    let types;
+    if (type == NodeAttrType.nodetype) {
+      types = nodeTypes;
+    } else if (type == NodeAttrType.numericalAttribute) {
+      types = numericalNodeAttriutes;
+    }
+
+    let tmp = [...types]
+
     // special: as the array can only have 3 items and the remove operation only happen in 2nd or 3rd item
     if (idx === 1 ) { // delete 2nd item
       tmp = [tmp[0], tmp[2], null]
@@ -64,16 +115,63 @@ function NetExtraNodeConfig(props: IStepProps) {
     else {// delete 3rd item
       tmp[idx] = null
     }
-    setNodTypes(tmp)
-    form.setFieldsValue({ 'nodeTypes': tmp })
+
+    if (type == NodeAttrType.nodetype) {
+      setNodTypes(tmp);
+    } else if (type == NodeAttrType.numericalAttribute) {
+      setNumAttributes(tmp);
+    }
+
+    if (type == NodeAttrType.nodetype) {
+      form.setFieldsValue({ 'nodeTypes': tmp })
+    } else if (type == NodeAttrType.numericalAttribute) {
+      form.setFieldsValue({ 'numericalNodeAttributes': tmp })
+    }
   }
 
-  const update = (value: string, idx: number) => {
-    const tmp = [...nodeTypes]
+  const update = (value: string, idx: number, type: NodeAttrType) => {
+    let types;
+    if (type == NodeAttrType.nodetype) {
+      types = nodeTypes;
+    } else if (type == NodeAttrType.numericalAttribute) {
+      types = numericalNodeAttriutes;
+    }
+
+    const tmp = [...types]
     tmp[idx] = value
-    setNodTypes(tmp)
-    form.setFieldsValue({ 'nodeTypes': tmp })
+
+    if (type == NodeAttrType.nodetype) {
+      setNodTypes(tmp);
+    } else if (type == NodeAttrType.numericalAttribute) {
+      setNumAttributes(tmp);
+    }
+
+    if (type == NodeAttrType.nodetype) {
+      form.setFieldsValue({ 'nodeTypes': tmp })
+    } else if (type == NodeAttrType.numericalAttribute) {
+      form.setFieldsValue({ 'numericalNodeAttributes': tmp })
+    }
   }
+  
+  // const remove = (idx: number) => {
+  //   let tmp = [...nodeTypes]
+  //   // special: as the array can only have 3 items and the remove operation only happen in 2nd or 3rd item
+  //   if (idx === 1 ) { // delete 2nd item
+  //     tmp = [tmp[0], tmp[2], null]
+  //   }
+  //   else {// delete 3rd item
+  //     tmp[idx] = null
+  //   }
+  //   setNodTypes(tmp)
+  //   form.setFieldsValue({ 'nodeTypes': tmp })
+  // }
+  //
+  // const update = (value: string, idx: number) => {
+  //   const tmp = [...nodeTypes]
+  //   tmp[idx] = value
+  //   setNodTypes(tmp)
+  //   form.setFieldsValue({ 'nodeTypes': tmp })
+  // }
 
   return (
     <Form
@@ -160,17 +258,46 @@ function NetExtraNodeConfig(props: IStepProps) {
                       <Select style={{ width: 300 }}
                         options={selectionOptions}
                         value={nodeType}
-                        onChange={(value) => update(value, index)}
+                        onChange={(value) => update(value, index, NodeAttrType.nodetype)}
                       />
                     </div>
                   </Form.Item>
-                  {index !== 0 ? <Button style={{marginBottom: 5}} onClick={() => remove(index)}>Delete this node type</Button> : null}
+                  {index !== 0 ? <Button style={{marginBottom: 5}} onClick={() => remove(index, NodeAttrType.nodetype)}>Delete this node type</Button> : null}
                 </>
               )
             }
           })}
+
+          {/*Numerical Attributes */}
+          {numericalNodeAttriutes.map((attr, index) => {
+            if (attr !== null) {
+              return (
+                <>
+                  <Form.Item
+                    name="numericalNodeAttributes"
+                    style={{ marginBottom: 5 }}
+                    rules={[{ required: false }]}
+                    key={`${index}-${attr}`}
+                  >
+                    <div className={classes.selection}>
+                      <Text className={classes.selectionName}>- Numerical Attribute {index + 1}:</Text>
+                      <Select style={{ width: 300 }}
+                        options={selectionOptions}
+                        value={attr}
+                        onChange={(value) => update(value, index, NodeAttrType.numericalAttribute)}
+                      />
+                    </div>
+                  </Form.Item>
+                  <Button style={{marginBottom: 5}} onClick={() => remove(index, NodeAttrType.numericalAttribute)}>Delete this attribute</Button>
+                </>
+              )
+            }
+          })}
+
+
           <br />
-          {(nodeTypes[2]===null) ? <Button onClick={() => add()} icon={<PlusOutlined />}>Add more node types</Button> : null}
+          {(nodeTypes[2]===null) ? <Button onClick={() => add(NodeAttrType.nodetype)} icon={<PlusOutlined />}>Add more node types</Button> : null}
+          {<Button onClick={() => add(NodeAttrType.numericalAttribute)} icon={<PlusOutlined />}>Add numerical node attribute</Button>}
         </>: null}
       </>: null}
 
