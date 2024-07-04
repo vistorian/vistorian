@@ -103,8 +103,10 @@ function VisSelector(props: IVisSelectorProps) {
       console.error('no valid specification!')
       return false
     }
-    if (visType === 'map' && (!config.linkTableConfig?.locationOfSourceNode || !config.linkTableConfig?.locationOfTargetNode)) {
-      return false
+    if (visType === 'map') {
+      if ((!config.linkTableConfig?.locationOfSourceNode || !config.linkTableConfig?.locationOfTargetNode) && !config.extraNodeConfig?.nodeLocation) {
+        return false
+      }
     }
     if (visType === 'timearcs' && !config.linkTableConfig?.withTime) {
       return false

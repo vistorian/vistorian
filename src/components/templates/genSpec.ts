@@ -51,39 +51,40 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       }
     ]
   }
-  if (visType === 'map') {
 
-    // TODO: check if the place is specified in the node or link table
-
-    console.log(config.linkTableConfig);
-    // config.linkTableConfig?.sourceNodeLabel
+  // We use the location either from the node table or the link table, but not both.
+  // When location is from the link table, it creates nodes specific to the location.
+  if (visType === 'map' && !config.extraNodeConfig?.nodeLocation) {
+    const sourcePlaceField = config.linkTableConfig?.locationOfSourceNode;
+    const targetPlaceField = config.linkTableConfig?.locationOfTargetNode;
 
     linkTableImportSpec.transform = [
       {
         "type": "geocode",
-        // "locationField": "Place1",
-        "locationField": config.linkTableConfig?.locationOfSourceNode,
+        "locationField": sourcePlaceField,
         "lonAs": "Lon1",
         "latAs": "Lat1"
       },
       {
         "type": "geocode",
-        // "locationField": "Place2",
-        "locationField":  config.linkTableConfig?.locationOfTargetNode,
+        "locationField":  targetPlaceField,
         "lonAs": "Lon2",
         "latAs": "Lat2"
       },
       {
         "type": "calculate",
         "as": "source",
-        "calculate": `datum.${sourceLabel} + ' (' + datum.Place1 + ')'`
+        "calculate": `datum.${sourceLabel} + ' (' + datum.${sourcePlaceField} + ')'`
       },
       {
         "type": "calculate",
         "as": "target",
-        "calculate": `datum.${targetLabel} + ' (' + datum.Place2 + ')'`
+        "calculate": `datum.${targetLabel} + ' (' + datum.${targetPlaceField} + ')'`
       }
     ]
+
+
+
   }
   // respond to global time slider
   if (config.linkTableConfig?.withTime) {
@@ -93,7 +94,7 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       "calculate": `datum.${config.linkTableConfig.time}`
     })
   }
-  if(visType == 'map'){
+  if(visType == 'map' && !config.extraNodeConfig?.nodeLocation){
     linkTableImportSpec.transform.push(
       {
         "type": "filter",
@@ -109,8 +110,6 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     let trans: any[] = []
     const calc = config.extraNodeConfig?.nodeLabel ? config.extraNodeConfig?.nodeLabel : 'id'
 
-    // console.log("label ", calc)
-
     trans.push({
       "type": "calculate",
       "as": `_label`,
@@ -121,11 +120,20 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
         trans.push({
           "type": "calculate",
           "as": `type${index}`,
-          // "calculate": `datum.${type}`
           "calculate": `datum['${type}']`
         })
       }
     })
+
+    if (config.extraNodeConfig?.nodeLocation) {
+      trans.push({
+        "type": "geocode",
+        "locationField":  config.extraNodeConfig?.nodeLocation,
+        "lonAs": "lon",
+        "latAs": "lat"
+      })
+    }
+
     dataSpec = [
       linkTableImportSpec,
       {

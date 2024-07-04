@@ -73,15 +73,15 @@ const templates: Template[] = [
     manual: "https://vistorian.github.io",
     error: ''
   },
-  {
-    key: "scatterplot",
-    label: "Scatterplot",
-    image: "matrix.png",
-    template: "scatterplot.json",
-    description: "Table layout showing links as cells and nodes as rows and columns.",
-    manual: "https://vistorian.github.io/visualizations.html#adjacency-matrix",
-    error: ''
-  },
+  // {
+  //   key: "scatterplot",
+  //   label: "Scatterplot",
+  //   image: "matrix.png",
+  //   template: "scatterplot.json",
+  //   description: "Table layout showing links as cells and nodes as rows and columns.",
+  //   manual: "https://vistorian.github.io/visualizations.html#adjacency-matrix",
+  //   error: ''
+  // },
   // {
   //   key: "jigsaw",
   //   label: "Jigsaw Diagram",
