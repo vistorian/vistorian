@@ -92,14 +92,15 @@ function Explorer(props: IVisContentProps) {
 
 
       let nodeAttributes: string[] = [];
-      if (networkCfg.extraNodeConfig?.nodeAttributes) {
-        nodeAttributes = nodeAttributes.concat(networkCfg.extraNodeConfig.nodeAttributes.filter(att => att).map(v => `data.${v}`))
+      if (networkCfg.extraNodeConfig?.numericalNodeAttributes) {
+        nodeAttributes = nodeAttributes.concat(networkCfg.extraNodeConfig.numericalNodeAttributes.filter(att => att).map(v => `data.${v}`))
+
+        orderingMethods = orderingMethods.concat(networkCfg.extraNodeConfig.numericalNodeAttributes.filter(att => att).map(v => `data.${v}`))
+        orderingMethodsLabels = orderingMethodsLabels.concat(networkCfg.extraNodeConfig.numericalNodeAttributes.filter(att => att))
       }
 
-      console.log("attrs ", nodeAttributes)
-      console.log("attrs ", networkCfg.extraNodeConfig?.nodeAttributes)
-
-
+      // console.log("attrs ", nodeAttributes)
+      // console.log("attrs ", networkCfg.extraNodeConfig)
 
       console.log("options ", options)
       console.log("config ", networkCfg)

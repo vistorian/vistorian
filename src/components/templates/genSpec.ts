@@ -52,16 +52,24 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
     ]
   }
   if (visType === 'map') {
+
+    // TODO: check if the place is specified in the node or link table
+
+    console.log(config.linkTableConfig);
+    // config.linkTableConfig?.sourceNodeLabel
+
     linkTableImportSpec.transform = [
       {
         "type": "geocode",
-        "locationField": "Place1",
+        // "locationField": "Place1",
+        "locationField": config.linkTableConfig?.locationOfSourceNode,
         "lonAs": "Lon1",
         "latAs": "Lat1"
       },
       {
         "type": "geocode",
-        "locationField": "Place2",
+        // "locationField": "Place2",
+        "locationField":  config.linkTableConfig?.locationOfTargetNode,
         "lonAs": "Lon2",
         "latAs": "Lat2"
       },

@@ -97,7 +97,8 @@ interface ExtraNodeConfig {
   nodeID?: string
   nodeLabel?: string
   nodeTypes?: string[]
-  nodeAttributes?: string[]
+  numericalNodeAttributes?: string[]
+  location?: string
 }
 
 // interface RelationType {

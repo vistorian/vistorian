@@ -54,8 +54,7 @@ function NetExtraNodeConfig(props: IStepProps) {
       return
     }
 
-    // TODO: save here node attributes? Currently not saved
-    console.log('extraNodeConfig', values)
+    // console.log('extraNodeConfig', values)
     onSuccess(values, 'extraNodeConfig');
   };
 
@@ -71,7 +70,6 @@ function NetExtraNodeConfig(props: IStepProps) {
   // }
 
   const add = (type: NodeAttrType) => {
-
     let types;
     if (type == NodeAttrType.nodetype) {
       types = nodeTypes;
@@ -239,6 +237,20 @@ function NetExtraNodeConfig(props: IStepProps) {
               <Select style={{ width: 300 }}
                 options={selectionOptions}
                 onChange={(value) => form.setFieldsValue({ 'nodeLabel': value })}
+              />
+            </div>
+          </Form.Item>
+
+          <Form.Item
+            name="nodeLocation"
+            style={{ margin: 0 }}
+            rules={[{ required: false }]}
+          >
+            <div className={classes.selection}>
+              <Text className={classes.selectionName}>- Node Location:&nbsp;</Text>
+              <Select style={{ width: 300 }}
+                options={selectionOptions}
+                onChange={(value) => form.setFieldsValue({ 'nodeLocation': value })}
               />
             </div>
           </Form.Item>
