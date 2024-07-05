@@ -1,5 +1,5 @@
 {
-      "zoom": true,
+    "zoom": true,
     "pan": {
       "modifierKeyRequired": null
     },
@@ -11,12 +11,23 @@
     "parameters": [
 
       {
-      "name": "AxisOne",
+      "name": "axisOne",
       "bind": {
         "input": "select",
-        "options": "[orderingMethods]",
-        "labels": "[orderingMethodsLabels]",
+        "options": "[nodeAttributes]",
+        "labels": "[nodeAttributes]",
         "label": "Axis 1"
+      },
+      "value": "degree"
+    },
+
+      {
+      "name": "axisTwo",
+      "bind": {
+        "input": "select",
+        "options": "[nodeAttributes]",
+        "labels": "[nodeAttributes]",
+        "label": "Axis 2"
       },
       "value": "degree"
     },
@@ -177,13 +188,13 @@
       "pattern": "cartesian",
       "x": [
         {
-          "field": "degree",
+          "field": {"parameter": "axisOne"},
           "scale": "x"
         }
       ],
       "y": [
         {
-          "field": "degree",
+          "field":  {"parameter": "axisTwo"},
           "scale": "y"
         }
       ],
@@ -272,7 +283,7 @@
         ],
         "domain": {
           "data": "network.nodes",
-          "field": "degree"
+          "field": {"parameter": "axisOne"}
         }
       },
       {
@@ -284,7 +295,7 @@
         ],
         "domain": {
           "data": "network.nodes",
-          "field": "degree"
+          "field": {"parameter": "axisTwo"}
         }
       }
     ],
@@ -386,6 +397,7 @@
       {
         "entries": "network.nodes",
         "layout": "layout",
+        "drawAxes": true,
         "actions": [
           {
             "interaction": "select",
@@ -538,6 +550,26 @@
           "stroke": "white",
           "strokeWidth": 0.5
         }
+      },
+      {
+      "mark": {
+        "type": "text",
+        "text": {"parameter": "axisOne"},
+        "x": "[width]",
+        "y": {"expression":  "[height] - 80"},
+        "fontSize": 18,
+        "fontStyle": "italic"
       }
+    },
+      {
+      "mark": {
+        "type": "text",
+        "text": {"parameter": "axisTwo"},
+        "x": 60,
+        "y": -20,
+        "fontSize": 18,
+        "fontStyle": "italic"
+      }
+    }
     ]
   }

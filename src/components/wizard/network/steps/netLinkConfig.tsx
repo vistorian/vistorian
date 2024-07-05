@@ -109,7 +109,7 @@ function NetLinkConfig(props: IStepProps) {
                 <Radio.Group id='net-config-directed'>
                   <MySpace direction="vertical">
                     <Text>
-                      Doses it matter which node is the&nbsp;<b>source</b>, and which is the&nbsp;<b>target</b>?
+                      Does it matter which node is the&nbsp;<b>source</b>, and which is the&nbsp;<b>target</b>?
                     </Text>
                     <Radio value={true}>Yes</Radio>
                     <Radio value={false}>No</Radio>
@@ -249,7 +249,7 @@ function NetLinkConfig(props: IStepProps) {
               >
                 <Radio.Group id="net-config-withTime">
                   <MySpace direction="vertical">
-                    <Text>Doses it matter which node is the&nbsp;<b>source</b>, and which is the&nbsp;<b>target</b>?</Text>
+                    {/*<Text>Doses it matter which node is the&nbsp;<b>source</b>, and which is the&nbsp;<b>target</b>?</Text>*/}
                     <Radio value={false}><b>No</b>, my links do not have associated times or this information is not recorded.</Radio>
                     <Radio value={true}><b>Yes</b>, each link is associated with a&nbsp;<i>single</i>&nbsp;time (for example, if edges correspond to letters posted from one person to another at a particular time)</Radio>
                   </MySpace>

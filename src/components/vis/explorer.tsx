@@ -4,6 +4,7 @@ import { NetworkConfig } from "../../../typings"
 import templates from "../templates/templates"
 import { genSpecFromLinkTable } from "../templates/genSpec"
 import networkNodeTable from "../wizard/network/preview/networkNodeTable";
+import {node} from "graphology-metrics";
 
 interface IVisContentProps {
   visTypeList: string[]
@@ -81,9 +82,10 @@ function Explorer(props: IVisContentProps) {
       let orderingMethods = ["optimal-leaf-order", "barycentre", "bandwidth-reduction", "pca", "degree"]
       let orderingMethodsLabels = ["Optimal-leaf-order", "Barycentre", "Bandwidth-reduction", "PCA", "Degree"]
 
-      // orderingMethods.push("data." + networkCfg.extraNodeConfig?.nodeLabel ?? "id");
       orderingMethods.push(networkCfg.extraNodeConfig?.nodeLabel ? "data." + networkCfg.extraNodeConfig?.nodeLabel : "id");
       orderingMethodsLabels.push(networkCfg.extraNodeConfig?.nodeLabel ?? "Label");
+
+      let nodeAttributes = ["degree"];
 
       if (networkCfg.extraNodeConfig?.nodeTypes) {
         orderingMethods = orderingMethods.concat(networkCfg.extraNodeConfig.nodeTypes.filter(att => att).map(v => `data.${v}`))
@@ -91,7 +93,6 @@ function Explorer(props: IVisContentProps) {
       }
 
 
-      let nodeAttributes: string[] = [];
       if (networkCfg.extraNodeConfig?.numericalNodeAttributes) {
         nodeAttributes = nodeAttributes.concat(networkCfg.extraNodeConfig.numericalNodeAttributes.filter(att => att).map(v => `data.${v}`))
 
@@ -99,9 +100,8 @@ function Explorer(props: IVisContentProps) {
         orderingMethodsLabels = orderingMethodsLabels.concat(networkCfg.extraNodeConfig.numericalNodeAttributes.filter(att => att))
       }
 
-      // console.log("attrs ", nodeAttributes)
+      console.log("attrs ", nodeAttributes)
       // console.log("attrs ", networkCfg.extraNodeConfig)
-
       console.log("options ", options)
       console.log("config ", networkCfg)
 
@@ -111,7 +111,7 @@ function Explorer(props: IVisContentProps) {
         networksDefinition: JSON.stringify(spec.network),
         width: width,
         height: height,
-        // nodeTypesAttrs: orderingMethods,
+        nodeAttributes: nodeAttributes,
         isDirected: networkCfg.linkTableConfig?.directed ? true : "false",
         orderingMethods: orderingMethods,
         orderingMethodsLabels: orderingMethodsLabels,
