@@ -153,7 +153,7 @@ function Landing() {
           </div>
 					<div className={classes.menuCol}>
 						<h2 className={classes.h2}>Resources</h2>
-            <a className={classes.boldLink} href="https://discord.gg/JbWCgSyd">Chat (Discord)</a>
+            <a className={classes.boldLink} href="https://discord.gg/YmHyfw93QX">Chat (Discord)</a>
             <br />
             <a className={classes.boldLink} href="https://groups.google.com/g/vistorian-community">Mailing List</a>
             <br />
