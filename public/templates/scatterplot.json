@@ -170,6 +170,20 @@
         },
         "value": 3
       },
+
+      {
+      "name": "beeswarmStrength",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Beeswarm",
+        "min": "0",
+        "max": "10",
+        "step": ".1"
+      },
+      "value": 0.1
+    },
+
       {
         "name": "time",
         "bind": {
@@ -201,7 +215,7 @@
       "transform": [
         {
           "type": "beeswarm",
-          "collisionStrength": 0.1
+          "collisionStrength": {"expression":  "params.beeswarmStrength"}
         }
       ]
     }
