@@ -3,6 +3,7 @@ import {useEffect, useState} from "react"
 import {NetworkConfig} from "../../../typings"
 import templates from "../templates/templates"
 import {genSpecFromLinkTable} from "../templates/genSpec"
+
 import {render} from "../../../public/lib/netpanorama-template-viewer";
 
 
