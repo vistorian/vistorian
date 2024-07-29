@@ -1,10 +1,10 @@
-import { Spin } from "antd"
-import { useEffect, useState } from "react"
-import { NetworkConfig } from "../../../typings"
+import {Spin} from "antd"
+import {useEffect, useState} from "react"
+import {NetworkConfig} from "../../../typings"
 import templates from "../templates/templates"
-import { genSpecFromLinkTable } from "../templates/genSpec"
-import networkNodeTable from "../wizard/network/preview/networkNodeTable";
-import {node} from "graphology-metrics";
+import {genSpecFromLinkTable} from "../templates/genSpec"
+import {render} from "../../../public/lib/netpanorama-template-viewer";
+
 
 interface IVisContentProps {
   visTypeList: string[]
@@ -13,10 +13,12 @@ interface IVisContentProps {
 }
 
 function Explorer(props: IVisContentProps) {
-  const { visTypeList, network, options } = props
+  const {visTypeList, network, options} = props
   const [loading, setLoading] = useState<boolean>(true)
   const networkCfg = JSON.parse(window.localStorage.getItem("NETWORK_WIZARD_" + network) as string) as NetworkConfig
-  const viewers: any[] = visTypeList.map(v => {return {}})
+  const viewers: any[] = visTypeList.map(v => {
+    return {}
+  })
 
   const onChange = (newVal: any, type: string) => {
     // console.log('onChange before:', newVal, type)
@@ -26,8 +28,7 @@ function Explorer(props: IVisContentProps) {
       if (viewer.state !== undefined) {
         if (type === 'time') {
           viewer.setParam('time', newVal, false)
-        }
-        else {
+        } else {
           propogateSelection(viewer, type, newVal)
         }
       }
@@ -47,13 +48,13 @@ function Explorer(props: IVisContentProps) {
     const nodes = viewer.state[networkName].nodes.filter(n => nodeIds.includes(n.id));
     const links = viewer.state[networkName].links.filter(l => linkIds.includes(l.id));
 
-    viewer.setParam(selectionName, { nodes, links }, false)
+    viewer.setParam(selectionName, {nodes, links}, false)
   }
 
   type ParamChangeCallbacks = { [paramName: string]: (newVal: string | number) => void } // refer to netpan
-  const getParamCallbacks: ParamChangeCallbacks = { 
-    hoveredNode: (newVal) => onChange(newVal, 'hoveredNode'), 
-    time: (newVal) => onChange(newVal, 'time'), 
+  const getParamCallbacks: ParamChangeCallbacks = {
+    hoveredNode: (newVal) => onChange(newVal, 'hoveredNode'),
+    time: (newVal) => onChange(newVal, 'time'),
   }
 
   const update = async () => {
@@ -106,7 +107,8 @@ function Explorer(props: IVisContentProps) {
       console.log("config ", networkCfg)
 
       // @ts-ignore
-      viewers[index] = await NetPanoramaTemplateViewer.render(templatePath, {
+      // viewers[index] = await NetPanoramaTemplateViewer.render(templatePath, {
+      viewers[index] = await render(templatePath, {
         dataDefinition: JSON.stringify(spec.data),
         networksDefinition: JSON.stringify(spec.network),
         width: width,
@@ -141,7 +143,7 @@ function Explorer(props: IVisContentProps) {
         // Object.values(elements).map(c => console.log(c))
       }
     }
-    
+
     if (loading) setLoading(false)
   }
 
@@ -168,18 +170,20 @@ function Explorer(props: IVisContentProps) {
   })
 
   return (
-    loading ? 
-      (<Spin tip="Loading" size="small">
-        <div style={{ width: '100%', height: '100%', display: 'flex' }} />
-      </Spin>)
-      : 
-      (<div style = {{ width: '100%', height: '100%', display: 'flex' }}>
-        {visTypeList.map((visType, idx) => {
-          return (
-            <div key={idx} id={`visSvg${idx}`} style={{ width: `${100 / visTypeList.length}%`, height: '100%', overflow: 'hidden' }} />
-          )
-        })}
-      </div>)
+      loading ?
+          (<Spin tip="Loading" size="small">
+            <div style={{width: '100%', height: '100%', display: 'flex'}}/>
+          </Spin>)
+          :
+          (<div style={{width: '100%', height: '100%', display: 'flex'}}>
+            {visTypeList.map((visType, idx) => {
+              return (
+                  <div key={idx} id={`visSvg${idx}`}
+                       style={{width: `${100 / visTypeList.length}%`, height: '100%', overflow: 'hidden'}}/>
+              )
+            })}
+          </div>)
   )
 }
+
 export default Explorer
