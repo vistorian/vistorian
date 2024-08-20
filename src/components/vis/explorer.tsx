@@ -56,6 +56,8 @@ function Explorer(props: IVisContentProps) {
   const getParamCallbacks: ParamChangeCallbacks = {
     hoveredNode: (newVal) => onChange(newVal, 'hoveredNode'),
     time: (newVal) => onChange(newVal, 'time'),
+
+    // symmetric: (newVal) => onChange(newVal, 'symmetric'),
   }
 
   const update = async () => {
@@ -122,7 +124,7 @@ function Explorer(props: IVisContentProps) {
       }, containerId, {
         renderer: renderer,
         paramCallbacks: getParamCallbacks
-      })
+      },)
       // @ts-ignore
       console.log('VIEW STATE:', viewers)
       // console.log(JSON.stringify(tmpViewer.spec))

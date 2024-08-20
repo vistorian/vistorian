@@ -1,4 +1,5 @@
 import { NetworkConfig } from "../../../typings"
+import {add} from "lodash-es";
 
 export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => {
   const linkFileName = config.linkTableConfig?.file
@@ -180,6 +181,8 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
   // is "id" correct default for case when only link-table used?
   const idField = config.extraNodeConfig?.hasExtraNode ? config.extraNodeConfig.nodeID : "id"
 
+
+  const addReversLinks = (!config.linkTableConfig?.directed && (visType === 'matrix' || visType === 'arcMatrix'));
   const baseNetworkSpec: any = {
     "name": "network",
     "parts": [
@@ -207,7 +210,8 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
             "target_node_type": defaultNodeType,
             // "target_id_field": idField,
 
-            "addReverseLinks": (visType === 'matrix' || visType === 'arcMatrix') ? true : false,
+            // "addReverseLinks": (visType === 'matrix' || visType === 'arcMatrix') ? true : false,
+            "addReverseLinks": addReversLinks,
             "data": ["*"]
           }
         ]
@@ -217,7 +221,6 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       { "type": "metric", "metric": "degree" },
       // { "type": "metric", "metric": "undirected-betweenes" }
     ] as any[],
-
   }
 
   // =========== if exists the node dataset ===========
@@ -246,7 +249,8 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
             "target_node_type": defaultNodeType,
             // "target_id_field": idField,
 
-            "addReverseLinks": (visType === 'matrix' || visType === 'arcMatrix') ? true : false,
+            // "addReverseLinks": (visType === 'matrix' || visType === 'arcMatrix') ? true : false,
+            "addReverseLinks": addReversLinks,
             "data": ["*"]
           }
         ]
