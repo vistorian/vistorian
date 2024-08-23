@@ -254,8 +254,9 @@
           "expression": "[nodeLabel]"
         },
         "dx": -10,
-        "//dx": -130,
-        "dy": 10,
+        "dy": {
+          "expression": "bounds.height / state.network.nodes.length / 2"
+        },
         "fontSize": {
           "expression": "params.labelSizeParam"
         },
@@ -320,10 +321,11 @@
           "expression": "params.labelSizeParam"
         },
         "//clip": true,
-        "y": 10,
         "angle": -90,
-        "dx": 20,
-        "dy": 10,
+        "dx": 10,
+        "dy": {
+          "expression": "bounds.width / state.network.nodes.length / 2"
+        },
         "fixedPanZoom": "y",
         "fontWeight": {
           "conditions": [
