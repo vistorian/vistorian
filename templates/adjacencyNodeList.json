@@ -78,8 +78,7 @@
       "mark": {
         "type": "text",
         "text": {
-          "//field": "key[0]",
-          "field": "data[0].source.data.name"
+          "field": "data[0].source.data._label"
         },
         "fontSize": {
           "expression": "params.labelSizeParam"
@@ -103,7 +102,6 @@
         {
           "entries": "groupedByTarget",
           "mark": {
-            "scaling": true,
             "type": "circle",
             "fill": "#F28527",
             "opacity": {
