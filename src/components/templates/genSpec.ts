@@ -109,13 +109,25 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
   // =========== if exists the node dataset =========== 
   if (config.extraNodeConfig?.hasExtraNode) {
     let trans: any[] = []
-    const calc = config.extraNodeConfig?.nodeLabel ? config.extraNodeConfig?.nodeLabel : 'id'
 
+    // Ensure there is an id field in the nodes
+    if (config.extraNodeConfig.nodeID != "id") {
+      const calcID = config.extraNodeConfig.nodeID;
+      trans.push({
+        "type": "calculate",
+        "as": `id`,
+        "calculate": `datum['${calcID}']`
+      })
+    }
+
+    const calc = config.extraNodeConfig?.nodeLabel ? config.extraNodeConfig?.nodeLabel : 'id'
     trans.push({
       "type": "calculate",
       "as": `_label`,
       "calculate": `datum['${calc}']`
+      // "calculate": `datum.${calc}`
     })
+
     config.extraNodeConfig?.nodeTypes?.forEach((type, index) => {
       if (type) {
         trans.push({
@@ -281,15 +293,16 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 
   // =========== if vis is timearcs, generate static network without time ===========
   if (visType === 'timearcs') {
+
     const staticNetworkSpec: any = {
       "name": "staticNetwork",
       "nodes": config.extraNodeConfig?.hasExtraNode ? "nodes" : undefined,
       "links": "links",
       "directed": true,
-      // "source_node": [idField, sourceLabel],
-      // "target_node": [idField, targetLabel]
-      "source_node": ["id", sourceLabel],
-      "target_node": ["id", targetLabel]
+      "source_node": [idField, sourceLabel],
+      "target_node": [idField, targetLabel]
+      // "source_node": ["id", sourceLabel],
+      // "target_node": ["id", targetLabel]
     }
     networkSpec.push(staticNetworkSpec)
   }

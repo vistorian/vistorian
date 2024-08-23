@@ -122,7 +122,7 @@
       "y": [
         {
           "order": "staticOrder",
-          "field": "data.name"
+          "field": "data._label"
         }
       ],
       "positioning": "none"
@@ -227,7 +227,7 @@
         "x2": {
           "expression": "bounds.width"
         },
-        "tooptip": {
+        "tooltip": {
           "expression": "datum"
         }
       }
@@ -247,6 +247,7 @@
         "dx": -15
       }
     },
+
     {
       "entries": "network.links",
       "layout": "layout",
@@ -256,7 +257,6 @@
         "start": "source",
         "end": "target",
         "shape": "curveSymmetric",
-        "parallelLinksType": "null",
         "stroke": {
           "conditions": [
             {
@@ -291,6 +291,7 @@
         }
       }
     },
+
     {
       "entries": "network.nodes",
       "layout": "layout",
@@ -349,7 +350,7 @@
           ],
           "value": 0.1
         },
-        "tooptip": {
+        "tooltip": {
           "expression": "datum"
         }
       }

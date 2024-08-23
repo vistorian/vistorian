@@ -96,7 +96,6 @@ function Explorer(props: IVisContentProps) {
         orderingMethodsLabels = orderingMethodsLabels.concat(networkCfg.extraNodeConfig.nodeTypes.filter(att => att))
       }
 
-
       if (networkCfg.extraNodeConfig?.numericalNodeAttributes) {
         nodeAttributes = nodeAttributes.concat(networkCfg.extraNodeConfig.numericalNodeAttributes.filter(att => att).map(v => `data.${v}`))
 
