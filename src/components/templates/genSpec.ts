@@ -237,7 +237,9 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 
   // =========== if exists the node dataset ===========
   // "source_id_field": idField creates an issue if all nodes are not present in the node table
-  if (config.extraNodeConfig?.hasExtraNode) {
+  // if (config.extraNodeConfig?.hasExtraNode) {
+  // For dynamic networks, nodes need to be associated with a time so only use link table
+  if (config.extraNodeConfig?.hasExtraNode && visType != "timearcs") {
     baseNetworkSpec.parts = [
       {
         "data": "nodes",
