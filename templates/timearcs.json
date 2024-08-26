@@ -115,7 +115,7 @@
       "pattern": "cartesian",
       "x": [
         {
-          "scale": "time",
+          "scale": "timeScale",
           "field": "data._time"
         }
       ],
@@ -137,7 +137,7 @@
   ],
   "scales": [
     {
-      "name": "time",
+      "name": "timeScale",
       "type": "time",
       "range": [
         50,
@@ -228,7 +228,7 @@
           "expression": "bounds.width"
         },
         "tooltip": {
-          "expression": "datum"
+          "expression": "datum.data_label"
         }
       }
     },
@@ -247,7 +247,6 @@
         "dx": -15
       }
     },
-
     {
       "entries": "network.links",
       "layout": "layout",
@@ -257,6 +256,7 @@
         "start": "source",
         "end": "target",
         "shape": "curveSymmetric",
+        "parallelLinksType": "null",
         "stroke": {
           "conditions": [
             {
@@ -284,14 +284,13 @@
               "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? params.linkOpacityParam : '0' "
             }
           ],
-          "expression": " (datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) ? 0.1 : 0 "
+          "expression": " (datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) ? '1' : '0' "
         },
-        "tooptip": {
-          "expression": "datum"
+        "tooltip": {
+          "expression": "datum.data._time"
         }
       }
     },
-
     {
       "entries": "network.nodes",
       "layout": "layout",
@@ -351,7 +350,7 @@
           "value": 0.1
         },
         "tooltip": {
-          "expression": "datum"
+          "expression": "datum.data._label"
         }
       }
     }
