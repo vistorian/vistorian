@@ -197,7 +197,7 @@
         "data": "network.nodes",
         "field": "data.type0"
       },
-      "legend": false
+      "legend": {"expression": "params.nodeTypeInShape"}
     },
     {
       "name": "nodeColor",
@@ -206,7 +206,8 @@
       "domain": {
         "data": "network.nodes",
         "field": "data.type0"
-      }
+      },
+      "legend": {"expression": "!params.nodeTypeInShape"}
     },
     {
       "name": "edgeColor",
