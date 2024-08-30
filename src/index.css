@@ -22,8 +22,11 @@ body {
   min-height: 100vh;
   background-color: #fff;
 }
+.ce-block__content, .ce-toolbar__content { max-width: calc(100% - 100px) !important; } .cdx-block { max-width: 100% !important; }
+.codex-editor__loader { height: 38px !important; }
+.codex-editor__redactor { padding-bottom: 38px !important;
 
-::-webkit-scrollbar {
+  ::-webkit-scrollbar {
   display: none; /* Chrome Safari */
 }
 

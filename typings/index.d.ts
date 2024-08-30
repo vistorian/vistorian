@@ -7,6 +7,27 @@ type Session = {
   created: string,
 }
 
+type Editor= {
+  id: number,
+  type: string,
+  created: string,
+  textId:string,
+  textContent: object,
+  isAddedVis:boolean,
+  visId:string,
+  networkEd: string,
+  visTypeList: string[],
+  caption:string,
+}
+
+type Story= {
+  id: string,
+  title:string,
+  author: string,
+  created: string,
+  content:object
+}
+
 type WizardCtx = {
   fileNameStore: string[]
   setFileNameStore: (fileNameStore: string[]) => void;
@@ -16,6 +37,31 @@ type WizardCtx = {
   setSessionStore: (sessionStore: Session[]) => void
 }
 
+type BlogCtx = {
+  fileNameStore: string[]
+  setFileNameStore: (fileNameStore: string[]) => void;
+  networkStore: string[]
+  setNetworkStore: (networkStore: string[]) => void;
+  sessionStore: Session[]
+  setSessionStore: (sessionStore: Session[]) => void;
+  editorStore: Editor[]
+  setEditorStore: (EditorStore: Editor[]) => void;
+  storyStore: Story[]
+  setStory: (storyStore: Story[]) => void;
+}
+
+type StoryCtx = {
+  fileNameStore: string[]
+  setFileNameStore: (fileNameStore: string[]) => void;
+  networkStore: string[]
+  setNetworkStore: (networkStore: string[]) => void;
+  sessionStore: Session[]
+  setSessionStore: (sessionStore: Session[]) => void;
+  editorStore: Editor[]
+  setEditorStore: (EditorStore: Editor[]) => void;
+  storyStore: Story[]
+  setStory: (storyStore: Story[]) => void;
+}
 
 // Vis template
 type Template = {
@@ -56,11 +102,6 @@ interface NetworkFormat {
   format: NetworkFormatOpt
 }
 
-// type LinkTypeOpt = "rowPerLink" | "rowPerNode"
-
-// interface LinkType {
-//   linkType: LinkTypeOpt
-// }
 
 interface LinkTableConfig {
   directed: boolean
@@ -144,5 +185,9 @@ export {
   ExtraNodeConfig,
   IStepProps,
   SelectOptionType,
-  AllMotifs
+  AllMotifs,
+  BlogCtx,
+  Editor,
+  StoryCtx,
+  Story
 }

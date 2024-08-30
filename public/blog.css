@@ -1,0 +1,45 @@
+@media (min-width: 651px) {
+    .ce-block__content {
+        max-width: calc(100% - 20px) !important;
+        margin: 0 60px;
+    }
+}
+
+
+@media (min-width: 651px) {
+    .ce-toolbar__content {
+        width: 0px !important;
+        margin: 0 50px;
+    }
+}
+
+.cdx-block {
+    max-width: 100% !important;
+}
+
+.simple-image input,
+.simple-image [contenteditable] {
+// styles
+}
+
+@media (min-width: 651px) {
+    .codex-editor--narrow .ce-toolbox .ce-popover {
+        left: 0;
+        right: 0;
+    }
+}
+
+@media (min-width: 651px) {
+    .codex-editor--narrow .ce-settings .ce-popover {
+        right: 0;
+        left: 0;
+    }
+}
+
+[contenteditable=true]:empty:before{
+    content: attr(placeholder);
+    pointer-events: none;
+    display: block;
+    color:grey;
+    font-style:italic;
+}

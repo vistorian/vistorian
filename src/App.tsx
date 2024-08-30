@@ -10,6 +10,9 @@ import Landing from './components/landing'
 import Wizard from './components/wizard'
 import Vis from './components/vis'
 import { Mode } from '../typings/status.enum'
+import LandingPage from "./components/story/landing";
+import Story from "./components/story";
+import ExportStory from "./components/story/export";
 // enum Mode {
 //   Explorer = 'Explorer',
 //   Explainer = 'Explainer'
@@ -42,6 +45,12 @@ function App() {
           <Route path="/wizard/network/:network" element={<Landing />}></Route>
           <Route path="/vis/:visTypes/network/:network" element={<Vis type={Mode.Explorer}/>}></Route>
           <Route path={`/vis/:visTypes/network/:network/${Mode.Explainer}`} element={<Vis type={Mode.Explainer} />}></Route>
+
+          {/* TODO: direct to related blog editor*/}
+          <Route path="/story" element={<LandingPage/>}></Route>
+          <Route path="/story-editor/:storyId" element={<Story/>}></Route>
+          <Route path="/story/:storyId" element={<ExportStory />}></Route>
+
         </Routes>
       </HashRouter>
     </>

@@ -123,6 +123,7 @@ function Explorer(props: IVisContentProps) {
         renderer: renderer,
         paramCallbacks: getParamCallbacks
       })
+      //, {state}
       // @ts-ignore
       console.log('VIEW STATE:', viewers)
       // console.log(JSON.stringify(tmpViewer.spec))
