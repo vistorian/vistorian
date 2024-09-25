@@ -176,14 +176,24 @@
       "data": "network.nodes",
       "pattern": "linear",
       "order": "order",
-      "orientation": "vertical"
+      "orientation": "vertical",
+      "transform": [
+        {"type": "translate",
+          "y": 30
+        }
+      ]
     },
     {
       "name": "labelLayoutX",
       "data": "network.nodes",
       "pattern": "linear",
       "order": "order",
-      "orientation": "horizontal"
+      "orientation": "horizontal",
+      "transform": [
+        {"type": "translate",
+          "x": 30
+        }
+      ]
     }
   ],
   "tables": [
@@ -254,7 +264,7 @@
           "expression": "[nodeLabel]"
         },
         "dx": -10,
-        "dy": {
+        "//dy": {
           "expression": "bounds.height / state.network.nodes.length / 2"
         },
         "fontSize": {
@@ -323,7 +333,7 @@
         "//clip": true,
         "angle": -90,
         "dx": 10,
-        "dy": {
+        "//dy": {
           "expression": "bounds.width / state.network.nodes.length / 2"
         },
         "fixedPanZoom": "y",
