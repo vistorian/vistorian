@@ -319,7 +319,8 @@
             {
               "//": "if the link is linked to a hovered node, show strong",
               "test": "params.hoveredNode.nodes.length > 0 && indexof(params.neighbours.links, datum) > -1",
-              "value": 1
+//              "value": 1,
+              "expression": "params.linkOpacityParam"
             },
             {
               "//": "if the link is linked to a selected node",
