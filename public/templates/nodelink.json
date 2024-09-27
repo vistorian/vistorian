@@ -427,7 +427,8 @@
             {
               "//": "selected neighbour",
               "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.nodes, datum) > -1",
-              "expression": ".5 + params.unselectedOpacity"
+//              "expression": ".5 + params.unselectedOpacity",
+              "expression": "params.nodeOpacityParam"
             }
           ],
           "expression": "params.unselectedOpacity"
@@ -483,7 +484,8 @@
             {
               "//": "selected neighbour",
               "test": "params.selectedNeighbours.nodes.length > 0 && indexof(params.selectedNeighbours.nodes, datum) > -1",
-              "expression": ".5 + params.unselectedOpacity"
+//              "expression": ".5 + params.unselectedOpacity",
+              "expression": "params.nodeOpacityParam"
             }
           ],
           "expression": "params.unselectedOpacity"
