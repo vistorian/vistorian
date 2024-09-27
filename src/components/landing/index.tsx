@@ -94,6 +94,9 @@ const useStyles = createUseStyles({
     '& img':{
       height: '50px',
       padding: '20px',
+    },
+    '& #uoe':{
+      height: '54px',
     }
   }, 
   boldLink: {
@@ -231,7 +234,8 @@ function Landing() {
     <div className={classes.logoDiv}>
       <br/><br/>
       <a href="http://vishub.net"><img src="logos/logo-vishub.png" /></a>
-      <a href="http://www.ed.ac.uk/informatics"><img id="uoe" src="logos/logo-edinburgh.png" /></a>
+      {/*<a href="http://www.ed.ac.uk/informatics"><img id="uoe" src="logos/logo-edinburgh.png" /></a>*/}
+      <a href="http://www.ed.ac.uk/informatics"><img id="uoe" src="logos/logo-EFI.png" /></a>
       <a href="http://www.inria.fr"><img src="logos/logo-inria.png" /></a>
       <a href="http://www.msr-inria.fr/"><img src="logos/logo-msr.png" /></a>
     </div>
