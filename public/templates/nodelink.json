@@ -4,7 +4,7 @@
     "modifierKeyRequired": null
   },
   "exportButton": true,
-  "saveLocalStorage": true,
+  "saveLocalStorage": false,
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
   "width": "[width]",
