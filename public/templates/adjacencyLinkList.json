@@ -178,7 +178,7 @@
               "conditions": [
                 {
                   "test": "params.hoveredNode.nodes.length > 0 && datum.target == params.hoveredNode.nodes[0]",
-                  "value": 3
+                  "value": 4
                 }
               ],
               "value": 0
