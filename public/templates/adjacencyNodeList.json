@@ -1,5 +1,5 @@
 {  
-  "pan": true, 
+  "pan": true,
   "zoom": true,
 
   "data": "[dataDefinition]",
@@ -24,7 +24,8 @@
     {
       "name": "hoveredNode",
       "network": "network",
-      "type": "selection"
+      "type": "selection",
+      "clearOnBackgroundClick": true
     },
     {
       "name": "labelSizeParam",
@@ -60,7 +61,7 @@
         "max": "40",
         "step": "1"
       },
-      "value": 6
+      "value": 10
     }
   ],
   "orderings": [
@@ -151,7 +152,7 @@
           "mark": {
             "type": "circle",
             "fill": "#F28527",
-            "stroke": "blue",
+            "stroke": "#777",
             "strokeWidth": {
               "conditions": [
                 {
