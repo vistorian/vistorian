@@ -13,6 +13,14 @@
     }
   ],
   "parameters":[
+
+    {
+      "name": "hoveredNode",
+      "network": "network",
+      "type": "selection",
+      "clearOnBackgroundClick": true
+    },
+
     {
       "name": "labelSizeParam",
       "bind": {
@@ -25,6 +33,32 @@
       },
       "value": 13
     },
+
+    {
+      "name": "adjacentLinkSize",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Adjacent Node Size",
+        "min": "5",
+        "max": "300",
+        "step": "1"
+      },
+      "value": 80
+    },
+    {
+      "name": "spacing",
+      "bind": {
+        "input": "range",
+        "event": "onChange",
+        "label": "Links Spacing",
+        "min": "5",
+        "max": "40",
+        "step": "1"
+      },
+      "value": 10
+    },
+
     {
       "name": "time",
       "bind": {
@@ -85,6 +119,17 @@
     {
       "entries": "groupedBySource",
       "layout": "layout",
+
+      "actions": [
+        {
+          "interaction": "select",
+          "using": "cursor",
+          "event": "mouseover",
+          "action": "replace",
+          "selection": "hoveredNode"
+        }
+      ],
+
       "mark": {
         "type": "text",
         "text": {
@@ -126,9 +171,20 @@
             "opacity": {
               "expression": "((datum.data._time != null && datum.data._time >= params.time[0] && datum.data._time <= params.time[1]) || (datum.data._time == null)) ? 1 : '0' "
             },
-            "area": 30,
+            "area": {"parameter": "adjacentLinkSize"},
+
+            "stroke": "#777",
+            "strokeWidth": {
+              "conditions": [
+                {
+                  "test": "params.hoveredNode.nodes.length > 0 && datum.target == params.hoveredNode.nodes[0]",
+                  "value": 3
+                }
+              ],
+              "value": 0
+            },
             "x": {
-              "expression": "index * 6 + 170"
+              "expression": "index * params.spacing + 170"
             },
             "tooltip": {
               "expression": " datum.source.data._label+ ' --- '+ datum.linkType +'--> ' + datum.target.data._label + '' "
