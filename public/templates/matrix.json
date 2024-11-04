@@ -179,7 +179,7 @@
       "orientation": "vertical",
       "transform": [
         {"type": "translate",
-          "y": 30
+          "y": 10
         }
       ]
     },
@@ -191,7 +191,7 @@
       "orientation": "horizontal",
       "transform": [
         {"type": "translate",
-          "x": 30
+          "x": 8
         }
       ]
     }
