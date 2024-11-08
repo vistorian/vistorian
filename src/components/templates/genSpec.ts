@@ -75,12 +75,13 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
       {
         "type": "calculate",
         "as": "source",
-        "calculate": `datum.${sourceLabel} + ' (' + datum.${sourcePlaceField} + ')'`
+        // "calculate": `datum.${sourceLabel} + ' (' + datum.${sourcePlaceField} + ')'`
+        "calculate": `datum['${sourceLabel}'] + ' (' + datum['${sourcePlaceField}'] + ')'`
       },
       {
         "type": "calculate",
         "as": "target",
-        "calculate": `datum.${targetLabel} + ' (' + datum.${targetPlaceField} + ')'`
+        "calculate": `datum['${targetLabel}'] + ' (' + datum['${targetPlaceField}'] + ')'`
       }
     ]
 
@@ -288,9 +289,9 @@ export const genSpecFromLinkTable = (config: NetworkConfig, visType: string) => 
 
   // TODO: deal with geo config, linkID
   if (config.linkTableConfig?.linkType)
-    baseNetworkSpec.transform.push({ "type": "calculate", "as": "linkType", "calculate": `datum.data.${config.linkTableConfig?.linkType}`, "for": "links" })
+    baseNetworkSpec.transform.push({ "type": "calculate", "as": "linkType", "calculate": `datum.data['${config.linkTableConfig?.linkType}']`, "for": "links" })
   if (config.linkTableConfig?.linkWeight)
-    baseNetworkSpec.transform.push({ "type": "calculate", "as": "linkWeight", "calculate": `datum.data.${config.linkTableConfig?.linkWeight}`, "for": "links" })
+    baseNetworkSpec.transform.push({ "type": "calculate", "as": "linkWeight", "calculate": `datum.data['${config.linkTableConfig?.linkWeight}']`, "for": "links" })
 
 
   // =========== if vis is timearcs, generate static network without time ===========

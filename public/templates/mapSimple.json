@@ -8,10 +8,15 @@
     {
       "name": "my_map",
       "tiles": "Stadia.AlidadeSmooth",
-      "zoomLevel": 4,
+      "zoomLevel": 8,
+//      "center": [
+//        51.5062,
+//        -30
+//      ]
+//      UK
       "center": [
-        51.5062,
-        -30
+        54,
+        -2
       ]
     }
   ],
@@ -114,7 +119,7 @@
         "label": "Link Width",
         "min": "0",
         "max": "5",
-        "step": ".5"
+        "step": "0.5"
       },
       "value": 1
     },
@@ -237,7 +242,6 @@
         "map": "my_map"
       }
     },
-
 
     {
       "entries": "network.nodes",
@@ -389,7 +393,15 @@
           "scale": "edgeColor"
         },
         "strokeWidth": {
-          "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
+          "conditions": [
+            {
+              "test": "datum.linkWeight == null",
+              "value": "params.linkWidthParam"
+            }
+          ],
+          "field": "linkWeight",
+          "scale": "edgeWidth"
+//          "value": 4
         },
         "opacity": {
           "conditions": [
