@@ -223,7 +223,7 @@
       "type": "linear",
       "range": [
         1,
-        10
+        5
       ],
       "rangeMapFunction": "datum * params.linkWidthParam",
       "domain": {
@@ -302,8 +302,18 @@
           "scale": "edgeColor"
         },
         "strokeWidth": {
-          "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
+          "conditions": [
+            {
+              "test": "datum.linkWeight == null",
+              "value": "params.linkWidthParam"
+            }
+          ],
+          "field": "linkWeight",
+          "scale": "edgeWidth"
         },
+//        "strokeWidth": {
+//          "expression": "datum.linkWeight == null ? params.linkWidthParam : 0.1 * datum.linkWeight * params.linkWidthParam"
+//        },
         "opacity": {
           "conditions": [
             {
