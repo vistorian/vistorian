@@ -1,13 +1,16 @@
-{    
+{
+  "width": 411,
+  "height": 411,
   "zoom": true,
+  "legends": false,
   "pan": {
     "modifierKeyRequired": null
   },
 
   "data": "[dataDefinition]",
   "networks": "[networksDefinition]",
-  "width": "[width]",
-  "height": "[height]",
+  "//width": "[width]",
+  "//height": "[height]",
 
   "parameters": [
     {
@@ -117,10 +120,15 @@
   ],
 
   "orderings": [
+//    {
+//      "name": "node_order",
+//      "data": "network.nodes",
+//      "orderBy": {"parameter": "seriationMethod"}
+//    },
     {
       "name": "node_order",
       "data": "network.nodes",
-      "orderBy": {"parameter": "seriationMethod"}
+      "orderBy": {"field" :"data.type0"}
     }
   ],
   "layouts": [
@@ -128,8 +136,11 @@
       "name": "layout",
       "data": "network.nodes",
       "order": "node_order",
-      "pattern": "hilbert",
-      "paddingX": 100
+//      "pattern": "hilbert",
+//      "pattern": "z-curve",
+      "pattern": "col-by-col",
+
+      "paddingX": 30
     }
   ],  
   "scales": [
@@ -245,7 +256,8 @@
           "scale": "nodeShape"
         },
         "area": { 
-          "expression": "40 + datum.degree * params.nodeSizeParam"
+//          "expression": "40 + datum.degree * params.nodeSizeParam",
+          "expression": "211 + datum.degree * 91"
         },
         "fill": {
           "conditions": [
@@ -276,43 +288,43 @@
           "value": 0.1
         }
       }
-    },
-    {
-      "entries": "network.nodes",
-      "layout": "layout",
-      "occlusion": {"field": "degree"},
-      "occlusionDensity":  2,
-      "overlapRemoval": {
-        "field": "degree",
-        "overlapDistance": 1.5
-      },
-      "mark": {
-        "type": "text",
-        "text": { "expression": "[nodeLabel]"},
-        "opacity": {
-          "conditions": [
-            {
-              "selectionIsEmpty": "node_selection.nodes",
-              "value": 1
-            },
-            {
-              "inSelection": "node_selection.nodes",
-              "value": 1
-            },
-            {
-              "inSelection": "neighbours.nodes",
-              "value": 1
-            }
-          ],
-          "value": 0.1
-        },
-        "cursor": "none",
-        "dx": 5,
-        "dy": 4,
-        "fontSize": 13,
-        "stroke": "white",
-        "strokeWidth": 0.3
-      }
     }
+//    {
+//      "entries": "network.nodes",
+//      "layout": "layout",
+//      "occlusion": {"field": "degree"},
+//      "occlusionDensity":  1.2,
+//      "overlapRemoval": {
+//        "field": "degree",
+//        "overlapDistance": 1.1
+//      },
+//      "mark": {
+//        "type": "text",
+//        "text": { "expression": "[nodeLabel]"},
+//        "opacity": {
+//          "conditions": [
+//            {
+//              "selectionIsEmpty": "node_selection.nodes",
+//              "value": 1
+//            },
+//            {
+//              "inSelection": "node_selection.nodes",
+//              "value": 1
+//            },
+//            {
+//              "inSelection": "neighbours.nodes",
+//              "value": 1
+//            }
+//          ],
+//          "value": 0.1
+//        },
+//        "cursor": "none",
+//        "dx": 5,
+//        "dy": 4,
+//        "fontSize": 13,
+//        "stroke": "white",
+//        "strokeWidth": 0.3
+//      }
+//    }
   ]
 }

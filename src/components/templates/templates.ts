@@ -90,14 +90,14 @@ const templates: Template[] = [
   //   description: "Showing different types of nodes as different lines of nodes with links connecting them.",
   //   manual: "https://vistorian.github.io"
   // },
-  // {
-  //   key: "waffleNode",
-  //   label: "Node Waffle-Chart",
-  //   image: "waffleNode.png",
-  //   template: "waffleNode.json",
-  //   description: "Highly compact visualization of all nodes shown in an ordered grid. Links can be shown overlaid.",
-  //   manual: "https://vistorian.github.io"
-  // },
+  {
+    key: "waffleNode",
+    label: "Node Waffle-Chart",
+    image: "waffleNode.png",
+    template: "waffleNode.json",
+    description: "Highly compact visualization of all nodes shown in an ordered grid. Links can be shown overlaid.",
+    manual: "https://vistorian.github.io"
+  },
   // {
   //   key: "waffleLink",
   //   label: "Link Waffle-Chart",
